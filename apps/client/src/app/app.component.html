@@ -1,2 +1,25 @@
-<expenses-tracker-nx-welcome></expenses-tracker-nx-welcome>
+<div class="grid grid-cols-2 p-4">
+  <div class="flex flex-col items-center gap-4">
+    <button
+      class="px-4 py-2 text-white bg-blue-700 rounded-md"
+      (click)="addData()">
+      Add Data
+    </button>
+    <button
+      class="px-4 py-2 text-white bg-red-700 rounded-md"
+      (click)="removeFirst()">
+      Delete Data
+    </button>
+  </div>
+  <div class="text-gray-700 bg-green-200">
+    <div class="p-2">
+      <ng-container *ngIf="!!data; else noData">
+        <pre>{{ data | async | json }}</pre>
+      </ng-container>
+      <ng-template #noData>
+        <span>No data yet!</span>
+      </ng-template>
+    </div>
+  </div>
+</div>
 <router-outlet></router-outlet>

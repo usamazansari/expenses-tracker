@@ -145,3 +145,8 @@ typings/
 
 # Yarn cache
 .yarn
+
+# Firebase
+.firebase
+*-debug.log
+.runtimeconfig.json

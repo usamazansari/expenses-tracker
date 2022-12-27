@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "ua-expenses-tracker": {
+      "hosting": {
+        "client": [
+          "ua-expenses-tracker"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "ua-expenses-tracker"
+  }
+}
