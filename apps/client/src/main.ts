@@ -17,13 +17,13 @@ bootstrapApplication(AppComponent, {
     provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
     importProvidersFrom(
       AngularFireModule.initializeApp({
-        projectId: 'ua-expenses-tracker',
-        appId: '1:996752641056:web:c4ab663b5a61a85b264045',
-        storageBucket: 'ua-expenses-tracker.appspot.com',
-        apiKey: 'AIzaSyDWMOv0m9vA37Uk7bUClfcB6dtJ0VwVv84',
-        authDomain: 'ua-expenses-tracker.firebaseapp.com',
-        messagingSenderId: '996752641056',
-        measurementId: 'G-ZM3ZXXJKQ0'
+        projectId: process.env['ET_PROJECT_ID'],
+        appId: process.env['ET_APP_ID'],
+        storageBucket: process.env['ET_STORAGE_BUCKET'],
+        apiKey: process.env['ET_API_KEY'],
+        authDomain: process.env['ET_AUTH_DOMAIN'],
+        messagingSenderId: process.env['ET_MESSAGING_SENDER_ID'],
+        measurementId: process.env['ET_MEASUREMENT_ID']
       }),
       AngularFireAuthModule,
       AngularFirestoreModule
