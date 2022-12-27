@@ -50,9 +50,16 @@ export class AppComponent implements OnInit {
   removeFirst() {
     this.data
       .pipe(
-        switchMap(([{ id }]) =>
-          this.collectionRef.ref.where('id', '==', id).get()
-        ),
+        switchMap(([doc]) => {
+          if (!doc) {
+            return throwError(
+              () => new Error('No documents in the collection')
+            );
+          }
+          const { id } = doc;
+          return this.collectionRef.ref.where('id', '==', id).get();
+        }),
+        take(1),
         switchMap(({ empty, docs }) => {
           if (!empty) {
             const [
@@ -62,14 +69,13 @@ export class AppComponent implements OnInit {
             ] = docs;
             return from(this.collectionRef.doc(id).delete());
           }
-          throw new Error('Document not found');
+          throw new Error('Document does not exist');
         }),
-        catchError(err => throwError(err)),
-        take(1)
+        catchError(err => throwError(() => new Error(err)))
       )
       .subscribe({
-        next: d => {
-          console.log({ d });
+        next: () => {
+          console.log('Delete Successful');
         },
         error: err => {
           console.log({ err });
