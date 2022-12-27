@@ -142,3 +142,6 @@ typings/
 
 # TernJS port file
 .tern-port
+
+# Yarn cache
+.yarn
