@@ -4,7 +4,10 @@
   "license": "MIT",
   "scripts": {
     "ng": "nx",
-    "postinstall": "node ./decorate-angular-cli.js"
+    "postinstall": "node ./decorate-angular-cli.js",
+    "build:stats": "nx run client:build:development --stats-json --source-map",
+    "build": "nx run client:build:production",
+    "analyze": "source-map-explorer dist/apps/client/**/*.js"
   },
   "private": true,
   "dependencies": {
@@ -54,9 +57,11 @@
     "nx": "15.4.1",
     "postcss": "^8.4.5",
     "prettier": "^2.6.2",
+    "source-map-explorer": "^2.5.3",
     "tailwindcss": "^3.0.2",
     "ts-jest": "28.0.5",
     "ts-node": "10.9.1",
     "typescript": "~4.8.2"
   }
 }
+
