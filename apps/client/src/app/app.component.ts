@@ -6,6 +6,7 @@ import {
   AngularFirestoreCollection
 } from '@angular/fire/compat/firestore';
 import { RouterModule } from '@angular/router';
+import { LayoutComponent } from '@expenses-tracker/layout';
 import {
   BehaviorSubject,
   catchError,
@@ -55,10 +56,9 @@ type DataType = {
 
 @Component({
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, LayoutComponent],
   selector: 'expenses-tracker-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
   flags$ = new BehaviorSubject<ComponentFlags>(flagStub);

@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common';
   selector: 'expenses-tracker-layout',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.scss']
+  templateUrl: './layout.component.html'
 })
 export class LayoutComponent {}
