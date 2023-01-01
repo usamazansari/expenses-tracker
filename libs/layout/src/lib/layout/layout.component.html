@@ -1,3 +1,7 @@
-<div class="grid">
+<div class="grid min-h-screen">
+  <expenses-tracker-navbar
+    (gotoLogin$)="navigate('login')"
+    (gotoSignup$)="navigate('signup')"
+    (gotoHome$)="navigate()"></expenses-tracker-navbar>
   <ng-content></ng-content>
 </div>
