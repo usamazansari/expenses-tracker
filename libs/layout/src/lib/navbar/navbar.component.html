@@ -1,27 +1,29 @@
-<div class="flex px-4 py-2 justify-between">
+<div class="flex justify-between px-4 py-2">
   <div class="flex">
     <div
       class="grid grid-cols-[auto_1fr] items-center gap-2 cursor-pointer"
       (click)="gotoHome()">
       <img
-        src="apps/client/src/assets/logo.png"
+        ngSrc="apps/client/src/assets/logo.png"
+        width="64"
+        height="64"
+        priority
         alt="Logo"
-        loading="eager"
         class="w-16 h-16" />
       <span
-        class="hover:underline hover:underline-offset-4 text-gray-600 hover:text-gray-800 transition-all duration-200"
+        class="text-gray-600 transition-all duration-200 hover:underline hover:underline-offset-4 hover:text-gray-800"
         >Expenses Tracker</span
       >
     </div>
   </div>
   <div class="flex">
     <button
-      class="px-4 hover:underline hover:underline-offset-4 text-gray-600 hover:text-gray-800 transition-all duration-200"
+      class="px-4 text-gray-600 transition-all duration-200 hover:underline hover:underline-offset-4 hover:text-gray-800"
       (click)="gotoLogin()">
       Login
     </button>
     <button
-      class="px-4 hover:underline hover:underline-offset-4 text-gray-600 hover:text-gray-800 transition-all duration-200"
+      class="px-4 text-gray-600 transition-all duration-200 hover:underline hover:underline-offset-4 hover:text-gray-800"
       (click)="gotoSignup()">
       Signup
     </button>
