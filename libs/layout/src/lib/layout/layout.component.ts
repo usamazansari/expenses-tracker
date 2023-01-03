@@ -9,9 +9,9 @@ import { NavbarComponent } from '../navbar/navbar.component';
   templateUrl: './layout.component.html'
 })
 export class LayoutComponent {
-  @Output() navigate$ = new EventEmitter<string>();
+  @Output() navigate$ = new EventEmitter<{ path: string; query?: string }>();
 
-  navigate(path = '') {
-    this.navigate$.emit(path);
+  navigate(path = '', query?: string) {
+    this.navigate$.emit({ path, query });
   }
 }

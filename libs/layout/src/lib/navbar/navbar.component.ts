@@ -1,10 +1,11 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { LogoGraphicComponent } from '@expenses-tracker/shared/assets';
 
 @Component({
   selector: 'expenses-tracker-navbar',
   standalone: true,
-  imports: [CommonModule, NgOptimizedImage],
+  imports: [CommonModule, NgOptimizedImage, LogoGraphicComponent],
   templateUrl: './navbar.component.html'
 })
 export class NavbarComponent {

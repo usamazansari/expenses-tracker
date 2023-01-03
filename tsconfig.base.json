@@ -15,7 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@expenses-tracker/auth": ["libs/auth/src/index.ts"],
       "@expenses-tracker/layout": ["libs/layout/src/index.ts"],
+      "@expenses-tracker/shared/assets": ["libs/shared/assets/src/index.ts"],
       "@expenses-tracker/shared/interfaces": [
         "libs/shared/interfaces/src/index.ts"
       ]

@@ -1,7 +1,9 @@
-<div class="grid min-h-screen">
+<div class="grid grid-rows-[auto_1fr] min-h-screen">
   <expenses-tracker-navbar
-    (gotoLogin$)="navigate('login')"
-    (gotoSignup$)="navigate('signup')"
+    (gotoLogin$)="navigate('auth', 'login')"
+    (gotoSignup$)="navigate('auth', 'signup')"
     (gotoHome$)="navigate()"></expenses-tracker-navbar>
-  <ng-content></ng-content>
+  <div class="grid grid-rows-[0fr_1fr] container mx-auto">
+    <ng-content></ng-content>
+  </div>
 </div>

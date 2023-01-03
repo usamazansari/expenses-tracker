@@ -11,8 +11,7 @@ import { LayoutComponent } from '@expenses-tracker/layout';
 })
 export class AppComponent {
   constructor(private _router: Router) {}
-  navigate(path = '') {
-    console.log({ path });
-    // this._router.navigate([path]);
+  navigate({ path, query }: { path: string; query?: string }) {
+    this._router.navigate([path], { queryParams: { mode: query } });
   }
 }
