@@ -8,6 +8,7 @@ import { USE_EMULATOR as DATABASE_EMULATOR } from '@angular/fire/compat/database
 import { USE_EMULATOR as FIRESTORE_EMULATOR } from '@angular/fire/compat/firestore';
 import { USE_EMULATOR as FUNCTIONS_EMULATOR } from '@angular/fire/compat/functions';
 import { bootstrapApplication } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
   provideRouter,
   withEnabledBlockingInitialNavigation
@@ -41,7 +42,8 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(
       AngularFireModule.initializeApp(firebaseConfig),
       AngularFireAuthModule,
-      AngularFirestoreModule
+      AngularFirestoreModule,
+      BrowserAnimationsModule
     ),
     {
       provide: AUTH_EMULATOR,

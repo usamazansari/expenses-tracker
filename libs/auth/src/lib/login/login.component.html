@@ -1,40 +1,38 @@
 <div
   class="grid grid-rows-[1fr_2fr] items-center w-[32rem] h-96 border rounded-lg p-4">
   <div class="flex items-center mx-auto">
-    <!-- <img
-      ngSrc="apps/client/src/assets/login.svg"
-      width="72"
-      height="72"
-      loading="lazy"
-      alt="Logo" /> -->
     <expenses-tracker-login-graphic
-      class="w-16 h-16"></expenses-tracker-login-graphic>
+      class="w-16 fill-blue-700"></expenses-tracker-login-graphic>
     <span class="text-3xl text-center text-blue-700">Login</span>
   </div>
-  <div class="grid grid-rows-[1fr_auto] gap-4">
-    <div class="grid grid-rows-2 gap-2">
-      <div class="flex items-center">
-        <div class="flex-[1_1_0] mr-2 text-right">Login Icon</div>
-        <div class="flex-[2_0_0] mr-2">
-          <input
-            class="w-full p-2 bg-transparent focus:outline-none"
-            type="email"
-            placeholder="foo@bar.com" />
+  <div class="grid grid-rows-[1fr_auto] gap-8">
+    <div class="grid grid-rows-2 gap-6">
+      <div class="grid gap-3 items-center grid-cols-[1fr_2fr]">
+        <div class="flex items-center justify-end">
+          <mat-icon>mail_outline</mat-icon>
         </div>
+        <input
+          class="w-full bg-transparent focus:outline-none"
+          type="email"
+          placeholder="foo@bar.com" />
       </div>
-      <div class="flex items-center my-2">
-        <div class="flex-[1_1_0] mr-2 text-right">Password Icon</div>
-        <div class="flex-[2_0_0] mr-2">
-          <input
-            class="w-full p-2 bg-transparent focus:outline-none"
-            type="password"
-            placeholder="Password" />
+      <div class="grid gap-3 items-center grid-cols-[1fr_2fr]">
+        <div class="flex items-center justify-end">
+          <mat-icon>key</mat-icon>
         </div>
+        <input
+          class="w-full bg-transparent focus:outline-none"
+          type="password"
+          placeholder="Password" />
       </div>
     </div>
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center gap-4">
       <button class="px-6 py-2 text-white bg-blue-700 w-[50%] rounded-lg">
         Login
+      </button>
+      <button
+        class="px-6 py-2 hover:underline hover:underline-offset-4 text-blue-700 w-[50%] rounded-lg">
+        Forgot Password?
       </button>
     </div>
   </div>
