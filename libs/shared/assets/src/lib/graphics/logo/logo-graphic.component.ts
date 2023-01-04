@@ -107,42 +107,42 @@ import { Component } from '@angular/core';
         <path d="m533.75 209.99h43.75v17.5h-43.75z" />
         <path d="m551.25 244.99h26.25v17.5h-26.25z" />
         <!-- <use x="70" y="576.40625" xlink:href="#t" />
-      <use x="74.011719" y="576.40625" xlink:href="#b" />
-      <use x="76.710938" y="576.40625" xlink:href="#a" />
-      <use x="80.417969" y="576.40625" xlink:href="#f" />
-      <use x="84.109375" y="576.40625" xlink:href="#c" />
-      <use x="86.722656" y="576.40625" xlink:href="#a" />
-      <use x="90.433594" y="576.40625" xlink:href="#l" />
-      <use x="96.25" y="576.40625" xlink:href="#k" />
-      <use x="100.167969" y="576.40625" xlink:href="#j" />
-      <use x="105.636719" y="576.40625" xlink:href="#e" />
-      <use x="109.644531" y="576.40625" xlink:href="#a" />
-      <use x="113.351562" y="576.40625" xlink:href="#i" />
-      <use x="117.246094" y="576.40625" xlink:href="#s" />
-      <use x="121.183594" y="576.40625" xlink:href="#h" />
-      <use x="126.882812" y="576.40625" xlink:href="#f" />
-      <use x="130.574219" y="576.40625" xlink:href="#r" />
-      <use x="133.828125" y="576.40625" xlink:href="#g" />
-      <use x="137.722656" y="576.40625" xlink:href="#a" />
-      <use x="141.429688" y="576.40625" xlink:href="#b" />
-      <use x="70" y="581.875" xlink:href="#q" />
-      <use x="72.378906" y="581.875" xlink:href="#b" />
-      <use x="75.078125" y="581.875" xlink:href="#d" />
-      <use x="78.832031" y="581.875" xlink:href="#h" />
-      <use x="86.4375" y="581.875" xlink:href="#c" />
-      <use x="89.050781" y="581.875" xlink:href="#g" />
-      <use x="92.941406" y="581.875" xlink:href="#a" />
-      <use x="98.554688" y="581.875" xlink:href="#p" />
-      <use x="103.132812" y="581.875" xlink:href="#d" />
-      <use x="106.890625" y="581.875" xlink:href="#o" />
-      <use x="110.785156" y="581.875" xlink:href="#i" />
-      <use x="116.582031" y="581.875" xlink:href="#e" />
-      <use x="120.589844" y="581.875" xlink:href="#b" />
-      <use x="123.285156" y="581.875" xlink:href="#d" />
-      <use x="127.042969" y="581.875" xlink:href="#n" />
-      <use x="128.917969" y="581.875" xlink:href="#a" />
-      <use x="132.625" y="581.875" xlink:href="#m" />
-      <use x="135.867188" y="581.875" xlink:href="#c" /> -->
+        <use x="74.011719" y="576.40625" xlink:href="#b" />
+        <use x="76.710938" y="576.40625" xlink:href="#a" />
+        <use x="80.417969" y="576.40625" xlink:href="#f" />
+        <use x="84.109375" y="576.40625" xlink:href="#c" />
+        <use x="86.722656" y="576.40625" xlink:href="#a" />
+        <use x="90.433594" y="576.40625" xlink:href="#l" />
+        <use x="96.25" y="576.40625" xlink:href="#k" />
+        <use x="100.167969" y="576.40625" xlink:href="#j" />
+        <use x="105.636719" y="576.40625" xlink:href="#e" />
+        <use x="109.644531" y="576.40625" xlink:href="#a" />
+        <use x="113.351562" y="576.40625" xlink:href="#i" />
+        <use x="117.246094" y="576.40625" xlink:href="#s" />
+        <use x="121.183594" y="576.40625" xlink:href="#h" />
+        <use x="126.882812" y="576.40625" xlink:href="#f" />
+        <use x="130.574219" y="576.40625" xlink:href="#r" />
+        <use x="133.828125" y="576.40625" xlink:href="#g" />
+        <use x="137.722656" y="576.40625" xlink:href="#a" />
+        <use x="141.429688" y="576.40625" xlink:href="#b" />
+        <use x="70" y="581.875" xlink:href="#q" />
+        <use x="72.378906" y="581.875" xlink:href="#b" />
+        <use x="75.078125" y="581.875" xlink:href="#d" />
+        <use x="78.832031" y="581.875" xlink:href="#h" />
+        <use x="86.4375" y="581.875" xlink:href="#c" />
+        <use x="89.050781" y="581.875" xlink:href="#g" />
+        <use x="92.941406" y="581.875" xlink:href="#a" />
+        <use x="98.554688" y="581.875" xlink:href="#p" />
+        <use x="103.132812" y="581.875" xlink:href="#d" />
+        <use x="106.890625" y="581.875" xlink:href="#o" />
+        <use x="110.785156" y="581.875" xlink:href="#i" />
+        <use x="116.582031" y="581.875" xlink:href="#e" />
+        <use x="120.589844" y="581.875" xlink:href="#b" />
+        <use x="123.285156" y="581.875" xlink:href="#d" />
+        <use x="127.042969" y="581.875" xlink:href="#n" />
+        <use x="128.917969" y="581.875" xlink:href="#a" />
+        <use x="132.625" y="581.875" xlink:href="#m" />
+        <use x="135.867188" y="581.875" xlink:href="#c" /> -->
       </g>
     </svg>
     <!-- expense by PenSmasher from <a href="https://thenounproject.com/browse/icons/term/expense/" target="_blank" title="expense Icons">Noun Project</a> -->

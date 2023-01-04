@@ -114,33 +114,33 @@ import { Component } from '@angular/core';
         <path
           d="m228.24 306.98c18.414 0 33.43-15.02 33.43-33.43 0-18.414-15.02-33.43-33.43-33.43-18.414 0-33.43 15.02-33.43 33.43 0 18.496 15.02 33.43 33.43 33.43zm0-49.805c9.0781 0 16.461 7.3828 16.461 16.461s-7.3828 16.461-16.461 16.461c-9.0781 0-16.461-7.3828-16.461-16.461s7.3828-16.461 16.461-16.461z" />
         <!-- <use x="70" y="687.273438" xlink:href="#e" />
-    <use x="101.132813" y="687.273438" xlink:href="#c" />
-    <use x="122.058594" y="687.273438" xlink:href="#a" />
-    <use x="150.828125" y="687.273438" xlink:href="#j" />
-    <use x="179.457031" y="687.273438" xlink:href="#b" />
-    <use x="199.738281" y="687.273438" xlink:href="#a" />
-    <use x="228.511719" y="687.273438" xlink:href="#i" />
-    <use x="273.648438" y="687.273438" xlink:href="#h" />
-    <use x="304.015625" y="687.273438" xlink:href="#g" />
-    <use x="346.441406" y="687.273438" xlink:href="#f" />
-    <use x="381.65625" y="687.273438" xlink:href="#a" />
-    <use x="410.429688" y="687.273438" xlink:href="#t" />
-    <use x="435.679688" y="687.273438" xlink:href="#d" />
-    <use x="450.222656" y="687.273438" xlink:href="#s" />
-    <use x="480.589844" y="687.273438" xlink:href="#r" />
-    <use x="525.5625" y="687.273438" xlink:href="#e" />
-    <use x="556.699219" y="687.273438" xlink:href="#d" />
-    <use x="571.238281" y="687.273438" xlink:href="#c" />
-    <use x="592.160156" y="687.273438" xlink:href="#q" />
-    <use x="617.308594" y="687.273438" xlink:href="#p" />
-    <use x="631.851562" y="687.273438" xlink:href="#a" />
-    <use x="70" y="729.695312" xlink:href="#o" />
-    <use x="197.5" y="729.695312" xlink:href="#b" />
-    <use x="217.78125" y="729.695312" xlink:href="#n" />
-    <use x="291.527344" y="729.695312" xlink:href="#m" />
-    <use x="431.351563" y="729.695312" xlink:href="#l" />
-    <use x="512.511719" y="729.695312" xlink:href="#k" />
-    <use x="580.976562" y="729.695312" xlink:href="#b" /> -->
+        <use x="101.132813" y="687.273438" xlink:href="#c" />
+        <use x="122.058594" y="687.273438" xlink:href="#a" />
+        <use x="150.828125" y="687.273438" xlink:href="#j" />
+        <use x="179.457031" y="687.273438" xlink:href="#b" />
+        <use x="199.738281" y="687.273438" xlink:href="#a" />
+        <use x="228.511719" y="687.273438" xlink:href="#i" />
+        <use x="273.648438" y="687.273438" xlink:href="#h" />
+        <use x="304.015625" y="687.273438" xlink:href="#g" />
+        <use x="346.441406" y="687.273438" xlink:href="#f" />
+        <use x="381.65625" y="687.273438" xlink:href="#a" />
+        <use x="410.429688" y="687.273438" xlink:href="#t" />
+        <use x="435.679688" y="687.273438" xlink:href="#d" />
+        <use x="450.222656" y="687.273438" xlink:href="#s" />
+        <use x="480.589844" y="687.273438" xlink:href="#r" />
+        <use x="525.5625" y="687.273438" xlink:href="#e" />
+        <use x="556.699219" y="687.273438" xlink:href="#d" />
+        <use x="571.238281" y="687.273438" xlink:href="#c" />
+        <use x="592.160156" y="687.273438" xlink:href="#q" />
+        <use x="617.308594" y="687.273438" xlink:href="#p" />
+        <use x="631.851562" y="687.273438" xlink:href="#a" />
+        <use x="70" y="729.695312" xlink:href="#o" />
+        <use x="197.5" y="729.695312" xlink:href="#b" />
+        <use x="217.78125" y="729.695312" xlink:href="#n" />
+        <use x="291.527344" y="729.695312" xlink:href="#m" />
+        <use x="431.351563" y="729.695312" xlink:href="#l" />
+        <use x="512.511719" y="729.695312" xlink:href="#k" />
+        <use x="580.976562" y="729.695312" xlink:href="#b" /> -->
       </g>
     </svg>
     <!-- authentication by Design Circle from <a href="https://thenounproject.com/browse/icons/term/authentication/" target="_blank" title="authentication Icons">Noun Project</a> -->

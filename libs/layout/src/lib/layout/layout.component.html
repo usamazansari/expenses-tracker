@@ -1,9 +1,10 @@
 <div class="grid grid-rows-[auto_1fr] min-h-screen">
   <expenses-tracker-navbar
-    (gotoLogin$)="navigate('auth', 'login')"
-    (gotoSignup$)="navigate('auth', 'signup')"
+    (gotoAuth$)="navigate('auth', 'login')"
     (gotoHome$)="navigate()"></expenses-tracker-navbar>
-  <div class="grid grid-rows-[0fr_1fr] container mx-auto">
-    <ng-content></ng-content>
+  <div class="ml-28">
+    <div class="container justify-self-center">
+      <ng-content></ng-content>
+    </div>
   </div>
 </div>

@@ -1,29 +1,11 @@
-<div class="flex justify-between px-4 py-2">
-  <div class="flex">
-    <div
-      class="grid grid-cols-[auto_1fr] items-center gap-2 cursor-pointer"
-      (click)="gotoHome()">
-      <expenses-tracker-logo-graphic
-        class="w-20"></expenses-tracker-logo-graphic>
-      <button
-        type="button"
-        class="text-gray-600 transition-all duration-200 hover:underline hover:underline-offset-4 hover:text-gray-800">
-        Expenses Tracker
-      </button>
-    </div>
-  </div>
-  <div class="flex">
-    <button
-      type="button"
-      class="px-4 text-gray-600 transition-all duration-200 hover:underline hover:underline-offset-4 hover:text-gray-800"
-      (click)="gotoLogin()">
-      Login
-    </button>
-    <button
-      type="button"
-      class="px-4 text-gray-600 transition-all duration-200 hover:underline hover:underline-offset-4 hover:text-gray-800"
-      (click)="gotoSignup()">
-      Signup
-    </button>
-  </div>
+<div
+  class="fixed top-0 bottom-0 left-0 flex flex-col justify-between px-4 py-2 text-white bg-blue-700 w-28">
+  <button type="button" title="Home" (click)="gotoHome()">
+    <expenses-tracker-logo-graphic
+      class="fill-white"></expenses-tracker-logo-graphic>
+  </button>
+  <button type="button" title="Auth" (click)="gotoAuth()">
+    <expenses-tracker-auth-graphic
+      class="fill-white"></expenses-tracker-auth-graphic>
+  </button>
 </div>
