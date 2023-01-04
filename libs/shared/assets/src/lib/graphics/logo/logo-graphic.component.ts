@@ -3,7 +3,6 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'expenses-tracker-logo-graphic',
   standalone: true,
-  imports: [],
   template: `
     <svg
       version="1.1"
