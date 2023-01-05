@@ -1,12 +1,12 @@
-<div class="grid grid-rows-[1fr_2fr] w-[32rem] h-96 border rounded-lg p-4">
-  <div class="flex items-center justify-self-center">
+<div class="grid grid-rows-[1fr_2fr] w-96 h-96 border rounded-lg p-4">
+  <div class="grid grid-cols-[1fr_1fr] gap-2 items-center">
     <expenses-tracker-login-graphic
-      class="w-16 fill-blue-700"></expenses-tracker-login-graphic>
-    <span class="text-3xl text-center text-blue-700">Login</span>
+      class="w-16 fill-blue-700 justify-self-end"></expenses-tracker-login-graphic>
+    <span class="text-3xl text-blue-700">Login</span>
   </div>
   <div class="grid grid-rows-[1fr_auto] gap-8">
     <div class="grid grid-rows-2 gap-6">
-      <div class="grid gap-3 items-center grid-cols-[1fr_2fr]">
+      <div class="grid gap-3 items-center grid-cols-[auto_1fr]">
         <div class="flex items-center justify-end">
           <mat-icon>mail_outline</mat-icon>
         </div>
@@ -15,7 +15,7 @@
           type="email"
           placeholder="foo@bar.com" />
       </div>
-      <div class="grid gap-3 items-center grid-cols-[1fr_2fr]">
+      <div class="grid gap-3 items-center grid-cols-[auto_1fr]">
         <div class="flex items-center justify-end">
           <mat-icon>key</mat-icon>
         </div>
