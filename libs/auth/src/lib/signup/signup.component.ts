@@ -1,15 +1,18 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import {
-  FormControl,
-  ReactiveFormsModule,
-  FormGroup,
   FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
   Validators
 } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { BehaviorSubject, debounceTime } from 'rxjs';
+import { BehaviorSubject, debounceTime, from, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
+import { FirebaseError } from '@angular/fire/app';
 import { RegisterGraphicComponent } from '@expenses-tracker/shared/assets';
 
 type SignupForm = {
@@ -29,12 +32,18 @@ type SignupForm = {
   ],
   templateUrl: './signup.component.html'
 })
-export class SignupComponent {
+export class SignupComponent implements OnInit {
   #formErrors$ = new BehaviorSubject<string[]>([]);
   formGroup!: FormGroup<SignupForm>;
   formErrors: string[] = [];
+  errorMap = new Map<string, string>([
+    ['email-required', 'Email is required'],
+    ['email-email', 'Email is invalid'],
+    ['password-required', 'Password is required'],
+    ['auth/email-already-in-use', 'Email is already in use']
+  ]);
 
-  constructor(private _fb: FormBuilder) {}
+  constructor(private _fb: FormBuilder, private _afAuth: AngularFireAuth) {}
 
   ngOnInit() {
     this.formGroup = this._fb.group<SignupForm>({
@@ -57,7 +66,23 @@ export class SignupComponent {
 
   signup() {
     if (this.formGroup.valid) {
-      console.log('Registering with', this.formGroup.value);
+      const { email, password } = this.formGroup.value;
+      from(
+        this._afAuth.createUserWithEmailAndPassword(email ?? '', password ?? '')
+      )
+        .pipe(
+          catchError(({ code }: FirebaseError) =>
+            throwError(() => new Error(code))
+          )
+        )
+        .subscribe({
+          next: () => {
+            console.log('user logged in');
+          },
+          error: ({ message }: Error) => {
+            this.#formErrors$.next([this.errorMap.get(message) ?? '']);
+          }
+        });
     } else {
       this.checkErrors();
     }
@@ -71,10 +96,14 @@ export class SignupComponent {
         for (const error in control?.errors) {
           this.#formErrors$.next([
             ...this.formErrors,
-            `Error in field ${controlName} - ${error}`
+            this.errorMap.get(`${controlName}-${error}`) ?? ''
           ]);
         }
       }
     }
+  }
+
+  clearErrors() {
+    this.#formErrors$.next([]);
   }
 }

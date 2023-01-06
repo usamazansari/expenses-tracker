@@ -1,5 +1,6 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import {
   FormBuilder,
   FormControl,
@@ -8,9 +9,16 @@ import {
   Validators
 } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { BehaviorSubject, debounceTime } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  debounceTime,
+  from,
+  throwError
+} from 'rxjs';
 
 import { LoginGraphicComponent } from '@expenses-tracker/shared/assets';
+import { FirebaseError } from '@angular/fire/app';
 
 type LoginForm = {
   email: FormControl<string | null>;
@@ -33,8 +41,15 @@ export class LoginComponent implements OnInit {
   #formErrors$ = new BehaviorSubject<string[]>([]);
   formGroup!: FormGroup<LoginForm>;
   formErrors: string[] = [];
+  errorMap = new Map<string, string>([
+    ['email-required', 'Email is required'],
+    ['email-email', 'Email is invalid'],
+    ['password-required', 'Password is required'],
+    ['auth/user-not-found', 'User with email not found'],
+    ['auth/wrong-password', 'Incorrect / non-existent password']
+  ]);
 
-  constructor(private _fb: FormBuilder) {}
+  constructor(private _fb: FormBuilder, private _afAuth: AngularFireAuth) {}
 
   ngOnInit() {
     this.formGroup = this._fb.group<LoginForm>({
@@ -57,7 +72,21 @@ export class LoginComponent implements OnInit {
 
   login() {
     if (this.formGroup.valid) {
-      console.log('Logging in with', this.formGroup.value);
+      const { email, password } = this.formGroup.value;
+      from(this._afAuth.signInWithEmailAndPassword(email ?? '', password ?? ''))
+        .pipe(
+          catchError(({ code }: FirebaseError) =>
+            throwError(() => new Error(code))
+          )
+        )
+        .subscribe({
+          next: () => {
+            console.log('user logged in');
+          },
+          error: ({ message }: Error) => {
+            this.#formErrors$.next([this.errorMap.get(message) ?? '']);
+          }
+        });
     } else {
       this.checkErrors();
     }
@@ -71,10 +100,14 @@ export class LoginComponent implements OnInit {
         for (const error in control?.errors) {
           this.#formErrors$.next([
             ...this.formErrors,
-            `Error in field ${controlName} - ${error}`
+            this.errorMap.get(`${controlName}-${error}`) ?? ''
           ]);
         }
       }
     }
+  }
+
+  clearErrors() {
+    this.#formErrors$.next([]);
   }
 }
