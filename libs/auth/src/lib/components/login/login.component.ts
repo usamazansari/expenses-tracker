@@ -9,44 +9,56 @@ import {
   Validators
 } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { BehaviorSubject, debounceTime, from, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import {
+  BehaviorSubject,
+  catchError,
+  debounceTime,
+  from,
+  throwError
+} from 'rxjs';
 
+import { LoginGraphicComponent } from '@expenses-tracker/shared/assets';
 import { FirebaseError } from '@angular/fire/app';
-import { RegisterGraphicComponent } from '@expenses-tracker/shared/assets';
 
-type SignupForm = {
+import { AuthService } from '../../services';
+
+type LoginForm = {
   email: FormControl<string | null>;
   password: FormControl<string | null>;
 };
 
 @Component({
-  selector: 'expenses-tracker-signup',
+  selector: 'expenses-tracker-login',
   standalone: true,
   imports: [
     CommonModule,
     NgOptimizedImage,
-    RegisterGraphicComponent,
+    LoginGraphicComponent,
     ReactiveFormsModule,
     MatIconModule
   ],
-  templateUrl: './signup.component.html'
+  templateUrl: './login.component.html'
 })
-export class SignupComponent implements OnInit {
+export class LoginComponent implements OnInit {
   #formErrors$ = new BehaviorSubject<string[]>([]);
-  formGroup!: FormGroup<SignupForm>;
+  formGroup!: FormGroup<LoginForm>;
   formErrors: string[] = [];
   errorMap = new Map<string, string>([
     ['email-required', 'Email is required'],
     ['email-email', 'Email is invalid'],
     ['password-required', 'Password is required'],
-    ['auth/email-already-in-use', 'Email is already in use']
+    ['auth/user-not-found', 'User with email not found'],
+    ['auth/wrong-password', 'Incorrect / non-existent password']
   ]);
 
-  constructor(private _fb: FormBuilder, private _afAuth: AngularFireAuth) {}
+  constructor(
+    private _fb: FormBuilder,
+    private _afAuth: AngularFireAuth,
+    private _service: AuthService
+  ) {}
 
   ngOnInit() {
-    this.formGroup = this._fb.group<SignupForm>({
+    this.formGroup = this._fb.group<LoginForm>({
       email: this._fb.control<string>('', {
         validators: [Validators.required, Validators.email]
       }),
@@ -64,20 +76,19 @@ export class SignupComponent implements OnInit {
     });
   }
 
-  signup() {
+  login() {
     if (this.formGroup.valid) {
       const { email, password } = this.formGroup.value;
-      from(
-        this._afAuth.createUserWithEmailAndPassword(email ?? '', password ?? '')
-      )
+      from(this._afAuth.signInWithEmailAndPassword(email ?? '', password ?? ''))
         .pipe(
           catchError(({ code }: FirebaseError) =>
             throwError(() => new Error(code))
           )
         )
         .subscribe({
-          next: () => {
-            console.log('user logged in');
+          next: ({ user }) => {
+            this._service.isLoggedIn$.next(true);
+            this._service.setUser(user);
           },
           error: ({ message }: Error) => {
             this.#formErrors$.next([this.errorMap.get(message) ?? '']);

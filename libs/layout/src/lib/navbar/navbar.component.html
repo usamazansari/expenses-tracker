@@ -1,11 +1,23 @@
 <div
   class="fixed top-0 bottom-0 left-0 flex flex-col justify-between px-4 py-2 text-white bg-blue-700 w-28">
-  <button type="button" title="Home" (click)="gotoHome()">
-    <expenses-tracker-logo-graphic
-      class="fill-white"></expenses-tracker-logo-graphic>
-  </button>
-  <button type="button" title="Auth" (click)="gotoAuth()">
-    <expenses-tracker-auth-graphic
-      class="fill-white"></expenses-tracker-auth-graphic>
-  </button>
+  <div class="grid">
+    <button type="button" title="Home" (click)="gotoHome()">
+      <expenses-tracker-logo-graphic
+        class="fill-white"></expenses-tracker-logo-graphic>
+    </button>
+  </div>
+  <div class="grid">
+    <ng-container *ngIf="!isLoggedIn; else loggedInUser">
+      <button type="button" title="Auth" (click)="gotoAuth()">
+        <expenses-tracker-auth-graphic
+          class="fill-white"></expenses-tracker-auth-graphic>
+      </button>
+    </ng-container>
+    <ng-template #loggedInUser>
+      <button type="button" title="Auth" (click)="gotoAuth()">
+        <expenses-tracker-account-graphic
+          class="fill-white"></expenses-tracker-account-graphic>
+      </button>
+    </ng-template>
+  </div>
 </div>
