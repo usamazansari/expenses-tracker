@@ -36,8 +36,10 @@ export class LoginService {
       tap(({ user }) => {
         this.updateState();
         this.updateUser(user);
-        this._notificationService.info({
-          description: `Logged in successfully as ${user?.email}`,
+        this._notificationService.success({
+          description: `Logged in successfully as ${
+            user?.displayName ?? user?.email
+          }`,
           title: 'Login Successful'
         });
       }),

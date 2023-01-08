@@ -1,5 +1,5 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Component, isDevMode, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -41,10 +41,10 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.formGroup = this._fb.group<LoginForm>({
-      email: this._fb.control<string>(isDevMode() ? 'usama@gmail' : '', {
+      email: this._fb.control<string>('', {
         validators: [Validators.required, Validators.email]
       }),
-      password: this._fb.control<string>(isDevMode() ? '1234567' : '', {
+      password: this._fb.control<string>('', {
         validators: [Validators.required]
       })
     });

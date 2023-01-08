@@ -4,6 +4,7 @@
       class="flex items-stretch justify-between gap-2 p-2 m-4 rounded shadow w-96"
       [ngClass]="{
         'text-blue-700': notification.type === 'info',
+        'text-green-700': notification.type === 'success',
         'text-red-500': notification.type === 'error'
       }">
       <div class="flex">

@@ -1,6 +1,5 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -9,13 +8,11 @@ import {
   Validators
 } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { BehaviorSubject, debounceTime, from, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { debounceTime, Observable, Subscription } from 'rxjs';
 
-import { FirebaseError } from '@angular/fire/app';
 import { RegisterGraphicComponent } from '@expenses-tracker/shared/assets';
 
-import { AuthService } from '../../services';
+import { SignupService } from './signup.service';
 
 type SignupForm = {
   email: FormControl<string | null>;
@@ -34,23 +31,12 @@ type SignupForm = {
   ],
   templateUrl: './signup.component.html'
 })
-export class SignupComponent implements OnInit {
-  #formErrors$ = new BehaviorSubject<string[]>([]);
+export class SignupComponent implements OnInit, OnDestroy {
   formGroup!: FormGroup<SignupForm>;
-  formErrors: string[] = [];
-  errorMap = new Map<string, string>([
-    ['email-required', 'Email is required'],
-    ['email-email', 'Email is invalid'],
-    ['password-required', 'Password is required'],
-    ['auth/email-already-in-use', 'Email is already in use'],
-    ['auth/weak-password', 'Password is too weak']
-  ]);
+  errors$!: Observable<string[]>;
+  signup$!: Subscription;
 
-  constructor(
-    private _fb: FormBuilder,
-    private _afAuth: AngularFireAuth,
-    private _auth: AuthService
-  ) {}
+  constructor(private _fb: FormBuilder, private _service: SignupService) {}
 
   ngOnInit() {
     this.formGroup = this._fb.group<SignupForm>({
@@ -63,51 +49,26 @@ export class SignupComponent implements OnInit {
     });
 
     this.formGroup.valueChanges.pipe(debounceTime(500)).subscribe(() => {
-      this.checkErrors();
+      this._service.updateErrors(this.formGroup);
     });
 
-    this.#formErrors$.subscribe(e => {
-      this.formErrors = [...e];
-    });
+    this.errors$ = this._service.getErrors$();
   }
 
   signup() {
     if (this.formGroup.valid) {
       const { email, password } = this.formGroup.value;
-      from(
-        this._afAuth.createUserWithEmailAndPassword(email ?? '', password ?? '')
-      )
-        .pipe(
-          catchError(({ code }: FirebaseError) =>
-            throwError(() => new Error(code))
-          )
-        )
-        .subscribe({
-          error: ({ message }: Error) => {
-            this.#formErrors$.next([this.errorMap.get(message) ?? '']);
-          }
-        });
+      this.signup$ = this._service.signup$({ email, password }).subscribe();
     } else {
-      this.checkErrors();
-    }
-  }
-
-  private checkErrors() {
-    this.#formErrors$.next([]);
-    if (this.formGroup.invalid) {
-      for (const controlName in this.formGroup.controls) {
-        const control = this.formGroup.get(controlName);
-        for (const error in control?.errors) {
-          this.#formErrors$.next([
-            ...this.formErrors,
-            this.errorMap.get(`${controlName}-${error}`) ?? ''
-          ]);
-        }
-      }
+      this._service.updateErrors(this.formGroup);
     }
   }
 
   clearErrors() {
-    this.#formErrors$.next([]);
+    this._service.clearErrors();
+  }
+
+  ngOnDestroy() {
+    this.signup$?.unsubscribe();
   }
 }

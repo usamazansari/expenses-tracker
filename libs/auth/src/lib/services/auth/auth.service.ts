@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { FirebaseError } from '@angular/fire/app';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { UserInfo } from 'firebase/auth';
-import { BehaviorSubject, catchError, from, throwError } from 'rxjs';
+import { BehaviorSubject, from } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -15,10 +14,14 @@ export class AuthService {
     ['email-required', 'Email is required'],
     ['email-email', 'Email is invalid'],
     ['password-required', 'Password is required'],
-    ['auth/email-already-in-use', 'Email is already in use'],
-    ['auth/weak-password', 'Password is too weak'],
-    ['auth/user-not-found', 'User with email not found'],
-    ['auth/wrong-password', 'Incorrect / non-existent password']
+    ['auth/email-already-in-use', 'The email entered is already in use'],
+    ['auth/weak-password', 'The password is too weak'],
+    ['auth/user-not-found', 'A user with the entered email does not exist'],
+    ['auth/wrong-password', 'Incorrect / non-existent password'],
+    [
+      'auth/network-request-failed',
+      'Unable to connect to the service, please try again later'
+    ]
   ]);
 
   constructor(private _auth: AngularFireAuth) {}
@@ -52,12 +55,10 @@ export class AuthService {
   }
 
   logout() {
-    return from(this._auth.signOut()).pipe(
-      catchError(({ code }: FirebaseError) => throwError(() => new Error(code)))
-    );
+    return from(this._auth.signOut());
   }
 
-  signup({
+  signup$({
     email,
     password
   }: {
@@ -65,9 +66,7 @@ export class AuthService {
     password: string | null | undefined;
   }) {
     return from(
-      this._auth.signInWithEmailAndPassword(email ?? '', password ?? '')
-    ).pipe(
-      catchError(({ code }: FirebaseError) => throwError(() => new Error(code)))
+      this._auth.createUserWithEmailAndPassword(email ?? '', password ?? '')
     );
   }
 

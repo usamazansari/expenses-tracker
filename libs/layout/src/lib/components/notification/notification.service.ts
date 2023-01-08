@@ -34,7 +34,7 @@ export class NotificationService {
       id: this.#idx++,
       ...notification,
       type: 'success',
-      icon: 'check'
+      icon: 'check_circle'
     });
   }
 
