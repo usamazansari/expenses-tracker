@@ -39,14 +39,14 @@ export class LoginService {
         this._notificationService.success({
           description: `Logged in successfully as ${
             user?.displayName ?? user?.email
-          }`,
+          }.`,
           title: 'Login Successful'
         });
       }),
       catchError(({ code }: FirebaseError) => {
         const error = this._authService.getError(code);
         this._notificationService.error({
-          description: `${error}`,
+          description: `${error}.`,
           title: 'Login failed'
         });
         return throwError(() => new Error(code));
@@ -80,11 +80,13 @@ export class LoginService {
     if (formGroup.invalid) {
       for (const controlName in formGroup.controls) {
         const control = formGroup.get(controlName);
-        for (const error in control?.errors) {
-          this.setErrors([
-            ...this.#errors,
-            this._authService.getError(`${controlName}-${error}`)
-          ]);
+        if (control?.dirty) {
+          for (const error in control?.errors) {
+            this.setErrors([
+              ...this.#errors,
+              this._authService.getError(`${controlName}-${error}`)
+            ]);
+          }
         }
       }
     }

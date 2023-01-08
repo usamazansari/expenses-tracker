@@ -29,14 +29,14 @@ export class SignupService {
     return this._authService.signup$({ email, password }).pipe(
       tap(({ user }) => {
         this._notificationService.success({
-          description: `Registered successfully as ${user?.email}`,
+          description: `Registered successfully as ${user?.email}. Please login to continue.`,
           title: 'Signup Successful'
         });
       }),
       catchError(({ code }: FirebaseError) => {
         const error = this._authService.getError(code);
         this._notificationService.error({
-          description: `${error}`,
+          description: `${error}.`,
           title: 'Signup failed'
         });
         return throwError(() => new Error(code));

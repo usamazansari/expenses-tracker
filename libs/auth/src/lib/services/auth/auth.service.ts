@@ -17,7 +17,7 @@ export class AuthService {
     ['auth/email-already-in-use', 'The email entered is already in use'],
     ['auth/weak-password', 'The password is too weak'],
     ['auth/user-not-found', 'A user with the entered email does not exist'],
-    ['auth/wrong-password', 'Incorrect / non-existent password'],
+    ['auth/wrong-password', 'Incorrect password'],
     [
       'auth/network-request-failed',
       'Unable to connect to the service, please try again later'
