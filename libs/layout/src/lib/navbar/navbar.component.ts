@@ -1,13 +1,14 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { UserInfo } from 'firebase/auth';
+import { Observable } from 'rxjs';
 
-import { AuthService } from '@expenses-tracker/auth';
 import {
   AccountGraphicComponent,
   AuthGraphicComponent,
   LogoGraphicComponent
 } from '@expenses-tracker/shared/assets';
+import { NavbarService } from './navbar.service';
 
 @Component({
   selector: 'expenses-tracker-navbar',
@@ -22,22 +23,17 @@ import {
   templateUrl: './navbar.component.html'
 })
 export class NavbarComponent implements OnInit {
-  #isLoggedIn$ = new BehaviorSubject<boolean>(false);
-  isLoggedIn = false;
+  isLoggedIn$!: Observable<boolean>;
+  user$!: Observable<UserInfo | null>;
 
   @Output() gotoHome$ = new EventEmitter<void>();
   @Output() gotoAuth$ = new EventEmitter<void>();
 
-  constructor(private _auth: AuthService) {}
+  constructor(private _service: NavbarService) {}
 
   ngOnInit() {
-    this._auth.isLoggedIn$.subscribe(state => {
-      this.#isLoggedIn$.next(state);
-    });
-
-    this.#isLoggedIn$.subscribe(state => {
-      this.isLoggedIn = state;
-    });
+    this.isLoggedIn$ = this._service.getIsLoggedIn$();
+    this.user$ = this._service.getUser$();
   }
 
   gotoHome() {
