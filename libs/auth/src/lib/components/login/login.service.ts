@@ -4,6 +4,7 @@ import { FormGroup } from '@angular/forms';
 import { UserInfo } from 'firebase/auth';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 
+import { NotificationService } from '@expenses-tracker/layout';
 import { IFlag } from '@expenses-tracker/shared/interfaces';
 
 import { AuthService } from '../../services';
@@ -19,7 +20,10 @@ export class LoginService {
   #errors$ = new BehaviorSubject<string[]>([]);
   #errors: string[] = [];
 
-  constructor(private _authService: AuthService) {}
+  constructor(
+    private _authService: AuthService,
+    private _notificationService: NotificationService
+  ) {}
 
   login$({
     email,
@@ -32,10 +36,17 @@ export class LoginService {
       tap(({ user }) => {
         this.updateState();
         this.updateUser(user);
+        this._notificationService.info({
+          description: `Logged in successfully as ${user?.email}`,
+          title: 'Login Successful'
+        });
       }),
       catchError(({ code }: FirebaseError) => {
         const error = this._authService.getError(code);
-        this.setErrors([error]);
+        this._notificationService.error({
+          description: `${error}`,
+          title: 'Login failed'
+        });
         return throwError(() => new Error(code));
       })
     );
