@@ -1,0 +1,63 @@
+<div class="grid grid-rows-[1fr_2fr] w-96 h-96 border rounded-lg p-4">
+  <div class="grid grid-cols-[1fr_1fr] gap-2 items-center">
+    <expenses-tracker-register-graphic
+      class="w-16 fill-blue-700 justify-self-end"></expenses-tracker-register-graphic>
+    <span class="text-3xl text-blue-700">Signup</span>
+  </div>
+  <form [formGroup]="formGroup" (ngSubmit)="signup()">
+    <div class="grid grid-rows-[1fr_auto] gap-8">
+      <div class="grid grid-rows-2 gap-6">
+        <div class="grid gap-3 items-center grid-cols-[1fr_2fr]">
+          <div class="flex items-center justify-end">
+            <mat-icon>mail_outline</mat-icon>
+          </div>
+          <input
+            formControlName="email"
+            class="w-full bg-transparent focus:outline-none focus:shadow-[0px_0.5px_0px_0px_rgb(31,41,55)] transition-shadow duration-200"
+            type="email"
+            placeholder="foo@bar.com" />
+        </div>
+        <div class="grid gap-3 items-center grid-cols-[1fr_2fr]">
+          <div class="flex items-center justify-end">
+            <mat-icon>key</mat-icon>
+          </div>
+          <input
+            formControlName="password"
+            class="w-full bg-transparent focus:outline-none focus:shadow-[0px_0.5px_0px_0px_rgb(31,41,55)] transition-shadow duration-200"
+            type="password"
+            placeholder="Password" />
+        </div>
+      </div>
+      <div class="flex flex-col gap-4">
+        <ng-container *ngIf="errors$ | async as errors">
+          <ng-container *ngIf="errors.length; else submitButton">
+            <div
+              class="flex flex-col gap-1 p-4 text-red-500 rounded-md bg-red-50">
+              <div class="flex items-center justify-between">
+                <span class="font-bold">Error Details:</span>
+                <mat-icon class="cursor-pointer" (click)="clearErrors()">
+                  clear
+                </mat-icon>
+              </div>
+              <ng-container *ngFor="let error of errors">
+                <div class="flex items-center">
+                  <mat-icon class="mr-2">error</mat-icon>
+                  <span>{{ error }}</span>
+                </div>
+              </ng-container>
+            </div>
+          </ng-container>
+          <ng-template #submitButton>
+            <button
+              type="submit"
+              class="flex items-center justify-center self-center px-6 py-2 text-white bg-blue-700 w-[50%] rounded-lg">
+              <mat-icon>person_add</mat-icon>
+              <span class="ml-2">Signup</span>
+            </button>
+          </ng-template>
+        </ng-container>
+        <span type="button" class="invisible">O</span>
+      </div>
+    </div>
+  </form>
+</div>

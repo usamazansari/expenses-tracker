@@ -1,0 +1,11 @@
+<div class="grid grid-rows-[auto_1fr] min-h-screen">
+  <expenses-tracker-navbar
+    (gotoAuth$)="navigate('auth', 'login')"
+    (gotoHome$)="navigate()"></expenses-tracker-navbar>
+  <div class="grid justify-center ml-28">
+    <div class="container">
+      <ng-content></ng-content>
+      <expenses-tracker-notification></expenses-tracker-notification>
+    </div>
+  </div>
+</div>

@@ -18,8 +18,19 @@
         "polyfills": ["zone.js"],
         "tsConfig": "apps/client/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": ["apps/client/src/favicon.ico", "apps/client/src/assets"],
-        "styles": ["apps/client/src/styles.scss"],
+        "assets": [
+          "apps/client/src/favicon.ico",
+          "apps/client/src/assets",
+          {
+            "glob": "**/*",
+            "input": "libs/shared/assets",
+            "output": "apps/client/src/assets"
+          }
+        ],
+        "styles": [
+          "apps/client/src/styles.scss",
+          "node_modules/@angular/material/prebuilt-themes/indigo-pink.css"
+        ],
         "scripts": []
       },
       "configurations": {
@@ -27,8 +38,8 @@
           "budgets": [
             {
               "type": "initial",
-              "maximumWarning": "500kb",
-              "maximumError": "1mb"
+              "maximumWarning": "1536kb",
+              "maximumError": "2mb"
             },
             {
               "type": "anyComponentStyle",
@@ -98,4 +109,3 @@
   },
   "tags": []
 }
-

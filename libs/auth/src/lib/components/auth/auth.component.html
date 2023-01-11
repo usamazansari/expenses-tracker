@@ -1,0 +1,30 @@
+<div class="flex flex-col items-center justify-center h-screen gap-6">
+  <div class="grid items-end grid-cols-2">
+    <button
+      type="button"
+      class="flex items-center justify-center w-48 p-4 text-center rounded-tl-lg rounded-bl-lg cursor-pointer"
+      [ngClass]="
+        mode === 'login' ? 'bg-blue-700 text-white' : 'border border-r-0'
+      "
+      (click)="gotoLogin()">
+      <mat-icon>login</mat-icon>
+      <span class="ml-2">Login</span>
+    </button>
+    <button
+      type="button"
+      class="flex items-center justify-center w-48 p-4 text-center rounded-tr-lg rounded-br-lg cursor-pointer"
+      [ngClass]="
+        mode === 'signup' ? 'bg-blue-700 text-white' : 'border border-l-0'
+      "
+      (click)="gotoSignup()">
+      <mat-icon>person_add</mat-icon>
+      <span class="ml-2">Signup</span>
+    </button>
+  </div>
+  <ng-container *ngIf="mode === 'login'">
+    <expenses-tracker-login></expenses-tracker-login>
+  </ng-container>
+  <ng-container *ngIf="mode === 'signup'">
+    <expenses-tracker-signup></expenses-tracker-signup>
+  </ng-container>
+</div>

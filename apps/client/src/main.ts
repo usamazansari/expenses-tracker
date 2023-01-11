@@ -1,4 +1,5 @@
 import { importProvidersFrom, isDevMode } from '@angular/core';
+import { provideImgixLoader } from '@angular/common';
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
@@ -7,6 +8,7 @@ import { USE_EMULATOR as DATABASE_EMULATOR } from '@angular/fire/compat/database
 import { USE_EMULATOR as FIRESTORE_EMULATOR } from '@angular/fire/compat/firestore';
 import { USE_EMULATOR as FUNCTIONS_EMULATOR } from '@angular/fire/compat/functions';
 import { bootstrapApplication } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
   provideRouter,
   withEnabledBlockingInitialNavigation
@@ -32,10 +34,16 @@ if (devEnv) firebase.firestore.setLogLevel('debug');
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
+    provideImgixLoader(
+      devEnv
+        ? 'http://localhost:8080'
+        : 'https://ua-expenses-tracker.firebaseapp.com/'
+    ),
     importProvidersFrom(
       AngularFireModule.initializeApp(firebaseConfig),
       AngularFireAuthModule,
-      AngularFirestoreModule
+      AngularFirestoreModule,
+      BrowserAnimationsModule
     ),
     {
       provide: AUTH_EMULATOR,
