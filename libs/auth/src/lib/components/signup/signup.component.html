@@ -9,7 +9,7 @@
       <div class="grid grid-rows-2 gap-6">
         <div class="grid gap-3 items-center grid-cols-[1fr_2fr]">
           <div class="flex items-center justify-end">
-            <mat-icon>mail_outline</mat-icon>
+            <span class="material-icons">mail_outline</span>
           </div>
           <input
             formControlName="email"
@@ -19,7 +19,7 @@
         </div>
         <div class="grid gap-3 items-center grid-cols-[1fr_2fr]">
           <div class="flex items-center justify-end">
-            <mat-icon>key</mat-icon>
+            <span class="material-icons">key</span>
           </div>
           <input
             formControlName="password"
@@ -35,13 +35,15 @@
               class="flex flex-col gap-1 p-4 text-red-500 rounded-md bg-red-50">
               <div class="flex items-center justify-between">
                 <span class="font-bold">Error Details:</span>
-                <mat-icon class="cursor-pointer" (click)="clearErrors()">
+                <span
+                  class="cursor-pointer material-icons"
+                  (click)="clearErrors()">
                   clear
-                </mat-icon>
+                </span>
               </div>
               <ng-container *ngFor="let error of errors">
                 <div class="flex items-center">
-                  <mat-icon class="mr-2">error</mat-icon>
+                  <span class="mr-2 material-icons">error</span>
                   <span>{{ error }}</span>
                 </div>
               </ng-container>
@@ -51,7 +53,7 @@
             <button
               type="submit"
               class="flex items-center justify-center self-center px-6 py-2 text-white bg-blue-700 w-[50%] rounded-lg">
-              <mat-icon>person_add</mat-icon>
+              <span class="material-icons">person_add</span>
               <span class="ml-2">Signup</span>
             </button>
           </ng-template>

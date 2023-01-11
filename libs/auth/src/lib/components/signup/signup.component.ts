@@ -1,5 +1,5 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -7,7 +7,6 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
 import { debounceTime, Observable, Subscription } from 'rxjs';
 
 import { RegisterGraphicComponent } from '@expenses-tracker/shared/assets';
@@ -26,8 +25,7 @@ type SignupForm = {
     CommonModule,
     NgOptimizedImage,
     RegisterGraphicComponent,
-    ReactiveFormsModule,
-    MatIconModule
+    ReactiveFormsModule
   ],
   templateUrl: './signup.component.html'
 })

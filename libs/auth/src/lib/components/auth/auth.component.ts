@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 
@@ -12,7 +11,7 @@ type AuthMode = 'login' | 'signup';
 @Component({
   selector: 'expenses-tracker-auth',
   standalone: true,
-  imports: [CommonModule, LoginComponent, SignupComponent, MatIconModule],
+  imports: [CommonModule, LoginComponent, SignupComponent],
   providers: [],
   templateUrl: './auth.component.html'
 })

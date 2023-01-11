@@ -7,7 +7,6 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
 import { debounceTime, Observable, Subscription } from 'rxjs';
 
 import { LoginGraphicComponent } from '@expenses-tracker/shared/assets';
@@ -26,8 +25,7 @@ type LoginForm = {
     CommonModule,
     NgOptimizedImage,
     LoginGraphicComponent,
-    ReactiveFormsModule,
-    MatIconModule
+    ReactiveFormsModule
   ],
   templateUrl: './login.component.html'
 })
