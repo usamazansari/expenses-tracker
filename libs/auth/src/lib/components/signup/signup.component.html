@@ -32,8 +32,8 @@
         <ng-container *ngIf="errors$ | async as errors">
           <ng-container *ngIf="errors.length; else submitButton">
             <div
-              class="flex flex-col p-4 text-red-700 bg-red-100 border border-red-500 rounded-md">
-              <div class="flex items-center justify-between mb-2">
+              class="flex flex-col gap-1 p-4 text-red-500 rounded-md bg-red-50">
+              <div class="flex items-center justify-between">
                 <span class="font-bold">Error Details:</span>
                 <mat-icon class="cursor-pointer" (click)="clearErrors()">
                   clear
