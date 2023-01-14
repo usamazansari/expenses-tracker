@@ -1,22 +1,32 @@
 <div
   class="sticky top-0 bottom-0 left-0 flex flex-col justify-between w-20 h-screen p-2 text-white bg-blue-700">
-  <div class="grid">
-    <button type="button" title="Home" (click)="gotoHome()">
+  <div class="grid gap-2">
+    <button matRipple type="button" title="Home" (click)="gotoHome()">
       <expenses-tracker-logo-graphic
         class="fill-white"></expenses-tracker-logo-graphic>
     </button>
+    <ng-container *ngIf="isLoggedIn$ | async">
+      <button
+        matRipple
+        type="button"
+        title="Dashboard"
+        (click)="gotoDashboard()">
+        <expenses-tracker-dashboard-graphic
+          class="fill-white"></expenses-tracker-dashboard-graphic>
+      </button>
+    </ng-container>
   </div>
-  <div class="grid">
+  <div class="grid gap-2">
     <ng-container *ngIf="isLoggedIn$ | async; else notLoggedIn">
       <ng-container *ngIf="user$ | async as user">
-        <button type="button" title="Auth" (click)="gotoAuth()">
+        <button matRipple type="button" title="Auth" (click)="gotoAuth()">
           <expenses-tracker-account-graphic
             class="fill-white"></expenses-tracker-account-graphic>
         </button>
       </ng-container>
     </ng-container>
     <ng-template #notLoggedIn>
-      <button type="button" title="Auth" (click)="gotoAuth()">
+      <button matRipple type="button" title="Auth" (click)="gotoAuth()">
         <expenses-tracker-auth-graphic
           class="fill-white"></expenses-tracker-auth-graphic>
       </button>

@@ -27,12 +27,12 @@ type SignupForm = {
   standalone: true,
   imports: [
     CommonModule,
-    RegisterGraphicComponent,
-    ReactiveFormsModule,
-    MatIconModule,
     MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
-    MatRippleModule
+    MatRippleModule,
+    ReactiveFormsModule,
+    RegisterGraphicComponent
   ],
   templateUrl: './signup.component.html'
 })

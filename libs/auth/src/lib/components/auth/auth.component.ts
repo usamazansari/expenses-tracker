@@ -16,9 +16,9 @@ type AuthMode = 'login' | 'signup';
   imports: [
     CommonModule,
     LoginComponent,
-    SignupComponent,
     MatIconModule,
-    MatRippleModule
+    MatRippleModule,
+    SignupComponent
   ],
   templateUrl: './auth.component.html'
 })

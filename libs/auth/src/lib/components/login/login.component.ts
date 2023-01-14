@@ -27,13 +27,12 @@ type LoginForm = {
   standalone: true,
   imports: [
     CommonModule,
-
     LoginGraphicComponent,
-    ReactiveFormsModule,
-    MatRippleModule,
     MatFormFieldModule,
     MatIconModule,
-    MatInputModule
+    MatInputModule,
+    MatRippleModule,
+    ReactiveFormsModule
   ],
   templateUrl: './login.component.html'
 })

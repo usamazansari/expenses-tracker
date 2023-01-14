@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { MatRippleModule } from '@angular/material/core';
 import { UserInfo } from 'firebase/auth';
 import { Observable } from 'rxjs';
 
 import {
   AccountGraphicComponent,
   AuthGraphicComponent,
+  DashboardGraphicComponent,
   LogoGraphicComponent
 } from '@expenses-tracker/shared/assets';
 import { NavbarService } from './navbar.service';
@@ -14,11 +16,12 @@ import { NavbarService } from './navbar.service';
   selector: 'expenses-tracker-navbar',
   standalone: true,
   imports: [
-    CommonModule,
-
     AccountGraphicComponent,
+    AuthGraphicComponent,
+    DashboardGraphicComponent,
+    CommonModule,
     LogoGraphicComponent,
-    AuthGraphicComponent
+    MatRippleModule
   ],
   templateUrl: './navbar.component.html'
 })
@@ -28,6 +31,7 @@ export class NavbarComponent implements OnInit {
 
   @Output() gotoHome$ = new EventEmitter<void>();
   @Output() gotoAuth$ = new EventEmitter<void>();
+  @Output() gotoDashboard$ = new EventEmitter<void>();
 
   constructor(private _service: NavbarService) {}
 
@@ -42,5 +46,9 @@ export class NavbarComponent implements OnInit {
 
   gotoAuth() {
     this.gotoAuth$.emit();
+  }
+
+  gotoDashboard() {
+    this.gotoDashboard$.emit();
   }
 }
