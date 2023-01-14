@@ -1,4 +1,4 @@
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { UserInfo } from 'firebase/auth';
 import { Observable } from 'rxjs';
@@ -15,7 +15,7 @@ import { NavbarService } from './navbar.service';
   standalone: true,
   imports: [
     CommonModule,
-    NgOptimizedImage,
+
     AccountGraphicComponent,
     LogoGraphicComponent,
     AuthGraphicComponent

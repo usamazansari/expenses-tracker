@@ -1,5 +1,5 @@
-import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -24,7 +24,7 @@ type SignupForm = {
   standalone: true,
   imports: [
     CommonModule,
-    NgOptimizedImage,
+
     RegisterGraphicComponent,
     ReactiveFormsModule,
     MatIconModule

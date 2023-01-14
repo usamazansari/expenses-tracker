@@ -1,4 +1,4 @@
-<div class="grid grid-rows-[1fr_2fr] w-96 h-96 border rounded-lg p-4 bg-white">
+<div class="grid grid-rows-[1fr_2fr] w-96 border rounded-lg p-4 bg-white">
   <div class="grid grid-cols-[1fr_1fr] gap-2 items-center">
     <expenses-tracker-login-graphic
       class="w-16 fill-blue-700 justify-self-end"></expenses-tracker-login-graphic>
@@ -6,56 +6,68 @@
   </div>
   <form [formGroup]="formGroup" (ngSubmit)="login()">
     <div class="grid grid-rows-[1fr_auto] gap-8">
-      <div class="grid grid-rows-2 gap-6">
-        <div class="grid gap-3 items-center grid-cols-[1fr_2fr]">
-          <div class="flex items-center justify-end">
-            <mat-icon>mail_outline</mat-icon>
-          </div>
-          <input
-            formControlName="email"
-            class="w-full bg-transparent focus:outline-none focus:shadow-[0px_0.5px_0px_0px_rgb(31,41,55)] transition-shadow duration-200"
-            type="email"
-            placeholder="foo@bar.com" />
+      <div class="grid gap-2">
+        <div class="flex items-center gap-2">
+          <mat-icon class="min-w-[24px]">mail_outline</mat-icon>
+          <mat-form-field class="w-full">
+            <mat-label>Email</mat-label>
+            <input
+              matInput
+              formControlName="email"
+              type="email"
+              placeholder="foo@bar.com"
+              required />
+            <mat-error *ngIf="this.formGroup.get('email')?.invalid">
+              {{ getError('email') }}
+            </mat-error>
+          </mat-form-field>
         </div>
-        <div class="grid gap-3 items-center grid-cols-[1fr_2fr]">
-          <div class="flex items-center justify-end">
-            <mat-icon>key</mat-icon>
-          </div>
-          <input
-            formControlName="password"
-            class="w-full bg-transparent focus:outline-none focus:shadow-[0px_0.5px_0px_0px_rgb(31,41,55)] transition-shadow duration-200"
-            type="password"
-            placeholder="Password" />
+
+        <div class="flex items-center gap-2">
+          <mat-icon class="min-w-[24px]">key</mat-icon>
+          <mat-form-field class="w-full">
+            <mat-label>Password</mat-label>
+            <input
+              size="sm"
+              matInput
+              formControlName="password"
+              type="password"
+              placeholder="Password"
+              required />
+            <mat-error *ngIf="this.formGroup.get('password')?.invalid">
+              {{ getError('password') }}
+            </mat-error>
+          </mat-form-field>
         </div>
       </div>
       <div class="flex flex-col gap-4">
-        <ng-container *ngIf="errors$ | async as errors">
+        <!-- <ng-container *ngIf="errors$ | async as errors">
           <ng-container *ngIf="errors.length; else submitButton">
             <div
-              class="flex flex-col p-4 text-red-500 bg-red-50 rounded-md gap-1">
+              class="flex flex-col gap-1 p-4 text-red-500 rounded-md bg-red-50">
               <div class="flex items-center justify-between">
                 <span class="font-bold">Error Details:</span>
-                <mat-icon class="cursor-pointer" (click)="clearErrors()">
+                <mat-icon class="min-w-[24px]" class="cursor-pointer" (click)="clearErrors()">
                   clear
                 </mat-icon>
               </div>
               <ng-container *ngFor="let error of errors">
                 <div class="flex items-center">
-                  <mat-icon class="mr-2">error</mat-icon>
+                  <mat-icon class="min-w-[24px]" class="mr-2">error</mat-icon>
                   <span>{{ error }}</span>
                 </div>
               </ng-container>
             </div>
           </ng-container>
-          <ng-template #submitButton>
-            <button
-              type="submit"
-              class="flex items-center justify-center self-center px-6 py-2 text-white bg-blue-700 w-[50%] rounded-lg">
-              <mat-icon>login</mat-icon>
-              <span class="ml-2">Login</span>
-            </button>
-          </ng-template>
-        </ng-container>
+          <ng-template #submitButton> -->
+        <button
+          type="submit"
+          class="flex items-center justify-center self-center px-6 py-2 text-white bg-blue-700 w-[50%] rounded-lg">
+          <mat-icon class="min-w-[24px]">login</mat-icon>
+          <span class="ml-2">Login</span>
+        </button>
+        <!-- </ng-template>
+        </ng-container> -->
         <span
           type="button"
           class="text-center text-blue-700 rounded-lg cursor-pointer hover:underline hover:underline-offset-4">

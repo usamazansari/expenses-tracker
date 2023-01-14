@@ -1,4 +1,4 @@
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -7,8 +7,10 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { debounceTime, Observable, Subscription } from 'rxjs';
+import { MatInputModule } from '@angular/material/input';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
 import { LoginGraphicComponent } from '@expenses-tracker/shared/assets';
 
@@ -24,16 +26,18 @@ type LoginForm = {
   standalone: true,
   imports: [
     CommonModule,
-    NgOptimizedImage,
+
     LoginGraphicComponent,
     ReactiveFormsModule,
-    MatIconModule
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule
   ],
   templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit, OnDestroy {
   formGroup!: FormGroup<LoginForm>;
-  errors$!: Observable<string[]>;
+  error$ = new BehaviorSubject<string>('');
   flags$!: Observable<LoginComponentFlags>;
   login$!: Subscription;
 
@@ -48,21 +52,25 @@ export class LoginComponent implements OnInit, OnDestroy {
         validators: [Validators.required]
       })
     });
-
-    this.formGroup.valueChanges.pipe(debounceTime(500)).subscribe(() => {
-      this._service.updateErrors(this.formGroup);
-    });
-
-    this.errors$ = this._service.getErrors$();
   }
 
   login() {
-    if (this.formGroup.valid) {
-      const { email, password } = this.formGroup.value;
-      this.login$ = this._service.login$({ email, password }).subscribe();
-    } else {
-      this._service.updateErrors(this.formGroup);
+    const { email, password } = this.formGroup.value;
+    this.login$ = this._service.login$({ email, password }).subscribe();
+  }
+
+  getError(formControlName = '') {
+    if (this.formGroup.get(formControlName)?.hasError('required')) {
+      return `${
+        formControlName.charAt(0).toUpperCase() + formControlName.slice(1)
+      } is required`;
     }
+
+    if (this.formGroup.get(formControlName)?.hasError('email')) {
+      return 'Invalid Email';
+    }
+
+    return '';
   }
 
   clearErrors() {
