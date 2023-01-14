@@ -7,14 +7,15 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
+import { MatRippleModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { LoginGraphicComponent } from '@expenses-tracker/shared/assets';
 
-import { LoginComponentFlags, LoginService } from './login.service';
+import { LoginService } from './login.service';
 
 type LoginForm = {
   email: FormControl<string | null>;
@@ -29,6 +30,7 @@ type LoginForm = {
 
     LoginGraphicComponent,
     ReactiveFormsModule,
+    MatRippleModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule
@@ -38,7 +40,6 @@ type LoginForm = {
 export class LoginComponent implements OnInit, OnDestroy {
   formGroup!: FormGroup<LoginForm>;
   error$ = new BehaviorSubject<string>('');
-  flags$!: Observable<LoginComponentFlags>;
   login$!: Subscription;
 
   constructor(private _fb: FormBuilder, private _service: LoginService) {}
@@ -55,8 +56,10 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   login() {
-    const { email, password } = this.formGroup.value;
-    this.login$ = this._service.login$({ email, password }).subscribe();
+    if (!this.formGroup.invalid) {
+      const { email, password } = this.formGroup.value;
+      this.login$ = this._service.login$({ email, password }).subscribe();
+    }
   }
 
   getError(formControlName = '') {
@@ -71,10 +74,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     return '';
-  }
-
-  clearErrors() {
-    this._service.clearErrors();
   }
 
   ngOnDestroy() {

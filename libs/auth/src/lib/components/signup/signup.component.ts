@@ -7,8 +7,11 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
+import { MatRippleModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { debounceTime, Observable, Subscription } from 'rxjs';
+import { MatInputModule } from '@angular/material/input';
+import { Subscription } from 'rxjs';
 
 import { RegisterGraphicComponent } from '@expenses-tracker/shared/assets';
 
@@ -24,16 +27,17 @@ type SignupForm = {
   standalone: true,
   imports: [
     CommonModule,
-
     RegisterGraphicComponent,
     ReactiveFormsModule,
-    MatIconModule
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatRippleModule
   ],
   templateUrl: './signup.component.html'
 })
 export class SignupComponent implements OnInit, OnDestroy {
   formGroup!: FormGroup<SignupForm>;
-  errors$!: Observable<string[]>;
   signup$!: Subscription;
 
   constructor(private _fb: FormBuilder, private _service: SignupService) {}
@@ -47,25 +51,27 @@ export class SignupComponent implements OnInit, OnDestroy {
         validators: [Validators.required]
       })
     });
-
-    this.formGroup.valueChanges.pipe(debounceTime(500)).subscribe(() => {
-      this._service.updateErrors(this.formGroup);
-    });
-
-    this.errors$ = this._service.getErrors$();
   }
 
   signup() {
     if (this.formGroup.valid) {
       const { email, password } = this.formGroup.value;
       this.signup$ = this._service.signup$({ email, password }).subscribe();
-    } else {
-      this._service.updateErrors(this.formGroup);
     }
   }
 
-  clearErrors() {
-    this._service.clearErrors();
+  getError(formControlName = '') {
+    if (this.formGroup.get(formControlName)?.hasError('required')) {
+      return `${
+        formControlName.charAt(0).toUpperCase() + formControlName.slice(1)
+      } is required`;
+    }
+
+    if (this.formGroup.get(formControlName)?.hasError('email')) {
+      return 'Invalid Email';
+    }
+
+    return '';
   }
 
   ngOnDestroy() {

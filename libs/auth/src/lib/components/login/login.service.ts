@@ -1,25 +1,16 @@
 import { Injectable } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
-import { FormGroup } from '@angular/forms';
 import { UserInfo } from 'firebase/auth';
-import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
+import { catchError, tap, throwError } from 'rxjs';
 
 import { NotificationService } from '@expenses-tracker/layout';
-import { IFlag } from '@expenses-tracker/shared/interfaces';
 
 import { AuthService } from '../../services';
-
-export type LoginComponentFlags = {
-  login: IFlag;
-};
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
-  #errors$ = new BehaviorSubject<string[]>([]);
-  #errors: string[] = [];
-
   constructor(
     private _authService: AuthService,
     private _notificationService: NotificationService
@@ -60,35 +51,5 @@ export class LoginService {
 
   updateUser(user: UserInfo | null) {
     this._authService.setUser(user);
-  }
-
-  setErrors(errors: string[]) {
-    this.#errors = errors;
-    this.#errors$.next(errors);
-  }
-
-  getErrors$() {
-    return this.#errors$.asObservable();
-  }
-
-  clearErrors() {
-    this.setErrors([]);
-  }
-
-  updateErrors(formGroup: FormGroup) {
-    this.setErrors([]);
-    if (formGroup.invalid) {
-      for (const controlName in formGroup.controls) {
-        const control = formGroup.get(controlName);
-        if (control?.dirty) {
-          for (const error in control?.errors) {
-            this.setErrors([
-              ...this.#errors,
-              this._authService.getError(`${controlName}-${error}`)
-            ]);
-          }
-        }
-      }
-    }
   }
 }
