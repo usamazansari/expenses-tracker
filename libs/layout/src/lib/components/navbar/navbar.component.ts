@@ -11,6 +11,7 @@ import {
   LogoGraphicComponent
 } from '@expenses-tracker/shared/assets';
 import { NavbarService } from './navbar.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'expenses-tracker-navbar',
@@ -33,7 +34,7 @@ export class NavbarComponent implements OnInit {
   @Output() gotoAuth$ = new EventEmitter<void>();
   @Output() gotoDashboard$ = new EventEmitter<void>();
 
-  constructor(private _service: NavbarService) {}
+  constructor(private _service: NavbarService, private _router: Router) {}
 
   ngOnInit() {
     this.isLoggedIn$ = this._service.getIsLoggedIn$();
@@ -41,14 +42,14 @@ export class NavbarComponent implements OnInit {
   }
 
   gotoHome() {
-    this.gotoHome$.emit();
+    this._router.navigate(['']);
   }
 
   gotoAuth() {
-    this.gotoAuth$.emit();
+    this._router.navigate(['auth'], { queryParams: { mode: 'login' } });
   }
 
   gotoDashboard() {
-    this.gotoDashboard$.emit();
+    this._router.navigate(['dashboard']);
   }
 }

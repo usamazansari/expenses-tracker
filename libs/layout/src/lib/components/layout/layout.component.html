@@ -1,10 +1,7 @@
 <div
   class="grid md:grid-cols-[auto_1fr] md:order-none order-1 grid-rows[auto_1fr] min-h-screen bg-gradient-to-tr from-green-100 via-cyan-100 to-indigo-100">
   <div class="order-2 md:order-1">
-    <expenses-tracker-navbar
-      (gotoAuth$)="navigate('auth', 'login')"
-      (gotoHome$)="navigate()"
-      (gotoDashboard$)="navigate('dahsboard')"></expenses-tracker-navbar>
+    <expenses-tracker-navbar></expenses-tracker-navbar>
   </div>
 
   <div class="grid order-1 mb-24 ml-0 md:order-2 md:ml-24 md:mb-0">
@@ -14,23 +11,3 @@
     </div>
   </div>
 </div>
-
-<!-- <mat-sidenav-container class="min-h-screen">
-  <mat-sidenav mode="side" opened>Sidenav content</mat-sidenav>
-  <mat-sidenav opened mode="side" position="end">End content</mat-sidenav>
-  <mat-sidenav-content>Main content</mat-sidenav-content>
-</mat-sidenav-container> -->
-
-<!-- <mat-drawer-container class="min-h-screen" hasBackdrop="false" autosize>
-  <mat-drawer #drawer mode="push" opened>
-    <expenses-tracker-navbar
-      (gotoAuth$)="navigate('auth', 'login')"
-      (gotoHome$)="navigate()"></expenses-tracker-navbar>
-  </mat-drawer>
-
-  <div class="container">
-    Content
-    <ng-content></ng-content>
-    <expenses-tracker-notification></expenses-tracker-notification>
-  </div>
-</mat-drawer-container> -->

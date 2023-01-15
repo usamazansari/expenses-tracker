@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
+import { Router } from '@angular/router';
 import { UserInfo } from 'firebase/auth';
 import { catchError, tap, throwError } from 'rxjs';
 
@@ -13,7 +14,8 @@ import { AuthService } from '../../services';
 export class LoginService {
   constructor(
     private _authService: AuthService,
-    private _notificationService: NotificationService
+    private _notificationService: NotificationService,
+    private _router: Router
   ) {}
 
   login$({
@@ -33,6 +35,7 @@ export class LoginService {
           }.`,
           title: 'Login Successful'
         });
+        this._router.navigate(['dashboard']);
       }),
       catchError(({ code }: FirebaseError) => {
         const error = this._authService.getError(code);
