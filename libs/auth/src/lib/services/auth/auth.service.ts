@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { UserInfo } from 'firebase/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import firebase from 'firebase/compat';
 import { BehaviorSubject, from } from 'rxjs';
 
 @Injectable({
@@ -8,7 +9,7 @@ import { BehaviorSubject, from } from 'rxjs';
 })
 export class AuthService {
   #isLoggedIn$ = new BehaviorSubject<boolean>(false);
-  #user$ = new BehaviorSubject<UserInfo | null>(null);
+  #user$ = new BehaviorSubject<firebase.User | null>(null);
 
   errorMap = new Map<string, string>([
     ['email-required', 'Email is required'],
@@ -24,7 +25,10 @@ export class AuthService {
     ]
   ]);
 
-  constructor(private _auth: AngularFireAuth) {}
+  constructor(
+    private _auth: AngularFireAuth,
+    private _firestore: AngularFirestore
+  ) {}
 
   getIsLoggedIn$() {
     return this.#isLoggedIn$.asObservable();
@@ -38,7 +42,7 @@ export class AuthService {
     return this.#user$.asObservable();
   }
 
-  setUser(user: UserInfo | null) {
+  setUser(user: firebase.User | null) {
     this.#user$.next(user);
   }
 
@@ -72,5 +76,13 @@ export class AuthService {
 
   getError(message: string) {
     return this.errorMap.get(message) ?? `Unknown error: ${message}`;
+  }
+
+  saveUser$({ email, uid }: firebase.User) {
+    return from(
+      this._firestore
+        .collection<Partial<firebase.User>>('users')
+        .add({ email, uid })
+    );
   }
 }

@@ -11,6 +11,7 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import firebase from 'firebase/compat';
 import { Subscription } from 'rxjs';
 
 import { RegisterGraphicComponent } from '@expenses-tracker/shared/assets';
@@ -39,6 +40,7 @@ type SignupForm = {
 export class SignupComponent implements OnInit, OnDestroy {
   formGroup!: FormGroup<SignupForm>;
   signup$!: Subscription;
+  saveUser$!: Subscription;
 
   constructor(private _fb: FormBuilder, private _service: SignupService) {}
 
@@ -56,7 +58,20 @@ export class SignupComponent implements OnInit, OnDestroy {
   signup() {
     if (this.formGroup.valid) {
       const { email, password } = this.formGroup.value;
-      this.signup$ = this._service.signup$({ email, password }).subscribe();
+      this.signup$ = this._service
+        .signup$({ email, password })
+        .subscribe(credentials => {
+          if (!!credentials) {
+            this.saveUser(credentials);
+          }
+        });
+    }
+  }
+
+  saveUser(credentials: firebase.auth.UserCredential) {
+    const { user } = credentials;
+    if (!!user) {
+      this.saveUser$ = this._service.saveUser$(user).subscribe();
     }
   }
 
@@ -76,5 +91,6 @@ export class SignupComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.signup$?.unsubscribe();
+    this.saveUser$?.unsubscribe();
   }
 }

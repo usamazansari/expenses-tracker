@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 import { Router } from '@angular/router';
-import { UserInfo } from 'firebase/auth';
 import { catchError, tap, throwError } from 'rxjs';
 
 import { NotificationService } from '@expenses-tracker/layout';
 
+import firebase from 'firebase/compat';
 import { AuthService } from '../../services';
 
 @Injectable({
@@ -52,7 +52,7 @@ export class LoginService {
     this._authService.setIsLoggedIn(true);
   }
 
-  updateUser(user: UserInfo | null) {
+  updateUser(user: firebase.User | null) {
     this._authService.setUser(user);
   }
 }
