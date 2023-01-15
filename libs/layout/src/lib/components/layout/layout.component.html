@@ -1,13 +1,17 @@
 <div
-  class="grid grid-cols-[auto_1fr] justify-items-center min-h-screen bg-gradient-to-tr from-green-100 via-cyan-100 to-indigo-100">
-  <expenses-tracker-navbar
-    (gotoAuth$)="navigate('auth', 'login')"
-    (gotoHome$)="navigate()"
-    (gotoDashboard$)="navigate('dahsboard')"></expenses-tracker-navbar>
+  class="grid md:grid-cols-[auto_1fr] md:order-none order-1 grid-rows[auto_1fr] min-h-screen bg-gradient-to-tr from-green-100 via-cyan-100 to-indigo-100">
+  <div class="order-2 md:order-1">
+    <expenses-tracker-navbar
+      (gotoAuth$)="navigate('auth', 'login')"
+      (gotoHome$)="navigate()"
+      (gotoDashboard$)="navigate('dahsboard')"></expenses-tracker-navbar>
+  </div>
 
-  <div class="container">
-    <ng-content></ng-content>
-    <expenses-tracker-notification></expenses-tracker-notification>
+  <div class="grid order-1 mb-24 ml-0 md:order-2 md:ml-24 md:mb-0">
+    <div class="container justify-self-center">
+      <ng-content></ng-content>
+      <expenses-tracker-notification></expenses-tracker-notification>
+    </div>
   </div>
 </div>
 

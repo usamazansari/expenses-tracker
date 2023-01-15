@@ -1,34 +1,50 @@
 <div
-  class="sticky top-0 bottom-0 left-0 flex flex-col justify-between w-20 h-screen p-2 text-white bg-blue-700">
-  <div class="grid gap-2">
-    <button matRipple type="button" title="Home" (click)="gotoHome()">
+  class="fixed bottom-0 left-0 right-0 flex flex-row justify-between h-24 p-2 text-white bg-blue-700 md:flex-col md:w-24 md:h-screen md:bottom-0 md:left-0 md:top-0">
+  <div class="flex flex-row gap-2 md:flex-col">
+    <button
+      matRipple
+      class="flex items-center justify-center"
+      type="button"
+      title="Home"
+      (click)="gotoHome()">
       <expenses-tracker-logo-graphic
-        class="fill-white"></expenses-tracker-logo-graphic>
+        class="w-20 fill-white"></expenses-tracker-logo-graphic>
     </button>
     <ng-container *ngIf="isLoggedIn$ | async">
       <button
         matRipple
         type="button"
         title="Dashboard"
+        class="flex items-center justify-center"
         (click)="gotoDashboard()">
         <expenses-tracker-dashboard-graphic
-          class="fill-white"></expenses-tracker-dashboard-graphic>
+          class="w-20 fill-white"></expenses-tracker-dashboard-graphic>
       </button>
     </ng-container>
   </div>
-  <div class="grid gap-2">
+  <div class="flex flex-row gap-2 md:flex-col">
     <ng-container *ngIf="isLoggedIn$ | async; else notLoggedIn">
       <ng-container *ngIf="user$ | async as user">
-        <button matRipple type="button" title="Auth" (click)="gotoAuth()">
+        <button
+          matRipple
+          class="flex items-center justify-center"
+          type="button"
+          title="Auth"
+          (click)="gotoAuth()">
           <expenses-tracker-account-graphic
-            class="fill-white"></expenses-tracker-account-graphic>
+            class="w-20 fill-white"></expenses-tracker-account-graphic>
         </button>
       </ng-container>
     </ng-container>
     <ng-template #notLoggedIn>
-      <button matRipple type="button" title="Auth" (click)="gotoAuth()">
+      <button
+        matRipple
+        class="flex items-center justify-center"
+        type="button"
+        title="Auth"
+        (click)="gotoAuth()">
         <expenses-tracker-auth-graphic
-          class="fill-white"></expenses-tracker-auth-graphic>
+          class="w-20 fill-white"></expenses-tracker-auth-graphic>
       </button>
     </ng-template>
   </div>
