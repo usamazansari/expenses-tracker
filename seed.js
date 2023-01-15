@@ -1,23 +1,42 @@
 const admin = require('firebase-admin');
-const faker = require('@faker-js/faker');
+const { faker } = require('@faker-js/faker');
 
 process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8088';
 
-admin.initializeApp({
+const app = admin.initializeApp({
   projectId: 'ua-expenses-tracker'
 });
 
-const db = admin.firestore();
+const db = admin.firestore(app);
 
-try {
-  Array.from({ length: 10 }).map((v, i) =>
-    db.collection('quanta').add({
-      owner: faker.faker.internet.email(),
-      title: `Quantum-${i + 1}`,
-      description: faker.faker.commerce.productDescription()
-    })
-  );
-  console.log('database seed was successful');
-} catch (error) {
-  console.log(error, 'database seed failed');
-}
+const seedDB = () => {
+  try {
+    Array.from({ length: 3 }).map((v, i) => {
+      if (i === 2) {
+        return db.collection('quanta').add({
+          owner: '',
+          title: `Quantum-${i + 1}`,
+          collaborators: [],
+          description: faker.commerce.productDescription()
+        });
+      }
+      return db.collection('quanta').add({
+        owner: '',
+        title: `Quantum-${i + 1}`,
+        description: faker.commerce.productDescription()
+      });
+    });
+    Array.from({ length: 2 }).map((v, i) =>
+      db.collection('quanta').add({
+        owner: '',
+        title: `Quantum-${i + 1}`,
+        description: faker.finance.transactionDescription()
+      })
+    );
+    console.log('db seeded');
+  } catch (e) {
+    console.log('db not seeded');
+  }
+};
+
+seedDB();
