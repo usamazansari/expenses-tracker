@@ -11,11 +11,11 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
 import { LoginGraphicComponent } from '@expenses-tracker/shared/assets';
 
-import { LoginService } from './login.service';
+import { ComponentFlags, LoginService } from './login.service';
 
 type LoginForm = {
   email: FormControl<string | null>;
@@ -39,6 +39,7 @@ type LoginForm = {
 export class LoginComponent implements OnInit, OnDestroy {
   formGroup!: FormGroup<LoginForm>;
   error$ = new BehaviorSubject<string>('');
+  flags$!: Observable<ComponentFlags>;
   login$!: Subscription;
 
   constructor(private _fb: FormBuilder, private _service: LoginService) {}
@@ -52,6 +53,8 @@ export class LoginComponent implements OnInit, OnDestroy {
         validators: [Validators.required]
       })
     });
+
+    this.flags$ = this._service.watchFlags$();
   }
 
   login() {
@@ -59,6 +62,10 @@ export class LoginComponent implements OnInit, OnDestroy {
       const { email, password } = this.formGroup.value;
       this.login$ = this._service.login$({ email, password }).subscribe();
     }
+  }
+
+  dismissError() {
+    this._service.dismissError();
   }
 
   getError(formControlName = '') {

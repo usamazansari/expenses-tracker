@@ -1,1 +1,10 @@
-<p>profile works!</p>
+<div class="grid">
+  <ng-container *ngIf="user$ | async as user; else noUser">
+    <div class="flex flex-wrap items-center">
+      <pre>{{ user | json }}</pre>
+    </div>
+  </ng-container>
+  <ng-template #noUser>
+    <div class="grid place-content-center">No User Available</div>
+  </ng-template>
+</div>

@@ -6,4 +6,12 @@ interface IFlag {
   dirty: boolean;
 }
 
-export { IFlag };
+const INITIAL_FLAGS: IFlag = {
+  loading: false,
+  success: false,
+  fail: false,
+  visible: true,
+  dirty: false
+};
+
+export { IFlag, INITIAL_FLAGS };
