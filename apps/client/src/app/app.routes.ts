@@ -9,5 +9,10 @@ export const appRoutes: Route[] = [
     path: 'dashboard',
     loadChildren: () =>
       import('@expenses-tracker/dashboard').then(m => m.dashboardRoutes)
+  },
+  {
+    path: 'profile',
+    loadChildren: () =>
+      import('@expenses-tracker/profile').then(m => m.profileRoutes)
   }
 ];

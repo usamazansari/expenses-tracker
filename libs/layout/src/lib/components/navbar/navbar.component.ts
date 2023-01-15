@@ -52,4 +52,8 @@ export class NavbarComponent implements OnInit {
   gotoDashboard() {
     this._router.navigate(['dashboard']);
   }
+
+  gotoProfile() {
+    this._router.navigate(['profile']);
+  }
 }

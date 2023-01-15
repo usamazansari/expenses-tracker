@@ -1,3 +1,3 @@
 export * from './lib/services';
 
-export * from './lib/auth.routes';
+export * from './lib/lib.routes';

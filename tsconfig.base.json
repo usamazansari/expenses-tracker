@@ -18,6 +18,7 @@
       "@expenses-tracker/auth": ["libs/auth/src/index.ts"],
       "@expenses-tracker/dashboard": ["libs/dashboard/src/index.ts"],
       "@expenses-tracker/layout": ["libs/layout/src/index.ts"],
+      "@expenses-tracker/profile": ["libs/profile/src/index.ts"],
       "@expenses-tracker/shared/assets": ["libs/shared/assets/src/index.ts"],
       "@expenses-tracker/shared/interfaces": [
         "libs/shared/interfaces/src/index.ts"
