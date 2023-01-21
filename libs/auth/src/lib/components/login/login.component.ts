@@ -40,16 +40,16 @@ export class LoginComponent implements OnInit, OnDestroy {
   formGroup!: FormGroup<LoginForm>;
   error$ = new BehaviorSubject<string>('');
   flags$!: Observable<ComponentFlags>;
-  login$!: Subscription;
+  #login$!: Subscription;
 
   constructor(private _fb: FormBuilder, private _service: LoginService) {}
 
   ngOnInit() {
     this.formGroup = this._fb.group<LoginForm>({
-      email: this._fb.control<string>('', {
+      email: this._fb.control<string>('usama@gmail', {
         validators: [Validators.required, Validators.email]
       }),
-      password: this._fb.control<string>('', {
+      password: this._fb.control<string>('123456789', {
         validators: [Validators.required]
       })
     });
@@ -60,7 +60,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   login() {
     if (!this.formGroup.invalid) {
       const { email, password } = this.formGroup.value;
-      this.login$ = this._service.login$({ email, password }).subscribe();
+      this.#login$ = this._service.login$({ email, password }).subscribe();
     }
   }
 
@@ -83,6 +83,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.login$?.unsubscribe();
+    this.#login$?.unsubscribe();
   }
 }

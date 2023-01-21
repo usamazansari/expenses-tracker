@@ -10,7 +10,7 @@
       <expenses-tracker-logo-graphic
         class="w-20 fill-white"></expenses-tracker-logo-graphic>
     </button>
-    <ng-container *ngIf="isLoggedIn$ | async">
+    <ng-container *ngIf="user$ | async">
       <button
         matRipple
         type="button"
@@ -23,7 +23,7 @@
     </ng-container>
   </div>
   <div class="flex flex-row gap-2 md:flex-col">
-    <ng-container *ngIf="isLoggedIn$ | async; else notLoggedIn">
+    <ng-container *ngIf="user$ | async; else notLoggedIn">
       <ng-container *ngIf="user$ | async as user">
         <button
           matRipple

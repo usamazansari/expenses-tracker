@@ -28,14 +28,10 @@ export class AuthService {
   constructor(
     private _auth: AngularFireAuth,
     private _firestore: AngularFirestore
-  ) {}
-
-  getIsLoggedIn$() {
-    return this.#isLoggedIn$.asObservable();
-  }
-
-  setIsLoggedIn(state: boolean) {
-    this.#isLoggedIn$.next(state);
+  ) {
+    this._auth.user.subscribe(user => {
+      this.setUser(user);
+    });
   }
 
   getUser$() {
@@ -58,7 +54,7 @@ export class AuthService {
     );
   }
 
-  logout() {
+  logout$() {
     return from(this._auth.signOut());
   }
 
@@ -74,15 +70,15 @@ export class AuthService {
     );
   }
 
-  getError(message: string) {
-    return this.errorMap.get(message) ?? `Unknown error: ${message}`;
-  }
-
   saveUser$({ email, uid }: firebase.User) {
     return from(
       this._firestore
         .collection<Partial<firebase.User>>('users')
         .add({ email, uid })
     );
+  }
+
+  getError(message: string) {
+    return this.errorMap.get(message) ?? `Unknown error: ${message}`;
   }
 }

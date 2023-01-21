@@ -6,7 +6,6 @@ import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 import { NotificationService } from '@expenses-tracker/layout';
 import { IFlag, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
-import firebase from 'firebase/compat';
 import { AuthService } from '../../services';
 
 export type ComponentFlags = {
@@ -45,14 +44,13 @@ export class LoginService {
 
     return this._authService.login$({ email, password }).pipe(
       tap(({ user }) => {
-        this.updateState();
-        this.updateUser(user);
         this._notificationService.success({
           description: `Logged in successfully as ${
             user?.displayName ?? user?.email
           }.`,
           title: 'Login Successful'
         });
+        this.#resetFlags();
         this._router.navigate(['dashboard']);
       }),
       catchError(({ code }: FirebaseError) => {
@@ -92,13 +90,5 @@ export class LoginService {
 
   dismissError() {
     this.#resetFlags();
-  }
-
-  updateState() {
-    this._authService.setIsLoggedIn(true);
-  }
-
-  updateUser(user: firebase.User | null) {
-    this._authService.setUser(user);
   }
 }

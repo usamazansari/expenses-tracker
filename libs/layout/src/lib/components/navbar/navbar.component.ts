@@ -37,7 +37,6 @@ export class NavbarComponent implements OnInit {
   constructor(private _service: NavbarService, private _router: Router) {}
 
   ngOnInit() {
-    this.isLoggedIn$ = this._service.getIsLoggedIn$();
     this.user$ = this._service.getUser$();
   }
 

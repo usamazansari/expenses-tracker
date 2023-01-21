@@ -40,8 +40,8 @@ type SignupForm = {
 export class SignupComponent implements OnInit, OnDestroy {
   formGroup!: FormGroup<SignupForm>;
   flags$!: Observable<ComponentFlags>;
-  signup$!: Subscription;
-  saveUser$!: Subscription;
+  #signup$!: Subscription;
+  #saveUser$!: Subscription;
 
   constructor(private _fb: FormBuilder, private _service: SignupService) {}
 
@@ -60,7 +60,7 @@ export class SignupComponent implements OnInit, OnDestroy {
   signup() {
     if (this.formGroup.valid) {
       const { email, password } = this.formGroup.value;
-      this.signup$ = this._service
+      this.#signup$ = this._service
         .signup$({ email, password })
         .subscribe(credentials => {
           if (!!credentials) {
@@ -73,7 +73,7 @@ export class SignupComponent implements OnInit, OnDestroy {
   saveUser(credentials: firebase.auth.UserCredential) {
     const { user } = credentials;
     if (!!user) {
-      this.saveUser$ = this._service.saveUser$(user).subscribe();
+      this.#saveUser$ = this._service.saveUser$(user).subscribe();
     }
   }
 
@@ -96,7 +96,7 @@ export class SignupComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.signup$?.unsubscribe();
-    this.saveUser$?.unsubscribe();
+    this.#signup$?.unsubscribe();
+    this.#saveUser$?.unsubscribe();
   }
 }

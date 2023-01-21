@@ -1,10 +1,29 @@
 <div class="grid">
-  <ng-container *ngIf="user$ | async as user; else noUser">
-    <div class="flex flex-wrap items-center">
-      <pre>{{ user | json }}</pre>
-    </div>
+  <ng-container *ngIf="user$ | async as user">
+    <ng-container *ngIf="flags$ | async as flags">
+      <ng-container *ngIf="flags.user.visible">
+        <ng-container *ngIf="flags.user.loading">
+          <div class="grid place-content-center">Loading...</div>
+        </ng-container>
+        <ng-container *ngIf="flags.user.success">
+          <div class="flex flex-wrap items-center">
+            <pre class="whitespace-pre-wrap">{{ user | json }}</pre>
+            <button
+              matRipple
+              type="button"
+              class="flex items-center justify-center self-center py-3 text-white bg-blue-700 w-[50%] rounded-lg"
+              (click)="logout()">
+              <mat-icon class="min-w-[24px]">logout</mat-icon>
+              <span class="ml-2">Logout</span>
+            </button>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="flags.user.fail">
+          <div class="grid place-content-center">
+            User Information Available
+          </div>
+        </ng-container>
+      </ng-container>
+    </ng-container>
   </ng-container>
-  <ng-template #noUser>
-    <div class="grid place-content-center">No User Available</div>
-  </ng-template>
 </div>
