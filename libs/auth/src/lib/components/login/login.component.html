@@ -1,15 +1,15 @@
 <div class="relative grid gap-2 p-4 bg-white border rounded-lg w-96">
-  <div class="grid grid-cols-[1fr_1fr] gap-2 items-center">
+  <div class="grid grid-cols-[1fr_1fr] gap-2 items-center py-12">
     <expenses-tracker-login-graphic
       class="w-16 fill-blue-700 justify-self-end"></expenses-tracker-login-graphic>
     <span class="text-3xl text-blue-700">Login</span>
   </div>
   <ng-container *ngIf="flags$ | async as flags">
+    <ng-container *ngIf="flags.login.loading">
+      <div
+        class="absolute top-0 left-0 bottom-0 right-0 bg-[rgba(240,240,240,0.5)] z-10"></div>
+    </ng-container>
     <ng-container *ngIf="flags.login.visible">
-      <ng-container *ngIf="flags.login.loading">
-        <div
-          class="absolute top-0 left-0 bottom-0 right-0 bg-[rgba(240,240,240,0.5)] z-10"></div>
-      </ng-container>
       <ng-container *ngIf="flags.login.fail">
         <div
           class="flex items-center justify-between gap-2 px-2 py-4 text-red-500 bg-red-100 rounded">
@@ -66,11 +66,6 @@
               <mat-icon class="min-w-[24px]">login</mat-icon>
               <span class="ml-2">Login</span>
             </button>
-            <span
-              type="button"
-              class="text-center text-blue-700 rounded-lg cursor-pointer hover:underline hover:underline-offset-4">
-              Forgot Password?
-            </span>
           </div>
         </div>
       </form>

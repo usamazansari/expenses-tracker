@@ -12,11 +12,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import firebase from 'firebase/compat';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 import { RegisterGraphicComponent } from '@expenses-tracker/shared/assets';
 
-import { SignupService } from './signup.service';
+import { ComponentFlags, SignupService } from './signup.service';
 
 type SignupForm = {
   email: FormControl<string | null>;
@@ -39,6 +39,7 @@ type SignupForm = {
 })
 export class SignupComponent implements OnInit, OnDestroy {
   formGroup!: FormGroup<SignupForm>;
+  flags$!: Observable<ComponentFlags>;
   signup$!: Subscription;
   saveUser$!: Subscription;
 
@@ -53,6 +54,7 @@ export class SignupComponent implements OnInit, OnDestroy {
         validators: [Validators.required]
       })
     });
+    this.flags$ = this._service.watchFlags$();
   }
 
   signup() {
@@ -87,6 +89,10 @@ export class SignupComponent implements OnInit, OnDestroy {
     }
 
     return '';
+  }
+
+  dismissError() {
+    this._service.dismissError();
   }
 
   ngOnDestroy() {

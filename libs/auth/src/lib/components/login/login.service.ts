@@ -76,10 +76,6 @@ export class LoginService {
     );
   }
 
-  dismissError() {
-    this.#resetFlags();
-  }
-
   #setFlags(flags: ComponentFlags) {
     this.#flags = { ...flags } ?? { login: INITIAL_FLAGS };
     this.#flags$.next(this.#flags);
@@ -92,6 +88,10 @@ export class LoginService {
 
   watchFlags$() {
     return this.#flags$.asObservable();
+  }
+
+  dismissError() {
+    this.#resetFlags();
   }
 
   updateState() {
