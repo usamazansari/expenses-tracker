@@ -25,7 +25,9 @@ export class NotificationComponent implements OnInit, OnDestroy {
 
     this._service.getNotifications$().subscribe(n => {
       this.notifications$.next([...this.#notifications, n]);
-      setTimeout(() => this.dismiss(n), 5000);
+      if (n.type !== 'error') {
+        setTimeout(() => this.dismiss(n), 5000);
+      }
     });
   }
 
