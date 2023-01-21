@@ -6,16 +6,55 @@
           <div class="grid place-content-center">Loading...</div>
         </ng-container>
         <ng-container *ngIf="flags.user.success">
-          <div class="flex flex-wrap items-center">
-            <pre class="whitespace-pre-wrap">{{ user | json }}</pre>
-            <button
-              matRipple
-              type="button"
-              class="flex items-center justify-center self-center py-3 text-white bg-blue-700 w-[50%] rounded-lg"
-              (click)="logout()">
-              <mat-icon class="min-w-[24px]">logout</mat-icon>
-              <span class="ml-2">Logout</span>
-            </button>
+          <div class="grid gap-2 p-4 bg-white border rounded-lg">
+            <div class="flex items-center justify-between">
+              <h1>{{ user.displayName || 'User Profile' }}</h1>
+              <ng-container *ngIf="!editMode">
+                <button
+                  matRipple
+                  type="button"
+                  class="flex items-center justify-center p-2 rounded-full">
+                  <mat-icon (click)="editDetails()">edit</mat-icon>
+                </button>
+              </ng-container>
+            </div>
+
+            <ng-container *ngIf="!editMode">
+              <div class="grid gap-2">
+                <span>Viewing profile details</span>
+                <button
+                  matRipple
+                  type="button"
+                  class="flex items-center justify-center gap-2 px-6 py-3 mx-2 text-white bg-blue-700 rounded-lg"
+                  (click)="logout()">
+                  <mat-icon class="min-w-[24px]">logout</mat-icon>
+                  <span>Logout</span>
+                </button>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="editMode">
+              <div class="grid gap-2">
+                <span>View form to edit profile details</span>
+                <div class="flex items-center gap-2">
+                  <button
+                    matRipple
+                    type="button"
+                    class="flex items-center justify-center gap-2 px-6 py-3 text-white bg-blue-700 rounded-lg"
+                    (click)="saveEdits()">
+                    <mat-icon class="min-w-[24px]">save</mat-icon>
+                    <span>Save</span>
+                  </button>
+                  <span
+                    matRipple
+                    type="button"
+                    (click)="cancelEdits()"
+                    class="flex items-center gap-2 px-6 py-3 text-center text-blue-700 rounded-lg cursor-pointer hover:underline hover:underline-offset-4">
+                    <mat-icon class="min-w-[24px]">clear</mat-icon>
+                    <span>Cancel</span>
+                  </span>
+                </div>
+              </div>
+            </ng-container>
           </div>
         </ng-container>
         <ng-container *ngIf="flags.user.fail">

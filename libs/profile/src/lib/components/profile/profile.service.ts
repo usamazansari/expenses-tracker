@@ -22,6 +22,9 @@ export class ProfileService {
   });
   #flags: ComponentFlags = { user: INITIAL_FLAGS, logout: INITIAL_FLAGS };
 
+  #editMode$ = new BehaviorSubject<boolean>(false);
+  #editMode = false;
+
   constructor(
     private _authService: AuthService,
     private _notificationService: NotificationService,
@@ -67,26 +70,6 @@ export class ProfileService {
     );
   }
 
-  #setFlags(flags: ComponentFlags) {
-    this.#flags = { ...flags } ?? {
-      user: INITIAL_FLAGS,
-      logout: INITIAL_FLAGS
-    };
-    this.#flags$.next(this.#flags);
-  }
-
-  #resetFlags() {
-    this.#flags = {
-      user: INITIAL_FLAGS,
-      logout: INITIAL_FLAGS
-    };
-    this.#flags$.next(this.#flags);
-  }
-
-  watchFlags$() {
-    return this.#flags$.asObservable();
-  }
-
   logout$() {
     this.#flags = {
       ...this.#flags,
@@ -125,5 +108,38 @@ export class ProfileService {
         return throwError(() => new Error(code));
       })
     );
+  }
+
+  #setFlags(flags: ComponentFlags) {
+    this.#flags = { ...flags } ?? {
+      user: INITIAL_FLAGS,
+      logout: INITIAL_FLAGS
+    };
+    this.#flags$.next(this.#flags);
+  }
+
+  #resetFlags() {
+    this.#flags = {
+      user: INITIAL_FLAGS,
+      logout: INITIAL_FLAGS
+    };
+    this.#flags$.next(this.#flags);
+  }
+
+  watchFlags$() {
+    return this.#flags$.asObservable();
+  }
+
+  #setEditMode(mode: boolean) {
+    this.#editMode = mode;
+    this.#editMode$.next(this.#editMode);
+  }
+
+  toggleEditMode() {
+    this.#setEditMode(!this.#editMode);
+  }
+
+  watchEditMode$() {
+    return this.#editMode$.asObservable();
   }
 }
