@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 import { Router } from '@angular/router';
-import firebase from 'firebase/compat';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 
 import { NotificationService } from '@expenses-tracker/layout';
-import { IFlag, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
+import {
+  IFlag,
+  INITIAL_FLAGS,
+  IUser
+} from '@expenses-tracker/shared/interfaces';
 
 import { AuthService } from '../../services';
 
@@ -75,7 +78,7 @@ export class SignupService {
     );
   }
 
-  saveUser$(user: firebase.User) {
+  saveUser$(user: IUser) {
     this.#flags = {
       ...this.#flags,
       saveUser: {

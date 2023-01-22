@@ -8,29 +8,26 @@
         <ng-container *ngIf="flags.user.success">
           <div class="grid gap-2 p-4 bg-white border rounded-lg">
             <div class="flex items-center justify-between">
-              <h1>{{ user.displayName || 'User Profile' }}</h1>
+              <h1 class="text-xl font-bold">
+                {{ user.displayName || 'User Profile' }}
+              </h1>
               <ng-container *ngIf="!editMode">
                 <button
                   matRipple
                   type="button"
                   class="flex items-center justify-center p-2 rounded-full">
-                  <mat-icon (click)="editDetails()">edit</mat-icon>
+                  <mat-icon class="text-gray-700" (click)="editDetails()">
+                    edit
+                  </mat-icon>
                 </button>
               </ng-container>
             </div>
 
             <ng-container *ngIf="!editMode">
-              <div class="grid gap-2">
-                <span>Viewing profile details</span>
-                <button
-                  matRipple
-                  type="button"
-                  class="flex items-center justify-center gap-2 px-6 py-3 mx-2 text-white bg-blue-700 rounded-lg"
-                  (click)="logout()">
-                  <mat-icon class="min-w-[24px]">logout</mat-icon>
-                  <span>Logout</span>
-                </button>
-              </div>
+              <expenses-tracker-profile-view
+                [user]="user"
+                (copyUID$)="copyUID($event)"
+                (logout$)="logout()"></expenses-tracker-profile-view>
             </ng-container>
             <ng-container *ngIf="editMode">
               <div class="grid gap-2">

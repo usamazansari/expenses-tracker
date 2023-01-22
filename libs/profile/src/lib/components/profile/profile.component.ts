@@ -1,21 +1,32 @@
+import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
-import { NotificationService } from '@expenses-tracker/layout';
-import firebase from 'firebase/compat';
 import { Observable, Subscription } from 'rxjs';
 
+import { NotificationService } from '@expenses-tracker/layout';
+import { IUser } from '@expenses-tracker/shared/interfaces';
+
+import { ExtractInitialsPipe } from '../../pipes';
+import { ProfileViewComponent } from '../profile-view/profile-view.component';
 import { ComponentFlags, ProfileService } from './profile.service';
 
 @Component({
   selector: 'expenses-tracker-profile',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatRippleModule],
+  imports: [
+    ClipboardModule,
+    CommonModule,
+    ExtractInitialsPipe,
+    MatIconModule,
+    MatRippleModule,
+    ProfileViewComponent
+  ],
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit, OnDestroy {
-  user$!: Observable<firebase.User | null>;
+  user$!: Observable<IUser | null>;
   editMode = false;
   flags$!: Observable<ComponentFlags>;
   #logout$!: Subscription;
@@ -52,6 +63,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
       description: 'Profile details were not updated since you clicked cancel.'
     });
     this.editMode = !this.editMode;
+  }
+
+  copyUID(uid: string | null) {
+    this._service.copyUID(uid);
   }
 
   ngOnDestroy() {

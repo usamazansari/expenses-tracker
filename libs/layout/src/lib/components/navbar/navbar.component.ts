@@ -1,17 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatRippleModule } from '@angular/material/core';
-import { UserInfo } from 'firebase/auth';
 import { Observable } from 'rxjs';
 
+import { Router } from '@angular/router';
 import {
   AccountGraphicComponent,
   AuthGraphicComponent,
   DashboardGraphicComponent,
   LogoGraphicComponent
 } from '@expenses-tracker/shared/assets';
+import { IUser } from '@expenses-tracker/shared/interfaces';
+
 import { NavbarService } from './navbar.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'expenses-tracker-navbar',
@@ -27,8 +28,7 @@ import { Router } from '@angular/router';
   templateUrl: './navbar.component.html'
 })
 export class NavbarComponent implements OnInit {
-  isLoggedIn$!: Observable<boolean>;
-  user$!: Observable<UserInfo | null>;
+  user$!: Observable<IUser | null>;
 
   @Output() gotoHome$ = new EventEmitter<void>();
   @Output() gotoAuth$ = new EventEmitter<void>();

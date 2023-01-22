@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import firebase from 'firebase/compat';
 import { BehaviorSubject, from } from 'rxjs';
+
+import { IUser } from '@expenses-tracker/shared/interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  #isLoggedIn$ = new BehaviorSubject<boolean>(false);
-  #user$ = new BehaviorSubject<firebase.User | null>(null);
+  #user$ = new BehaviorSubject<IUser | null>(null);
 
   errorMap = new Map<string, string>([
     ['email-required', 'Email is required'],
@@ -30,7 +30,7 @@ export class AuthService {
     private _firestore: AngularFirestore
   ) {
     this._auth.user.subscribe(user => {
-      this.setUser(user);
+      this.setUser(user as IUser);
     });
   }
 
@@ -38,7 +38,7 @@ export class AuthService {
     return this.#user$.asObservable();
   }
 
-  setUser(user: firebase.User | null) {
+  setUser(user: IUser | null) {
     this.#user$.next(user);
   }
 
@@ -70,11 +70,9 @@ export class AuthService {
     );
   }
 
-  saveUser$({ email, uid }: firebase.User) {
+  saveUser$({ email, uid }: IUser) {
     return from(
-      this._firestore
-        .collection<Partial<firebase.User>>('users')
-        .add({ email, uid })
+      this._firestore.collection<Partial<IUser>>('users').add({ email, uid })
     );
   }
 

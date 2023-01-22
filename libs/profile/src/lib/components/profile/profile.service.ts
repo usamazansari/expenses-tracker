@@ -1,3 +1,4 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, of, tap, throwError } from 'rxjs';
@@ -28,7 +29,8 @@ export class ProfileService {
   constructor(
     private _authService: AuthService,
     private _notificationService: NotificationService,
-    private _router: Router
+    private _router: Router,
+    private _clipboard: Clipboard
   ) {}
 
   getUser$() {
@@ -108,6 +110,21 @@ export class ProfileService {
         return throwError(() => new Error(code));
       })
     );
+  }
+
+  copyUID(uid: string | null) {
+    const copyState = this._clipboard.copy(uid ?? '');
+    if (copyState) {
+      this._notificationService.info({
+        title: 'Success!',
+        description: 'UID copied to the clipboard'
+      });
+    } else {
+      this._notificationService.info({
+        title: 'Fail!',
+        description: 'UID cannot be copied to the clipboard'
+      });
+    }
   }
 
   #setFlags(flags: ComponentFlags) {

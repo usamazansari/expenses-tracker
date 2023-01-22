@@ -17,6 +17,7 @@ import { Observable, Subscription } from 'rxjs';
 import { RegisterGraphicComponent } from '@expenses-tracker/shared/assets';
 
 import { ComponentFlags, SignupService } from './signup.service';
+import { IUser } from '@expenses-tracker/shared/interfaces';
 
 type SignupForm = {
   email: FormControl<string | null>;
@@ -73,7 +74,7 @@ export class SignupComponent implements OnInit, OnDestroy {
   saveUser(credentials: firebase.auth.UserCredential) {
     const { user } = credentials;
     if (!!user) {
-      this.#saveUser$ = this._service.saveUser$(user).subscribe();
+      this.#saveUser$ = this._service.saveUser$(user as IUser).subscribe();
     }
   }
 
