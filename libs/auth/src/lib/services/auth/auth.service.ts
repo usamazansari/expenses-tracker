@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { BehaviorSubject, from } from 'rxjs';
+import firebase from 'firebase/compat';
+import { BehaviorSubject, catchError, from, switchMap, throwError } from 'rxjs';
 
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { NotificationService } from '@expenses-tracker/layout';
 import { IUser } from '@expenses-tracker/shared/interfaces';
 
 @Injectable({
@@ -27,10 +30,11 @@ export class AuthService {
 
   constructor(
     private _auth: AngularFireAuth,
-    private _firestore: AngularFirestore
+    private _firestore: AngularFirestore,
+    private _notificationService: NotificationService
   ) {
     this._auth.user.subscribe(user => {
-      this.setUser(user as IUser);
+      this.updateUserData$(user);
     });
   }
 
@@ -74,6 +78,66 @@ export class AuthService {
     return from(
       this._firestore.collection<Partial<IUser>>('users').add({ email, uid })
     );
+  }
+
+  updateUserData$(user: firebase.User | null) {
+    if (!user) {
+      return;
+    }
+    const { uid } = user as firebase.User;
+    return this.getUserFromFirestore$(uid)
+      .pipe()
+      .subscribe({
+        next: doc => {
+          if (!doc) {
+            this._notificationService.error({
+              title: 'Error',
+              description: 'Error in reading document'
+            });
+            return;
+          }
+          const data = doc.data();
+          if (!data) {
+            this._notificationService.error({
+              title: 'Error',
+              description: 'Error in reading document data'
+            });
+            return;
+          }
+          const { displayName, email } = data;
+          this._notificationService.success({
+            description: `Logged in successfully as ${displayName ?? email}.`,
+            title: 'Login Successful'
+          });
+          this.setUser(user as IUser);
+        },
+        error: error => {
+          console.log({ error });
+          this._notificationService.error(error);
+        }
+      });
+  }
+
+  getUserFromFirestore$(uid: string) {
+    return this._firestore
+      .collection<IUser>('users', ref => ref.where('uid', '==', uid))
+      .get()
+      .pipe(
+        switchMap(query => {
+          if (!query) {
+            return throwError(() => new Error('Query returned null!'));
+          }
+          const { docs = [] } = query;
+          if (!docs.length) {
+            return throwError(() => new Error('No matching documents found!'));
+          }
+          const [{ id = '' }] = docs;
+          return this._firestore.collection<IUser>('users').doc(id).get();
+        }),
+        catchError(({ message }: Error) => {
+          return throwError(() => new Error(message));
+        })
+      );
   }
 
   getError(message: string) {

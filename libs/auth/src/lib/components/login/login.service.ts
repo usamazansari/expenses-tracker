@@ -3,6 +3,7 @@ import { FirebaseError } from '@angular/fire/app';
 import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { NotificationService } from '@expenses-tracker/layout';
 import { IFlag, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
@@ -20,9 +21,9 @@ export class LoginService {
   #flags: ComponentFlags = { login: INITIAL_FLAGS };
 
   constructor(
+    private _router: Router,
     private _authService: AuthService,
-    private _notificationService: NotificationService,
-    private _router: Router
+    private _notificationService: NotificationService
   ) {}
 
   login$({
@@ -43,13 +44,7 @@ export class LoginService {
     this.#setFlags(this.#flags);
 
     return this._authService.login$({ email, password }).pipe(
-      tap(({ user }) => {
-        this._notificationService.success({
-          description: `Logged in successfully as ${
-            user?.displayName ?? user?.email
-          }.`,
-          title: 'Login Successful'
-        });
+      tap(() => {
         this.#resetFlags();
         this._router.navigate(['dashboard']);
       }),

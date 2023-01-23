@@ -11,45 +11,30 @@
               <h1 class="text-xl font-bold">
                 {{ user.displayName || 'User Profile' }}
               </h1>
-              <ng-container *ngIf="!editMode">
+              <ng-container *ngIf="!isEditing">
                 <button
                   matRipple
                   type="button"
                   class="flex items-center justify-center p-2 rounded-full">
-                  <mat-icon class="text-gray-700" (click)="editDetails()">
+                  <mat-icon class="text-gray-700" (click)="editMode()">
                     edit
                   </mat-icon>
                 </button>
               </ng-container>
             </div>
 
-            <ng-container *ngIf="!editMode">
+            <ng-container *ngIf="!isEditing">
               <expenses-tracker-profile-view
                 [user]="user"
                 (copyUID$)="copyUID($event)"
                 (logout$)="logout()"></expenses-tracker-profile-view>
             </ng-container>
-            <ng-container *ngIf="editMode">
+            <ng-container *ngIf="isEditing">
               <div class="grid gap-2">
-                <span>View form to edit profile details</span>
-                <div class="flex items-center gap-2">
-                  <button
-                    matRipple
-                    type="button"
-                    class="flex items-center justify-center gap-2 px-6 py-3 text-white bg-blue-700 rounded-lg"
-                    (click)="saveEdits()">
-                    <mat-icon class="min-w-[24px]">save</mat-icon>
-                    <span>Save</span>
-                  </button>
-                  <span
-                    matRipple
-                    type="button"
-                    (click)="cancelEdits()"
-                    class="flex items-center gap-2 px-6 py-3 text-center text-blue-700 rounded-lg cursor-pointer hover:underline hover:underline-offset-4">
-                    <mat-icon class="min-w-[24px]">clear</mat-icon>
-                    <span>Cancel</span>
-                  </span>
-                </div>
+                <expenses-tracker-profile-edit
+                  [user]="user"
+                  (editUserInfo$)="editUserInfo($event)"
+                  (cancelEdit$)="cancelEdit()"></expenses-tracker-profile-edit>
               </div>
             </ng-container>
           </div>

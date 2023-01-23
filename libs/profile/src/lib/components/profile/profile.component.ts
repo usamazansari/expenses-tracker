@@ -9,6 +9,7 @@ import { NotificationService } from '@expenses-tracker/layout';
 import { IUser } from '@expenses-tracker/shared/interfaces';
 
 import { ExtractInitialsPipe } from '../../pipes';
+import { ProfileEditComponent } from '../profile-edit/profile-edit.component';
 import { ProfileViewComponent } from '../profile-view/profile-view.component';
 import { ComponentFlags, ProfileService } from './profile.service';
 
@@ -21,13 +22,14 @@ import { ComponentFlags, ProfileService } from './profile.service';
     ExtractInitialsPipe,
     MatIconModule,
     MatRippleModule,
+    ProfileEditComponent,
     ProfileViewComponent
   ],
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit, OnDestroy {
   user$!: Observable<IUser | null>;
-  editMode = false;
+  isEditing = false;
   flags$!: Observable<ComponentFlags>;
   #logout$!: Subscription;
 
@@ -37,7 +39,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.user$ = this._service.getUser$();
+    this.user$ = this._service.getUser$() as Observable<IUser | null>;
     this.flags$ = this._service.watchFlags$();
   }
 
@@ -45,24 +47,35 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.#logout$ = this._service.logout$().subscribe();
   }
 
-  editDetails() {
-    this.editMode = !this.editMode;
+  editMode() {
+    this.isEditing = true;
   }
 
-  saveEdits() {
-    this._notificationService.success({
-      title: 'Changed Saved',
-      description: 'Profile details updated successfully!'
+  editUserInfo($: { name: string | null }) {
+    this._service.updateUserDetails$($).subscribe({
+      next: () => {
+        this._notificationService.success({
+          title: 'Successful!',
+          description: 'User details updated successfully.'
+        });
+        this.isEditing = false;
+      },
+      error: error => {
+        this._notificationService.error({
+          title: 'Failed!',
+          description: `Unable to update the user details - ${error}.`
+        });
+        this.isEditing = true;
+      }
     });
-    this.editMode = !this.editMode;
   }
 
-  cancelEdits() {
+  cancelEdit() {
     this._notificationService.info({
       title: 'Changed not saved.',
       description: 'Profile details were not updated since you clicked cancel.'
     });
-    this.editMode = !this.editMode;
+    this.isEditing = !this.isEditing;
   }
 
   copyUID(uid: string | null) {
