@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import firebase from 'firebase/compat';
-import { BehaviorSubject, catchError, from, switchMap, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  from,
+  switchMap,
+  throwError
+} from 'rxjs';
 
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { NotificationService } from '@expenses-tracker/layout';
 import { IUser } from '@expenses-tracker/shared/interfaces';
 
 @Injectable({
@@ -30,11 +34,14 @@ export class AuthService {
 
   constructor(
     private _auth: AngularFireAuth,
-    private _firestore: AngularFirestore,
-    private _notificationService: NotificationService
+    private _firestore: AngularFirestore
   ) {
-    this._auth.user.subscribe(user => {
-      this.updateUserData$(user);
+    combineLatest([
+      this._auth.user,
+      this._firestore.collection<IUser>('users').valueChanges()
+    ]).subscribe(([user, users]) => {
+      if (!user) this.setUser(null);
+      else this.setUser(users.find(u => u.uid === user?.uid) ?? null);
     });
   }
 
@@ -78,44 +85,6 @@ export class AuthService {
     return from(
       this._firestore.collection<Partial<IUser>>('users').add({ email, uid })
     );
-  }
-
-  updateUserData$(user: firebase.User | null) {
-    if (!user) {
-      return;
-    }
-    const { uid } = user as firebase.User;
-    return this.getUserFromFirestore$(uid)
-      .pipe()
-      .subscribe({
-        next: doc => {
-          if (!doc) {
-            this._notificationService.error({
-              title: 'Error',
-              description: 'Error in reading document'
-            });
-            return;
-          }
-          const data = doc.data();
-          if (!data) {
-            this._notificationService.error({
-              title: 'Error',
-              description: 'Error in reading document data'
-            });
-            return;
-          }
-          const { displayName, email } = data;
-          this._notificationService.success({
-            description: `Logged in successfully as ${displayName ?? email}.`,
-            title: 'Login Successful'
-          });
-          this.setUser(user as IUser);
-        },
-        error: error => {
-          console.log({ error });
-          this._notificationService.error(error);
-        }
-      });
   }
 
   getUserFromFirestore$(uid: string) {

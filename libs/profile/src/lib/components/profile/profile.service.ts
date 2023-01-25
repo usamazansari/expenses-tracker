@@ -1,13 +1,18 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { BehaviorSubject, catchError, switchMap, tap, throwError } from 'rxjs';
-
 import { FirebaseError } from '@angular/fire/app';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { AuthService } from '@expenses-tracker/auth';
-import { NotificationService } from '@expenses-tracker/layout';
+import { Router } from '@angular/router';
+import {
+  BehaviorSubject,
+  catchError,
+  from,
+  switchMap,
+  tap,
+  throwError
+} from 'rxjs';
 
+import { AuthService } from '@expenses-tracker/auth';
+import { NotificationService } from '@expenses-tracker/shared/common';
 import { IFlag, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
 export type ComponentFlags = {
@@ -29,7 +34,6 @@ export class ProfileService {
   #editMode = false;
 
   constructor(
-    private _firestore: AngularFirestore,
     private _authService: AuthService,
     private _notificationService: NotificationService,
     private _router: Router,
@@ -115,22 +119,16 @@ export class ProfileService {
     );
   }
 
-  updateUserDetails$({ name }: { name: string | null }) {
-    return this.getUser$().pipe(
-      switchMap(user => {
-        if (!user) {
-          return throwError(() => new Error('user not found'));
-        }
-        const { uid } = user;
-        return this._authService.getUserFromFirestore$(uid).pipe(
-          switchMap(data => {
-            if (!data) {
-              return throwError(() => new Error('No data!'));
-            }
-            return data.ref.update({ displayName: name });
-          })
-        );
-      })
+  updateUserDetails$({ uid, name }: { uid: string; name: string }) {
+    return this._authService.getUserFromFirestore$(uid ?? '').pipe(
+      switchMap(data =>
+        from(data?.ref.update({ displayName: name.trim() })).pipe(
+          catchError(({ code }: FirebaseError) =>
+            throwError(() => new Error(code))
+          )
+        )
+      ),
+      catchError(({ code }: FirebaseError) => throwError(() => new Error(code)))
     );
   }
 

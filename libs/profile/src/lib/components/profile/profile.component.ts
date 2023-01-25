@@ -5,7 +5,7 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Observable, Subscription } from 'rxjs';
 
-import { NotificationService } from '@expenses-tracker/layout';
+import { NotificationService } from '@expenses-tracker/shared/common';
 import { IUser } from '@expenses-tracker/shared/interfaces';
 
 import { ExtractInitialsPipe } from '../../pipes';
@@ -39,7 +39,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.user$ = this._service.getUser$() as Observable<IUser | null>;
+    this.user$ = this._service.getUser$();
     this.flags$ = this._service.watchFlags$();
   }
 
@@ -51,7 +51,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.isEditing = true;
   }
 
-  editUserInfo($: { name: string | null }) {
+  editUserInfo($: { uid: string; name: string }) {
     this._service.updateUserDetails$($).subscribe({
       next: () => {
         this._notificationService.success({
@@ -62,7 +62,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       },
       error: error => {
         this._notificationService.error({
-          title: 'Failed!',
+          title: 'Error!',
           description: `Unable to update the user details - ${error}.`
         });
         this.isEditing = true;

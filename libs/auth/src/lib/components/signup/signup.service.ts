@@ -3,7 +3,7 @@ import { FirebaseError } from '@angular/fire/app';
 import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 
-import { NotificationService } from '@expenses-tracker/layout';
+import { NotificationService } from '@expenses-tracker/shared/common';
 import {
   IFlag,
   INITIAL_FLAGS,
@@ -56,6 +56,7 @@ export class SignupService {
           description: `Registered successfully as ${user?.email}.`,
           title: 'Signup Successful!'
         });
+        this.#resetFlags();
       }),
       catchError(({ code }: FirebaseError) => {
         const error = this._authService.getError(code);

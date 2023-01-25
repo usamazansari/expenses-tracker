@@ -3,8 +3,7 @@ import { FirebaseError } from '@angular/fire/app';
 import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { NotificationService } from '@expenses-tracker/layout';
+import { NotificationService } from '@expenses-tracker/shared/common';
 import { IFlag, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
 import { AuthService } from '../../services';

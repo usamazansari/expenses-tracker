@@ -34,21 +34,27 @@ type ProfileEditForm = {
 export class ProfileEditComponent implements OnInit {
   formGroup!: FormGroup<ProfileEditForm>;
   @Input() user!: IUser;
-  @Output() editUserInfo$ = new EventEmitter<{ name: string | null }>();
+  @Output() editUserInfo$ = new EventEmitter<{
+    uid: string;
+    name: string;
+  }>();
   @Output() cancelEdits$ = new EventEmitter<void>();
 
   constructor(private _fb: FormBuilder) {}
 
   ngOnInit() {
     this.formGroup = this._fb.group<ProfileEditForm>({
-      name: this._fb.control<string>('', {
+      name: this._fb.control<string>(this.user.displayName ?? '', {
         validators: []
       })
     });
   }
 
   editUserInfo() {
-    this.editUserInfo$.emit(this.formGroup.value as { name: string | null });
+    this.editUserInfo$.emit({
+      uid: this.user.uid,
+      ...(this.formGroup.value as { name: string })
+    });
   }
 
   cancelEdit() {
