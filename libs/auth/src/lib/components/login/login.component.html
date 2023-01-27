@@ -1,67 +1,76 @@
-<div class="grid grid-rows-[1fr_2fr] w-96 h-96 border rounded-lg p-4">
-  <div class="grid grid-cols-[1fr_1fr] gap-2 items-center">
+<div class="relative grid gap-2 p-4 bg-white border rounded-lg w-96">
+  <div class="grid grid-cols-[1fr_1fr] gap-2 items-center py-12">
     <expenses-tracker-login-graphic
       class="w-16 fill-blue-700 justify-self-end"></expenses-tracker-login-graphic>
     <span class="text-3xl text-blue-700">Login</span>
   </div>
-  <form [formGroup]="formGroup" (ngSubmit)="login()">
-    <div class="grid grid-rows-[1fr_auto] gap-8">
-      <div class="grid grid-rows-2 gap-6">
-        <div class="grid gap-3 items-center grid-cols-[1fr_2fr]">
-          <div class="flex items-center justify-end">
-            <mat-icon>mail_outline</mat-icon>
+  <ng-container *ngIf="flags$ | async as flags">
+    <ng-container *ngIf="flags.login.loading">
+      <div
+        class="absolute top-0 left-0 bottom-0 right-0 bg-[rgba(240,240,240,0.5)] z-10"></div>
+    </ng-container>
+    <ng-container *ngIf="flags.login.visible">
+      <ng-container *ngIf="flags.login.fail">
+        <div
+          class="flex items-center justify-between gap-2 px-2 py-4 text-red-500 bg-red-100 rounded">
+          <div class="flex items-center gap-2">
+            <mat-icon>error</mat-icon>
+            <span class="font-bold">Login Failed</span>
           </div>
-          <input
-            formControlName="email"
-            class="w-full bg-transparent focus:outline-none focus:shadow-[0px_0.5px_0px_0px_rgb(31,41,55)] transition-shadow duration-200"
-            type="email"
-            placeholder="foo@bar.com" />
+          <button class="flex items-center" (click)="dismissError()">
+            <mat-icon>clear</mat-icon>
+          </button>
         </div>
-        <div class="grid gap-3 items-center grid-cols-[1fr_2fr]">
-          <div class="flex items-center justify-end">
-            <mat-icon>key</mat-icon>
-          </div>
-          <input
-            formControlName="password"
-            class="w-full bg-transparent focus:outline-none focus:shadow-[0px_0.5px_0px_0px_rgb(31,41,55)] transition-shadow duration-200"
-            type="password"
-            placeholder="Password" />
-        </div>
-      </div>
-      <div class="flex flex-col gap-4">
-        <ng-container *ngIf="errors$ | async as errors">
-          <ng-container *ngIf="errors.length; else submitButton">
-            <div
-              class="flex flex-col p-4 text-red-500 bg-red-50 rounded-md gap-1">
-              <div class="flex items-center justify-between">
-                <span class="font-bold">Error Details:</span>
-                <mat-icon class="cursor-pointer" (click)="clearErrors()">
-                  clear
-                </mat-icon>
-              </div>
-              <ng-container *ngFor="let error of errors">
-                <div class="flex items-center">
-                  <mat-icon class="mr-2">error</mat-icon>
-                  <span>{{ error }}</span>
-                </div>
-              </ng-container>
+      </ng-container>
+      <form [formGroup]="formGroup" (ngSubmit)="login()">
+        <div class="grid grid-rows-[1fr_auto] gap-2">
+          <div class="grid gap-2">
+            <div class="flex items-center gap-2">
+              <mat-icon class="min-w-[24px] text-gray-700">
+                mail_outline
+              </mat-icon>
+              <mat-form-field class="w-full">
+                <mat-label>Email</mat-label>
+                <input
+                  matInput
+                  formControlName="email"
+                  type="email"
+                  placeholder="foo@bar.com"
+                  required />
+                <mat-error *ngIf="this.formGroup.get('email')?.invalid">
+                  {{ getError('email') }}
+                </mat-error>
+              </mat-form-field>
             </div>
-          </ng-container>
-          <ng-template #submitButton>
+
+            <div class="flex items-center gap-2">
+              <mat-icon class="min-w-[24px] text-gray-700">key</mat-icon>
+              <mat-form-field class="w-full">
+                <mat-label>Password</mat-label>
+                <input
+                  size="sm"
+                  matInput
+                  formControlName="password"
+                  type="password"
+                  placeholder="Password"
+                  required />
+                <mat-error *ngIf="this.formGroup.get('password')?.invalid">
+                  {{ getError('password') }}
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="flex flex-col gap-2">
             <button
+              matRipple
               type="submit"
-              class="flex items-center justify-center self-center px-6 py-2 text-white bg-blue-700 w-[50%] rounded-lg">
-              <mat-icon>login</mat-icon>
+              class="flex items-center justify-center self-center py-3 text-white bg-blue-700 w-[50%] rounded-lg">
+              <mat-icon class="min-w-[24px]">login</mat-icon>
               <span class="ml-2">Login</span>
             </button>
-          </ng-template>
-        </ng-container>
-        <span
-          type="button"
-          class="text-center text-blue-700 rounded-lg cursor-pointer hover:underline hover:underline-offset-4">
-          Forgot Password?
-        </span>
-      </div>
-    </div>
-  </form>
+          </div>
+        </div>
+      </form>
+    </ng-container>
+  </ng-container>
 </div>

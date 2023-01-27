@@ -1,4 +1,4 @@
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -7,12 +7,15 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
+import { MatRippleModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { debounceTime, Observable, Subscription } from 'rxjs';
+import { MatInputModule } from '@angular/material/input';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
 import { LoginGraphicComponent } from '@expenses-tracker/shared/assets';
 
-import { LoginComponentFlags, LoginService } from './login.service';
+import { ComponentFlags, LoginService } from './login.service';
 
 type LoginForm = {
   email: FormControl<string | null>;
@@ -24,18 +27,20 @@ type LoginForm = {
   standalone: true,
   imports: [
     CommonModule,
-    NgOptimizedImage,
     LoginGraphicComponent,
-    ReactiveFormsModule,
-    MatIconModule
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatRippleModule,
+    ReactiveFormsModule
   ],
   templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit, OnDestroy {
   formGroup!: FormGroup<LoginForm>;
-  errors$!: Observable<string[]>;
-  flags$!: Observable<LoginComponentFlags>;
-  login$!: Subscription;
+  error$ = new BehaviorSubject<string>('');
+  flags$!: Observable<ComponentFlags>;
+  #login$!: Subscription;
 
   constructor(private _fb: FormBuilder, private _service: LoginService) {}
 
@@ -49,27 +54,35 @@ export class LoginComponent implements OnInit, OnDestroy {
       })
     });
 
-    this.formGroup.valueChanges.pipe(debounceTime(500)).subscribe(() => {
-      this._service.updateErrors(this.formGroup);
-    });
-
-    this.errors$ = this._service.getErrors$();
+    this.flags$ = this._service.watchFlags$();
   }
 
   login() {
-    if (this.formGroup.valid) {
+    if (!this.formGroup.invalid) {
       const { email, password } = this.formGroup.value;
-      this.login$ = this._service.login$({ email, password }).subscribe();
-    } else {
-      this._service.updateErrors(this.formGroup);
+      this.#login$ = this._service.login$({ email, password }).subscribe();
     }
   }
 
-  clearErrors() {
-    this._service.clearErrors();
+  dismissError() {
+    this._service.dismissError();
+  }
+
+  getError(formControlName = '') {
+    if (this.formGroup.get(formControlName)?.hasError('required')) {
+      return `${
+        formControlName.charAt(0).toUpperCase() + formControlName.slice(1)
+      } is required`;
+    }
+
+    if (this.formGroup.get(formControlName)?.hasError('email')) {
+      return 'Invalid Email';
+    }
+
+    return '';
   }
 
   ngOnDestroy() {
-    this.login$?.unsubscribe();
+    this.#login$?.unsubscribe();
   }
 }

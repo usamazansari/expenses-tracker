@@ -1,7 +1,9 @@
-import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+
+import { NotificationComponent } from '@expenses-tracker/shared/common';
+
 import { NavbarComponent } from '../navbar/navbar.component';
-import { NotificationComponent } from '../notification/notification.component';
 
 @Component({
   selector: 'expenses-tracker-layout',
@@ -9,10 +11,4 @@ import { NotificationComponent } from '../notification/notification.component';
   imports: [CommonModule, NavbarComponent, NotificationComponent],
   templateUrl: './layout.component.html'
 })
-export class LayoutComponent {
-  @Output() navigate$ = new EventEmitter<{ path: string; query?: string }>();
-
-  navigate(path = '', query?: string) {
-    this.navigate$.emit({ path, query });
-  }
-}
+export class LayoutComponent {}

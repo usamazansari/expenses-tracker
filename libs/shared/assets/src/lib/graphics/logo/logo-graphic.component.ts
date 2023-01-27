@@ -1,14 +1,18 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Attribute, Component } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'expenses-tracker-logo-graphic',
   standalone: true,
+  imports: [CommonModule],
   template: `
     <svg
       version="1.1"
       viewBox="0 0 700 575"
       xmlns="http://www.w3.org/2000/svg"
-      xmlns:xlink="http://www.w3.org/1999/xlink">
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      [classList]="classes$ | async">
       <defs>
         <symbol id="t" overflow="visible">
           <path
@@ -148,4 +152,9 @@ import { Component } from '@angular/core';
     <!-- expense by PenSmasher from <a href="https://thenounproject.com/browse/icons/term/expense/" target="_blank" title="expense Icons">Noun Project</a> -->
   `
 })
-export class LogoGraphicComponent {}
+export class LogoGraphicComponent {
+  classes$ = new BehaviorSubject<string>('');
+  constructor(@Attribute('class') public classes: string) {
+    this.classes$.next(classes);
+  }
+}

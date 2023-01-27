@@ -1,21 +1,35 @@
 import { Injectable } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
-import { FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 
-import { NotificationService } from '@expenses-tracker/layout';
+import { NotificationService } from '@expenses-tracker/shared/common';
+import {
+  IFlag,
+  INITIAL_FLAGS,
+  IUser
+} from '@expenses-tracker/shared/interfaces';
 
 import { AuthService } from '../../services';
+
+export type ComponentFlags = {
+  signup: IFlag;
+  saveUser: IFlag;
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class SignupService {
-  #errors$ = new BehaviorSubject<string[]>([]);
-  #errors: string[] = [];
+  #flags$ = new BehaviorSubject<ComponentFlags>({
+    signup: INITIAL_FLAGS,
+    saveUser: INITIAL_FLAGS
+  });
+  #flags: ComponentFlags = { signup: INITIAL_FLAGS, saveUser: INITIAL_FLAGS };
 
   constructor(
     private _authService: AuthService,
+    private _router: Router,
     private _notificationService: NotificationService
   ) {}
 
@@ -26,12 +40,23 @@ export class SignupService {
     email: string | null | undefined;
     password: string | null | undefined;
   }) {
+    this.#flags = {
+      ...this.#flags,
+      signup: {
+        ...this.#flags.signup,
+        dirty: true,
+        loading: true
+      }
+    };
+    this.#setFlags(this.#flags);
+
     return this._authService.signup$({ email, password }).pipe(
       tap(({ user }) => {
         this._notificationService.success({
-          description: `Registered successfully as ${user?.email}. Please login to continue.`,
-          title: 'Signup Successful'
+          description: `Registered successfully as ${user?.email}.`,
+          title: 'Signup Successful!'
         });
+        this.#resetFlags();
       }),
       catchError(({ code }: FirebaseError) => {
         const error = this._authService.getError(code);
@@ -39,36 +64,78 @@ export class SignupService {
           description: `${error}.`,
           title: 'Signup failed'
         });
+        this.#flags = {
+          ...this.#flags,
+          signup: {
+            ...this.#flags.signup,
+            loading: false,
+            fail: true,
+            visible: true
+          }
+        };
+        this.#setFlags(this.#flags);
         return throwError(() => new Error(code));
       })
     );
   }
 
-  setErrors(errors: string[]) {
-    this.#errors = errors;
-    this.#errors$.next(errors);
-  }
-
-  getErrors$() {
-    return this.#errors$.asObservable();
-  }
-
-  clearErrors() {
-    this.setErrors([]);
-  }
-
-  updateErrors(formGroup: FormGroup) {
-    this.setErrors([]);
-    if (formGroup.invalid) {
-      for (const controlName in formGroup.controls) {
-        const control = formGroup.get(controlName);
-        for (const error in control?.errors) {
-          this.setErrors([
-            ...this.#errors,
-            this._authService.getError(`${controlName}-${error}`)
-          ]);
-        }
+  saveUser$(user: IUser) {
+    this.#flags = {
+      ...this.#flags,
+      saveUser: {
+        ...this.#flags.saveUser,
+        dirty: true,
+        loading: true
       }
-    }
+    };
+    this.#setFlags(this.#flags);
+    return this._authService.saveUser$(user).pipe(
+      tap(() => {
+        this._notificationService.success({
+          description: `User with email ${user?.email} successfully saved. Please login to continue.`,
+          title: 'User Registered!'
+        });
+        this._router.navigate(['auth'], { queryParams: { mode: 'login' } });
+      }),
+      catchError(({ code }: FirebaseError) => {
+        const error = this._authService.getError(code);
+        this._notificationService.error({
+          description: `${error}.`,
+          title: `Unable to save the user with email: ${user?.email}`
+        });
+        this.#flags = {
+          ...this.#flags,
+          saveUser: {
+            ...this.#flags.saveUser,
+            loading: false,
+            fail: true,
+            visible: true
+          }
+        };
+        this.#setFlags(this.#flags);
+        return throwError(() => new Error(code));
+      })
+    );
+  }
+
+  #setFlags(flags: ComponentFlags) {
+    this.#flags = { ...flags } ?? {
+      signup: INITIAL_FLAGS,
+      saveUser: INITIAL_FLAGS
+    };
+    this.#flags$.next(this.#flags);
+  }
+
+  #resetFlags() {
+    this.#flags = { signup: INITIAL_FLAGS, saveUser: INITIAL_FLAGS };
+    this.#flags$.next(this.#flags);
+  }
+
+  watchFlags$() {
+    return this.#flags$.asObservable();
+  }
+
+  dismissError() {
+    this.#resetFlags();
   }
 }

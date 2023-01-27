@@ -1,46 +1,58 @@
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { UserInfo } from 'firebase/auth';
+import { MatRippleModule } from '@angular/material/core';
 import { Observable } from 'rxjs';
 
+import { Router } from '@angular/router';
 import {
   AccountGraphicComponent,
   AuthGraphicComponent,
+  DashboardGraphicComponent,
   LogoGraphicComponent
 } from '@expenses-tracker/shared/assets';
+import { IUser } from '@expenses-tracker/shared/interfaces';
+
 import { NavbarService } from './navbar.service';
 
 @Component({
   selector: 'expenses-tracker-navbar',
   standalone: true,
   imports: [
-    CommonModule,
-    NgOptimizedImage,
     AccountGraphicComponent,
+    AuthGraphicComponent,
+    DashboardGraphicComponent,
+    CommonModule,
     LogoGraphicComponent,
-    AuthGraphicComponent
+    MatRippleModule
   ],
   templateUrl: './navbar.component.html'
 })
 export class NavbarComponent implements OnInit {
-  isLoggedIn$!: Observable<boolean>;
-  user$!: Observable<UserInfo | null>;
+  user$!: Observable<IUser | null>;
 
   @Output() gotoHome$ = new EventEmitter<void>();
   @Output() gotoAuth$ = new EventEmitter<void>();
+  @Output() gotoDashboard$ = new EventEmitter<void>();
 
-  constructor(private _service: NavbarService) {}
+  constructor(private _service: NavbarService, private _router: Router) {}
 
   ngOnInit() {
-    this.isLoggedIn$ = this._service.getIsLoggedIn$();
     this.user$ = this._service.getUser$();
   }
 
   gotoHome() {
-    this.gotoHome$.emit();
+    this._router.navigate(['']);
   }
 
   gotoAuth() {
-    this.gotoAuth$.emit();
+    this._router.navigate(['auth'], { queryParams: { mode: 'login' } });
+  }
+
+  gotoDashboard() {
+    this._router.navigate(['dashboard']);
+  }
+
+  gotoProfile() {
+    this._router.navigate(['profile']);
   }
 }

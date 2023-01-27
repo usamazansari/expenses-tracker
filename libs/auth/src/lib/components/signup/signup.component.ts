@@ -1,5 +1,5 @@
-import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -7,12 +7,17 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
+import { MatRippleModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { debounceTime, Observable, Subscription } from 'rxjs';
+import { MatInputModule } from '@angular/material/input';
+import firebase from 'firebase/compat';
+import { Observable, Subscription } from 'rxjs';
 
 import { RegisterGraphicComponent } from '@expenses-tracker/shared/assets';
 
-import { SignupService } from './signup.service';
+import { ComponentFlags, SignupService } from './signup.service';
+import { IUser } from '@expenses-tracker/shared/interfaces';
 
 type SignupForm = {
   email: FormControl<string | null>;
@@ -24,17 +29,20 @@ type SignupForm = {
   standalone: true,
   imports: [
     CommonModule,
-    NgOptimizedImage,
-    RegisterGraphicComponent,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatRippleModule,
     ReactiveFormsModule,
-    MatIconModule
+    RegisterGraphicComponent
   ],
   templateUrl: './signup.component.html'
 })
 export class SignupComponent implements OnInit, OnDestroy {
   formGroup!: FormGroup<SignupForm>;
-  errors$!: Observable<string[]>;
-  signup$!: Subscription;
+  flags$!: Observable<ComponentFlags>;
+  #signup$!: Subscription;
+  #saveUser$!: Subscription;
 
   constructor(private _fb: FormBuilder, private _service: SignupService) {}
 
@@ -47,28 +55,49 @@ export class SignupComponent implements OnInit, OnDestroy {
         validators: [Validators.required]
       })
     });
-
-    this.formGroup.valueChanges.pipe(debounceTime(500)).subscribe(() => {
-      this._service.updateErrors(this.formGroup);
-    });
-
-    this.errors$ = this._service.getErrors$();
+    this.flags$ = this._service.watchFlags$();
   }
 
   signup() {
     if (this.formGroup.valid) {
       const { email, password } = this.formGroup.value;
-      this.signup$ = this._service.signup$({ email, password }).subscribe();
-    } else {
-      this._service.updateErrors(this.formGroup);
+      this.#signup$ = this._service
+        .signup$({ email, password })
+        .subscribe(credentials => {
+          if (!!credentials) {
+            this.saveUser(credentials);
+          }
+        });
     }
   }
 
-  clearErrors() {
-    this._service.clearErrors();
+  saveUser(credentials: firebase.auth.UserCredential) {
+    const { user } = credentials;
+    if (!!user) {
+      this.#saveUser$ = this._service.saveUser$(user as IUser).subscribe();
+    }
+  }
+
+  getError(formControlName = '') {
+    if (this.formGroup.get(formControlName)?.hasError('required')) {
+      return `${
+        formControlName.charAt(0).toUpperCase() + formControlName.slice(1)
+      } is required`;
+    }
+
+    if (this.formGroup.get(formControlName)?.hasError('email')) {
+      return 'Invalid Email';
+    }
+
+    return '';
+  }
+
+  dismissError() {
+    this._service.dismissError();
   }
 
   ngOnDestroy() {
-    this.signup$?.unsubscribe();
+    this.#signup$?.unsubscribe();
+    this.#saveUser$?.unsubscribe();
   }
 }

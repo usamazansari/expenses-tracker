@@ -29,8 +29,6 @@ const firebaseConfig = {
   storageBucket: 'ua-expenses-tracker.appspot.com'
 };
 
-if (devEnv) firebase.firestore.setLogLevel('debug');
-
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
