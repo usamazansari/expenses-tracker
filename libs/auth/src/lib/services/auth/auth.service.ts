@@ -10,6 +10,7 @@ import {
   throwError
 } from 'rxjs';
 
+import { Collections } from '@expenses-tracker/shared/common';
 import { IUser } from '@expenses-tracker/shared/interfaces';
 
 @Injectable({
@@ -38,7 +39,7 @@ export class AuthService {
   ) {
     combineLatest([
       this._auth.user,
-      this._firestore.collection<IUser>('users').valueChanges()
+      this._firestore.collection<IUser>(Collections.Users).valueChanges()
     ]).subscribe(([user, users]) => {
       if (!user) this.setUser(null);
       else this.setUser(users.find(u => u.uid === user?.uid) ?? null);
@@ -83,13 +84,15 @@ export class AuthService {
 
   saveUser$({ email, uid }: IUser) {
     return from(
-      this._firestore.collection<Partial<IUser>>('users').add({ email, uid })
+      this._firestore
+        .collection<Partial<IUser>>(Collections.Users)
+        .add({ email, uid })
     );
   }
 
   getUserFromFirestore$(uid: string) {
     return this._firestore
-      .collection<IUser>('users', ref => ref.where('uid', '==', uid))
+      .collection<IUser>(Collections.Users, ref => ref.where('uid', '==', uid))
       .get()
       .pipe(
         switchMap(query => {
@@ -101,7 +104,10 @@ export class AuthService {
             return throwError(() => new Error('No matching documents found!'));
           }
           const [{ id = '' }] = docs;
-          return this._firestore.collection<IUser>('users').doc(id).get();
+          return this._firestore
+            .collection<IUser>(Collections.Users)
+            .doc(id)
+            .get();
         }),
         catchError(({ message }: Error) => {
           return throwError(() => new Error(message));
