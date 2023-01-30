@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
-import { User } from 'firebase/auth';
 import { BehaviorSubject } from 'rxjs';
 
+import { IUser } from '@expenses-tracker/shared/interfaces';
 import { ExtractInitialsPipe } from '../../pipes';
 
 @Component({
@@ -14,9 +14,9 @@ import { ExtractInitialsPipe } from '../../pipes';
   templateUrl: './profile-view.component.html'
 })
 export class ProfileViewComponent {
-  #user$ = new BehaviorSubject<User | null>(null);
+  #user$ = new BehaviorSubject<IUser | null>(null);
   @Input()
-  set user(value: User | null) {
+  set user(value: IUser | null) {
     this.#user$.next(value);
   }
   get user() {

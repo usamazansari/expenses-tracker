@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import { User } from 'firebase/auth';
 import { BehaviorSubject } from 'rxjs';
 
 import { AuthService } from '@expenses-tracker/auth';
+import { IUser } from '@expenses-tracker/shared/interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NavbarService {
-  #user$ = new BehaviorSubject<User | null>(null);
+  #user$ = new BehaviorSubject<IUser | null>(null);
 
   constructor(private _authService: AuthService) {
     this._authService.getUser$().subscribe(user => {
@@ -16,7 +16,7 @@ export class NavbarService {
     });
   }
 
-  setUser(user: User | null) {
+  setUser(user: IUser | null) {
     this.#user$.next(user);
   }
 

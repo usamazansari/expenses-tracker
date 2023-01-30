@@ -9,8 +9,8 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { User } from 'firebase/auth';
 
+import { IUser } from '@expenses-tracker/shared/interfaces';
 import { ExtractInitialsPipe } from '../../pipes';
 
 type ProfileEditForm = {
@@ -33,12 +33,12 @@ type ProfileEditForm = {
 })
 export class ProfileEditComponent implements OnInit {
   formGroup!: FormGroup<ProfileEditForm>;
-  @Input() user!: User;
+  @Input() user!: IUser;
   @Output() editUserInfo$ = new EventEmitter<{
     uid: string;
     name: string;
   }>();
-  @Output() cancelEdit$ = new EventEmitter<void>();
+  @Output() cancelEdits$ = new EventEmitter<void>();
 
   constructor(private _fb: FormBuilder) {}
 
@@ -58,7 +58,6 @@ export class ProfileEditComponent implements OnInit {
   }
 
   cancelEdit() {
-    console.log('in here');
-    this.cancelEdit$.emit();
+    this.cancelEdits$.emit();
   }
 }

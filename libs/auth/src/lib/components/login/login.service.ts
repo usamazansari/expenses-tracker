@@ -10,18 +10,14 @@ import { AuthService } from '../../services';
 
 export type ComponentFlags = {
   login: IFlag;
-  saveUser: IFlag;
 };
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
-  #flags$ = new BehaviorSubject<ComponentFlags>({
-    login: INITIAL_FLAGS,
-    saveUser: INITIAL_FLAGS
-  });
-  #flags: ComponentFlags = { login: INITIAL_FLAGS, saveUser: INITIAL_FLAGS };
+  #flags$ = new BehaviorSubject<ComponentFlags>({ login: INITIAL_FLAGS });
+  #flags: ComponentFlags = { login: INITIAL_FLAGS };
 
   constructor(
     private _router: Router,
@@ -47,11 +43,7 @@ export class LoginService {
     this.#setFlags(this.#flags);
 
     return this._authService.login$({ email, password }).pipe(
-      tap(({ user }) => {
-        this._notificationService.success({
-          description: `Logged in as ${user?.displayName ?? user?.email}`,
-          title: 'Login successful!'
-        });
+      tap(() => {
         this.#resetFlags();
         this._router.navigate(['dashboard']);
       }),
@@ -77,15 +69,12 @@ export class LoginService {
   }
 
   #setFlags(flags: ComponentFlags) {
-    this.#flags = { ...flags } ?? {
-      login: INITIAL_FLAGS,
-      saveUser: INITIAL_FLAGS
-    };
+    this.#flags = { ...flags } ?? { login: INITIAL_FLAGS };
     this.#flags$.next(this.#flags);
   }
 
   #resetFlags() {
-    this.#flags = { login: INITIAL_FLAGS, saveUser: INITIAL_FLAGS };
+    this.#flags = { login: INITIAL_FLAGS };
     this.#flags$.next(this.#flags);
   }
 

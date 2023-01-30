@@ -1,33 +1,48 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { updateProfile, User } from 'firebase/auth';
-import { BehaviorSubject, EMPTY, from } from 'rxjs';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  from,
+  switchMap,
+  throwError
+} from 'rxjs';
+
+import { Collections } from '@expenses-tracker/shared/common';
+import { IUser } from '@expenses-tracker/shared/interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  #user$ = new BehaviorSubject<User | null>(null);
-  #user: User | null = null;
+  #user$ = new BehaviorSubject<IUser | null>(null);
 
   errorMap = new Map<string, string>([
+    ['email-required', 'Email is required'],
+    ['email-email', 'Email is invalid'],
+    ['password-required', 'Password is required'],
     ['auth/email-already-in-use', 'The email entered is already in use'],
-    ['auth/invalid-email', 'Invalid Email address'],
+    ['auth/weak-password', 'The password is too weak'],
+    ['auth/user-not-found', 'A user with the entered email does not exist'],
+    ['auth/wrong-password', 'Incorrect password'],
     [
       'auth/network-request-failed',
       'Unable to connect to the service, please try again later'
-    ],
-    ['auth/user-not-found', 'A user with the entered email does not exist'],
-    ['auth/weak-password', 'The password is too weak'],
-    ['auth/wrong-password', 'Incorrect password'],
-    ['email-email', 'Email is invalid'],
-    ['email-required', 'Email is required'],
-    ['password-required', 'Password is required']
+    ]
   ]);
 
-  constructor(private _auth: AngularFireAuth) {
-    this._auth.user.subscribe(user => {
-      this.setUser(user as User);
+  constructor(
+    private _auth: AngularFireAuth,
+    private _firestore: AngularFirestore
+  ) {
+    combineLatest([
+      this._auth.user,
+      this._firestore.collection<IUser>(Collections.Users).valueChanges()
+    ]).subscribe(([user, users]) => {
+      if (!user) this.setUser(null);
+      else this.setUser(users.find(u => u.uid === user?.uid) ?? null);
     });
   }
 
@@ -35,8 +50,7 @@ export class AuthService {
     return this.#user$.asObservable();
   }
 
-  setUser(user: User | null) {
-    this.#user = user ?? null;
+  setUser(user: IUser | null) {
     this.#user$.next(user);
   }
 
@@ -68,10 +82,37 @@ export class AuthService {
     );
   }
 
-  editUserInfo$({ name }: { name: string }) {
-    return !this.#user
-      ? EMPTY
-      : from(updateProfile(this.#user, { displayName: name }));
+  saveUser$({ email, uid }: IUser) {
+    return from(
+      this._firestore
+        .collection<Partial<IUser>>(Collections.Users)
+        .add({ email, uid })
+    );
+  }
+
+  getUserFromFirestore$(uid: string) {
+    return this._firestore
+      .collection<IUser>(Collections.Users, ref => ref.where('uid', '==', uid))
+      .get()
+      .pipe(
+        switchMap(query => {
+          if (!query) {
+            return throwError(() => new Error('Query returned null!'));
+          }
+          const { docs = [] } = query;
+          if (!docs.length) {
+            return throwError(() => new Error('No matching documents found!'));
+          }
+          const [{ id = '' }] = docs;
+          return this._firestore
+            .collection<IUser>(Collections.Users)
+            .doc(id)
+            .get();
+        }),
+        catchError(({ message }: Error) => {
+          return throwError(() => new Error(message));
+        })
+      );
   }
 
   getError(message: string) {

@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
-import { User } from 'firebase/auth';
 import { Observable, Subscription } from 'rxjs';
 
 import { NotificationService } from '@expenses-tracker/shared/common';
+import { IUser } from '@expenses-tracker/shared/interfaces';
 
 import { ExtractInitialsPipe } from '../../pipes';
 import { ProfileEditComponent } from '../profile-edit/profile-edit.component';
@@ -28,7 +28,7 @@ import { ComponentFlags, ProfileService } from './profile.service';
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit, OnDestroy {
-  user$!: Observable<User | null>;
+  user$!: Observable<IUser | null>;
   isEditing = false;
   flags$!: Observable<ComponentFlags>;
   #logout$!: Subscription;
@@ -52,7 +52,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   editUserInfo($: { uid: string; name: string }) {
-    this._service.editUserInfo$($).subscribe({
+    this._service.updateUserDetails$($).subscribe({
       next: () => {
         this._notificationService.success({
           title: 'Successful!',
@@ -71,12 +71,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   cancelEdit() {
-    console.log('in here!');
     this._notificationService.info({
       title: 'Changed not saved.',
       description: 'Profile details were not updated since you clicked cancel.'
     });
-    this.isEditing = false;
+    this.isEditing = !this.isEditing;
   }
 
   copyUID(uid: string | null) {

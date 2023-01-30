@@ -2,7 +2,14 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { Injectable } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 import { Router } from '@angular/router';
-import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  from,
+  switchMap,
+  tap,
+  throwError
+} from 'rxjs';
 
 import { AuthService } from '@expenses-tracker/auth';
 import { NotificationService } from '@expenses-tracker/shared/common';
@@ -112,8 +119,17 @@ export class ProfileService {
     );
   }
 
-  editUserInfo$({ name }: { name: string }) {
-    return this._authService.editUserInfo$({ name });
+  updateUserDetails$({ uid, name }: { uid: string; name: string }) {
+    return this._authService.getUserFromFirestore$(uid ?? '').pipe(
+      switchMap(data =>
+        from(data?.ref.update({ displayName: name.trim() })).pipe(
+          catchError(({ code }: FirebaseError) =>
+            throwError(() => new Error(code))
+          )
+        )
+      ),
+      catchError(({ code }: FirebaseError) => throwError(() => new Error(code)))
+    );
   }
 
   copyUID(uid: string | null) {

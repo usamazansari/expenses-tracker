@@ -1,16 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatRippleModule } from '@angular/material/core';
-import { Router } from '@angular/router';
-import { User } from 'firebase/auth';
 import { Observable } from 'rxjs';
 
+import { Router } from '@angular/router';
 import {
   AccountGraphicComponent,
   AuthGraphicComponent,
   DashboardGraphicComponent,
   LogoGraphicComponent
 } from '@expenses-tracker/shared/assets';
+import { IUser } from '@expenses-tracker/shared/interfaces';
 
 import { NavbarService } from './navbar.service';
 
@@ -28,7 +28,7 @@ import { NavbarService } from './navbar.service';
   templateUrl: './navbar.component.html'
 })
 export class NavbarComponent implements OnInit {
-  user$!: Observable<User | null>;
+  user$!: Observable<IUser | null>;
 
   @Output() gotoHome$ = new EventEmitter<void>();
   @Output() gotoAuth$ = new EventEmitter<void>();

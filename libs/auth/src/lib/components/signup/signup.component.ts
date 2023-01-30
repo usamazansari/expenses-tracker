@@ -11,11 +11,13 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import firebase from 'firebase/compat';
 import { Observable, Subscription } from 'rxjs';
 
 import { RegisterGraphicComponent } from '@expenses-tracker/shared/assets';
 
 import { ComponentFlags, SignupService } from './signup.service';
+import { IUser } from '@expenses-tracker/shared/interfaces';
 
 type SignupForm = {
   email: FormControl<string | null>;
@@ -59,7 +61,20 @@ export class SignupComponent implements OnInit, OnDestroy {
   signup() {
     if (this.formGroup.valid) {
       const { email, password } = this.formGroup.value;
-      this.#signup$ = this._service.signup$({ email, password }).subscribe();
+      this.#signup$ = this._service
+        .signup$({ email, password })
+        .subscribe(credentials => {
+          if (!!credentials) {
+            this.saveUser(credentials);
+          }
+        });
+    }
+  }
+
+  saveUser(credentials: firebase.auth.UserCredential) {
+    const { user } = credentials;
+    if (!!user) {
+      this.#saveUser$ = this._service.saveUser$(user as IUser).subscribe();
     }
   }
 

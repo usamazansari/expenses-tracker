@@ -4,7 +4,11 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 
 import { NotificationService } from '@expenses-tracker/shared/common';
-import { IFlag, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
+import {
+  IFlag,
+  INITIAL_FLAGS,
+  IUser
+} from '@expenses-tracker/shared/interfaces';
 
 import { AuthService } from '../../services';
 
@@ -53,7 +57,6 @@ export class SignupService {
           title: 'Signup Successful!'
         });
         this.#resetFlags();
-        this._router.navigate(['auth'], { queryParams: { mode: 'login' } });
       }),
       catchError(({ code }: FirebaseError) => {
         const error = this._authService.getError(code);
@@ -65,6 +68,45 @@ export class SignupService {
           ...this.#flags,
           signup: {
             ...this.#flags.signup,
+            loading: false,
+            fail: true,
+            visible: true
+          }
+        };
+        this.#setFlags(this.#flags);
+        return throwError(() => new Error(code));
+      })
+    );
+  }
+
+  saveUser$(user: IUser) {
+    this.#flags = {
+      ...this.#flags,
+      saveUser: {
+        ...this.#flags.saveUser,
+        dirty: true,
+        loading: true
+      }
+    };
+    this.#setFlags(this.#flags);
+    return this._authService.saveUser$(user).pipe(
+      tap(() => {
+        this._notificationService.success({
+          description: `User with email ${user?.email} successfully saved. Please login to continue.`,
+          title: 'User Registered!'
+        });
+        this._router.navigate(['auth'], { queryParams: { mode: 'login' } });
+      }),
+      catchError(({ code }: FirebaseError) => {
+        const error = this._authService.getError(code);
+        this._notificationService.error({
+          description: `${error}.`,
+          title: `Unable to save the user with email: ${user?.email}`
+        });
+        this.#flags = {
+          ...this.#flags,
+          saveUser: {
+            ...this.#flags.saveUser,
             loading: false,
             fail: true,
             visible: true
