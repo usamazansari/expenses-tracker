@@ -58,7 +58,6 @@ export class ProfileEditComponent implements OnInit {
   }
 
   cancelEdit() {
-    console.log('in here');
     this.cancelEdit$.emit();
   }
 }

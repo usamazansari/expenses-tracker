@@ -71,7 +71,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   cancelEdit() {
-    console.log('in here!');
     this._notificationService.info({
       title: 'Changed not saved.',
       description: 'Profile details were not updated since you clicked cancel.'
