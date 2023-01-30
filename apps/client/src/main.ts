@@ -1,19 +1,20 @@
-import { importProvidersFrom, isDevMode } from '@angular/core';
 import { provideImgixLoader } from '@angular/common';
+import { importProvidersFrom, isDevMode } from '@angular/core';
 import { AngularFireModule } from '@angular/fire/compat';
-import { AngularFireAuthModule } from '@angular/fire/compat/auth';
-import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
-import { USE_EMULATOR as AUTH_EMULATOR } from '@angular/fire/compat/auth';
-import { USE_EMULATOR as DATABASE_EMULATOR } from '@angular/fire/compat/database';
-import { USE_EMULATOR as FIRESTORE_EMULATOR } from '@angular/fire/compat/firestore';
-import { USE_EMULATOR as FUNCTIONS_EMULATOR } from '@angular/fire/compat/functions';
+import {
+  AngularFireAuthModule,
+  USE_EMULATOR as AUTH_EMULATOR
+} from '@angular/fire/compat/auth';
+import {
+  AngularFirestoreModule,
+  USE_EMULATOR as FIRESTORE_EMULATOR
+} from '@angular/fire/compat/firestore';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
   provideRouter,
   withEnabledBlockingInitialNavigation
 } from '@angular/router';
-import firebase from 'firebase/compat/app';
 
 import { AppComponent } from './app/app.component';
 import { appRoutes } from './app/app.routes';
@@ -48,16 +49,8 @@ bootstrapApplication(AppComponent, {
       useValue: devEnv ? ['http://localhost:9099', 9099] : undefined
     },
     {
-      provide: DATABASE_EMULATOR,
-      useValue: devEnv ? ['http://localhost', 9000] : undefined
-    },
-    {
       provide: FIRESTORE_EMULATOR,
       useValue: devEnv ? ['localhost', 8088] : undefined
-    },
-    {
-      provide: FUNCTIONS_EMULATOR,
-      useValue: devEnv ? ['http://localhost', 5001] : undefined
     }
   ]
 }).catch(err => console.error(err));
