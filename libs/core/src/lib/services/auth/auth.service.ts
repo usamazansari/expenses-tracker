@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { updateProfile, User } from 'firebase/auth';
+import { updateProfile } from 'firebase/auth';
 import { EMPTY, from } from 'rxjs';
 
 import { ContextService } from '../context/context.service';
@@ -12,11 +12,7 @@ export class AuthService {
   constructor(
     private _auth: AngularFireAuth,
     private _context: ContextService
-  ) {
-    this._auth.user.subscribe(user => {
-      this._context.setUser(user as User);
-    });
-  }
+  ) {}
 
   login$({
     email,
