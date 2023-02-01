@@ -34,7 +34,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   #logout$!: Subscription;
 
   constructor(
-    private _notificationService: NotificationService,
+    private _notification: NotificationService,
     private _service: ProfileService
   ) {}
 
@@ -54,14 +54,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
   editUserInfo($: { uid: string; name: string }) {
     this._service.editUserInfo$($).subscribe({
       next: () => {
-        this._notificationService.success({
+        this._notification.success({
           title: 'Successful!',
           description: 'User details updated successfully.'
         });
         this.isEditing = false;
       },
       error: error => {
-        this._notificationService.error({
+        this._notification.error({
           title: 'Error!',
           description: `Unable to update the user details - ${error}.`
         });
@@ -71,7 +71,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   cancelEdit() {
-    this._notificationService.info({
+    this._notification.info({
       title: 'Changed not saved.',
       description: 'Profile details were not updated since you clicked cancel.'
     });

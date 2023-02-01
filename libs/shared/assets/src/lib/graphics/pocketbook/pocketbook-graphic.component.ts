@@ -3,7 +3,7 @@ import { Attribute, Component } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({
-  selector: 'expenses-tracker-pocketbook',
+  selector: 'expenses-tracker-pocketbook-graphic',
   standalone: true,
   imports: [CommonModule],
   template: `<svg

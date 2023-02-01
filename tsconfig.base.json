@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@expenses-tracker/auth": ["libs/auth/src/index.ts"],
+      "@expenses-tracker/core": ["libs/core/src/index.ts"],
       "@expenses-tracker/dashboard": ["libs/dashboard/src/index.ts"],
       "@expenses-tracker/layout": ["libs/layout/src/index.ts"],
       "@expenses-tracker/pocketbook": ["libs/pocketbook/src/index.ts"],
