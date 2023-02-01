@@ -11,6 +11,11 @@ export const appRoutes: Route[] = [
       import('@expenses-tracker/dashboard').then(m => m.dashboardRoutes)
   },
   {
+    path: 'pocketbook',
+    loadChildren: () =>
+      import('@expenses-tracker/pocketbook').then(m => m.pocketbookRoutes)
+  },
+  {
     path: 'profile',
     loadChildren: () =>
       import('@expenses-tracker/profile').then(m => m.profileRoutes)

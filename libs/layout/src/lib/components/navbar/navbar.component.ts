@@ -9,7 +9,8 @@ import {
   AccountGraphicComponent,
   AuthGraphicComponent,
   DashboardGraphicComponent,
-  LogoGraphicComponent
+  LogoGraphicComponent,
+  PocketbookGraphicComponent
 } from '@expenses-tracker/shared/assets';
 
 import { NavbarService } from './navbar.service';
@@ -18,12 +19,14 @@ import { NavbarService } from './navbar.service';
   selector: 'expenses-tracker-navbar',
   standalone: true,
   imports: [
+    CommonModule,
+    MatRippleModule,
+
     AccountGraphicComponent,
     AuthGraphicComponent,
     DashboardGraphicComponent,
-    CommonModule,
     LogoGraphicComponent,
-    MatRippleModule
+    PocketbookGraphicComponent
   ],
   templateUrl: './navbar.component.html'
 })
@@ -33,6 +36,7 @@ export class NavbarComponent implements OnInit {
   @Output() gotoHome$ = new EventEmitter<void>();
   @Output() gotoAuth$ = new EventEmitter<void>();
   @Output() gotoDashboard$ = new EventEmitter<void>();
+  @Output() gotoPocketbook$ = new EventEmitter<void>();
 
   constructor(private _service: NavbarService, private _router: Router) {}
 
@@ -50,6 +54,10 @@ export class NavbarComponent implements OnInit {
 
   gotoDashboard() {
     this._router.navigate(['dashboard']);
+  }
+
+  gotoPocketbook() {
+    this._router.navigate(['pocketbook']);
   }
 
   gotoProfile() {
