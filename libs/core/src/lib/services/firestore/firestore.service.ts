@@ -32,7 +32,8 @@ export class FirestoreService {
           ...pocketbook,
           id: this._firestore.createId(),
           owner: user?.uid ?? '',
-          createdAt: new Date().getUTCSeconds()
+          collaborators: [],
+          createdAt: new Date()
         })
       )
     );

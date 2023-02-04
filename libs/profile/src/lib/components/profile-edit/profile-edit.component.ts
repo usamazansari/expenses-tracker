@@ -58,6 +58,7 @@ export class ProfileEditComponent implements OnInit {
   }
 
   cancelEdit() {
+    this.formGroup.reset();
     this.cancelEdit$.emit();
   }
 }

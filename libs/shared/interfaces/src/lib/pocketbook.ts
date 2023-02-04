@@ -2,13 +2,15 @@ interface IPocketbook {
   id: string;
   owner: string;
   name?: string;
-  createdAt: number;
+  collaborators: string[];
+  createdAt: Date;
 }
 
 const POCKETBOOK_STUB: IPocketbook = {
   id: '',
   owner: '',
-  createdAt: 0
+  collaborators: [],
+  createdAt: new Date(0)
 };
 
 export { IPocketbook, POCKETBOOK_STUB };

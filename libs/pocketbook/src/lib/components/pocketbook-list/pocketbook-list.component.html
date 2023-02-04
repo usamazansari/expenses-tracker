@@ -1,32 +1,50 @@
 <ng-container *ngIf="pocketbookList$ | async as pocketbookList">
   <div
-    class="relative grid grid-cols-1 grid-rows-1 gap-2 p-4 bg-white border rounded-lg min-h-[50vh]">
-    <ng-container *ngIf="!!pocketbookList.length; else emptyPocketbookList">
-      <ng-container *ngFor="let pocketbook of pocketbookList">
-        <div>
-          <pre>{{ pocketbook | json }}</pre>
+    class="relative grid grid-cols-1 gap-2 p-4 bg-white rounded-lg min-h-[50vh]">
+    <div class="flex items-center justify-center gap-2">
+      <expenses-tracker-pocketbook-graphic
+        class="w-20 fill-blue-700"></expenses-tracker-pocketbook-graphic>
+      <span class="text-3xl text-blue-700 cursor-default">
+        My Pocketbooks
+      </span>
+    </div>
+    <ng-container *ngIf="!pocketbookList.length; else showPocketbookList">
+      <div class="relative grid p-4">
+        <div class="grid gap-2 place-content-center">
+          <div class="flex items-center justify-center gap-2">
+            <expenses-tracker-empty-pocketbook-list-graphic
+              class="w-16 fill-red-500"></expenses-tracker-empty-pocketbook-list-graphic>
+            <p class="text-red-500 cursor-default">No pocketbooks found.</p>
+          </div>
+          <div class="flex items-center justify-center gap-2">
+            <button
+              matRipple
+              type="button"
+              class="flex items-center justify-center gap-2 px-6 py-3 mx-2 text-white bg-blue-700 rounded-lg md:justify-self-center"
+              (click)="addPocketbook()">
+              <mat-icon>add</mat-icon>
+              Add Pocketbook
+            </button>
+          </div>
         </div>
-      </ng-container>
+      </div>
     </ng-container>
-    <ng-template #emptyPocketbookList>
-      <div class="grid gap-2 place-content-center">
-        <div class="flex items-center justify-center gap-2">
-          <expenses-tracker-empty-pocketbook-list-graphic
-            class="w-20 fill-blue-700"></expenses-tracker-empty-pocketbook-list-graphic>
-          <p class="text-gray-700 cursor-default">
-            No pocketbooks found. Try Adding some pocketbooks.
-          </p>
+    <ng-template #showPocketbookList>
+      <div class="grid grid-rows-[1fr_auto] gap-3">
+        <div class="grid items-center grid-cols-1 gap-2 md:grid-cols-2">
+          <ng-container *ngFor="let pocketbook of pocketbookList">
+            <expenses-tracker-pocketbook-list-item
+              [pocketbook]="pocketbook"></expenses-tracker-pocketbook-list-item>
+          </ng-container>
         </div>
-        <div class="flex items-center justify-center gap-2">
-          <button
-            matRipple
-            type="button"
-            class="flex items-center justify-center gap-2 px-6 py-3 mx-2 text-white bg-blue-700 rounded-lg md:justify-self-center"
-            (click)="addPocketbook()">
-            <mat-icon>add</mat-icon>
-            Add Pocketbook
-          </button>
-        </div>
+        <button
+          matRipple
+          type="button"
+          class="flex items-center justify-center gap-2 px-6 py-3 mx-2 text-white bg-blue-700 rounded-lg md:justify-self-center"
+          (click)="addPocketbook()">
+          <mat-icon>add</mat-icon>
+          Add Pocketbook
+        </button>
       </div>
     </ng-template>
   </div>

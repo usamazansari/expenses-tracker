@@ -60,7 +60,11 @@ export class LoginComponent implements OnInit, OnDestroy {
   login() {
     if (!this.formGroup.invalid) {
       const { email, password } = this.formGroup.value;
-      this.#login$ = this._service.login$({ email, password }).subscribe();
+      this.#login$ = this._service.login$({ email, password }).subscribe({
+        next: () => {
+          this.formGroup.reset();
+        }
+      });
     }
   }
 
