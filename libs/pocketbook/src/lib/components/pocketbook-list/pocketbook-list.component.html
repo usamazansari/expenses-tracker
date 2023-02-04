@@ -1,1 +1,33 @@
-<p>pocketbook-list works!</p>
+<ng-container *ngIf="pocketbookList$ | async as pocketbookList">
+  <div
+    class="relative grid grid-cols-1 grid-rows-1 gap-2 p-4 bg-white border rounded-lg min-h-[50vh]">
+    <ng-container *ngIf="!!pocketbookList.length; else emptyPocketbookList">
+      <ng-container *ngFor="let pocketbook of pocketbookList">
+        <div>
+          <pre>{{ pocketbook | json }}</pre>
+        </div>
+      </ng-container>
+    </ng-container>
+    <ng-template #emptyPocketbookList>
+      <div class="grid gap-2 place-content-center">
+        <div class="flex items-center justify-center gap-2">
+          <expenses-tracker-empty-pocketbook-list-graphic
+            class="w-20 fill-blue-700"></expenses-tracker-empty-pocketbook-list-graphic>
+          <p class="text-gray-700 cursor-default">
+            No pocketbooks found. Try Adding some pocketbooks.
+          </p>
+        </div>
+        <div class="flex items-center justify-center gap-2">
+          <button
+            matRipple
+            type="button"
+            class="flex items-center justify-center gap-2 px-6 py-3 mx-2 text-white bg-blue-700 rounded-lg md:justify-self-center"
+            (click)="addPocketbook()">
+            <mat-icon>add</mat-icon>
+            Add Pocketbook
+          </button>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</ng-container>
