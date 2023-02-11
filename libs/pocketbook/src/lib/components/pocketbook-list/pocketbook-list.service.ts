@@ -15,7 +15,7 @@ export class PocketbookListService {
   constructor(private _router: Router, private _firestore: FirestoreService) {}
 
   fetchPocketbookList$() {
-    this._firestore.getAllPocketbooks$().subscribe(pocketbookList => {
+    this._firestore.getPocketbookList$().subscribe(pocketbookList => {
       this.setPocketbookList(pocketbookList);
     });
   }

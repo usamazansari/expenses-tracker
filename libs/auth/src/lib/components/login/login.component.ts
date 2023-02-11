@@ -54,6 +54,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       })
     });
 
+    this._service.dismissError();
     this.flags$ = this._service.watchFlags$();
   }
 

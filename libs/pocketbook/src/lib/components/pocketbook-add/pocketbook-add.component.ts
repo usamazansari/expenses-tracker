@@ -11,7 +11,8 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { Subscription } from 'rxjs';
+import { User } from 'firebase/auth';
+import { Observable, Subscription } from 'rxjs';
 
 import { AddPocketbookGraphicComponent } from '@expenses-tracker/shared/assets';
 
@@ -40,14 +41,14 @@ type PocketbookAddForm = {
 })
 export class PocketbookAddComponent implements OnInit, OnDestroy {
   formGroup!: FormGroup<PocketbookAddForm>;
+  users$!: Observable<User[]>;
   #addPocketbook$!: Subscription;
 
-  constructor(
-    private _fb: FormBuilder,
-    private _service: PocketbookAddService
-  ) {}
+  constructor(private _fb: FormBuilder, private _service: PocketbookAddService) {}
 
   ngOnInit() {
+    this._service.fetchUserList$();
+    this.users$ = this._service.watchUserList$();
     this.formGroup = this._fb.group<PocketbookAddForm>({
       name: this._fb.control<string>('', Validators.required),
       collaborators: this._fb.control<string[]>([])

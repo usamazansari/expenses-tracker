@@ -4,11 +4,7 @@ import { FirebaseError } from '@angular/fire/app';
 import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 
-import {
-  AuthService,
-  ContextService,
-  ErrorService
-} from '@expenses-tracker/core';
+import { AuthService, ContextService, ErrorService } from '@expenses-tracker/core';
 import { NotificationService } from '@expenses-tracker/shared/common';
 import { IFlag, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
@@ -118,8 +114,8 @@ export class ProfileService {
     );
   }
 
-  editUserInfo$({ name }: { name: string }) {
-    return this._auth.editUserInfo$({ name });
+  editUserInfo$({ displayName }: { displayName: string }) {
+    return this._auth.editUserInfo$({ displayName });
   }
 
   copyUID(uid: string | null) {

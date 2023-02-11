@@ -1,20 +1,20 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { User } from 'firebase/auth';
+import { map, switchMap, throwError } from 'rxjs';
+
 import { Collections } from '@expenses-tracker/shared/common';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
-import { map, switchMap, throwError } from 'rxjs';
+
 import { ContextService } from '../context/context.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirestoreService {
-  constructor(
-    private _firestore: AngularFirestore,
-    private _context: ContextService
-  ) {}
+  constructor(private _firestore: AngularFirestore, private _context: ContextService) {}
 
-  getAllPocketbooks$() {
+  getPocketbookList$() {
     return this._context.getUser$().pipe(
       switchMap(user =>
         this._firestore
@@ -25,7 +25,7 @@ export class FirestoreService {
     );
   }
 
-  createPocketbook(pocketbook: Partial<IPocketbook>) {
+  createPocketbook$(pocketbook: Partial<IPocketbook>) {
     return this._context.getUser$().pipe(
       switchMap(user =>
         this._firestore.collection<IPocketbook>(Collections.Pocketbook).add({
@@ -39,7 +39,7 @@ export class FirestoreService {
     );
   }
 
-  deletePocketbook(pocketbook: Partial<IPocketbook>) {
+  deletePocketbook$(pocketbook: Partial<IPocketbook>) {
     return this._context.getUser$().pipe(
       switchMap(user =>
         this._firestore
@@ -60,5 +60,36 @@ export class FirestoreService {
           )
       )
     );
+  }
+
+  saveUser$({ uid, displayName, email, phoneNumber, photoURL }: User) {
+    return this._firestore
+      .collection<Partial<User>>(Collections.User)
+      .add({ uid, displayName, email, phoneNumber, photoURL });
+  }
+
+  updateUser$({ displayName, email, phoneNumber, photoURL }: Partial<User>) {
+    const user = this._context.getUser();
+    return this._firestore
+      .collection<Partial<User>>(Collections.User, ref => ref.where('uid', '==', user?.uid))
+      .get()
+      .pipe(
+        map(({ docs: [doc] }) => ({ id: doc?.id, data: doc?.data() })),
+        switchMap(({ id, data }) =>
+          this._firestore
+            .collection<Partial<User>>(Collections.User)
+            .doc(id)
+            .update({
+              displayName: displayName ?? data?.displayName,
+              email: email ?? data?.email,
+              phoneNumber: phoneNumber ?? data?.phoneNumber,
+              photoURL: photoURL ?? data?.photoURL
+            })
+        )
+      );
+  }
+
+  watchUserList$() {
+    return this._firestore.collection<Partial<User>>(Collections.User).valueChanges();
   }
 }

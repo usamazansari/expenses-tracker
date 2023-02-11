@@ -33,10 +33,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   flags$!: Observable<ComponentFlags>;
   #logout$!: Subscription;
 
-  constructor(
-    private _notification: NotificationService,
-    private _service: ProfileService
-  ) {}
+  constructor(private _notification: NotificationService, private _service: ProfileService) {}
 
   ngOnInit() {
     this.user$ = this._service.getUser$();
@@ -51,7 +48,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.isEditing = true;
   }
 
-  editUserInfo($: { uid: string; name: string }) {
+  editUserInfo($: { uid: string; displayName: string }) {
     this._service.editUserInfo$($).subscribe({
       next: () => {
         this._notification.success({

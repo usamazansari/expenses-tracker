@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 import { Router } from '@angular/router';
-import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
+import { User } from 'firebase/auth';
+import { BehaviorSubject, catchError, switchMap, tap, throwError } from 'rxjs';
 
 import { NotificationService } from '@expenses-tracker/shared/common';
 import { IFlag, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
-
-import { AuthService, ErrorService } from '@expenses-tracker/core';
+import { AuthService, ErrorService, FirestoreService } from '@expenses-tracker/core';
 
 export type ComponentFlags = {
   signup: IFlag;
@@ -26,6 +26,7 @@ export class SignupService {
   constructor(
     private _auth: AuthService,
     private _error: ErrorService,
+    private _firestore: FirestoreService,
     private _router: Router,
     private _notification: NotificationService
   ) {}
@@ -56,6 +57,11 @@ export class SignupService {
         this.#resetFlags();
         this._router.navigate(['dashboard']);
       }),
+      switchMap(({ user }) =>
+        !user
+          ? throwError(() => new Error(`Cannot Register user with email ${email}!`))
+          : this._firestore.saveUser$(user as User)
+      ),
       catchError(({ code }: FirebaseError) => {
         const error = this._error.getError(code);
         this._notification.error({
