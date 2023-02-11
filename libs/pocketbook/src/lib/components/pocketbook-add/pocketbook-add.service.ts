@@ -23,7 +23,9 @@ export class PocketbookAddService {
   ) {}
 
   fetchUserList$() {
-    this._firestore.watchUserList$().subscribe();
+    this._firestore.watchUserList$().subscribe(userList => {
+      this.#setUserList(userList as User[]);
+    });
   }
 
   #setUserList(userList: User[] = []) {

@@ -6,10 +6,7 @@
     <span class="text-3xl text-blue-700">Add Pocketbook</span>
   </div>
   <div class="grid min-w-[24rem]">
-    <form
-      [formGroup]="formGroup"
-      (ngSubmit)="addPocketbook()"
-      class="max-w-[24rem]">
+    <form [formGroup]="formGroup" (ngSubmit)="addPocketbook()" class="max-w-[24rem]">
       <div class="grid grid-rows-[1fr_auto] gap-2">
         <div class="grid gap-2">
           <div class="flex items-center gap-2">
@@ -28,22 +25,18 @@
             </mat-form-field>
           </div>
 
-          <!-- <div class="flex items-center gap-2">
-            <mat-icon class="min-w-[24px] text-gray-700">key</mat-icon>
+          <div class="flex items-center gap-2">
+            <mat-icon class="min-w-[24px] text-gray-700">person</mat-icon>
             <mat-form-field class="w-full">
-              <mat-label>Password</mat-label>
-              <input
-                size="sm"
-                matInput
-                formControlName="password"
-                type="password"
-                placeholder="Password"
-                required />
-              <mat-error *ngIf="this.formGroup.get('password')?.invalid">
-                {{ getError('password') }}
-              </mat-error>
+              <mat-label>Collaborators</mat-label>
+              <mat-select>
+                <mat-option>None</mat-option>
+                <mat-option *ngFor="let user of users$ | async" [value]="user">
+                  {{ user.email }}
+                </mat-option>
+              </mat-select>
             </mat-form-field>
-          </div> -->
+          </div>
         </div>
         <div class="grid grid-cols-2 gap-2">
           <button
