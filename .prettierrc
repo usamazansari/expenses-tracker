@@ -4,6 +4,7 @@
   "singleQuote": true,
   "trailingComma": "none",
   "tabWidth": 2,
+  "printWidth": 96,
   "endOfLine": "crlf",
   "overrides": [
     {
@@ -20,3 +21,4 @@
     }
   ]
 }
+
