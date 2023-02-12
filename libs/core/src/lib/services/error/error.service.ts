@@ -7,10 +7,7 @@ export class ErrorService {
   errorMap = new Map<string, string>([
     ['auth/email-already-in-use', 'The email entered is already in use'],
     ['auth/invalid-email', 'Invalid Email address'],
-    [
-      'auth/network-request-failed',
-      'Unable to connect to the service, please try again later'
-    ],
+    ['auth/network-request-failed', 'Unable to connect to the service, please try again later'],
     ['auth/user-not-found', 'A user with the entered email does not exist'],
     ['auth/weak-password', 'The password is too weak'],
     ['auth/wrong-password', 'Incorrect password'],
