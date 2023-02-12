@@ -12,13 +12,7 @@ import { AuthMode, AuthService } from './auth.service';
 @Component({
   selector: 'expenses-tracker-auth',
   standalone: true,
-  imports: [
-    CommonModule,
-    LoginComponent,
-    MatIconModule,
-    MatRippleModule,
-    SignupComponent
-  ],
+  imports: [CommonModule, LoginComponent, MatIconModule, MatRippleModule, SignupComponent],
   templateUrl: './auth.component.html'
 })
 export class AuthComponent implements OnInit {
