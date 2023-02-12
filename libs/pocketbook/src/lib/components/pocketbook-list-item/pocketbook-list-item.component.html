@@ -5,8 +5,7 @@
     <p class="text-xl font-bold">{{ pocketbook.name }}</p>
     <p class="text-gray-700">Collaborators</p>
     <div class="flex flex-col gap-1">
-      <ng-container
-        *ngIf="!pocketbook.collaborators.length; else showCollaborators">
+      <ng-container *ngIf="!pocketbook.collaborators.length; else showCollaborators">
         <p class="text-gray-400">No Collaborators Added</p>
       </ng-container>
       <ng-template #showCollaborators>

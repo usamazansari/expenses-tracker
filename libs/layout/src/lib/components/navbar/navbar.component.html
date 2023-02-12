@@ -7,8 +7,7 @@
       type="button"
       title="Home"
       (click)="gotoHome()">
-      <expenses-tracker-logo-graphic
-        class="w-20 fill-white"></expenses-tracker-logo-graphic>
+      <expenses-tracker-logo-graphic class="w-20 fill-white"></expenses-tracker-logo-graphic>
     </button>
     <ng-container *ngIf="user$ | async">
       <button
@@ -52,8 +51,7 @@
         type="button"
         title="Auth"
         (click)="gotoAuth()">
-        <expenses-tracker-auth-graphic
-          class="w-20 fill-white"></expenses-tracker-auth-graphic>
+        <expenses-tracker-auth-graphic class="w-20 fill-white"></expenses-tracker-auth-graphic>
       </button>
     </ng-template>
   </div>

@@ -3,10 +3,7 @@ import { Component, Input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { BehaviorSubject } from 'rxjs';
 
-import {
-  IPocketbook,
-  POCKETBOOK_STUB
-} from '@expenses-tracker/shared/interfaces';
+import { IPocketbook, POCKETBOOK_STUB } from '@expenses-tracker/shared/interfaces';
 
 @Component({
   selector: 'expenses-tracker-pocketbook-list-item',

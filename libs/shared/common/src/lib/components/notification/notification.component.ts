@@ -32,9 +32,7 @@ export class NotificationComponent implements OnInit, OnDestroy {
   }
 
   dismiss({ id }: Notification) {
-    this.notifications$.next([
-      ...this.#notifications.filter(({ id: nId }) => nId !== id)
-    ]);
+    this.notifications$.next([...this.#notifications.filter(({ id: nId }) => nId !== id)]);
   }
 
   ngOnDestroy() {

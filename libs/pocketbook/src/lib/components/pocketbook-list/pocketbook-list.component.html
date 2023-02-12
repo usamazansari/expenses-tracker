@@ -1,12 +1,9 @@
 <ng-container *ngIf="pocketbookList$ | async as pocketbookList">
-  <div
-    class="relative grid grid-cols-1 gap-2 p-4 bg-white rounded-lg min-h-[50vh]">
+  <div class="relative grid grid-cols-1 gap-2 p-4 bg-white rounded-lg min-h-[50vh]">
     <div class="flex items-center justify-center gap-2">
       <expenses-tracker-pocketbook-graphic
         class="w-20 fill-blue-700"></expenses-tracker-pocketbook-graphic>
-      <span class="text-3xl text-blue-700 cursor-default">
-        My Pocketbooks
-      </span>
+      <span class="text-3xl text-blue-700 cursor-default"> My Pocketbooks </span>
     </div>
     <ng-container *ngIf="!pocketbookList.length; else showPocketbookList">
       <div class="relative grid p-4">
