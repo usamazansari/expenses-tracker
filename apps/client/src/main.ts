@@ -11,10 +11,7 @@ import {
 } from '@angular/fire/compat/firestore';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  provideRouter,
-  withEnabledBlockingInitialNavigation
-} from '@angular/router';
+import { provideRouter, withEnabledBlockingInitialNavigation } from '@angular/router';
 
 import { AppComponent } from './app/app.component';
 import { appRoutes } from './app/app.routes';
@@ -34,9 +31,7 @@ bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
     provideImgixLoader(
-      devEnv
-        ? 'http://localhost:8080'
-        : 'https://ua-expenses-tracker.firebaseapp.com/'
+      devEnv ? 'http://localhost:8080' : 'https://ua-expenses-tracker.firebaseapp.com/'
     ),
     importProvidersFrom(
       AngularFireModule.initializeApp(firebaseConfig),
