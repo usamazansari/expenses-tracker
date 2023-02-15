@@ -1,3 +1,4 @@
+import { ENTER } from '@angular/cdk/keycodes';
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
@@ -7,21 +8,23 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatRippleModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { User } from 'firebase/auth';
-import { Observable, Subscription } from 'rxjs';
+import { filter, map, Observable, Subscription } from 'rxjs';
 
+import { ContextService } from '@expenses-tracker/core';
 import { AddPocketbookGraphicComponent } from '@expenses-tracker/shared/assets';
 
-import { PocketbookAddService } from './pocketbook-add.service';
+import { ComponentFlags, PocketbookAddService } from './pocketbook-add.service';
 
 type PocketbookAddForm = {
   name: FormControl<string | null>;
-  collaborators: FormControl<string[] | null>;
+  collaborators: FormControl<User[] | null>;
 };
 
 @Component({
@@ -29,6 +32,7 @@ type PocketbookAddForm = {
   standalone: true,
   imports: [
     CommonModule,
+    MatChipsModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -43,18 +47,41 @@ type PocketbookAddForm = {
 })
 export class PocketbookAddComponent implements OnInit, OnDestroy {
   formGroup!: FormGroup<PocketbookAddForm>;
-  users$!: Observable<User[]>;
+  userList$!: Observable<User[]>;
+  flags$!: Observable<ComponentFlags>;
+  filteredUserList$!: Observable<User[]>;
+  selectedCollaboratorList: string[] = [];
+  separatorKeysCodes = [ENTER];
   #addPocketbook$!: Subscription;
 
-  constructor(private _fb: FormBuilder, private _service: PocketbookAddService) {}
+  constructor(
+    private _fb: FormBuilder,
+    private _context: ContextService,
+    private _service: PocketbookAddService
+  ) {}
 
   ngOnInit() {
     this._service.fetchUserList$();
-    this.users$ = this._service.watchUserList$();
+    this.userList$ = this._service.watchUserList$().pipe(
+      map(users => users.filter(({ uid }) => uid !== this._context.getUser()?.uid)),
+      filter(Boolean)
+    );
+
     this.formGroup = this._fb.group<PocketbookAddForm>({
       name: this._fb.control<string>('', Validators.required),
-      collaborators: this._fb.control<string[]>([])
+      collaborators: this._fb.control<User[]>([])
     });
+
+    this.flags$ = this._service.watchFlags$();
+  }
+
+  removeCollaborator(collaborator: User): void {
+    const selectedCollaboratorList = this.formGroup.get('collaborators')?.value as User[];
+    const index = selectedCollaboratorList.findIndex(({ uid }) => uid === collaborator.uid);
+    if (index >= 0) {
+      selectedCollaboratorList.splice(index, 1);
+      this.formGroup.get('collaborators')?.setValue(selectedCollaboratorList ?? []);
+    }
   }
 
   addPocketbook() {
@@ -63,7 +90,7 @@ export class PocketbookAddComponent implements OnInit, OnDestroy {
       this.#addPocketbook$ = this._service
         .addPocketbook$({
           name: name ?? '',
-          collaborators: collaborators ?? []
+          collaboratorList: collaborators?.map(({ uid }) => uid)
         })
         .subscribe({
           next: res => {
@@ -80,10 +107,6 @@ export class PocketbookAddComponent implements OnInit, OnDestroy {
   cancelAddPocketbook() {
     this.formGroup.reset();
     this._service.cancelAddPocketbook();
-  }
-
-  dismissError() {
-    // this._service.dismissError();
   }
 
   getError(formControlName = '') {

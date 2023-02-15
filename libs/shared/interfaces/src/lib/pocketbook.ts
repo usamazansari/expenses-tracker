@@ -2,14 +2,14 @@ interface IPocketbook {
   id: string;
   owner: string;
   name?: string;
-  collaborators: string[];
+  collaboratorList: string[];
   createdAt: Date;
 }
 
 const POCKETBOOK_STUB: IPocketbook = {
   id: '',
   owner: '',
-  collaborators: [],
+  collaboratorList: [],
   createdAt: new Date(0)
 };
 

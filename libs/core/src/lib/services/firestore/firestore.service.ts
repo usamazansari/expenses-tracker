@@ -25,14 +25,14 @@ export class FirestoreService {
     );
   }
 
-  createPocketbook$(pocketbook: Partial<IPocketbook>) {
+  createPocketbook$({ name, collaboratorList = [] }: Partial<IPocketbook>) {
     return this._context.getUser$().pipe(
       switchMap(user =>
         this._firestore.collection<IPocketbook>(Collections.Pocketbook).add({
-          ...pocketbook,
           id: this._firestore.createId(),
           owner: user?.uid ?? '',
-          collaborators: [],
+          name,
+          collaboratorList,
           createdAt: new Date()
         })
       )

@@ -10,7 +10,7 @@
       <div class="grid grid-rows-[1fr_auto] gap-2">
         <div class="grid gap-2">
           <div class="flex items-center gap-2">
-            <mat-icon class="min-w-[24px] text-gray-700">person</mat-icon>
+            <mat-icon class="min-w-[24px] text-gray-700">book</mat-icon>
             <mat-form-field class="w-full">
               <mat-label>Name</mat-label>
               <input
@@ -26,13 +26,26 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <mat-icon class="min-w-[24px] text-gray-700">person</mat-icon>
-            <mat-form-field class="w-full">
-              <mat-label>Collaborators</mat-label>
-              <mat-select>
-                <mat-option>None</mat-option>
-                <mat-option *ngFor="let user of users$ | async" [value]="user">
-                  {{ user.email }}
+            <mat-icon class="min-w-[24px] text-gray-700">group</mat-icon>
+            <mat-form-field class="example-chip-list" appearance="fill">
+              <mat-label>Add Collaborators</mat-label>
+              <mat-select formControlName="collaborators" multiple>
+                <mat-select-trigger>
+                  <mat-chip-set>
+                    <mat-chip
+                      *ngFor="let collaborator of formGroup.get('collaborators')?.value"
+                      [removable]="true"
+                      (removed)="removeCollaborator(collaborator)">
+                      {{ collaborator.email }}
+                      <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                  </mat-chip-set>
+                </mat-select-trigger>
+
+                <mat-option
+                  *ngFor="let collaborator of userList$ | async"
+                  [value]="collaborator">
+                  {{ collaborator.email }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
