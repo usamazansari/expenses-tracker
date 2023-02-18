@@ -2,39 +2,33 @@ const admin = require('firebase-admin');
 const { faker } = require('@faker-js/faker');
 
 process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8088';
+process.env.AUTH_EMULATOR_HOST = 'localhost:9099';
 
 const app = admin.initializeApp({
   projectId: 'ua-expenses-tracker'
 });
 
-const db = admin.firestore(app);
+const firestore = admin.firestore(app);
+// const auth = admin.auth(app);
+
+// console.log({ app, auth, db: firestore });
 
 const seedDB = () => {
   try {
-    Array.from({ length: 3 }).map((v, i) => {
-      if (i === 2) {
-        return db.collection('quanta').add({
-          owner: '',
-          title: `Quantum-${i + 1}`,
-          collaborators: [],
-          description: faker.commerce.productDescription()
-        });
-      }
-      return db.collection('quanta').add({
+    // auth.createUser({ email: 'usama@gmail', password: '123456789', uid: '1' });
+    // auth.createUser({ email: 'eram@gmail', password: '123456789', uid: '2' });
+    // auth.createUser({ email: 'aamir@gmail', password: '123456789', uid: '3' });
+    Array.from({ length: 3 }).map((v, i) =>
+      firestore.collection('pocketbooks').add({
         owner: '',
-        title: `Quantum-${i + 1}`,
+        title: `Pocketbook-${i + 1}`,
+        collaborators: [],
         description: faker.commerce.productDescription()
-      });
-    });
-    Array.from({ length: 2 }).map((v, i) =>
-      db.collection('quanta').add({
-        owner: '',
-        title: `Quantum-${i + 1}`,
-        description: faker.finance.transactionDescription()
       })
     );
     console.log('db seeded');
   } catch (e) {
+    console.error({ e });
     console.log('db not seeded');
   }
 };
