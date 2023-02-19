@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { User } from 'firebase/auth';
 import { BehaviorSubject, Observable } from 'rxjs';
 
@@ -13,7 +14,13 @@ import { AddPocketbookGraphicComponent } from '@expenses-tracker/shared/assets';
 @Component({
   selector: 'expenses-tracker-pocketbook-list-item',
   standalone: true,
-  imports: [CommonModule, MatIconModule, AddPocketbookGraphicComponent, ExtractInitialsPipe],
+  imports: [
+    CommonModule,
+    MatIconModule,
+    MatTooltipModule,
+    AddPocketbookGraphicComponent,
+    ExtractInitialsPipe
+  ],
   templateUrl: './pocketbook-list-item.component.html'
 })
 export class PocketbookListItemComponent implements OnInit {
