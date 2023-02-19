@@ -28,7 +28,7 @@
     </ng-container>
     <ng-template #showPocketbookList>
       <div class="grid grid-rows-[1fr_auto] gap-3">
-        <div class="grid items-center grid-cols-1 gap-2 md:grid-cols-2">
+        <div class="flex flex-wrap justify-around gap-2">
           <ng-container *ngFor="let pocketbook of pocketbookList">
             <expenses-tracker-pocketbook-list-item
               [pocketbook]="pocketbook"></expenses-tracker-pocketbook-list-item>

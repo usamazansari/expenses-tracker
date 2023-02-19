@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { User } from 'firebase/auth';
-import { map, switchMap, throwError } from 'rxjs';
+import { map, of, switchMap, throwError } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
@@ -91,5 +91,15 @@ export class FirestoreService {
 
   watchUserList$() {
     return this._firestore.collection<Partial<User>>(Collections.User).valueChanges();
+  }
+
+  watchCollaboratorList$({ collaboratorList }: IPocketbook) {
+    return !collaboratorList.length
+      ? of([])
+      : this._firestore
+          .collection<Partial<User>>(Collections.User, ref =>
+            ref.where('uid', 'in', collaboratorList)
+          )
+          .valueChanges();
   }
 }

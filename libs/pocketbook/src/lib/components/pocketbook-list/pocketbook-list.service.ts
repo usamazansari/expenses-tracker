@@ -22,7 +22,7 @@ export class PocketbookListService {
 
   setPocketbookList(pocketbookList: IPocketbook[] = []) {
     this.#pocketbookList = pocketbookList ?? [];
-    this.#pocketbookList$.next(pocketbookList);
+    this.#pocketbookList$.next(this.#pocketbookList);
   }
 
   watchPocketbookList$() {
