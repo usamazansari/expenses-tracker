@@ -89,12 +89,11 @@ export class PocketbookAddComponent implements OnInit, OnDestroy {
           collaboratorList: collaborators?.map(({ uid }) => uid)
         })
         .subscribe({
-          next: res => {
+          next: () => {
             this.formGroup.reset();
-            console.log({ res });
           },
           error: error => {
-            console.log({ error });
+            console.error({ error });
           }
         });
     }

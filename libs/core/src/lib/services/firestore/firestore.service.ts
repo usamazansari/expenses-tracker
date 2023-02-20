@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { User } from 'firebase/auth';
-import { combineLatest, from, map, of, switchMap, throwError, tap } from 'rxjs';
+import { combineLatest, from, map, of, switchMap, throwError } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
@@ -26,12 +26,7 @@ export class FirestoreService {
           ref.where('collaboratorList', 'array-contains', this._context.getUser()?.uid ?? '')
         )
         .valueChanges()
-    ]).pipe(
-      map(([owner, collaborator]) => ({ owner, collaborator })),
-      tap(res => {
-        console.log({ res });
-      })
-    );
+    ]).pipe(map(([owner, collaborator]) => ({ owner, collaborator })));
   }
 
   createPocketbook$({ name, collaboratorList = [] }: Partial<IPocketbook>) {
