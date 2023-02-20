@@ -3,10 +3,10 @@
   <div class="flex items-center justify-center gap-2 py-12">
     <expenses-tracker-add-pocketbook-graphic
       class="w-20 fill-blue-700"></expenses-tracker-add-pocketbook-graphic>
-    <span class="text-3xl text-blue-700">Add Pocketbook</span>
+    <span class="text-3xl text-blue-700">Edit Pocketbook</span>
   </div>
   <div class="grid min-w-[24rem]">
-    <form [formGroup]="formGroup" (ngSubmit)="addPocketbook()" class="max-w-[24rem]">
+    <form [formGroup]="formGroup" (ngSubmit)="editPocketbook()" class="max-w-[24rem]">
       <div class="grid grid-rows-[1fr_auto] gap-2">
         <div class="grid gap-2">
           <div class="flex items-center gap-2">
@@ -29,11 +29,14 @@
             <mat-icon class="min-w-[24px] text-gray-700">group</mat-icon>
             <mat-form-field class="w-full" appearance="fill">
               <mat-label>Add Collaborators</mat-label>
-              <mat-select formControlName="collaborators" multiple>
+              <mat-select formControlName="collaboratorList" multiple>
                 <mat-select-trigger>
                   <mat-chip-set>
                     <mat-chip
-                      *ngFor="let collaborator of formGroup.get('collaborators')?.value"
+                      *ngFor="
+                        let collaborator of formGroup.get('collaboratorList')?.valueChanges
+                          | async
+                      "
                       [removable]="true"
                       (removed)="removeCollaborator(collaborator)">
                       {{ collaborator.email }}
@@ -62,7 +65,7 @@
           <button
             matRipple
             type="button"
-            (click)="cancelAddPocketbook()"
+            (click)="cancelEditPocketbook()"
             class="flex items-center w-full gap-2 px-6 py-3 text-center text-blue-700 rounded-lg cursor-pointer hover:underline hover:underline-offset-4">
             <mat-icon class="min-w-[24px]">clear</mat-icon>
             <span>Cancel</span>

@@ -5,7 +5,7 @@
         class="w-20 fill-blue-700"></expenses-tracker-pocketbook-graphic>
       <span class="text-3xl text-blue-700 cursor-default"> My Pocketbooks </span>
     </div>
-    <ng-container *ngIf="!pocketbookList.length; else showPocketbookList">
+    <ng-container *ngIf="!pocketbookList.owner.length; else showOwnedPocketbookList">
       <div class="relative grid p-4">
         <div class="grid gap-2 place-content-center">
           <div class="flex items-center justify-center gap-2">
@@ -13,36 +13,50 @@
               class="w-16 fill-red-500"></expenses-tracker-empty-pocketbook-list-graphic>
             <p class="text-red-500 cursor-default">No pocketbooks found.</p>
           </div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #showOwnedPocketbookList>
+      <div class="grid grid-rows-[1fr_auto] gap-3">
+        <div class="flex flex-wrap justify-around gap-2">
+          <ng-container *ngFor="let pocketbook of pocketbookList.owner">
+            <expenses-tracker-pocketbook-list-item
+              [pocketbook]="pocketbook"
+              [isOwner]="true"></expenses-tracker-pocketbook-list-item>
+          </ng-container>
+        </div>
+      </div>
+    </ng-template>
+    <ng-container
+      *ngIf="!pocketbookList.collaborator.length; else showCollaboratorPocketbookList">
+      <div class="relative grid p-4">
+        <div class="grid gap-2 place-content-center">
           <div class="flex items-center justify-center gap-2">
-            <button
-              matRipple
-              type="button"
-              class="flex items-center justify-center gap-2 px-6 py-3 mx-2 text-white bg-blue-700 rounded-lg md:justify-self-center"
-              (click)="addPocketbook()">
-              <mat-icon>add</mat-icon>
-              Add Pocketbook
-            </button>
+            <expenses-tracker-empty-pocketbook-list-graphic
+              class="w-16 fill-red-500"></expenses-tracker-empty-pocketbook-list-graphic>
+            <p class="text-red-500 cursor-default">No pocketbooks found.</p>
           </div>
         </div>
       </div>
     </ng-container>
-    <ng-template #showPocketbookList>
+    <ng-template #showCollaboratorPocketbookList>
       <div class="grid grid-rows-[1fr_auto] gap-3">
         <div class="flex flex-wrap justify-around gap-2">
-          <ng-container *ngFor="let pocketbook of pocketbookList">
+          <ng-container *ngFor="let pocketbook of pocketbookList.collaborator">
             <expenses-tracker-pocketbook-list-item
-              [pocketbook]="pocketbook"></expenses-tracker-pocketbook-list-item>
+              [pocketbook]="pocketbook"
+              [isOwner]="false"></expenses-tracker-pocketbook-list-item>
           </ng-container>
         </div>
-        <button
-          matRipple
-          type="button"
-          class="flex items-center justify-center gap-2 px-6 py-3 mx-2 text-white bg-blue-700 rounded-lg md:justify-self-center"
-          (click)="addPocketbook()">
-          <mat-icon>add</mat-icon>
-          Add Pocketbook
-        </button>
       </div>
     </ng-template>
+    <button
+      matRipple
+      type="button"
+      class="flex items-center justify-center gap-2 px-6 py-3 mx-2 text-white bg-blue-700 rounded-lg md:justify-self-center"
+      (click)="addPocketbook()">
+      <mat-icon>add</mat-icon>
+      Add Pocketbook
+    </button>
   </div>
 </ng-container>

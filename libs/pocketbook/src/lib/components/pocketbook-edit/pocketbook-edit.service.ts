@@ -9,25 +9,24 @@ import { NotificationService } from '@expenses-tracker/shared/common';
 import { IFlag, INITIAL_FLAGS, IPocketbook } from '@expenses-tracker/shared/interfaces';
 
 export type ComponentFlags = {
-  addPocketbook: IFlag;
+  editPocketbook: IFlag;
   fetchCollaborators: IFlag;
 };
 
 @Injectable({
   providedIn: 'root'
 })
-export class PocketbookAddService {
+export class PocketbookEditService {
   #userList$ = new BehaviorSubject<User[]>([]);
   #flags$ = new BehaviorSubject<ComponentFlags>({
-    addPocketbook: INITIAL_FLAGS,
+    editPocketbook: INITIAL_FLAGS,
     fetchCollaborators: INITIAL_FLAGS
   });
   #userList: User[] = [];
   #flags: ComponentFlags = {
-    addPocketbook: INITIAL_FLAGS,
+    editPocketbook: INITIAL_FLAGS,
     fetchCollaborators: INITIAL_FLAGS
   };
-
   constructor(
     private _router: Router,
     private _firestore: FirestoreService,
@@ -80,7 +79,7 @@ export class PocketbookAddService {
 
   resetFlags() {
     this.#setFlags({
-      addPocketbook: INITIAL_FLAGS,
+      editPocketbook: INITIAL_FLAGS,
       fetchCollaborators: INITIAL_FLAGS
     });
   }
@@ -89,34 +88,36 @@ export class PocketbookAddService {
     return this.#flags$.asObservable();
   }
 
-  addPocketbook$(pocketbook: Partial<IPocketbook>) {
+  editPocketbook$(pocketbook: Partial<IPocketbook>) {
     this.resetFlags();
     this.#setFlags({
       ...this.#flags,
-      addPocketbook: {
-        ...this.#flags.addPocketbook,
+      editPocketbook: {
+        ...this.#flags.editPocketbook,
         loading: true
       }
     });
-    return this._firestore.createPocketbook$(pocketbook).pipe(
+    return this._firestore.updatePocketbook$(pocketbook).pipe(
       tap(() => {
         this._notification.success({
-          title: 'Pocketbook Created!',
+          title: 'Pocketbook Updated!',
           description: `Pocketbook ${pocketbook.name} successfully created!`
         });
         this.resetFlags();
         this._router.navigate(['pocketbook/list']);
       }),
-      catchError(({ code }: FirebaseError) => {
+      catchError((e: FirebaseError) => {
+        console.error({ e });
+        const { code } = e;
         const error = this._error.getError(code);
         this._notification.error({
           description: `${error}.`,
-          title: 'Login failed'
+          title: 'Pocketbook not updated'
         });
         this.#setFlags({
           ...this.#flags,
-          addPocketbook: {
-            ...this.#flags.addPocketbook,
+          editPocketbook: {
+            ...this.#flags.editPocketbook,
             loading: false,
             fail: true,
             visible: true
@@ -127,7 +128,8 @@ export class PocketbookAddService {
     );
   }
 
-  cancelAddPocketbook() {
-    this._router.navigate(['pocketbook/list']);
+  cancelEditPocketbook(pocketbook: string = '') {
+    if (!pocketbook) this._router.navigate(['pocketbook/list']);
+    else this._router.navigate([`pocketbook/${pocketbook}`]);
   }
 }

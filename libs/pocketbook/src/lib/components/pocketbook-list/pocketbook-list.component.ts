@@ -3,14 +3,13 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { Observable } from 'rxjs';
 
-import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 import {
   EmptyPocketbookListGraphicComponent,
   PocketbookGraphicComponent
 } from '@expenses-tracker/shared/assets';
 
 import { PocketbookListItemComponent } from '../pocketbook-list-item/pocketbook-list-item.component';
-import { PocketbookListService } from './pocketbook-list.service';
+import { PocketbookListService, UserPocketbookList } from './pocketbook-list.service';
 
 @Component({
   selector: 'expenses-tracker-pocketbook-list',
@@ -27,7 +26,7 @@ import { PocketbookListService } from './pocketbook-list.service';
   styles: []
 })
 export class PocketbookListComponent implements OnInit {
-  pocketbookList$!: Observable<IPocketbook[]>;
+  pocketbookList$!: Observable<UserPocketbookList>;
   constructor(private _service: PocketbookListService) {}
 
   ngOnInit() {

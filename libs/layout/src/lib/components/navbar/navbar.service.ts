@@ -10,7 +10,7 @@ export class NavbarService {
   constructor(private _context: ContextService, private _router: Router) {}
 
   getUser$() {
-    return this._context.getUser$();
+    return this._context.watchUser$();
   }
 
   gotoHome() {

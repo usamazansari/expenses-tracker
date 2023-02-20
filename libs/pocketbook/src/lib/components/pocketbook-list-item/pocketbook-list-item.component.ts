@@ -5,11 +5,11 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { User } from 'firebase/auth';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { IPocketbook, POCKETBOOK_STUB } from '@expenses-tracker/shared/interfaces';
 import { ExtractInitialsPipe } from '@expenses-tracker/profile';
+import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
-import { PocketbookListItemService } from './pocketbook-list-item.service';
 import { AddPocketbookGraphicComponent } from '@expenses-tracker/shared/assets';
+import { PocketbookListItemService } from './pocketbook-list-item.service';
 
 @Component({
   selector: 'expenses-tracker-pocketbook-list-item',
@@ -24,13 +24,21 @@ import { AddPocketbookGraphicComponent } from '@expenses-tracker/shared/assets';
   templateUrl: './pocketbook-list-item.component.html'
 })
 export class PocketbookListItemComponent implements OnInit {
-  #pocketBook$ = new BehaviorSubject<IPocketbook>(POCKETBOOK_STUB);
+  #pocketbook$ = new BehaviorSubject<IPocketbook | null>(null);
+  #isOwner$ = new BehaviorSubject<boolean>(false);
   collaboratorList$!: Observable<User[]>;
-  @Input() set pocketbook(value: IPocketbook) {
-    this.#pocketBook$.next(value);
+  @Input() set pocketbook(value: IPocketbook | null) {
+    this.#pocketbook$.next(value);
   }
   get pocketbook() {
-    return this.#pocketBook$.getValue();
+    return this.#pocketbook$.getValue();
+  }
+
+  @Input() set isOwner(value: boolean) {
+    this.#isOwner$.next(value);
+  }
+  get isOwner() {
+    return this.#isOwner$.getValue();
   }
 
   constructor(private _service: PocketbookListItemService) {}
@@ -38,5 +46,9 @@ export class PocketbookListItemComponent implements OnInit {
   ngOnInit() {
     this._service.fetchCollaboratorList$(this.pocketbook);
     this.collaboratorList$ = this._service.watchCollaboratorList$();
+  }
+
+  editPocketbook(pocketbook: IPocketbook) {
+    this._service.editPocketbook(pocketbook);
   }
 }

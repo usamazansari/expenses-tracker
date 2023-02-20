@@ -5,12 +5,17 @@ import { BehaviorSubject } from 'rxjs';
 import { FirestoreService } from '@expenses-tracker/core';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
+export type UserPocketbookList = {
+  owner: IPocketbook[];
+  collaborator: IPocketbook[];
+};
+
 @Injectable({
   providedIn: 'root'
 })
 export class PocketbookListService {
-  #pocketbookList$ = new BehaviorSubject<IPocketbook[]>([]);
-  #pocketbookList: IPocketbook[] = [];
+  #pocketbookList$ = new BehaviorSubject<UserPocketbookList>({ owner: [], collaborator: [] });
+  #pocketbookList: UserPocketbookList = { owner: [], collaborator: [] };
 
   constructor(private _router: Router, private _firestore: FirestoreService) {}
 
@@ -20,8 +25,8 @@ export class PocketbookListService {
     });
   }
 
-  setPocketbookList(pocketbookList: IPocketbook[] = []) {
-    this.#pocketbookList = pocketbookList ?? [];
+  setPocketbookList(pocketbookList: UserPocketbookList) {
+    this.#pocketbookList = pocketbookList;
     this.#pocketbookList$.next(this.#pocketbookList);
   }
 

@@ -45,7 +45,7 @@ export class ProfileService {
       }
     };
     this.#setFlags(this.#flags);
-    return this._context.getUser$().pipe(
+    return this._context.watchUser$().pipe(
       tap(() => {
         this.#flags = {
           ...this.#flags,
