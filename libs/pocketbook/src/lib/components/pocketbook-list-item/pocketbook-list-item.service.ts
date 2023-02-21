@@ -38,4 +38,8 @@ export class PocketbookListItemService {
     this._context.setPocketbook(pocketbook);
     this._router.navigate(['pocketbook/edit']);
   }
+
+  deletePocketbook$(pocketbook: IPocketbook) {
+    return this._firestore.deletePocketbook$(pocketbook);
+  }
 }

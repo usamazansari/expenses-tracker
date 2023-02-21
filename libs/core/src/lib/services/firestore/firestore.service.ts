@@ -60,19 +60,24 @@ export class FirestoreService {
 
   deletePocketbook$(pocketbook: Partial<IPocketbook>) {
     return this._firestore
-      .collection<IPocketbook>(Collections.Pocketbook)
-      .doc(pocketbook.id)
+      .collection<IPocketbook>(Collections.Pocketbook, ref =>
+        ref.where('id', '==', pocketbook.id ?? '')
+      )
       .get()
       .pipe(
-        map(ref => ref.data()),
-        switchMap(data => {
+        map(ref => ({
+          id: (ref.docs ?? [])[0]?.id ?? '',
+          data: (ref.docs ?? [])[0]?.data() ?? null
+        })),
+        switchMap(({ data, id }) => {
+          console.log({ data, id });
           if (data?.owner === this._context.getUser()?.uid) {
             return this._firestore
               .collection<IPocketbook>(Collections.Pocketbook)
-              .doc(pocketbook.id)
+              .doc(id)
               .delete();
           }
-          return throwError(() => new Error('Data not found!'));
+          return throwError(() => new Error('You cannot delete this pocketbook!'));
         })
       );
   }

@@ -17,7 +17,6 @@
       <ng-template #showCollaborators>
         <div class="flex gap-2">
           <ng-container *ngFor="let collaborator of collaboratorList$ | async">
-            <!-- <p class="text-gray-700">{{ collaborator | json }}</p> -->
             <div
               class="p-4 border rounded-full w-14 h-14"
               #tooltip="matTooltip"
@@ -34,25 +33,26 @@
       <button
         matRipple
         type="button"
-        class="flex items-center self-center justify-center w-full py-3 text-white bg-green-500 rounded-lg">
+        class="flex items-center self-center justify-center w-full gap-2 py-3 text-white bg-green-500 rounded-lg">
         <mat-icon class="min-w-[24px]">start</mat-icon>
-        <span class="ml-2">View</span>
+        <span>View</span>
       </button>
       <ng-container *ngIf="isOwner">
         <button
           matRipple
           type="button"
-          class="flex items-center self-center justify-center w-full py-3 text-white bg-blue-700 rounded-lg"
+          class="flex items-center self-center justify-center w-full gap-2 py-3 text-white bg-blue-700 rounded-lg"
           (click)="editPocketbook(pocketbook)">
           <mat-icon class="min-w-[24px]">edit</mat-icon>
-          <span class="ml-2">Edit</span>
+          <span>Edit</span>
         </button>
         <button
           matRipple
           type="button"
-          class="flex items-center self-center justify-center w-full py-3 text-white bg-red-500 rounded-lg">
+          class="flex items-center self-center justify-center w-full gap-2 py-3 text-white bg-red-500 rounded-lg"
+          (click)="deletePocketbook()">
           <mat-icon class="min-w-[24px]">delete</mat-icon>
-          <span class="ml-2">Delete</span>
+          <span>Delete</span>
         </button>
       </ng-container>
     </div>

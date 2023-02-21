@@ -1,21 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { User } from 'firebase/auth';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { of, EMPTY, BehaviorSubject, Observable, switchMap } from 'rxjs';
 
 import { ExtractInitialsPipe } from '@expenses-tracker/profile';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
-
 import { AddPocketbookGraphicComponent } from '@expenses-tracker/shared/assets';
+
 import { PocketbookListItemService } from './pocketbook-list-item.service';
+import { PocketbookDeleteDialogComponent } from './pocketbook-delete-dialog.component';
 
 @Component({
   selector: 'expenses-tracker-pocketbook-list-item',
   standalone: true,
   imports: [
     CommonModule,
+    MatDialogModule,
     MatIconModule,
     MatTooltipModule,
     AddPocketbookGraphicComponent,
@@ -41,7 +44,7 @@ export class PocketbookListItemComponent implements OnInit {
     return this.#isOwner$.getValue();
   }
 
-  constructor(private _service: PocketbookListItemService) {}
+  constructor(private _service: PocketbookListItemService, private _dialog: MatDialog) {}
 
   ngOnInit() {
     this._service.fetchCollaboratorList$(this.pocketbook);
@@ -50,5 +53,25 @@ export class PocketbookListItemComponent implements OnInit {
 
   editPocketbook(pocketbook: IPocketbook) {
     this._service.editPocketbook(pocketbook);
+  }
+
+  deletePocketbook() {
+    const _ref = this._dialog.open(PocketbookDeleteDialogComponent);
+
+    _ref
+      .afterClosed()
+      .pipe(
+        switchMap(result =>
+          result ? this._service.deletePocketbook$(this.pocketbook as IPocketbook) : of(EMPTY)
+        )
+      )
+      .subscribe({
+        next: res => {
+          console.log({ res });
+        },
+        error: error => {
+          console.error({ error });
+        }
+      });
   }
 }
