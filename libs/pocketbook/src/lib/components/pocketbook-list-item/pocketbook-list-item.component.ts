@@ -24,6 +24,7 @@ import { PocketbookDeleteDialogComponent } from './pocketbook-delete-dialog.comp
     AddPocketbookGraphicComponent,
     ExtractInitialsPipe
   ],
+  providers: [PocketbookListItemService],
   templateUrl: './pocketbook-list-item.component.html'
 })
 export class PocketbookListItemComponent implements OnInit {

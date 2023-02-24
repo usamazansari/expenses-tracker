@@ -21,7 +21,11 @@ export class PocketbookListService {
 
   fetchPocketbookList$() {
     this._firestore.getPocketbookList$().subscribe(pocketbookList => {
-      this.setPocketbookList(pocketbookList);
+      console.log({ pocketbookList });
+      this.setPocketbookList({
+        collaborator: pocketbookList?.collaborator,
+        owner: pocketbookList?.owner
+      });
     });
   }
 
