@@ -18,7 +18,7 @@ export class NavbarService {
   }
 
   gotoAuth() {
-    this._router.navigate(['auth'], { queryParams: { mode: 'login' } });
+    this._router.navigate(['auth', 'login']);
   }
 
   gotoDashboard() {

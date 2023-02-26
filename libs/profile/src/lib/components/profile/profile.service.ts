@@ -91,7 +91,7 @@ export class ProfileService {
           description: 'User has been logged out successfully'
         });
         this.#resetFlags();
-        this._router.navigate(['auth'], { queryParams: { mode: 'login' } });
+        this._router.navigate(['auth', 'login']);
       }),
       catchError(({ code }: FirebaseError) => {
         const error = this._error.getError(code);
