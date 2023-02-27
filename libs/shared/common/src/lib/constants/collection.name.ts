@@ -1,5 +1,6 @@
 enum Collections {
-  Users = 'users'
+  Pocketbook = 'pocketbooks',
+  User = 'users'
 }
 
 export { Collections };

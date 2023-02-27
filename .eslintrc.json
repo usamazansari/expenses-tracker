@@ -5,6 +5,12 @@
   "extends": ["plugin:prettier/recommended"],
   "overrides": [
     {
+      "files": ["*.*"],
+      "rules": {
+        "max-len": ["warn", { "code": 96 }]
+      }
+    },
+    {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
         "@nrwl/nx/enforce-module-boundaries": [
@@ -41,7 +47,12 @@
         "jest": true
       },
       "rules": {}
+    },
+    {
+      "files": ["*.html"],
+      "rules": {
+        "max-len": ["off"]
+      }
     }
   ]
 }
-

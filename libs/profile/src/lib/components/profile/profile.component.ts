@@ -33,10 +33,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   flags$!: Observable<ComponentFlags>;
   #logout$!: Subscription;
 
-  constructor(
-    private _notificationService: NotificationService,
-    private _service: ProfileService
-  ) {}
+  constructor(private _notification: NotificationService, private _service: ProfileService) {}
 
   ngOnInit() {
     this.user$ = this._service.getUser$();
@@ -51,17 +48,17 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.isEditing = true;
   }
 
-  editUserInfo($: { uid: string; name: string }) {
+  editUserInfo($: { uid: string; displayName: string }) {
     this._service.editUserInfo$($).subscribe({
       next: () => {
-        this._notificationService.success({
+        this._notification.success({
           title: 'Successful!',
           description: 'User details updated successfully.'
         });
         this.isEditing = false;
       },
       error: error => {
-        this._notificationService.error({
+        this._notification.error({
           title: 'Error!',
           description: `Unable to update the user details - ${error}.`
         });
@@ -71,7 +68,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   cancelEdit() {
-    this._notificationService.info({
+    this._notification.info({
       title: 'Changed not saved.',
       description: 'Profile details were not updated since you clicked cancel.'
     });

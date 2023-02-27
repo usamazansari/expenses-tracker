@@ -59,7 +59,11 @@ export class SignupComponent implements OnInit, OnDestroy {
   signup() {
     if (this.formGroup.valid) {
       const { email, password } = this.formGroup.value;
-      this.#signup$ = this._service.signup$({ email, password }).subscribe();
+      this.#signup$ = this._service.signup$({ email, password }).subscribe({
+        next: () => {
+          this.formGroup.reset();
+        }
+      });
     }
   }
 

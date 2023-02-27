@@ -3,10 +3,7 @@
     <div class="grid grid-rows-1 gap-8 m-0 sm:mx-32 lg:m-0 lg:grid-cols-3">
       <div class="grid grid-rows-1 gap-2 place-content-center">
         <ng-container *ngIf="user.photoURL">
-          <img
-            class="w-24 h-24 rounded-full"
-            [src]="user.photoURL"
-            alt="User Image" />
+          <img class="w-24 h-24 rounded-full" [src]="user.photoURL" alt="User Image" />
         </ng-container>
         <ng-container *ngIf="!user.photoURL">
           <span
@@ -28,9 +25,7 @@
           </ng-container>
         </div>
         <div class="flex items-center gap-2">
-          <mat-icon class="min-w-[24px] text-gray-700">
-            alternate_email
-          </mat-icon>
+          <mat-icon class="min-w-[24px] text-gray-700"> alternate_email </mat-icon>
           <span class="overflow-hidden whitespace-nowrap overflow-ellipsis">
             {{ user.email }}
           </span>

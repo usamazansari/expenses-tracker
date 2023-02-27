@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 import { Router } from '@angular/router';
-import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
+import { User } from 'firebase/auth';
+import { BehaviorSubject, catchError, switchMap, tap, throwError } from 'rxjs';
 
 import { NotificationService } from '@expenses-tracker/shared/common';
 import { IFlag, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
-
-import { AuthService } from '../../services';
+import { AuthService, ErrorService, FirestoreService } from '@expenses-tracker/core';
 
 export type ComponentFlags = {
   signup: IFlag;
@@ -24,9 +24,11 @@ export class SignupService {
   #flags: ComponentFlags = { signup: INITIAL_FLAGS, saveUser: INITIAL_FLAGS };
 
   constructor(
-    private _authService: AuthService,
+    private _auth: AuthService,
+    private _error: ErrorService,
+    private _firestore: FirestoreService,
     private _router: Router,
-    private _notificationService: NotificationService
+    private _notification: NotificationService
   ) {}
 
   signup$({
@@ -46,18 +48,23 @@ export class SignupService {
     };
     this.#setFlags(this.#flags);
 
-    return this._authService.signup$({ email, password }).pipe(
+    return this._auth.signup$({ email, password }).pipe(
       tap(({ user }) => {
-        this._notificationService.success({
+        this._notification.success({
           description: `Registered successfully as ${user?.email}.`,
           title: 'Signup Successful!'
         });
         this.#resetFlags();
-        this._router.navigate(['auth'], { queryParams: { mode: 'login' } });
+        this._router.navigate(['dashboard']);
       }),
+      switchMap(({ user }) =>
+        !user
+          ? throwError(() => new Error(`Cannot Register user with email ${email}!`))
+          : this._firestore.saveUser$(user as User)
+      ),
       catchError(({ code }: FirebaseError) => {
-        const error = this._authService.getError(code);
-        this._notificationService.error({
+        const error = this._error.getError(code);
+        this._notification.error({
           description: `${error}.`,
           title: 'Signup failed'
         });

@@ -4,7 +4,7 @@ import { FirebaseError } from '@angular/fire/app';
 import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 
-import { AuthService } from '@expenses-tracker/auth';
+import { AuthService, ContextService, ErrorService } from '@expenses-tracker/core';
 import { NotificationService } from '@expenses-tracker/shared/common';
 import { IFlag, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
@@ -27,8 +27,10 @@ export class ProfileService {
   #editMode = false;
 
   constructor(
-    private _authService: AuthService,
-    private _notificationService: NotificationService,
+    private _auth: AuthService,
+    private _context: ContextService,
+    private _error: ErrorService,
+    private _notification: NotificationService,
     private _router: Router,
     private _clipboard: Clipboard
   ) {}
@@ -43,7 +45,7 @@ export class ProfileService {
       }
     };
     this.#setFlags(this.#flags);
-    return this._authService.getUser$().pipe(
+    return this._context.watchUser$().pipe(
       tap(() => {
         this.#flags = {
           ...this.#flags,
@@ -82,18 +84,18 @@ export class ProfileService {
       }
     };
     this.#setFlags(this.#flags);
-    return this._authService.logout$().pipe(
+    return this._auth.logout$().pipe(
       tap(() => {
-        this._notificationService.info({
+        this._notification.info({
           title: 'Logout Successful',
           description: 'User has been logged out successfully'
         });
         this.#resetFlags();
-        this._router.navigate(['auth'], { queryParams: { mode: 'login' } });
+        this._router.navigate(['auth', 'login']);
       }),
       catchError(({ code }: FirebaseError) => {
-        const error = this._authService.getError(code);
-        this._notificationService.error({
+        const error = this._error.getError(code);
+        this._notification.error({
           description: `${error}.`,
           title: 'Login failed'
         });
@@ -112,19 +114,19 @@ export class ProfileService {
     );
   }
 
-  editUserInfo$({ name }: { name: string }) {
-    return this._authService.editUserInfo$({ name });
+  editUserInfo$({ displayName }: { displayName: string }) {
+    return this._auth.editUserInfo$({ displayName });
   }
 
   copyUID(uid: string | null) {
     const copyState = this._clipboard.copy(uid ?? '');
     if (copyState) {
-      this._notificationService.info({
+      this._notification.info({
         title: 'Success!',
         description: 'UID copied to the clipboard'
       });
     } else {
-      this._notificationService.info({
+      this._notification.info({
         title: 'Fail!',
         description: 'UID cannot be copied to the clipboard'
       });

@@ -5,8 +5,7 @@ import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 
 import { NotificationService } from '@expenses-tracker/shared/common';
 import { IFlag, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
-
-import { AuthService } from '../../services';
+import { AuthService, ErrorService } from '@expenses-tracker/core';
 
 export type ComponentFlags = {
   login: IFlag;
@@ -25,8 +24,9 @@ export class LoginService {
 
   constructor(
     private _router: Router,
-    private _authService: AuthService,
-    private _notificationService: NotificationService
+    private _auth: AuthService,
+    private _error: ErrorService,
+    private _notification: NotificationService
   ) {}
 
   login$({
@@ -46,9 +46,9 @@ export class LoginService {
     };
     this.#setFlags(this.#flags);
 
-    return this._authService.login$({ email, password }).pipe(
+    return this._auth.login$({ email, password }).pipe(
       tap(({ user }) => {
-        this._notificationService.success({
+        this._notification.success({
           description: `Logged in as ${user?.displayName ?? user?.email}`,
           title: 'Login successful!'
         });
@@ -56,8 +56,8 @@ export class LoginService {
         this._router.navigate(['dashboard']);
       }),
       catchError(({ code }: FirebaseError) => {
-        const error = this._authService.getError(code);
-        this._notificationService.error({
+        const error = this._error.getError(code);
+        this._notification.error({
           description: `${error}.`,
           title: 'Login failed'
         });

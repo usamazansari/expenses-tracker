@@ -1,26 +1,35 @@
 import { Injectable } from '@angular/core';
-import { User } from 'firebase/auth';
-import { BehaviorSubject } from 'rxjs';
+import { Router } from '@angular/router';
 
-import { AuthService } from '@expenses-tracker/auth';
+import { ContextService } from '@expenses-tracker/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NavbarService {
-  #user$ = new BehaviorSubject<User | null>(null);
-
-  constructor(private _authService: AuthService) {
-    this._authService.getUser$().subscribe(user => {
-      this.setUser(user);
-    });
-  }
-
-  setUser(user: User | null) {
-    this.#user$.next(user);
-  }
+  constructor(private _context: ContextService, private _router: Router) {}
 
   getUser$() {
-    return this.#user$.asObservable();
+    return this._context.watchUser$();
+  }
+
+  gotoHome() {
+    this._router.navigate(['']);
+  }
+
+  gotoAuth() {
+    this._router.navigate(['auth', 'login']);
+  }
+
+  gotoDashboard() {
+    this._router.navigate(['dashboard']);
+  }
+
+  gotoPocketbook() {
+    this._router.navigate(['pocketbook']);
+  }
+
+  gotoProfile() {
+    this._router.navigate(['profile']);
   }
 }

@@ -2,46 +2,42 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { RouterModule } from '@angular/router';
+import { Observable } from 'rxjs';
 
 import { LoginComponent } from '../login/login.component';
 import { SignupComponent } from '../signup/signup.component';
 
-type AuthMode = 'login' | 'signup';
+import { AuthMode, AuthService } from './auth.service';
 
 @Component({
   selector: 'expenses-tracker-auth',
   standalone: true,
   imports: [
     CommonModule,
-    LoginComponent,
+    RouterModule,
     MatIconModule,
     MatRippleModule,
+
+    LoginComponent,
     SignupComponent
   ],
   templateUrl: './auth.component.html'
 })
 export class AuthComponent implements OnInit {
-  #mode = new BehaviorSubject<AuthMode>('login');
-  mode!: AuthMode;
+  authMode$!: Observable<AuthMode>;
 
-  constructor(private _route: ActivatedRoute, private _router: Router) {}
+  constructor(private _service: AuthService) {}
 
   ngOnInit() {
-    this._route.queryParams.subscribe(({ mode }) => {
-      this.#mode.next(mode);
-    });
-    this.#mode.subscribe(mode => {
-      this.mode = mode;
-    });
+    this.authMode$ = this._service.watchAuthMode$();
   }
 
   gotoLogin() {
-    this._router.navigate([], { queryParams: { mode: 'login' } });
+    this._service.gotoLogin();
   }
 
   gotoSignup() {
-    this._router.navigate([], { queryParams: { mode: 'signup' } });
+    this._service.gotoSignup();
   }
 }

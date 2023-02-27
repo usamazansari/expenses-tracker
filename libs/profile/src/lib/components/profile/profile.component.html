@@ -15,10 +15,9 @@
                 <button
                   matRipple
                   type="button"
-                  class="flex items-center justify-center p-2 rounded-full">
-                  <mat-icon class="text-gray-700" (click)="editMode()">
-                    edit
-                  </mat-icon>
+                  class="flex items-center justify-center p-2 rounded-full"
+                  (click)="editMode()">
+                  <mat-icon class="text-gray-700"> edit </mat-icon>
                 </button>
               </ng-container>
             </div>
@@ -40,9 +39,7 @@
           </div>
         </ng-container>
         <ng-container *ngIf="flags.user.fail">
-          <div class="grid place-content-center">
-            User Information Available
-          </div>
+          <div class="grid place-content-center">User Information Available</div>
         </ng-container>
       </ng-container>
     </ng-container>

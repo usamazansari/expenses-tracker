@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatRippleModule } from '@angular/material/core';
-import { Router } from '@angular/router';
 import { User } from 'firebase/auth';
 import { Observable } from 'rxjs';
 
@@ -9,7 +8,8 @@ import {
   AccountGraphicComponent,
   AuthGraphicComponent,
   DashboardGraphicComponent,
-  LogoGraphicComponent
+  LogoGraphicComponent,
+  PocketbookGraphicComponent
 } from '@expenses-tracker/shared/assets';
 
 import { NavbarService } from './navbar.service';
@@ -18,12 +18,14 @@ import { NavbarService } from './navbar.service';
   selector: 'expenses-tracker-navbar',
   standalone: true,
   imports: [
+    CommonModule,
+    MatRippleModule,
+
     AccountGraphicComponent,
     AuthGraphicComponent,
     DashboardGraphicComponent,
-    CommonModule,
     LogoGraphicComponent,
-    MatRippleModule
+    PocketbookGraphicComponent
   ],
   templateUrl: './navbar.component.html'
 })
@@ -33,26 +35,31 @@ export class NavbarComponent implements OnInit {
   @Output() gotoHome$ = new EventEmitter<void>();
   @Output() gotoAuth$ = new EventEmitter<void>();
   @Output() gotoDashboard$ = new EventEmitter<void>();
+  @Output() gotoPocketbook$ = new EventEmitter<void>();
 
-  constructor(private _service: NavbarService, private _router: Router) {}
+  constructor(private _service: NavbarService) {}
 
   ngOnInit() {
     this.user$ = this._service.getUser$();
   }
 
   gotoHome() {
-    this._router.navigate(['']);
+    this._service.gotoHome();
   }
 
   gotoAuth() {
-    this._router.navigate(['auth'], { queryParams: { mode: 'login' } });
+    this._service.gotoAuth();
   }
 
   gotoDashboard() {
-    this._router.navigate(['dashboard']);
+    this._service.gotoDashboard();
+  }
+
+  gotoPocketbook() {
+    this._service.gotoPocketbook();
   }
 
   gotoProfile() {
-    this._router.navigate(['profile']);
+    this._service.gotoProfile();
   }
 }

@@ -1,11 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule
-} from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -14,7 +9,7 @@ import { User } from 'firebase/auth';
 import { ExtractInitialsPipe } from '../../pipes';
 
 type ProfileEditForm = {
-  name: FormControl<string | null>;
+  displayName: FormControl<string | null>;
 };
 
 @Component({
@@ -22,11 +17,12 @@ type ProfileEditForm = {
   standalone: true,
   imports: [
     CommonModule,
-    ExtractInitialsPipe,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+
+    ExtractInitialsPipe
   ],
   templateUrl: './profile-edit.component.html',
   styles: []
@@ -36,7 +32,7 @@ export class ProfileEditComponent implements OnInit {
   @Input() user!: User;
   @Output() editUserInfo$ = new EventEmitter<{
     uid: string;
-    name: string;
+    displayName: string;
   }>();
   @Output() cancelEdit$ = new EventEmitter<void>();
 
@@ -44,7 +40,7 @@ export class ProfileEditComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this._fb.group<ProfileEditForm>({
-      name: this._fb.control<string>(this.user.displayName ?? '', {
+      displayName: this._fb.control<string>(this.user.displayName ?? '', {
         validators: []
       })
     });
@@ -53,11 +49,12 @@ export class ProfileEditComponent implements OnInit {
   editUserInfo() {
     this.editUserInfo$.emit({
       uid: this.user.uid,
-      ...(this.formGroup.value as { name: string })
+      ...(this.formGroup.value as { displayName: string })
     });
   }
 
   cancelEdit() {
+    this.formGroup.reset();
     this.cancelEdit$.emit();
   }
 }

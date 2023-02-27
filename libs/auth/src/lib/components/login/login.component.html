@@ -6,8 +6,7 @@
   </div>
   <ng-container *ngIf="flags$ | async as flags">
     <ng-container *ngIf="flags.login.loading">
-      <div
-        class="absolute top-0 left-0 bottom-0 right-0 bg-[rgba(240,240,240,0.5)] z-10"></div>
+      <div class="absolute top-0 left-0 bottom-0 right-0 bg-[rgba(240,240,240,0.5)] z-10"></div>
     </ng-container>
     <ng-container *ngIf="flags.login.visible">
       <ng-container *ngIf="flags.login.fail">
@@ -26,9 +25,7 @@
         <div class="grid grid-rows-[1fr_auto] gap-2">
           <div class="grid gap-2">
             <div class="flex items-center gap-2">
-              <mat-icon class="min-w-[24px] text-gray-700">
-                mail_outline
-              </mat-icon>
+              <mat-icon class="min-w-[24px] text-gray-700"> mail_outline </mat-icon>
               <mat-form-field class="w-full">
                 <mat-label>Email</mat-label>
                 <input
@@ -64,9 +61,9 @@
             <button
               matRipple
               type="submit"
-              class="flex items-center justify-center self-center py-3 text-white bg-blue-700 w-[50%] rounded-lg">
+              class="flex items-center gap-2 justify-center self-center py-3 text-white bg-blue-700 w-[50%] rounded-lg">
               <mat-icon class="min-w-[24px]">login</mat-icon>
-              <span class="ml-2">Login</span>
+              <span>Login</span>
             </button>
           </div>
         </div>
