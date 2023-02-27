@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import {
@@ -9,13 +10,14 @@ import {
 } from '@expenses-tracker/shared/assets';
 
 import { PocketbookListItemComponent } from '../pocketbook-list-item/pocketbook-list-item.component';
-import { PocketbookListService, UserPocketbookList } from './pocketbook-list.service';
+import { PocketbookListService, PocketbookViewMode } from './pocketbook-list.service';
 
 @Component({
   selector: 'expenses-tracker-pocketbook-list',
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     MatIconModule,
 
     EmptyPocketbookListGraphicComponent,
@@ -26,15 +28,23 @@ import { PocketbookListService, UserPocketbookList } from './pocketbook-list.ser
   styles: []
 })
 export class PocketbookListComponent implements OnInit {
-  pocketbookList$!: Observable<UserPocketbookList>;
+  viewMode$!: Observable<PocketbookViewMode>;
+
   constructor(private _service: PocketbookListService) {}
 
   ngOnInit() {
-    this._service.fetchPocketbookList$();
-    this.pocketbookList$ = this._service.watchPocketbookList$();
+    this.viewMode$ = this._service.watchViewMode$();
   }
 
   addPocketbook() {
     this._service.gotoAddPocketbook();
+  }
+
+  gotoOwnerPocketbookList() {
+    this._service.gotoOwnerPocketbookList();
+  }
+
+  gotoCollaboratorPocketbookList() {
+    this._service.gotoCollaboratorPocketbookList();
   }
 }

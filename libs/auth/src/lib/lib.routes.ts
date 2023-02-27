@@ -9,9 +9,9 @@ export const authRoutes: Route[] = [
     component: AuthComponent,
     canActivate: [ReverseAuthGuard],
     children: [
-      { path: '', redirectTo: 'login', pathMatch: 'full' },
       { path: 'login', component: LoginComponent },
-      { path: 'signup', component: SignupComponent }
+      { path: 'signup', component: SignupComponent },
+      { path: '', redirectTo: 'login', pathMatch: 'full' }
     ]
   }
 ];

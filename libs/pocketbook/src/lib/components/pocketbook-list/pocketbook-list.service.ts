@@ -1,44 +1,47 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
+import { BehaviorSubject, filter } from 'rxjs';
 
-import { FirestoreService } from '@expenses-tracker/core';
-import { IPocketbook } from '@expenses-tracker/shared/interfaces';
-
-export type UserPocketbookList = {
-  owner: IPocketbook[];
-  collaborator: IPocketbook[];
-};
+export type PocketbookViewMode = 'owner' | 'collaborator';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PocketbookListService {
-  #pocketbookList$ = new BehaviorSubject<UserPocketbookList>({ owner: [], collaborator: [] });
-  #pocketbookList: UserPocketbookList = { owner: [], collaborator: [] };
+  #viewMode$ = new BehaviorSubject<PocketbookViewMode>('owner');
+  #viewMode: PocketbookViewMode = 'owner';
 
-  constructor(private _router: Router, private _firestore: FirestoreService) {}
+  constructor(private _router: Router) {
+    this.fetchViewMode();
+  }
 
-  fetchPocketbookList$() {
-    this._firestore.getPocketbookList$().subscribe(pocketbookList => {
-      console.log({ pocketbookList });
-      this.setPocketbookList({
-        collaborator: pocketbookList?.collaborator,
-        owner: pocketbookList?.owner
-      });
+  fetchViewMode() {
+    this._router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(e => {
+      const { url } = e as NavigationEnd;
+      this.setViewMode(url.split('/').at(-1) as PocketbookViewMode);
     });
   }
 
-  setPocketbookList(pocketbookList: UserPocketbookList) {
-    this.#pocketbookList = pocketbookList;
-    this.#pocketbookList$.next(this.#pocketbookList);
+  setViewMode(viewMode: PocketbookViewMode = 'owner') {
+    this.#viewMode = viewMode;
+    this.#viewMode$.next(this.#viewMode);
   }
 
-  watchPocketbookList$() {
-    return this.#pocketbookList$.asObservable();
+  watchViewMode$() {
+    return this.#viewMode$.asObservable();
   }
 
   gotoAddPocketbook() {
     this._router.navigate(['pocketbook', 'add']);
+  }
+
+  gotoOwnerPocketbookList() {
+    this.setViewMode('owner');
+    this._router.navigate(['pocketbook', 'list', 'owner']);
+  }
+
+  gotoCollaboratorPocketbookList() {
+    this.setViewMode('collaborator');
+    this._router.navigate(['pocketbook', 'list', 'collaborator']);
   }
 }

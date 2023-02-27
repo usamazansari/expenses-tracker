@@ -1,11 +1,55 @@
-<ng-container *ngIf="pocketbookList$ | async as pocketbookList">
-  <div class="relative grid grid-cols-1 gap-2 p-4 bg-white rounded-lg min-h-[50vh]">
-    <div class="flex items-center justify-center gap-2">
-      <expenses-tracker-pocketbook-graphic
-        class="w-20 fill-blue-700"></expenses-tracker-pocketbook-graphic>
-      <span class="text-3xl text-blue-700 cursor-default"> My Pocketbooks </span>
+<div class="flex flex-col justify-center gap-6 py-8 bg-white rounded-lg">
+  <div class="flex items-center justify-center gap-2">
+    <expenses-tracker-pocketbook-graphic
+      class="w-20 fill-blue-700"></expenses-tracker-pocketbook-graphic>
+    <span class="text-3xl text-blue-700 cursor-default"> My Pocketbooks </span>
+  </div>
+  <ng-container *ngIf="viewMode$ | async as viewMode">
+    <div class="flex justify-center">
+      <button
+        matRipple
+        type="button"
+        class="flex items-center justify-center w-48 gap-2 p-4 text-center rounded-tl-lg rounded-bl-lg cursor-pointer"
+        [ngClass]="
+          viewMode === 'owner'
+            ? 'bg-blue-700 text-white'
+            : 'border border-r-0 bg-white text-gray-700'
+        "
+        (click)="gotoOwnerPocketbookList()">
+        <mat-icon>verified_user</mat-icon>
+        <span>Owned</span>
+      </button>
+      <button
+        matRipple
+        type="button"
+        class="flex items-center justify-center w-48 gap-2 p-4 text-center rounded-tr-lg rounded-br-lg cursor-pointer"
+        [ngClass]="
+          viewMode === 'collaborator'
+            ? 'bg-blue-700 text-white'
+            : 'border border-l-0 bg-white text-gray-700'
+        "
+        (click)="gotoCollaboratorPocketbookList()">
+        <mat-icon>group</mat-icon>
+        <span>Collaborated</span>
+      </button>
     </div>
-    <ng-container *ngIf="!pocketbookList.owner.length; else showOwnedPocketbookList">
+  </ng-container>
+  <div class="relative grid grid-cols-1 gap-2 p-4">
+    <router-outlet></router-outlet>
+  </div>
+  <div class="flex justify-center">
+    <button
+      matRipple
+      type="button"
+      class="flex items-center justify-center gap-2 px-6 py-3 mx-2 text-white bg-blue-700 rounded-lg md:justify-self-center"
+      (click)="addPocketbook()">
+      <mat-icon>add</mat-icon>
+      Add Pocketbook
+    </button>
+  </div>
+</div>
+<!-- <div class="relative grid grid-cols-1 gap-2 p-4 bg-white rounded-lg min-h-[50vh]"> -->
+<!-- <ng-container *ngIf="!pocketbookList.owner.length; else showOwnedPocketbookList">
       <div class="relative grid p-4">
         <div class="grid gap-2 place-content-center">
           <div class="flex items-center justify-center gap-2">
@@ -49,8 +93,8 @@
           </ng-container>
         </div>
       </div>
-    </ng-template>
-    <button
+    </ng-template> -->
+<!-- <button
       matRipple
       type="button"
       class="flex items-center justify-center gap-2 px-6 py-3 mx-2 text-white bg-blue-700 rounded-lg md:justify-self-center"
@@ -58,5 +102,5 @@
       <mat-icon>add</mat-icon>
       Add Pocketbook
     </button>
-  </div>
-</ng-container>
+  </ng-container> -->
+<!-- </div> -->
