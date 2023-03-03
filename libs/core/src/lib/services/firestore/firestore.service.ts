@@ -135,6 +135,15 @@ export class FirestoreService {
     return this._firestore.collection<Partial<User>>(Collections.User).valueChanges();
   }
 
+  watchOwner$(pocketbook: IPocketbook | null) {
+    return this._firestore
+      .collection<Partial<User>>(Collections.User, ref =>
+        ref.where('uid', '==', pocketbook?.owner ?? '')
+      )
+      .valueChanges()
+      .pipe(map(([owner]) => owner));
+  }
+
   watchCollaboratorList$(pocketbook: IPocketbook | null) {
     return !pocketbook?.collaboratorList.length
       ? of([])

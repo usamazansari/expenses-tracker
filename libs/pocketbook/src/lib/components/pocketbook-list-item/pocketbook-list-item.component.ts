@@ -31,6 +31,8 @@ export class PocketbookListItemComponent implements OnInit {
   #pocketbook$ = new BehaviorSubject<IPocketbook | null>(null);
   #isOwner$ = new BehaviorSubject<boolean>(false);
   collaboratorList$!: Observable<User[]>;
+  owner$!: Observable<User | null>;
+
   @Input() set pocketbook(value: IPocketbook | null) {
     this.#pocketbook$.next(value);
   }
@@ -50,6 +52,7 @@ export class PocketbookListItemComponent implements OnInit {
   ngOnInit() {
     this._service.fetchCollaboratorList$(this.pocketbook);
     this.collaboratorList$ = this._service.watchCollaboratorList$();
+    this.owner$ = this._service.watchOwner$(this.pocketbook) as Observable<User>;
   }
 
   editPocketbook(pocketbook: IPocketbook) {

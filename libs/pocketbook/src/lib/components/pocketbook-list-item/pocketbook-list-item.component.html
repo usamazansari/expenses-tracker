@@ -5,8 +5,17 @@
         class="w-20 fill-blue-700"></expenses-tracker-add-pocketbook-graphic>
     </div>
 
-    <div class="py-2">
+    <div class="flex items-center justify-between py-2">
       <p class="text-2xl font-bold">{{ pocketbook.name }}</p>
+      <ng-container *ngIf="owner$ | async as owner">
+        <div
+          class="p-4 border rounded-full w-14 h-14"
+          #tooltip="matTooltip"
+          [matTooltip]="owner.displayName ?? owner.email ?? ''"
+          matTooltipPosition="above">
+          <p class="text-center">{{ owner | extractInitials }}</p>
+        </div>
+      </ng-container>
     </div>
 
     <div class="flex flex-col gap-1">

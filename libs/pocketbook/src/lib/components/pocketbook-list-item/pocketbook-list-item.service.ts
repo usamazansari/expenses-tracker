@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { User } from 'firebase/auth';
 import { BehaviorSubject } from 'rxjs';
 
+import { Router } from '@angular/router';
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
-import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -32,6 +32,10 @@ export class PocketbookListItemService {
 
   watchCollaboratorList$() {
     return this.#collaboratorList$.asObservable();
+  }
+
+  watchOwner$(pocketbook: IPocketbook | null) {
+    return this._firestore.watchOwner$(pocketbook);
   }
 
   editPocketbook(pocketbook: IPocketbook) {
