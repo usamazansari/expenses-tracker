@@ -17,8 +17,8 @@ export class PocketbookListService {
 
   fetchViewMode() {
     this._router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(e => {
-      const { url } = e as NavigationEnd;
-      this.setViewMode(url.split('/').at(-1) as PocketbookViewMode);
+      const { url, urlAfterRedirects } = e as NavigationEnd;
+      this.setViewMode((urlAfterRedirects ?? url)?.split('/').at(-1) as PocketbookViewMode);
     });
   }
 
