@@ -5,8 +5,17 @@
         class="w-20 fill-blue-700"></expenses-tracker-add-pocketbook-graphic>
     </div>
 
-    <div class="py-2">
+    <div class="flex items-center justify-between py-2">
       <p class="text-2xl font-bold">{{ pocketbook.name }}</p>
+      <ng-container *ngIf="owner$ | async as owner">
+        <div
+          class="p-4 border rounded-full w-14 h-14"
+          #tooltip="matTooltip"
+          [matTooltip]="owner.displayName ?? owner.email ?? ''"
+          matTooltipPosition="above">
+          <p class="text-center">{{ owner | extractInitials }}</p>
+        </div>
+      </ng-container>
     </div>
 
     <div class="flex flex-col gap-1">
@@ -34,8 +43,8 @@
         matRipple
         type="button"
         class="flex items-center self-center justify-center w-full gap-2 py-3 text-white bg-green-500 rounded-lg">
-        <mat-icon class="min-w-[24px]">start</mat-icon>
-        <span>View</span>
+        <mat-icon class="min-w-[24px]">visibility</mat-icon>
+        <span>OPEN</span>
       </button>
       <ng-container *ngIf="isOwner">
         <button
@@ -44,7 +53,7 @@
           class="flex items-center self-center justify-center w-full gap-2 py-3 text-white bg-blue-700 rounded-lg"
           (click)="editPocketbook(pocketbook)">
           <mat-icon class="min-w-[24px]">edit</mat-icon>
-          <span>Edit</span>
+          <span>EDIT</span>
         </button>
         <button
           matRipple
@@ -52,7 +61,7 @@
           class="flex items-center self-center justify-center w-full gap-2 py-3 text-white bg-red-500 rounded-lg"
           (click)="deletePocketbook()">
           <mat-icon class="min-w-[24px]">delete</mat-icon>
-          <span>Delete</span>
+          <span>DELETE</span>
         </button>
       </ng-container>
     </div>

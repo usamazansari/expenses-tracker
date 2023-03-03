@@ -18,9 +18,9 @@ import { MatRippleModule } from '@angular/material/core';
           matRipple
           [mat-dialog-close]="true"
           type="button"
-          class="flex items-center w-full gap-2 px-6 py-3 text-center text-white bg-red-500 rounded-lg cursor-pointer">
+          class="flex items-center w-full gap-2 px-6 py-3 text-center text-white bg-red-500 rounded-lg cursor-pointer font-bold">
           <mat-icon class="min-w-[24px]">delete</mat-icon>
-          <span>Yes</span>
+          <span>YES</span>
         </button>
         <button
           matRipple
@@ -28,7 +28,7 @@ import { MatRippleModule } from '@angular/material/core';
           type="button"
           class="flex items-center w-full gap-2 px-6 py-3 text-center text-blue-700 rounded-lg cursor-pointer hover:underline hover:underline-offset-4">
           <mat-icon class="min-w-[24px]">clear</mat-icon>
-          <span>No</span>
+          <span>NO</span>
         </button>
       </div>
     </mat-dialog-actions>`,
