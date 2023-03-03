@@ -17,8 +17,8 @@ export class AuthService {
 
   fetchAuthMode() {
     this._router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(e => {
-      const { url } = e as NavigationEnd;
-      this.setAuthMode(url.split('/').at(-1) as AuthMode);
+      const { url, urlAfterRedirects } = e as NavigationEnd;
+      this.setAuthMode((urlAfterRedirects ?? url)?.split('/').at(-1) as AuthMode);
     });
   }
 
