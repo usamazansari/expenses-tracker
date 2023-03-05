@@ -28,8 +28,8 @@ export const pocketbookRoutes: Route[] = [
         ]
       },
       { path: 'add', component: PocketbookAddComponent, canActivate: [AuthGuard] },
-      { path: 'edit', component: PocketbookEditComponent, canActivate: [AuthGuard] },
       { path: ':id', component: PocketbookDetailComponent },
+      { path: ':id/edit', component: PocketbookEditComponent, canActivate: [AuthGuard] },
       { path: '', redirectTo: 'list', pathMatch: 'full' }
     ]
   }

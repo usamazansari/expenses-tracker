@@ -2,11 +2,25 @@ import { Injectable } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 import { Router } from '@angular/router';
 import { User } from 'firebase/auth';
-import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  map,
+  Observable,
+  of,
+  switchMap,
+  tap,
+  throwError
+} from 'rxjs';
 
-import { ErrorService, FirestoreService } from '@expenses-tracker/core';
+import { ContextService, ErrorService, FirestoreService } from '@expenses-tracker/core';
 import { NotificationService } from '@expenses-tracker/shared/common';
 import { IFlag, INITIAL_FLAGS, IPocketbook } from '@expenses-tracker/shared/interfaces';
+
+export interface IPocketbookEditForm {
+  name: string | null;
+  collaboratorList: User[] | null;
+}
 
 export type ComponentFlags = {
   editPocketbook: IFlag;
@@ -29,6 +43,7 @@ export class PocketbookEditService {
   };
   constructor(
     private _router: Router,
+    private _context: ContextService,
     private _firestore: FirestoreService,
     private _error: ErrorService,
     private _notification: NotificationService
@@ -86,6 +101,31 @@ export class PocketbookEditService {
 
   watchFlags$() {
     return this.#flags$.asObservable();
+  }
+
+  watchPocketbook$() {
+    return this._context
+      .watchPocketbook$()
+      .pipe(
+        switchMap(pb =>
+          !pb
+            ? this._firestore.watchPocketbook$(this._router.url.split('/').at(-2) ?? '')
+            : of(pb)
+        )
+      );
+  }
+
+  patchValues$(): Observable<IPocketbookEditForm> {
+    return this.watchUserList$().pipe(
+      switchMap(userList =>
+        this.watchPocketbook$().pipe(
+          map(pb => ({
+            name: pb?.name ?? '',
+            collaboratorList: userList.filter(({ uid }) => pb?.collaboratorList.includes(uid))
+          }))
+        )
+      )
+    );
   }
 
   editPocketbook$(pocketbook: Partial<IPocketbook>) {

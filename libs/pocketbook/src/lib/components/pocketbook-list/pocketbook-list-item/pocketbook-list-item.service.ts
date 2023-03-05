@@ -42,7 +42,7 @@ export class PocketbookListItemService {
 
   editPocketbook(pocketbook: IPocketbook) {
     this._context.setPocketbook(pocketbook);
-    this._router.navigate(['pocketbook/edit']);
+    this._router.navigate(['pocketbook', pocketbook.id, 'edit']);
   }
 
   deletePocketbook$(pocketbook: IPocketbook) {

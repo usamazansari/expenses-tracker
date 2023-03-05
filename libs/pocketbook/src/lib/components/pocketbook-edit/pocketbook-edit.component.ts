@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -13,17 +13,21 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { User } from 'firebase/auth';
-import { BehaviorSubject, filter, map, Observable, Subscription } from 'rxjs';
+import { filter, map, Observable, Subscription } from 'rxjs';
 
 import { ContextService } from '@expenses-tracker/core';
 import { AddPocketbookGraphicComponent } from '@expenses-tracker/shared/assets';
 
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
-import { ComponentFlags, PocketbookEditService } from './pocketbook-edit.service';
+import {
+  ComponentFlags,
+  IPocketbookEditForm,
+  PocketbookEditService
+} from './pocketbook-edit.service';
 
-type PocketbookEditForm = {
-  name: FormControl<string | null>;
-  collaboratorList: FormControl<User[] | null>;
+type PocketbookEditForm<T extends IPocketbookEditForm = IPocketbookEditForm> = {
+  name: FormControl<T['name']>;
+  collaboratorList: FormControl<T['collaboratorList']>;
 };
 
 @Component({
@@ -47,16 +51,9 @@ export class PocketbookEditComponent implements OnInit, OnDestroy {
   userList$!: Observable<User[]>;
   flags$!: Observable<ComponentFlags>;
   #editPocketbook$!: Subscription;
-  #userList$!: Subscription;
-  #pocketbook$ = new BehaviorSubject<IPocketbook | null>(null);
+  #patchValues$!: Subscription;
+  pocketbook$!: Observable<IPocketbook | null>;
   collaboratorList$!: Observable<User[]>;
-
-  @Input() set pocketbook(value: IPocketbook | null) {
-    this.#pocketbook$.next(value);
-  }
-  get pocketbook() {
-    return this.#pocketbook$.getValue();
-  }
 
   constructor(
     private _fb: FormBuilder,
@@ -76,14 +73,8 @@ export class PocketbookEditComponent implements OnInit, OnDestroy {
       collaboratorList: this._fb.control<User[]>([])
     });
 
-    this.#userList$ = this._service.watchUserList$().subscribe(userList => {
-      const pocketbook = this._context.getPocketbook();
-      this.formGroup.patchValue({
-        name: pocketbook?.name,
-        collaboratorList: userList.filter(({ uid }) =>
-          pocketbook?.collaboratorList.includes(uid)
-        )
-      });
+    this.#patchValues$ = this._service.patchValues$().subscribe(patchValues => {
+      this.formGroup.patchValue(patchValues);
     });
 
     this.flags$ = this._service.watchFlags$();
@@ -134,6 +125,6 @@ export class PocketbookEditComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.#editPocketbook$?.unsubscribe();
-    this.#userList$?.unsubscribe();
+    this.#patchValues$?.unsubscribe();
   }
 }
