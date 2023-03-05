@@ -104,14 +104,11 @@ export class PocketbookEditService {
   }
 
   watchPocketbook$() {
+    const pocketbookId = this._router.url.match(/pocketbook\/(\w+)\//)?.at(1);
     return this._context
       .watchPocketbook$()
       .pipe(
-        switchMap(pb =>
-          !pb
-            ? this._firestore.watchPocketbook$(this._router.url.split('/').at(-2) ?? '')
-            : of(pb)
-        )
+        switchMap(pb => (!pb ? this._firestore.watchPocketbook$(pocketbookId ?? '') : of(pb)))
       );
   }
 
