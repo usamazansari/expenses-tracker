@@ -9,7 +9,7 @@ import {
   PocketbookGraphicComponent
 } from '@expenses-tracker/shared/assets';
 
-import { PocketbookListItemComponent } from '../pocketbook-list-item/pocketbook-list-item.component';
+import { PocketbookListItemComponent } from './pocketbook-list-item/pocketbook-list-item.component';
 import { PocketbookListService, PocketbookViewMode } from './pocketbook-list.service';
 
 @Component({
