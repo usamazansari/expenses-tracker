@@ -20,6 +20,7 @@
       "@expenses-tracker/features/dashboard": ["libs/features/dashboard/src/index.ts"],
       "@expenses-tracker/features/pocketbook": ["libs/features/pocketbook/src/index.ts"],
       "@expenses-tracker/features/profile": ["libs/features/profile/src/index.ts"],
+      "@expenses-tracker/features/transaction": ["libs/features/transaction/src/index.ts"],
       "@expenses-tracker/layout": ["libs/layout/src/index.ts"],
       "@expenses-tracker/shared/assets": ["libs/shared/assets/src/index.ts"],
       "@expenses-tracker/shared/common": ["libs/shared/common/src/index.ts"],
