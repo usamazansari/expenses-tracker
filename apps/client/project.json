@@ -67,7 +67,8 @@
           "browserTarget": "client:build:production"
         },
         "development": {
-          "browserTarget": "client:build:development"
+          "browserTarget": "client:build:development",
+          "hmr": true
         }
       },
       "defaultConfiguration": "development",
