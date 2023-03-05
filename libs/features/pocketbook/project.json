@@ -1,15 +1,15 @@
 {
-  "name": "pocketbook",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "features-pocketbook",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
-  "sourceRoot": "libs/pocketbook/src",
+  "sourceRoot": "libs/features/pocketbook/src",
   "prefix": "expenses-tracker",
   "targets": {
     "test": {
       "executor": "@nrwl/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/pocketbook/jest.config.ts",
+        "jestConfig": "libs/features/pocketbook/jest.config.ts",
         "passWithNoTests": true
       }
     },
@@ -18,8 +18,8 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
-          "libs/pocketbook/**/*.ts",
-          "libs/pocketbook/**/*.html"
+          "libs/features/pocketbook/**/*.ts",
+          "libs/features/pocketbook/**/*.html"
         ]
       }
     }

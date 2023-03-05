@@ -6,7 +6,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { User } from 'firebase/auth';
 import { of, EMPTY, BehaviorSubject, Observable, switchMap } from 'rxjs';
 
-import { ExtractInitialsPipe } from '@expenses-tracker/profile';
+import { ExtractInitialsPipe } from '@expenses-tracker/features/profile';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 import { AddPocketbookGraphicComponent } from '@expenses-tracker/shared/assets';
 

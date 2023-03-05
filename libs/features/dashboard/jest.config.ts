@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
-  displayName: 'dashboard',
-  preset: '../../jest.preset.js',
+  displayName: 'features-dashboard',
+  preset: '../../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
     'ts-jest': {
@@ -9,7 +9,7 @@ export default {
       stringifyContentPathRegex: '\\.(html|svg)$'
     }
   },
-  coverageDirectory: '../../coverage/libs/dashboard',
+  coverageDirectory: '../../../coverage/libs/features/dashboard',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular'
   },
