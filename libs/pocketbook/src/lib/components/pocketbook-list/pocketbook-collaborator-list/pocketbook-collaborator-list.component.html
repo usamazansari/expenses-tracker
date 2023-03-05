@@ -11,14 +11,12 @@
     </div>
   </ng-container>
   <ng-template #showOwnedPocketbookList>
-    <div class="grid grid-rows-[1fr_auto] gap-3">
-      <div class="flex flex-wrap justify-center gap-2">
-        <ng-container *ngFor="let pocketbook of pocketbookList">
-          <expenses-tracker-pocketbook-list-item
-            [pocketbook]="pocketbook"
-            [isOwner]="false"></expenses-tracker-pocketbook-list-item>
-        </ng-container>
-      </div>
+    <div class="flex flex-wrap justify-center gap-2">
+      <ng-container *ngFor="let pocketbook of pocketbookList">
+        <expenses-tracker-pocketbook-list-item
+          [pocketbook]="pocketbook"
+          [isOwner]="false"></expenses-tracker-pocketbook-list-item>
+      </ng-container>
     </div>
   </ng-template>
 </ng-container>

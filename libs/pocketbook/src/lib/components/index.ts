@@ -1,3 +1,4 @@
+export * from './pocketbook-card/pocketbook-card.component';
 export * from './pocketbook-list/pocketbook-list.component';
 export * from './pocketbook-list/pocketbook-owner-list/pocketbook-owner-list.component';
 export * from './pocketbook-list/pocketbook-collaborator-list/pocketbook-collaborator-list.component';

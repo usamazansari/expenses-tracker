@@ -4,6 +4,7 @@ import { AuthGuard } from '@expenses-tracker/auth';
 
 import {
   PocketbookAddComponent,
+  PocketbookCardComponent,
   PocketbookEditComponent,
   PocketbookListComponent,
   PocketbookOwnerListComponent,
@@ -12,16 +13,22 @@ import {
 
 export const pocketbookRoutes: Route[] = [
   {
-    path: 'list',
-    component: PocketbookListComponent,
-    canActivate: [AuthGuard],
+    path: '',
+    component: PocketbookCardComponent,
     children: [
-      { path: 'owner', component: PocketbookOwnerListComponent },
-      { path: 'collaborator', component: PocketbookCollaboratorListComponent },
-      { path: '', redirectTo: 'owner', pathMatch: 'full' }
+      {
+        path: 'list',
+        component: PocketbookListComponent,
+        canActivate: [AuthGuard],
+        children: [
+          { path: 'owner', component: PocketbookOwnerListComponent },
+          { path: 'collaborator', component: PocketbookCollaboratorListComponent },
+          { path: '', redirectTo: 'owner', pathMatch: 'full' }
+        ]
+      },
+      { path: 'add', component: PocketbookAddComponent, canActivate: [AuthGuard] },
+      { path: 'edit', component: PocketbookEditComponent, canActivate: [AuthGuard] },
+      { path: '', redirectTo: 'list', pathMatch: 'full' }
     ]
-  },
-  { path: 'add', component: PocketbookAddComponent, canActivate: [AuthGuard] },
-  { path: 'edit', component: PocketbookEditComponent, canActivate: [AuthGuard] },
-  { path: '', redirectTo: 'list', pathMatch: 'full' }
+  }
 ];
