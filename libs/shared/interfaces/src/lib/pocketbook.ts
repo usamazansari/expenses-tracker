@@ -6,11 +6,4 @@ interface IPocketbook {
   createdAt: Date;
 }
 
-const POCKETBOOK_STUB: IPocketbook = {
-  id: '',
-  owner: '',
-  collaboratorList: [],
-  createdAt: new Date(0)
-};
-
-export { IPocketbook, POCKETBOOK_STUB };
+export { IPocketbook };
