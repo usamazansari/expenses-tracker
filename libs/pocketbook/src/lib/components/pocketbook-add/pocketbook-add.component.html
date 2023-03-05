@@ -24,31 +24,39 @@
             </mat-form-field>
           </div>
 
-          <div class="flex items-center gap-2">
-            <mat-icon class="min-w-[24px] text-gray-700">group</mat-icon>
-            <mat-form-field class="w-full" appearance="fill">
-              <mat-label>Add Collaborators</mat-label>
-              <mat-select formControlName="collaborators" multiple>
-                <mat-select-trigger>
-                  <mat-chip-set>
-                    <mat-chip
-                      *ngFor="let collaborator of formGroup.get('collaborators')?.value"
-                      [removable]="true"
-                      (removed)="removeCollaborator(collaborator)">
-                      {{ collaborator.email }}
-                      <mat-icon matChipRemove>cancel</mat-icon>
-                    </mat-chip>
-                  </mat-chip-set>
-                </mat-select-trigger>
+          <ng-container *ngIf="userList$ | async as userList">
+            <ng-container *ngIf="!!userList.length">
+              <div class="flex items-center gap-2">
+                <mat-icon class="min-w-[24px] text-gray-700">group</mat-icon>
+                <mat-form-field class="w-full" appearance="fill">
+                  <mat-label>Add Collaborators</mat-label>
+                  <mat-select formControlName="collaboratorList" multiple>
+                    <mat-select-trigger>
+                      <mat-chip-set>
+                        <ng-container
+                          *ngIf="
+                            formGroup.get('collaboratorList')?.valueChanges
+                              | async as collaboratorList
+                          ">
+                          <mat-chip
+                            *ngFor="let collaborator of collaboratorList"
+                            [removable]="true"
+                            (removed)="removeCollaborator(collaborator)">
+                            {{ collaborator.email }}
+                            <mat-icon matChipRemove>cancel</mat-icon>
+                          </mat-chip>
+                        </ng-container>
+                      </mat-chip-set>
+                    </mat-select-trigger>
 
-                <mat-option
-                  *ngFor="let collaborator of userList$ | async"
-                  [value]="collaborator">
-                  {{ collaborator.email }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
+                    <mat-option *ngFor="let collaborator of userList" [value]="collaborator">
+                      {{ collaborator.email }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </ng-container>
+          </ng-container>
         </div>
         <div class="grid grid-cols-2 gap-2">
           <button

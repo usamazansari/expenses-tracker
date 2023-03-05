@@ -23,7 +23,7 @@ import { ComponentFlags, PocketbookAddService } from './pocketbook-add.service';
 
 type PocketbookAddForm = {
   name: FormControl<string | null>;
-  collaborators: FormControl<User[] | null>;
+  collaboratorList: FormControl<User[] | null>;
 };
 
 @Component({
@@ -65,24 +65,24 @@ export class PocketbookAddComponent implements OnInit, OnDestroy {
 
     this.formGroup = this._fb.group<PocketbookAddForm>({
       name: this._fb.control<string>('', Validators.required),
-      collaborators: this._fb.control<User[]>([])
+      collaboratorList: this._fb.control<User[]>([])
     });
 
     this.flags$ = this._service.watchFlags$();
   }
 
   removeCollaborator(collaborator: User): void {
-    const selectedCollaboratorList = this.formGroup.get('collaborators')?.value as User[];
+    const selectedCollaboratorList = this.formGroup.get('collaboratorList')?.value as User[];
     const index = selectedCollaboratorList.findIndex(({ uid }) => uid === collaborator.uid);
     if (index >= 0) {
       selectedCollaboratorList.splice(index, 1);
-      this.formGroup.get('collaborators')?.setValue(selectedCollaboratorList ?? []);
+      this.formGroup.get('collaboratorList')?.setValue(selectedCollaboratorList ?? []);
     }
   }
 
   addPocketbook() {
     if (!this.formGroup.invalid) {
-      const { name, collaborators } = this.formGroup.value;
+      const { name, collaboratorList: collaborators } = this.formGroup.value;
       this.#addPocketbook$ = this._service
         .addPocketbook$({
           name: name ?? '',

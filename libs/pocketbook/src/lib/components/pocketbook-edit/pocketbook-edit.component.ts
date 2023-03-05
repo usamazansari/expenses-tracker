@@ -50,6 +50,7 @@ export class PocketbookEditComponent implements OnInit, OnDestroy {
   #userList$!: Subscription;
   #pocketbook$ = new BehaviorSubject<IPocketbook | null>(null);
   collaboratorList$!: Observable<User[]>;
+
   @Input() set pocketbook(value: IPocketbook | null) {
     this.#pocketbook$.next(value);
   }
