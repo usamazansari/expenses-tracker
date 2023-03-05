@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 import { EmptyPocketbookListGraphicComponent } from '@expenses-tracker/shared/assets';
+import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
-import { PocketbookOwnerListService } from './pocketbook-owner-list.service';
 import { PocketbookListItemComponent } from '../pocketbook-list-item/pocketbook-list-item.component';
+import { PocketbookOwnerListService } from './pocketbook-owner-list.service';
 
 @Component({
   selector: 'expenses-tracker-pocketbook-owner-list',

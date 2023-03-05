@@ -18,7 +18,7 @@ import { BehaviorSubject, filter, map, Observable, Subscription } from 'rxjs';
 import { ContextService } from '@expenses-tracker/core';
 import { AddPocketbookGraphicComponent } from '@expenses-tracker/shared/assets';
 
-import { IPocketbook, POCKETBOOK_STUB } from '@expenses-tracker/shared/interfaces';
+import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 import { ComponentFlags, PocketbookEditService } from './pocketbook-edit.service';
 
 type PocketbookEditForm = {
@@ -48,9 +48,9 @@ export class PocketbookEditComponent implements OnInit, OnDestroy {
   flags$!: Observable<ComponentFlags>;
   #editPocketbook$!: Subscription;
   #userList$!: Subscription;
-  #pocketbook$ = new BehaviorSubject<IPocketbook>(POCKETBOOK_STUB);
+  #pocketbook$ = new BehaviorSubject<IPocketbook | null>(null);
   collaboratorList$!: Observable<User[]>;
-  @Input() set pocketbook(value: IPocketbook) {
+  @Input() set pocketbook(value: IPocketbook | null) {
     this.#pocketbook$.next(value);
   }
   get pocketbook() {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 import { FirestoreService } from '@expenses-tracker/core';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
@@ -13,15 +13,13 @@ export class PocketbookOwnerListService {
   constructor(private _firestore: FirestoreService) {}
 
   fetchPocketbookList$() {
-    this._firestore
-      .getPocketbookList$()
-      .pipe(map(({ owner }) => owner))
-      .subscribe(pocketbookList => {
-        this.setPocketbookList(pocketbookList);
-      });
+    this._firestore.getOwnedPocketbookList$().subscribe(pocketbookList => {
+      this.setPocketbookList(pocketbookList);
+    });
   }
 
   setPocketbookList(pocketbookList: IPocketbook[]) {
+    console.log({ pocketbookList });
     this.#pocketbookList = pocketbookList ?? [];
     this.#pocketbookList$.next(this.#pocketbookList);
   }
