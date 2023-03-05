@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { User } from 'firebase/auth';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 
 import { Router } from '@angular/router';
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
+import { NotificationService } from '@expenses-tracker/shared/common';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,8 @@ export class PocketbookListItemService {
   constructor(
     private _router: Router,
     private _firestore: FirestoreService,
-    private _context: ContextService
+    private _context: ContextService,
+    private _notification: NotificationService
   ) {}
 
   fetchCollaboratorList$(pocketbook: IPocketbook | null) {
@@ -44,6 +46,24 @@ export class PocketbookListItemService {
   }
 
   deletePocketbook$(pocketbook: IPocketbook) {
-    return this._firestore.deletePocketbook$(pocketbook);
+    return this._firestore.deletePocketbook$(pocketbook).pipe(
+      tap(() => {
+        this._notification.success({
+          title: 'Deleted Successfully',
+          description: 'Pocketbook successfully deleted'
+        });
+      }),
+      catchError(e => {
+        this._notification.error({
+          title: 'Delete Failed',
+          description: 'Unable to delete the pocketbook'
+        });
+        return throwError(() => new Error(e));
+      })
+    );
+  }
+
+  gotoPocketbook(id: string) {
+    this._router.navigate(['pocketbook', id]);
   }
 }
