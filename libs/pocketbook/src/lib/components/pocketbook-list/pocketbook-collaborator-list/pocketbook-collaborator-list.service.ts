@@ -13,7 +13,7 @@ export class PocketbookCollaboratorListService {
   constructor(private _firestore: FirestoreService) {}
 
   fetchPocketbookList$() {
-    this._firestore.getCollaboratedPocketbookList$().subscribe(pocketbookList => {
+    this._firestore.watchCollaboratedPocketbookList$().subscribe(pocketbookList => {
       this.setPocketbookList(pocketbookList);
     });
   }

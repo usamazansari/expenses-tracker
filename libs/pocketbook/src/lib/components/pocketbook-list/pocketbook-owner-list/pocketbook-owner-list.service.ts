@@ -13,13 +13,12 @@ export class PocketbookOwnerListService {
   constructor(private _firestore: FirestoreService) {}
 
   fetchPocketbookList$() {
-    this._firestore.getOwnedPocketbookList$().subscribe(pocketbookList => {
+    this._firestore.watchOwnedPocketbookList$().subscribe(pocketbookList => {
       this.setPocketbookList(pocketbookList);
     });
   }
 
   setPocketbookList(pocketbookList: IPocketbook[]) {
-    console.log({ pocketbookList });
     this.#pocketbookList = pocketbookList ?? [];
     this.#pocketbookList$.next(this.#pocketbookList);
   }

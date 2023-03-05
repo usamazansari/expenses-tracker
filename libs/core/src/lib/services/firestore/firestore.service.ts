@@ -41,7 +41,7 @@ export class FirestoreService {
     );
   }
 
-  getOwnedPocketbookList$() {
+  watchOwnedPocketbookList$() {
     return this._context.watchUser$().pipe(
       switchMap(user =>
         this._firestore
@@ -61,7 +61,7 @@ export class FirestoreService {
     );
   }
 
-  getCollaboratedPocketbookList$() {
+  watchCollaboratedPocketbookList$() {
     return this._context.watchUser$().pipe(
       switchMap(user =>
         this._firestore
