@@ -1,5 +1,5 @@
 {
-  "name": "shared-common",
+  "name": "common",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
   "sourceRoot": "libs/shared/common/src",
@@ -17,10 +17,7 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "libs/shared/common/**/*.ts",
-          "libs/shared/common/**/*.html"
-        ]
+        "lintFilePatterns": ["libs/shared/common/**/*.ts", "libs/shared/common/**/*.html"]
       }
     }
   },
