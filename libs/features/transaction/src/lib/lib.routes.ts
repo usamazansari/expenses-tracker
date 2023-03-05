@@ -1,3 +1,8 @@
 import { Route } from '@angular/router';
 
-export const transactionRoutes: Route[] = [];
+import { TransactionListComponent } from './components';
+
+export const transactionRoutes: Route[] = [
+  { path: 'list', component: TransactionListComponent },
+  { path: '', redirectTo: 'list', pathMatch: 'full' }
+];

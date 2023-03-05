@@ -208,7 +208,7 @@ export class FirestoreService {
   }
 
   watchCollaboratorList$(pocketbook: IPocketbook | null) {
-    return !pocketbook?.collaboratorList.length
+    return !pocketbook?.collaboratorList?.length
       ? of([])
       : this._firestore
           .collection<Partial<User>>(Collections.User, ref =>

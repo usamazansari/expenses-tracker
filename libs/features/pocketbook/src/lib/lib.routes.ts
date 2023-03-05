@@ -28,7 +28,13 @@ export const pocketbookRoutes: Route[] = [
         ]
       },
       { path: 'add', component: PocketbookAddComponent, canActivate: [AuthGuard] },
-      { path: ':id', component: PocketbookDetailComponent },
+      {
+        path: ':id/transaction',
+        component: PocketbookDetailComponent,
+        loadChildren: () =>
+          import('@expenses-tracker/features/transaction').then(m => m.transactionRoutes)
+      },
+      { path: ':id', redirectTo: ':id/transaction', pathMatch: 'full' },
       { path: ':id/edit', component: PocketbookEditComponent, canActivate: [AuthGuard] },
       { path: '', redirectTo: 'list', pathMatch: 'full' }
     ]
