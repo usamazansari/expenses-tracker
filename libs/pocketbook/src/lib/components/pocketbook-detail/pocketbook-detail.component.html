@@ -1,0 +1,10 @@
+<ng-container *ngIf="pocketbook$ | async as pocketbook">
+  <ng-container *ngIf="!pocketbook; else displayPocketbook">
+    Pocketbook not found
+  </ng-container>
+  <ng-template #displayPocketbook>
+    <div class="grid">
+      <pre>{{ pocketbook | json }}</pre>
+    </div>
+  </ng-template>
+</ng-container>

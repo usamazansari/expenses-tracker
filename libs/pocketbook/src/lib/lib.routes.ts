@@ -5,6 +5,7 @@ import { AuthGuard } from '@expenses-tracker/auth';
 import {
   PocketbookAddComponent,
   PocketbookCardComponent,
+  PocketbookDetailComponent,
   PocketbookEditComponent,
   PocketbookListComponent,
   PocketbookOwnerListComponent,
@@ -28,6 +29,7 @@ export const pocketbookRoutes: Route[] = [
       },
       { path: 'add', component: PocketbookAddComponent, canActivate: [AuthGuard] },
       { path: 'edit', component: PocketbookEditComponent, canActivate: [AuthGuard] },
+      { path: ':id', component: PocketbookDetailComponent },
       { path: '', redirectTo: 'list', pathMatch: 'full' }
     ]
   }

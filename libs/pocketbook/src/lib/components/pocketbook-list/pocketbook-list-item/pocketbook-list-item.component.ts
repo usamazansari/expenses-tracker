@@ -55,8 +55,8 @@ export class PocketbookListItemComponent implements OnInit {
     this.owner$ = this._service.watchOwner$(this.pocketbook) as Observable<User>;
   }
 
-  editPocketbook(pocketbook: IPocketbook) {
-    this._service.editPocketbook(pocketbook);
+  editPocketbook() {
+    this._service.editPocketbook(this.pocketbook as IPocketbook);
   }
 
   deletePocketbook() {
@@ -69,13 +69,10 @@ export class PocketbookListItemComponent implements OnInit {
           result ? this._service.deletePocketbook$(this.pocketbook as IPocketbook) : of(EMPTY)
         )
       )
-      .subscribe({
-        next: res => {
-          console.log({ res });
-        },
-        error: error => {
-          console.error({ error });
-        }
-      });
+      .subscribe();
+  }
+
+  gotoPocketbookDetail() {
+    this._service.gotoPocketbook(this.pocketbook?.id ?? '');
   }
 }

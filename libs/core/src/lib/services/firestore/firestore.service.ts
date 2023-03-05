@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Timestamp } from '@angular/fire/firestore';
 import { User } from 'firebase/auth';
-import { map, of, switchMap, throwError } from 'rxjs';
+import { map, Observable, of, switchMap, throwError } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
@@ -41,7 +41,7 @@ export class FirestoreService {
     );
   }
 
-  watchOwnedPocketbookList$() {
+  watchOwnedPocketbookList$(): Observable<IPocketbook[]> {
     return this._context.watchUser$().pipe(
       switchMap(user =>
         this._firestore
@@ -61,7 +61,7 @@ export class FirestoreService {
     );
   }
 
-  watchCollaboratedPocketbookList$() {
+  watchCollaboratedPocketbookList$(): Observable<IPocketbook[]> {
     return this._context.watchUser$().pipe(
       switchMap(user =>
         this._firestore
@@ -79,6 +79,23 @@ export class FirestoreService {
           )
       )
     );
+  }
+
+  watchPocketbook$(id: string): Observable<IPocketbook> {
+    return this._firestore
+      .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
+        ref.where('id', '==', id ?? '')
+      )
+      .valueChanges()
+      .pipe(
+        map(
+          ([pb]) =>
+            ({
+              ...pb,
+              createdAt: (pb?.createdAt as Timestamp)?.toDate()
+            } as IPocketbook)
+        )
+      );
   }
 
   createPocketbook$({ name, collaboratorList = [], transactions = [] }: Partial<IPocketbook>) {
