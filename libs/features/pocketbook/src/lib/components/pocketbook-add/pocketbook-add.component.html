@@ -9,7 +9,7 @@
       <div class="grid grid-rows-[1fr_auto] gap-2">
         <div class="grid gap-2">
           <div class="flex items-center gap-2">
-            <mat-icon class="min-w-[24px] text-gray-700">book</mat-icon>
+            <mat-icon class="min-w-[24px] text-dark dark:text-light">book</mat-icon>
             <mat-form-field class="w-full">
               <mat-label>Name</mat-label>
               <input
@@ -27,7 +27,7 @@
           <ng-container *ngIf="userList$ | async as userList">
             <ng-container *ngIf="!!userList.length">
               <div class="flex items-center gap-2">
-                <mat-icon class="min-w-[24px] text-gray-700">group</mat-icon>
+                <mat-icon class="min-w-[24px] text-dark dark:text-light">group</mat-icon>
                 <mat-form-field class="w-full" appearance="fill">
                   <mat-label>Add Collaborators</mat-label>
                   <mat-select formControlName="collaboratorList" multiple>

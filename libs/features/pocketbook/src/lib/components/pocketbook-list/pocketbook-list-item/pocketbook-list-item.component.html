@@ -19,7 +19,7 @@
     </div>
 
     <div class="flex flex-col gap-1">
-      <p class="text-gray-700">Collaborators</p>
+      <p class="text-dark dark:text-light">Collaborators</p>
       <ng-container *ngIf="!pocketbook.collaboratorList.length; else showCollaborators">
         <p class="text-gray-300">No Collaborators Added</p>
       </ng-container>
@@ -39,7 +39,9 @@
     </div>
 
     <div class="flex">
-      <p class="text-sm italic text-gray-700">{{ pocketbook.createdAt | date : 'long' }}</p>
+      <p class="text-sm italic text-dark dark:text-light">
+        {{ pocketbook.createdAt | date : 'long' }}
+      </p>
     </div>
 
     <div class="flex gap-2">
