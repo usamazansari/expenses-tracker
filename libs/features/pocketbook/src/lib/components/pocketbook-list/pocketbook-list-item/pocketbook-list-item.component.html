@@ -1,15 +1,16 @@
 <ng-container *ngIf="pocketbook; else showError">
-  <div class="flex flex-col h-full gap-2 p-4 border rounded-lg cursor-default w-96">
+  <div
+    class="flex flex-col h-full gap-2 p-4 border rounded-lg cursor-default border-border_color-light dark:border-border_color-dark w-96">
     <div class="grid self-center w-48 h-48 place-content-center">
       <expenses-tracker-add-pocketbook-graphic
         class="w-20 fill-primary"></expenses-tracker-add-pocketbook-graphic>
     </div>
 
     <div class="flex items-center justify-between py-2">
-      <p class="text-2xl font-bold">{{ pocketbook.name }}</p>
+      <p class="text-2xl font-bold text-dark dark:text-light">{{ pocketbook.name }}</p>
       <ng-container *ngIf="owner$ | async as owner">
         <div
-          class="p-4 border rounded-full w-14 h-14"
+          class="p-4 border rounded-full border-border_color-light dark:border-border_color-dark w-14 h-14 text-dark dark:text-light"
           #tooltip="matTooltip"
           [matTooltip]="owner.displayName ?? owner.email ?? ''"
           matTooltipPosition="above">
@@ -27,7 +28,7 @@
         <div class="flex gap-2">
           <ng-container *ngFor="let collaborator of collaboratorList$ | async">
             <div
-              class="p-4 border rounded-full w-14 h-14"
+              class="p-4 border rounded-full border-border_color-light dark:border-border_color-dark w-14 h-14 text-dark dark:text-light"
               #tooltip="matTooltip"
               [matTooltip]="collaborator.displayName ?? collaborator.email ?? ''"
               matTooltipPosition="above">
@@ -65,7 +66,7 @@
         <button
           matRipple
           type="button"
-          class="flex items-center self-center justify-center w-full gap-2 py-3 text-white bg-danger rounded-lg"
+          class="flex items-center self-center justify-center w-full gap-2 py-3 text-white rounded-lg bg-danger"
           (click)="deletePocketbook()">
           <mat-icon class="min-w-[24px]">delete</mat-icon>
           <span>DELETE</span>
