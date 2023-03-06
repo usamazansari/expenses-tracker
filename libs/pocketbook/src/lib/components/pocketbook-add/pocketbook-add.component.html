@@ -10,7 +10,7 @@
       <div class="grid grid-rows-[1fr_auto] gap-2">
         <div class="grid gap-2">
           <div class="flex items-center gap-2">
-            <mat-icon class="min-w-[24px] text-gray-700">book</mat-icon>
+            <mat-icon class="min-w-[24px] text-dark dark:text-light">book</mat-icon>
             <mat-form-field class="w-full">
               <mat-label>Name</mat-label>
               <input
@@ -26,7 +26,7 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <mat-icon class="min-w-[24px] text-gray-700">group</mat-icon>
+            <mat-icon class="min-w-[24px] text-dark dark:text-light">group</mat-icon>
             <mat-form-field class="w-full" appearance="fill">
               <mat-label>Add Collaborators</mat-label>
               <mat-select formControlName="collaborators" multiple>
@@ -55,7 +55,7 @@
           <button
             matRipple
             type="submit"
-            class="flex items-center gap-2 self-center justify-center w-full py-3 text-white bg-primary rounded-lg">
+            class="flex items-center self-center justify-center w-full gap-2 py-3 text-white rounded-lg bg-primary">
             <mat-icon class="min-w-[24px]">save</mat-icon>
             <span>SAVE</span>
           </button>
@@ -63,7 +63,7 @@
             matRipple
             type="button"
             (click)="cancelAddPocketbook()"
-            class="flex items-center w-full gap-2 px-6 py-3 text-center text-primary rounded-lg cursor-pointer hover:underline hover:underline-offset-4">
+            class="flex items-center w-full gap-2 px-6 py-3 text-center rounded-lg cursor-pointer text-primary hover:underline hover:underline-offset-4">
             <mat-icon class="min-w-[24px]">clear</mat-icon>
             <span>CANCEL</span>
           </button>

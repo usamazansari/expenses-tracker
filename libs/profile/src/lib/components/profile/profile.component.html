@@ -6,9 +6,9 @@
           <div class="grid place-content-center">Loading...</div>
         </ng-container>
         <ng-container *ngIf="flags.user.success">
-          <div class="grid gap-2 p-4 bg-white border rounded-lg">
+          <div class="grid gap-2 p-4 bg-white border rounded-lg dark:bg-dark">
             <div class="flex items-center justify-between">
-              <h1 class="text-xl font-bold">
+              <h1 class="text-xl font-bold text-dark dark:text-light">
                 {{ user.displayName || 'User Profile' }}
               </h1>
               <ng-container *ngIf="!isEditing">
@@ -17,7 +17,7 @@
                   type="button"
                   class="flex items-center justify-center p-2 rounded-full"
                   (click)="editMode()">
-                  <mat-icon class="text-gray-700">edit</mat-icon>
+                  <mat-icon class="text-dark dark:text-light">edit</mat-icon>
                 </button>
               </ng-container>
             </div>
