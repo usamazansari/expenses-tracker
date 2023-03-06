@@ -3,9 +3,9 @@
     <div
       class="flex items-stretch justify-between gap-2 p-2 m-4 bg-white rounded shadow w-[28rem]"
       [ngClass]="{
-        'text-blue-700': notification.type === 'info',
-        'text-green-700': notification.type === 'success',
-        'text-red-500': notification.type === 'error'
+        'text-primary': notification.type === 'info',
+        'text-secondary': notification.type === 'success',
+        'text-danger': notification.type === 'error'
       }">
       <div class="flex">
         <div class="flex items-center mr-2">
