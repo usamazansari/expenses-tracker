@@ -6,29 +6,26 @@
           <img class="w-24 h-24 rounded-full" [src]="user.photoURL" alt="User Image" />
         </ng-container>
         <ng-container *ngIf="!user.photoURL">
-          <span
-            class="grid w-24 h-24 text-4xl rounded-full text-dark dark:text-light bg-gradient-to-tr gradient-light dark:gradient-dark place-content-center">
+          <span class="grid w-24 h-24 text-4xl rounded-full place-content-center">
             {{ user | extractInitials }}
           </span>
         </ng-container>
       </div>
       <div class="grid grid-rows-1 gap-2">
         <div class="flex items-center gap-2">
-          <mat-icon class="min-w-[24px] text-dark dark:text-light"> person </mat-icon>
+          <mat-icon class="min-w-[24px]"> person </mat-icon>
           <ng-container *ngIf="!user.displayName">
-            <span class="text-disabled-light dark:text-disabled-dark">Name unavailable</span>
+            <span class="">Name unavailable</span>
           </ng-container>
           <ng-container *ngIf="user.displayName">
-            <span
-              class="overflow-hidden whitespace-nowrap overflow-ellipsis text-dark dark:text-light">
+            <span class="overflow-hidden whitespace-nowrap overflow-ellipsis">
               {{ user.displayName }}
             </span>
           </ng-container>
         </div>
         <div class="flex items-center gap-2">
-          <mat-icon class="min-w-[24px] text-dark dark:text-light"> alternate_email </mat-icon>
-          <span
-            class="overflow-hidden whitespace-nowrap overflow-ellipsis text-dark dark:text-light">
+          <mat-icon class="min-w-[24px]"> alternate_email </mat-icon>
+          <span class="overflow-hidden whitespace-nowrap overflow-ellipsis">
             {{ user.email }}
           </span>
         </div>
@@ -36,9 +33,8 @@
       <div class="grid grid-rows-1 gap-2">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <mat-icon class="min-w-[24px] text-dark dark:text-light"> badge </mat-icon>
-            <span
-              class="overflow-hidden whitespace-nowrap overflow-ellipsis text-dark dark:text-light">
+            <mat-icon class="min-w-[24px]"> badge </mat-icon>
+            <span class="overflow-hidden whitespace-nowrap overflow-ellipsis">
               {{ user.uid }}
             </span>
           </div>
@@ -46,9 +42,7 @@
             matRipple
             type="button"
             class="flex items-center justify-center p-2 rounded-full">
-            <mat-icon class="text-dark dark:text-light" (click)="copyUID(user.uid)">
-              content_copy
-            </mat-icon>
+            <mat-icon class="" (click)="copyUID(user.uid)"> content_copy </mat-icon>
           </button>
         </div>
       </div>

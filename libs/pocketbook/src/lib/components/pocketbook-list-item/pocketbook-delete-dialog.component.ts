@@ -9,13 +9,12 @@ import { MatRippleModule } from '@angular/material/core';
   standalone: true,
   imports: [CommonModule, MatDialogModule, MatIconModule, MatRippleModule],
   template: `
-    <div
-      class="grid p-6 bg-light dark:bg-dark gap-6 rounded border border-border_color-light dark:border-border_color-dark">
+    <div class="grid p-6  gap-6 rounded border ">
       <div class="">
-        <p class="text-xl font-bold text-dark dark:text-light">Delete Pocketbook</p>
+        <p class="text-xl font-bold ">Delete Pocketbook</p>
       </div>
       <div class="">
-        <p class="text-dark dark:text-light">Are you sure you want to delete the pocketbook?</p>
+        <p class="">Are you sure you want to delete the pocketbook?</p>
       </div>
       <div class="flex flex-col">
         <div class="flex items-center justify-center gap-6">
