@@ -2,7 +2,7 @@
   <div class="flex items-center justify-center gap-2 py-12">
     <expenses-tracker-pocketbook-graphic
       class="w-20 fill-primary"></expenses-tracker-pocketbook-graphic>
-    <span class="text-3xl text-primary cursor-default"> My Pocketbooks </span>
+    <span class="text-3xl cursor-default text-primary"> My Pocketbooks </span>
   </div>
   <ng-container *ngIf="viewMode$ | async as viewMode">
     <div class="flex justify-center">
@@ -10,11 +10,7 @@
         matRipple
         type="button"
         class="flex items-center justify-center w-48 gap-2 p-4 text-center rounded-tl-lg rounded-bl-lg cursor-pointer"
-        [ngClass]="
-          viewMode === 'owner'
-            ? 'bg-primary text-white'
-            : 'border border-border_color-light dark:border-border_color-dark border border-border_color-light dark:border-border_color-dark-r-0 bg-light dark:bg-dark text-dark dark:text-light'
-        "
+        [ngClass]="viewMode === 'owner' ? 'bg-primary text-white' : 'border border-r-0'"
         (click)="gotoOwnerPocketbookList()">
         <mat-icon>verified_user</mat-icon>
         <span>Owned</span>
@@ -23,11 +19,7 @@
         matRipple
         type="button"
         class="flex items-center justify-center w-48 gap-2 p-4 text-center rounded-tr-lg rounded-br-lg cursor-pointer"
-        [ngClass]="
-          viewMode === 'collaborator'
-            ? 'bg-primary text-white'
-            : 'border border-border_color-light dark:border-border_color-dark border border-border_color-light dark:border-border_color-dark-l-0 bg-light dark:bg-dark text-dark dark:text-light'
-        "
+        [ngClass]="viewMode === 'collaborator' ? 'bg-primary text-white' : 'border border-l-0'"
         (click)="gotoCollaboratorPocketbookList()">
         <mat-icon>group</mat-icon>
         <span>Collaborated</span>
@@ -41,7 +33,7 @@
     <button
       matRipple
       type="button"
-      class="flex items-center justify-center gap-2 px-6 py-3 mx-2 text-white bg-primary rounded-lg md:justify-self-center"
+      class="flex items-center justify-center gap-2 px-6 py-3 mx-2 text-white rounded-lg bg-primary md:justify-self-center"
       (click)="addPocketbook()">
       <mat-icon>add</mat-icon>
       <span>ADD POCKETBOOK</span>
