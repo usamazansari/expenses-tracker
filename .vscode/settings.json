@@ -1,3 +1,5 @@
 {
-  "editor.tabCompletion": "on"
+  "editor.tabCompletion": "on",
+  "diffEditor.codeLens": true,
+  "cSpell.words": ["usamazansari"]
 }

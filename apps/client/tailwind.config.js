@@ -27,20 +27,23 @@ module.exports = {
   darkMode: 'class',
   theme: {
     colors: {
-      'et-layer': '#0D1117',
-      'et-layer-alternate': '#161B22',
-      'et-button-primary': '#21262D',
-      'et-button-primary-bg': '#C9D1D9',
-      'et-button-hover': '#30363D',
-      'et-button-accent': '#58a6ff',
-      'et-button-accent-bg': '#388bfd26',
-      'et-border': '#f0f6fc1a',
-      'et-border-hover': '#8B949E',
-      'et-select': '#F78166',
-      'et-blue': '#58A6FF',
-      'et-red': '#F85149',
+      'et-accent': '#58A6FF',
+      'et-accent-bg': '#388BFD26',
+      'et-accent-emphasis': '#1f6feb',
+      'et-border': '#F0F6FC1A',
+      'et-border-hover': '#8B949E1A',
       'et-green': '#3FB950',
-      'et-yellow': '#f1e05a'
+      'et-layer-alternate': '#161B22',
+      'et-layer': '#0D1117',
+      'et-danger': '#F85149',
+      'et-danger-bg': '#FD443A26',
+      'et-select': '#F78166',
+      'et-text': '#C9D1D9',
+      'et-text-bg': '#21262D',
+      'et-text-bg-hover': '#30363D',
+      'et-violet': '#A371F7',
+      'et-yellow': '#F1E05a',
+      'et-white': '#ffffff'
     }
   }
 };

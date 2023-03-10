@@ -1,17 +1,21 @@
-<div class="relative grid gap-2 p-4 border rounded-lg w-96">
-  <div class="grid grid-cols-[1fr_1fr] gap-2 items-center py-12">
-    <expenses-tracker-register-graphic
-      class="w-16 fill-primary justify-self-end"></expenses-tracker-register-graphic>
-    <span class="text-3xl text-primary">Signup</span>
-  </div>
-  <ng-container *ngIf="flags$ | async as flags">
+<ng-container *ngIf="flags$ | async as flags">
+  <div class="relative grid gap-2 p-4 border rounded-lg w-96 bg-et-layer-alternate">
+    <div
+      class="grid grid-cols-[1fr_1fr] gap-2 items-center py-12"
+      [ngClass]="{
+        'opacity-50 pointer-events-none': flags.signup.loading || flags.saveUser.loading
+      }">
+      <expenses-tracker-register-graphic
+        class="w-16 fill-et-accent-emphasis justify-self-end"></expenses-tracker-register-graphic>
+      <span class="text-3xl text-et-accent-emphasis">Signup</span>
+    </div>
     <ng-container *ngIf="flags.signup.loading || flags.saveUser.loading">
-      <div class="absolute top-0 left-0 bottom-0 right-0 bg-[rgba(240,240,240,0.5)] z-10"></div>
+      <div class="absolute top-0 bottom-0 left-0 right-0 z-10 bg-et-border-hover"></div>
     </ng-container>
     <ng-container *ngIf="flags.signup.visible">
       <ng-container *ngIf="flags.signup.fail">
         <div
-          class="flex items-center justify-between gap-2 px-2 py-4 bg-red-100 rounded-lg text-danger">
+          class="absolute top-0 left-0 right-0 flex items-center justify-between gap-2 px-2 py-4 bg-red-100 rounded-lg bg-et-danger-bg text-et-danger">
           <div class="flex items-center gap-2">
             <mat-icon>error</mat-icon>
             <span class="font-bold">Signup Failed</span>
@@ -22,10 +26,14 @@
         </div>
       </ng-container>
       <form [formGroup]="formGroup" (ngSubmit)="signup()">
-        <div class="grid grid-rows-[1fr_auto] gap-2">
+        <div
+          class="grid grid-rows-[1fr_auto] gap-2"
+          [ngClass]="{
+            'opacity-50 pointer-events-none': flags.signup.loading || flags.saveUser.loading
+          }">
           <div class="grid gap-2">
             <div class="flex items-center gap-2">
-              <mat-icon class="min-w-[24px]">mail_outline</mat-icon>
+              <mat-icon class="min-w-[24px] text-et-text">mail_outline</mat-icon>
               <mat-form-field class="w-full">
                 <mat-label>Email</mat-label>
                 <input
@@ -41,7 +49,7 @@
             </div>
 
             <div class="flex items-center gap-2">
-              <mat-icon class="min-w-[24px]">key</mat-icon>
+              <mat-icon class="min-w-[24px] text-et-text">key</mat-icon>
               <mat-form-field class="w-full">
                 <mat-label>Password</mat-label>
                 <input
@@ -61,7 +69,7 @@
             <button
               matRipple
               type="submit"
-              class="flex items-center gap-2 justify-center self-center py-3 text-white bg-primary w-[50%] rounded-lg">
+              class="bg-et-accent-emphasis text-et-white flex items-center gap-2 justify-center self-center py-3 text-white bg-primary w-[50%] rounded-lg">
               <mat-icon class="min-w-[24px]">person_add</mat-icon>
               <span>SIGNUP</span>
             </button>
@@ -69,5 +77,5 @@
         </div>
       </form>
     </ng-container>
-  </ng-container>
-</div>
+  </div>
+</ng-container>

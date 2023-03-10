@@ -5,7 +5,11 @@
         matRipple
         type="button"
         class="flex items-center justify-center w-48 gap-2 p-4 text-center rounded-tl-lg rounded-bl-lg cursor-pointer"
-        [ngClass]="authMode === 'login' ? 'bg-primary text-white' : 'border  border-r-0 '"
+        [ngClass]="
+          authMode === 'login'
+            ? 'text-et-white bg-et-accent-emphasis'
+            : 'text-et-text bg-et-text-bg'
+        "
         (click)="gotoLogin()">
         <mat-icon>login</mat-icon>
         <span>Login</span>
@@ -14,18 +18,16 @@
         matRipple
         type="button"
         class="flex items-center justify-center w-48 gap-2 p-4 text-center rounded-tr-lg rounded-br-lg cursor-pointer"
-        [ngClass]="authMode === 'signup' ? 'bg-primary text-white' : 'border  border-l-0 '"
+        [ngClass]="
+          authMode === 'signup'
+            ? 'text-et-white bg-et-accent-emphasis'
+            : 'text-et-text bg-et-text-bg'
+        "
         (click)="gotoSignup()">
         <mat-icon>person_add</mat-icon>
         <span>Signup</span>
       </button>
     </div>
-    <!-- <ng-container *ngIf="authMode === 'login'">
-      <expenses-tracker-login></expenses-tracker-login>
-    </ng-container>
-    <ng-container *ngIf="authMode === 'signup'">
-      <expenses-tracker-signup></expenses-tracker-signup>
-    </ng-container> -->
     <router-outlet></router-outlet>
   </ng-container>
 </div>
