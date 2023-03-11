@@ -7,7 +7,7 @@
         class="flex items-center gap-2 justify-center w-48 p-4 text-center rounded-tl-lg rounded-bl-lg cursor-pointer"
         [ngClass]="
           authMode === 'login'
-            ? 'bg-primary text-white'
+            ? 'bg-blue-700 text-white'
             : 'border border-r-0 bg-white text-gray-700'
         "
         (click)="gotoLogin()">
@@ -20,7 +20,7 @@
         class="flex items-center gap-2 justify-center w-48 p-4 text-center rounded-tr-lg rounded-br-lg cursor-pointer"
         [ngClass]="
           authMode === 'signup'
-            ? 'bg-primary text-white'
+            ? 'bg-blue-700 text-white'
             : 'border border-l-0 bg-white text-gray-700'
         "
         (click)="gotoSignup()">

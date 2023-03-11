@@ -1,8 +1,8 @@
 <div class="relative grid gap-2 p-4 bg-white border rounded-lg w-96">
   <div class="grid grid-cols-[1fr_1fr] gap-2 items-center py-12">
     <expenses-tracker-login-graphic
-      class="w-16 fill-primary justify-self-end"></expenses-tracker-login-graphic>
-    <span class="text-3xl text-primary">Login</span>
+      class="w-16 fill-blue-700 justify-self-end"></expenses-tracker-login-graphic>
+    <span class="text-3xl text-blue-700">Login</span>
   </div>
   <ng-container *ngIf="flags$ | async as flags">
     <ng-container *ngIf="flags.login.loading">
@@ -11,7 +11,7 @@
     <ng-container *ngIf="flags.login.visible">
       <ng-container *ngIf="flags.login.fail">
         <div
-          class="flex items-center justify-between gap-2 px-2 py-4 text-danger bg-red-100 rounded">
+          class="flex items-center justify-between gap-2 px-2 py-4 text-red-500 bg-red-100 rounded">
           <div class="flex items-center gap-2">
             <mat-icon>error</mat-icon>
             <span class="font-bold">Login Failed</span>
@@ -61,7 +61,7 @@
             <button
               matRipple
               type="submit"
-              class="flex items-center gap-2 justify-center self-center py-3 text-white bg-primary w-[50%] rounded-lg">
+              class="flex items-center gap-2 justify-center self-center py-3 text-white bg-blue-700 w-[50%] rounded-lg">
               <mat-icon class="min-w-[24px]">login</mat-icon>
               <span>LOGIN</span>
             </button>

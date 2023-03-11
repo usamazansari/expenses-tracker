@@ -2,7 +2,7 @@
   <div class="flex flex-col h-full gap-2 p-4 border rounded-lg cursor-default w-96">
     <div class="grid self-center w-48 h-48 place-content-center">
       <expenses-tracker-add-pocketbook-graphic
-        class="w-20 fill-primary"></expenses-tracker-add-pocketbook-graphic>
+        class="w-20 fill-blue-700"></expenses-tracker-add-pocketbook-graphic>
     </div>
 
     <div class="flex items-center justify-between py-2">
@@ -46,7 +46,7 @@
       <button
         matRipple
         type="button"
-        class="flex items-center self-center justify-center w-full gap-2 py-3 text-white rounded-lg bg-secondary"
+        class="flex items-center self-center justify-center w-full gap-2 py-3 text-white bg-green-500 rounded-lg"
         (click)="gotoPocketbookDetail()">
         <mat-icon class="min-w-[24px]">visibility</mat-icon>
         <span>OPEN</span>
@@ -55,7 +55,7 @@
         <button
           matRipple
           type="button"
-          class="flex items-center self-center justify-center w-full gap-2 py-3 text-white rounded-lg bg-primary"
+          class="flex items-center self-center justify-center w-full gap-2 py-3 text-white bg-blue-700 rounded-lg"
           (click)="editPocketbook()">
           <mat-icon class="min-w-[24px]">edit</mat-icon>
           <span>EDIT</span>
@@ -63,7 +63,7 @@
         <button
           matRipple
           type="button"
-          class="flex items-center self-center justify-center w-full gap-2 py-3 text-white bg-danger rounded-lg"
+          class="flex items-center self-center justify-center w-full gap-2 py-3 text-white bg-red-500 rounded-lg"
           (click)="deletePocketbook()">
           <mat-icon class="min-w-[24px]">delete</mat-icon>
           <span>DELETE</span>
