@@ -1,8 +1,8 @@
 <div class="grid grid-cols-1 grid-rows-1 gap-4 justify-items-center">
   <div class="flex items-center justify-center gap-2 py-12">
     <expenses-tracker-pocketbook-graphic
-      class="w-20 fill-et-accent-emphasis"></expenses-tracker-pocketbook-graphic>
-    <span class="text-3xl cursor-default text-et-accent-emphasis">My Pocketbooks</span>
+      class="w-20 fill-et-color-accent-emphasis"></expenses-tracker-pocketbook-graphic>
+    <span class="text-3xl cursor-default text-et-color-accent-emphasis">My Pocketbooks</span>
   </div>
   <!-- TODO: usamazansari: Add Flags -->
   <ng-container *ngIf="viewMode$ | async as viewMode">
@@ -13,8 +13,8 @@
         class="flex items-center justify-center w-48 gap-2 p-4 text-center rounded-tl-lg rounded-bl-lg cursor-pointer"
         [ngClass]="
           viewMode === 'owner'
-            ? 'text-et-white bg-et-accent-emphasis'
-            : 'text-et-text bg-et-text-bg'
+            ? 'text-et-color-fg-on-accent-emphasis bg-et-color-accent-emphasis'
+            : 'text-et-color-fg-default bg-et-color-button-default-bg'
         "
         (click)="gotoOwnerPocketbookList()">
         <mat-icon>verified_user</mat-icon>
@@ -26,8 +26,8 @@
         class="flex items-center justify-center w-48 gap-2 p-4 text-center rounded-tr-lg rounded-br-lg cursor-pointer"
         [ngClass]="
           viewMode === 'collaborator'
-            ? 'text-et-white bg-et-accent-emphasis'
-            : 'text-et-text bg-et-text-bg'
+            ? 'text-et-color-fg-on-accent-emphasis bg-et-color-accent-emphasis'
+            : 'text-et-color-fg-default bg-et-color-button-default-bg'
         "
         (click)="gotoCollaboratorPocketbookList()">
         <mat-icon>group</mat-icon>
@@ -42,7 +42,7 @@
     <button
       matRipple
       type="button"
-      class="flex items-center justify-center gap-2 px-6 py-3 mx-2 rounded-lg md:justify-self-center bg-et-accent-emphasis text-et-white"
+      class="flex items-center justify-center gap-2 px-6 py-3 mx-2 rounded-lg md:justify-self-center bg-et-color-button-primary-bg text-et-color-button-primary"
       (click)="addPocketbook()">
       <mat-icon>add</mat-icon>
       <span>ADD POCKETBOOK</span>

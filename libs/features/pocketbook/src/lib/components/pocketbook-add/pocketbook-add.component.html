@@ -1,15 +1,15 @@
-<div class="grid grid-cols-1 grid-rows-1 gap-2 justify-items-center">
+<div class="grid grid-cols-1 grid-rows-1 gap-2 justify-items-center text-et-color-fg-default">
   <div class="flex items-center justify-center gap-2 py-12">
     <expenses-tracker-add-pocketbook-graphic
-      class="w-20 fill-et-accent-emphasis"></expenses-tracker-add-pocketbook-graphic>
-    <span class="text-3xl text-et-accent-emphasis">Add Pocketbook</span>
+      class="w-20 fill-et-color-accent-emphasis"></expenses-tracker-add-pocketbook-graphic>
+    <span class="text-3xl text-et-color-accent-emphasis">Add Pocketbook</span>
   </div>
   <div class="grid min-w-[24rem]">
     <form [formGroup]="formGroup" (ngSubmit)="addPocketbook()" class="max-w-[24rem]">
       <div class="grid grid-rows-[1fr_auto] gap-2">
         <div class="grid gap-2">
           <div class="flex items-center gap-2">
-            <mat-icon class="min-w-[24px] text-et-text">book</mat-icon>
+            <mat-icon class="min-w-[24px]">book</mat-icon>
             <mat-form-field class="w-full">
               <mat-label>Name</mat-label>
               <input
@@ -27,7 +27,7 @@
           <ng-container *ngIf="userList$ | async as userList">
             <ng-container *ngIf="!!userList.length">
               <div class="flex items-center gap-2">
-                <mat-icon class="min-w-[24px] text-et-text">group</mat-icon>
+                <mat-icon class="min-w-[24px]">group</mat-icon>
                 <mat-form-field class="w-full" appearance="fill">
                   <mat-label>Add Collaborators</mat-label>
                   <mat-select formControlName="collaboratorList" multiple>
@@ -62,7 +62,7 @@
           <button
             matRipple
             type="submit"
-            class="flex items-center self-center justify-center w-full gap-2 py-3 rounded-lg text-et-white bg-et-accent-emphasis">
+            class="flex items-center self-center justify-center w-full gap-2 py-3 rounded-lg text-et-replace bg-et-replace-emphasis">
             <mat-icon class="min-w-[24px]">save</mat-icon>
             <span>SAVE</span>
           </button>
@@ -70,7 +70,7 @@
             matRipple
             type="button"
             (click)="cancelAddPocketbook()"
-            class="flex items-center w-full gap-2 px-6 py-3 text-center rounded-lg cursor-pointer text-et-accent hover:underline hover:underline-offset-4">
+            class="flex items-center w-full gap-2 px-6 py-3 text-center rounded-lg cursor-pointer text-et-replace hover:underline hover:underline-offset-4">
             <mat-icon class="min-w-[24px]">clear</mat-icon>
             <span>CANCEL</span>
           </button>
