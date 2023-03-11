@@ -1,16 +1,15 @@
 <ng-container *ngIf="pocketbook; else showError">
-  <div
-    class="flex flex-col h-full gap-2 p-4 border rounded-lg cursor-default border-et-border w-96 bg-et-text-bg">
+  <div class="flex flex-col h-full gap-2 p-4 border rounded-lg cursor-default w-96">
     <div class="grid self-center w-48 h-48 place-content-center">
       <expenses-tracker-add-pocketbook-graphic
-        class="w-20 fill-et-accent-emphasis"></expenses-tracker-add-pocketbook-graphic>
+        class="w-20 fill-primary"></expenses-tracker-add-pocketbook-graphic>
     </div>
 
     <div class="flex items-center justify-between py-2">
-      <p class="text-2xl font-bold text-et-text">{{ pocketbook.name }}</p>
+      <p class="text-2xl font-bold">{{ pocketbook.name }}</p>
       <ng-container *ngIf="owner$ | async as owner">
         <div
-          class="p-4 transition-colors duration-200 border rounded-full cursor-default w-14 h-14 bg-et-text-bg text-et-text hover:bg-et-text-bg-hover"
+          class="p-4 border rounded-full w-14 h-14"
           #tooltip="matTooltip"
           [matTooltip]="owner.displayName ?? owner.email ?? ''"
           matTooltipPosition="above">
@@ -20,15 +19,15 @@
     </div>
 
     <div class="flex flex-col gap-1">
-      <p class="text-et-text">Collaborators</p>
+      <p class="">Collaborators</p>
       <ng-container *ngIf="!pocketbook.collaboratorList.length; else showCollaborators">
-        <p class="text-et-border-hover">No Collaborators Added</p>
+        <p class="text-gray-300">No Collaborators Added</p>
       </ng-container>
       <ng-template #showCollaborators>
         <div class="flex gap-2">
           <ng-container *ngFor="let collaborator of collaboratorList$ | async">
             <div
-              class="p-4 transition-colors duration-200 border rounded-full cursor-default w-14 h-14 bg-et-text-bg text-et-text hover:bg-et-text-bg-hover"
+              class="p-4 border rounded-full w-14 h-14"
               #tooltip="matTooltip"
               [matTooltip]="collaborator.displayName ?? collaborator.email ?? ''"
               matTooltipPosition="above">
@@ -40,7 +39,7 @@
     </div>
 
     <div class="flex">
-      <p class="text-sm italic text-et-text">
+      <p class="text-sm italic">
         {{ pocketbook.createdAt | date : 'long' }}
       </p>
     </div>
@@ -49,7 +48,7 @@
       <button
         matRipple
         type="button"
-        class="flex items-center self-center justify-center w-full gap-2 py-3 rounded-lg text-et-white bg-et-green"
+        class="flex items-center self-center justify-center w-full gap-2 py-3 text-white rounded-lg bg-secondary"
         (click)="gotoPocketbookDetail()">
         <mat-icon class="min-w-[24px]">visibility</mat-icon>
         <span>OPEN</span>
@@ -58,7 +57,7 @@
         <button
           matRipple
           type="button"
-          class="flex items-center self-center justify-center w-full gap-2 py-3 rounded-lg text-et-white bg-et-accent-emphasis"
+          class="flex items-center self-center justify-center w-full gap-2 py-3 text-white rounded-lg bg-primary"
           (click)="editPocketbook()">
           <mat-icon class="min-w-[24px]">edit</mat-icon>
           <span>EDIT</span>
@@ -66,7 +65,7 @@
         <button
           matRipple
           type="button"
-          class="flex items-center self-center justify-center w-full gap-2 py-3 rounded-lg text-et-white bg-et-danger"
+          class="flex items-center self-center justify-center w-full gap-2 py-3 text-white rounded-lg bg-danger"
           (click)="deletePocketbook()">
           <mat-icon class="min-w-[24px]">delete</mat-icon>
           <span>DELETE</span>

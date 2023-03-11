@@ -8,18 +8,18 @@
         <div class="flex items-center justify-center gap-2 py-12 md:justify-start">
           <div class="grid self-center place-content-center">
             <expenses-tracker-add-pocketbook-graphic
-              class="w-20 fill-et-accent-emphasis"></expenses-tracker-add-pocketbook-graphic>
+              class="w-20 fill-primary"></expenses-tracker-add-pocketbook-graphic>
           </div>
           <div class="flex">
-            <p class="text-2xl font-bold text-et-text">{{ pocketbook.name }}</p>
+            <p class="text-2xl font-bold">{{ pocketbook.name }}</p>
           </div>
         </div>
         <div class="grid items-center grid-cols-4 gap-2 justify-items-center">
-          <mat-icon class="justify-self-end text-et-accent-emphasis">verified_user</mat-icon>
+          <mat-icon class="justify-self-end">verified_user</mat-icon>
           <div class="flex justify-self-start">
             <ng-container *ngIf="owner$ | async as owner">
               <div
-                class="p-4 transition-colors duration-200 border rounded-full w-14 h-14 cursor-default bg-et-text-bg text-et-text hover:bg-et-text-bg-hover"
+                class="p-4 border rounded-full w-14 h-14"
                 #tooltip="matTooltip"
                 [matTooltip]="owner.displayName ?? owner.email ?? ''"
                 matTooltipPosition="above">
@@ -27,11 +27,11 @@
               </div>
             </ng-container>
           </div>
-          <mat-icon class="justify-self-end text-et-accent-emphasis">group</mat-icon>
+          <mat-icon class="justify-self-end">group</mat-icon>
           <div class="flex gap-2 justify-self-start">
             <ng-container *ngFor="let collaborator of collaboratorList$ | async">
               <div
-                class="p-4 transition-colors duration-200 border rounded-full w-14 h-14 cursor-default bg-et-text-bg text-et-text hover:bg-et-text-bg-hover"
+                class="p-4 border rounded-full w-14 h-14"
                 #tooltip="matTooltip"
                 [matTooltip]="collaborator.displayName ?? collaborator.email ?? ''"
                 matTooltipPosition="above">
