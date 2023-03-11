@@ -7,8 +7,8 @@
         class="flex items-center justify-center w-48 gap-2 p-4 text-center rounded-tl-lg rounded-bl-lg cursor-pointer"
         [ngClass]="
           authMode === 'login'
-            ? 'text-et-white bg-et-accent-emphasis'
-            : 'text-et-text bg-et-text-bg'
+            ? 'text-et-color-fg-on-accent-emphasis bg-et-color-accent-emphasis'
+            : 'text-et-color-fg-default bg-et-color-button-default-bg'
         "
         (click)="gotoLogin()">
         <mat-icon>login</mat-icon>
@@ -20,8 +20,8 @@
         class="flex items-center justify-center w-48 gap-2 p-4 text-center rounded-tr-lg rounded-br-lg cursor-pointer"
         [ngClass]="
           authMode === 'signup'
-            ? 'text-et-white bg-et-accent-emphasis'
-            : 'text-et-text bg-et-text-bg'
+            ? 'text-et-color-fg-on-accent-emphasis bg-et-color-accent-emphasis'
+            : 'text-et-color-fg-default bg-et-color-button-default-bg'
         "
         (click)="gotoSignup()">
         <mat-icon>person_add</mat-icon>

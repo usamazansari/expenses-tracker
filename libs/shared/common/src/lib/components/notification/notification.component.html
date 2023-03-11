@@ -3,9 +3,9 @@
     <div
       class="flex items-stretch justify-between gap-2 p-2 m-4 rounded-lg shadow w-[28rem] border border-et-border"
       [ngClass]="{
-        'text-et-accent bg-et-accent-bg': notification.type === 'info',
-        'text-et-green bg-et-text-bg': notification.type === 'success',
-        'text-et-danger bg-et-danger-bg': notification.type === 'error'
+        'text-et-color-fg-attention bg-et-color-bg-attention': notification.type === 'info',
+        'text-et-color-fg-success bg-et-color-bg-success': notification.type === 'success',
+        'text-et-color-fg-danger bg-et-color-bg-danger': notification.type === 'error'
       }">
       <div class="flex">
         <div class="flex items-center mr-2">

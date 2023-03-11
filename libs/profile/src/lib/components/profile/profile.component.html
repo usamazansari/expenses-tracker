@@ -1,5 +1,6 @@
 <ng-container *ngIf="flags$ | async as flags">
-  <div class="grid p-2 rounded-lg bg-et-layer-alternate">
+  <div
+    class="grid p-2 border rounded-lg bg-et-layer-alternate text-et-color-fg-default border-et-color-border-default">
     <ng-container *ngIf="user$ | async as user">
       <ng-container *ngIf="flags.user.visible">
         <ng-container *ngIf="flags.user.loading">
@@ -8,14 +9,14 @@
         <ng-container *ngIf="flags.user.success">
           <div class="grid gap-2 p-4">
             <div class="flex items-center justify-between">
-              <h1 class="text-xl font-bold text-et-text">
+              <h1 class="text-xl font-bold">
                 {{ user.displayName || 'User Profile' }}
               </h1>
               <ng-container *ngIf="!isEditing">
                 <button
                   matRipple
                   type="button"
-                  class="flex items-center justify-center p-2 rounded-full text-et-text"
+                  class="flex items-center justify-center p-2 rounded-full bg-et-color-button-primary-bg text-et-color-button-primary"
                   (click)="editMode()">
                   <mat-icon>edit</mat-icon>
                 </button>
@@ -39,7 +40,8 @@
           </div>
         </ng-container>
         <ng-container *ngIf="flags.user.fail">
-          <div class="grid place-content-center text-et-danger">
+          <div
+            class="grid border place-content-center bg-et-color-button-danger-bg text-et-color-fg-danger border-et-color-button-danger-border">
             User information not available
           </div>
         </ng-container>

@@ -7,7 +7,8 @@
       type="button"
       title="Home"
       (click)="gotoHome()">
-      <expenses-tracker-logo-graphic class="w-20 fill-et-text"></expenses-tracker-logo-graphic>
+      <expenses-tracker-logo-graphic
+        class="w-20 fill-et-color-fg-default"></expenses-tracker-logo-graphic>
     </button>
     <ng-container *ngIf="user$ | async">
       <button
@@ -17,7 +18,7 @@
         class="flex items-center justify-center"
         (click)="gotoDashboard()">
         <expenses-tracker-dashboard-graphic
-          class="w-20 fill-et-text"></expenses-tracker-dashboard-graphic>
+          class="w-20 fill-et-color-fg-default"></expenses-tracker-dashboard-graphic>
       </button>
       <button
         matRipple
@@ -26,7 +27,7 @@
         class="flex items-center justify-center"
         (click)="gotoPocketbook()">
         <expenses-tracker-pocketbook-graphic
-          class="w-20 fill-et-text"></expenses-tracker-pocketbook-graphic>
+          class="w-20 fill-et-color-fg-default"></expenses-tracker-pocketbook-graphic>
       </button>
     </ng-container>
   </div>
@@ -40,7 +41,7 @@
           title="Auth"
           (click)="gotoProfile()">
           <expenses-tracker-account-graphic
-            class="w-20 fill-et-text"></expenses-tracker-account-graphic>
+            class="w-20 fill-et-color-fg-default"></expenses-tracker-account-graphic>
         </button>
       </ng-container>
     </ng-container>
@@ -52,7 +53,7 @@
         title="Auth"
         (click)="gotoAuth()">
         <expenses-tracker-auth-graphic
-          class="w-20 fill-et-text"></expenses-tracker-auth-graphic>
+          class="w-20 fill-et-color-fg-default"></expenses-tracker-auth-graphic>
       </button>
     </ng-template>
   </div>

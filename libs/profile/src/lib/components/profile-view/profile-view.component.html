@@ -1,5 +1,5 @@
 <ng-container *ngIf="!!user">
-  <div class="grid gap-2">
+  <div class="grid gap-2 text-et-color-fg-default">
     <div class="grid grid-rows-1 gap-8 m-0 sm:mx-32 lg:m-0 lg:grid-cols-3">
       <div class="grid grid-rows-1 gap-2 place-content-center">
         <ng-container *ngIf="user.photoURL">
@@ -10,26 +10,28 @@
         </ng-container>
         <ng-container *ngIf="!user.photoURL">
           <span
-            class="grid w-24 h-24 text-4xl border rounded-full cursor-default place-content-center bg-et-text-bg border-et-border text-et-text">
+            class="grid w-24 h-24 text-4xl rounded-full cursor-default place-content-center bg-et-color-accent-subtle">
             {{ user | extractInitials }}
           </span>
         </ng-container>
       </div>
       <div class="grid grid-rows-1 gap-2">
         <div class="flex items-center gap-2">
-          <mat-icon class="min-w-[24px] text-et-text">person</mat-icon>
+          <mat-icon class="min-w-[24px] text-et-color-accent-emphasis">person</mat-icon>
           <ng-container *ngIf="!user.displayName">
-            <span class="text-et-muted">Name unavailable</span>
+            <span class="text-et-color-fg-muted">Name unavailable</span>
           </ng-container>
           <ng-container *ngIf="user.displayName">
-            <span class="overflow-hidden whitespace-nowrap overflow-ellipsis text-et-text">
+            <span class="overflow-hidden whitespace-nowrap overflow-ellipsis">
               {{ user.displayName }}
             </span>
           </ng-container>
         </div>
         <div class="flex items-center gap-2">
-          <mat-icon class="min-w-[24px] text-et-text">alternate_email</mat-icon>
-          <span class="overflow-hidden whitespace-nowrap overflow-ellipsis text-et-text">
+          <mat-icon class="min-w-[24px] text-et-color-accent-emphasis">
+            alternate_email
+          </mat-icon>
+          <span class="overflow-hidden whitespace-nowrap overflow-ellipsis">
             {{ user.email }}
           </span>
         </div>
@@ -37,8 +39,8 @@
       <div class="grid grid-rows-1 gap-2">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <mat-icon class="min-w-[24px] text-et-text">badge</mat-icon>
-            <span class="overflow-hidden whitespace-nowrap overflow-ellipsis text-et-text">
+            <mat-icon class="min-w-[24px] text-et-color-accent-emphasis">badge</mat-icon>
+            <span class="overflow-hidden whitespace-nowrap overflow-ellipsis">
               {{ user.uid }}
             </span>
           </div>
@@ -46,7 +48,9 @@
             matRipple
             type="button"
             class="flex items-center justify-center p-2 rounded-full">
-            <mat-icon class="text-et-muted" (click)="copyUID(user.uid)">content_copy</mat-icon>
+            <mat-icon class="text-et-color-accent-emphasis" (click)="copyUID(user.uid)">
+              content_copy
+            </mat-icon>
           </button>
         </div>
       </div>
@@ -54,7 +58,7 @@
       <button
         matRipple
         type="button"
-        class="flex items-center justify-center gap-2 px-6 py-3 mx-2 rounded-lg text-et-white bg-et-accent-emphasis md:justify-self-center"
+        class="flex items-center justify-center gap-2 px-6 py-3 border rounded-lg bg-et-color-button-primary-bg text-et-color-button-primary border-et-color-button-primary-border"
         (click)="logout()">
         <mat-icon class="min-w-[24px]">logout</mat-icon>
         <span>LOGOUT</span>
