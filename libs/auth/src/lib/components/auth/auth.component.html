@@ -8,7 +8,7 @@
         [ngClass]="
           authMode === 'login'
             ? 'bg-primary text-white'
-            : 'border border-r-0 bg-white text-dark dark:text-light'
+            : 'border border-r-0 bg-white text-gray-700'
         "
         (click)="gotoLogin()">
         <mat-icon>login</mat-icon>
@@ -21,7 +21,7 @@
         [ngClass]="
           authMode === 'signup'
             ? 'bg-primary text-white'
-            : 'border border-l-0 bg-white text-dark dark:text-light'
+            : 'border border-l-0 bg-white text-gray-700'
         "
         (click)="gotoSignup()">
         <mat-icon>person_add</mat-icon>
