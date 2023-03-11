@@ -5,7 +5,11 @@
         matRipple
         type="button"
         class="flex items-center justify-center w-48 gap-2 p-4 text-center rounded-tl-lg rounded-bl-lg cursor-pointer"
-        [ngClass]="authMode === 'login' ? 'bg-primary text-white' : 'border  border-r-0 '"
+        [ngClass]="
+          authMode === 'login'
+            ? 'bg-primary text-white'
+            : 'border border-border_color-light dark:border-border_color-dark dark:border-border_color-dark-r-0 bg-light dark:bg-dark text-dark dark:text-light'
+        "
         (click)="gotoLogin()">
         <mat-icon>login</mat-icon>
         <span>Login</span>
@@ -14,7 +18,11 @@
         matRipple
         type="button"
         class="flex items-center justify-center w-48 gap-2 p-4 text-center rounded-tr-lg rounded-br-lg cursor-pointer"
-        [ngClass]="authMode === 'signup' ? 'bg-primary text-white' : 'border  border-l-0 '"
+        [ngClass]="
+          authMode === 'signup'
+            ? 'bg-primary text-white'
+            : 'border border-border_color-light dark:border-border_color-dark border-l-0 bg-light dark:bg-dark text-dark dark:text-light'
+        "
         (click)="gotoSignup()">
         <mat-icon>person_add</mat-icon>
         <span>Signup</span>
