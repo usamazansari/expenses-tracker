@@ -1,11 +1,11 @@
 <div class="fixed top-0 right-0 z-50 p-2">
   <ng-container *ngFor="let notification of notifications$ | async">
     <div
-      class="flex items-stretch justify-between gap-2 p-2 m-4 rounded shadow w-[28rem]"
+      class="flex items-stretch justify-between gap-2 p-2 m-4 rounded-lg shadow w-[28rem] border border-et-border"
       [ngClass]="{
-        'text-primary': notification.type === 'info',
-        'text-secondary': notification.type === 'success',
-        'text-danger': notification.type === 'error'
+        'text-et-accent bg-et-accent-bg': notification.type === 'info',
+        'text-et-green bg-et-text-bg': notification.type === 'success',
+        'text-et-danger bg-et-danger-bg': notification.type === 'error'
       }">
       <div class="flex">
         <div class="flex items-center mr-2">
