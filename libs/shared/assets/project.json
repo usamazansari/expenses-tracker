@@ -1,5 +1,5 @@
 {
-  "name": "shared-assets",
+  "name": "assets",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
   "sourceRoot": "libs/shared/assets/src",
@@ -17,10 +17,7 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "libs/shared/assets/**/*.ts",
-          "libs/shared/assets/**/*.html"
-        ]
+        "lintFilePatterns": ["libs/shared/assets/**/*.ts", "libs/shared/assets/**/*.html"]
       }
     }
   },

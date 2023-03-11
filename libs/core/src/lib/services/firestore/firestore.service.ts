@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Timestamp } from '@angular/fire/firestore';
 import { User } from 'firebase/auth';
-import { map, of, switchMap, throwError } from 'rxjs';
+import { map, Observable, of, switchMap, throwError } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
@@ -14,6 +15,10 @@ import { ContextService } from '../context/context.service';
 export class FirestoreService {
   constructor(private _firestore: AngularFirestore, private _context: ContextService) {}
 
+  /**
+   * @deprecated Use individual fetch methods
+   * @returns `{ owner: Pocketbooks owner, collaborator: Pocketbooks collaborated }`
+   */
   getPocketbookList$() {
     return this._context.watchUser$().pipe(
       switchMap(user =>
@@ -36,7 +41,64 @@ export class FirestoreService {
     );
   }
 
-  createPocketbook$({ name, collaboratorList = [] }: Partial<IPocketbook>) {
+  watchOwnedPocketbookList$(): Observable<IPocketbook[]> {
+    return this._context.watchUser$().pipe(
+      switchMap(user =>
+        this._firestore
+          .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
+            ref.where('owner', '==', user?.uid ?? '')
+          )
+          .valueChanges()
+          .pipe(
+            map(pocketbookList =>
+              pocketbookList.map(pb => ({
+                ...pb,
+                createdAt: (pb.createdAt as Timestamp).toDate()
+              }))
+            )
+          )
+      )
+    );
+  }
+
+  watchCollaboratedPocketbookList$(): Observable<IPocketbook[]> {
+    return this._context.watchUser$().pipe(
+      switchMap(user =>
+        this._firestore
+          .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
+            ref.where('collaboratorList', 'array-contains', user?.uid ?? '')
+          )
+          .valueChanges()
+          .pipe(
+            map(pocketbookList =>
+              pocketbookList.map(pb => ({
+                ...pb,
+                createdAt: (pb.createdAt as Timestamp).toDate()
+              }))
+            )
+          )
+      )
+    );
+  }
+
+  watchPocketbook$(id: string): Observable<IPocketbook> {
+    return this._firestore
+      .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
+        ref.where('id', '==', id ?? '')
+      )
+      .valueChanges()
+      .pipe(
+        map(
+          ([pb]) =>
+            ({
+              ...pb,
+              createdAt: (pb?.createdAt as Timestamp)?.toDate()
+            } as IPocketbook)
+        )
+      );
+  }
+
+  createPocketbook$({ name, collaboratorList = [], transactions = [] }: Partial<IPocketbook>) {
     return this._context.watchUser$().pipe(
       switchMap(user =>
         this._firestore.collection<IPocketbook>(Collections.Pocketbook).add({
@@ -44,6 +106,7 @@ export class FirestoreService {
           owner: user?.uid ?? '',
           name,
           collaboratorList,
+          transactions,
           createdAt: new Date()
         })
       )
@@ -145,7 +208,7 @@ export class FirestoreService {
   }
 
   watchCollaboratorList$(pocketbook: IPocketbook | null) {
-    return !pocketbook?.collaboratorList.length
+    return !pocketbook?.collaboratorList?.length
       ? of([])
       : this._firestore
           .collection<Partial<User>>(Collections.User, ref =>
