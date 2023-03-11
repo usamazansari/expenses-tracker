@@ -1,7 +1,7 @@
 <div class="fixed top-0 right-0 z-50 p-2">
   <ng-container *ngFor="let notification of notifications$ | async">
     <div
-      class="flex items-stretch justify-between gap-2 p-2 m-4 bg-light dark:bg-dark rounded shadow w-[28rem]"
+      class="flex items-stretch justify-between gap-2 p-2 m-4 bg-white rounded shadow w-[28rem]"
       [ngClass]="{
         'text-primary': notification.type === 'info',
         'text-secondary': notification.type === 'success',
@@ -17,7 +17,7 @@
         </div>
       </div>
       <div
-        class="flex items-center cursor-pointer text-dark dark:text-light"
+        class="flex items-center text-dark dark:text-light cursor-pointer"
         (click)="dismiss(notification)">
         <mat-icon>clear</mat-icon>
       </div>
