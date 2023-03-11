@@ -22,7 +22,7 @@
     <div class="flex flex-col gap-1">
       <p class="text-et-text">Collaborators</p>
       <ng-container *ngIf="!pocketbook.collaboratorList.length; else showCollaborators">
-        <p class="text-et-border-hover">No Collaborators Added</p>
+        <p class="text-et-muted">No Collaborators Added</p>
       </ng-container>
       <ng-template #showCollaborators>
         <div class="flex gap-2">
