@@ -43,8 +43,7 @@ module.exports = {
       'et-text-bg-hover': '#30363D',
       'et-violet': '#A371F7',
       'et-yellow': '#F1E05a',
-      'et-white': '#ffffff',
-      'et-muted': '#8b949e'
+      'et-white': '#ffffff'
     }
   }
 };

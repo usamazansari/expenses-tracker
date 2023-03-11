@@ -138,7 +138,7 @@ export class PocketbookEditService {
       tap(() => {
         this._notification.success({
           title: 'Pocketbook Updated!',
-          description: `Pocketbook ${pocketbook.name} successfully updated!`
+          description: `Pocketbook ${pocketbook.name} successfully created!`
         });
         this.resetFlags();
         this._router.navigate(['pocketbook/list']);
@@ -166,7 +166,7 @@ export class PocketbookEditService {
   }
 
   cancelEditPocketbook(pocketbook: string = '') {
-    if (!pocketbook) this._router.navigate(['pocketbook', 'list']);
-    else this._router.navigate(['pocketbook', pocketbook]);
+    if (!pocketbook) this._router.navigate(['pocketbook/list']);
+    else this._router.navigate([`pocketbook/${pocketbook}`]);
   }
 }
