@@ -1,12 +1,13 @@
-<div class="grid">
-  <ng-container *ngIf="user$ | async as user">
-    <ng-container *ngIf="flags$ | async as flags">
+<ng-container *ngIf="flags$ | async as flags">
+  <div
+    class="grid p-2 border rounded-lg bg-et-layer-alternate text-et-color-fg-default border-et-color-border-default">
+    <ng-container *ngIf="user$ | async as user">
       <ng-container *ngIf="flags.user.visible">
         <ng-container *ngIf="flags.user.loading">
           <div class="grid place-content-center">Loading...</div>
         </ng-container>
         <ng-container *ngIf="flags.user.success">
-          <div class="grid gap-2 p-4 bg-white border rounded-lg">
+          <div class="grid gap-2 p-4">
             <div class="flex items-center justify-between">
               <h1 class="text-xl font-bold">
                 {{ user.displayName || 'User Profile' }}
@@ -15,9 +16,9 @@
                 <button
                   matRipple
                   type="button"
-                  class="flex items-center justify-center p-2 rounded-full"
+                  class="flex items-center justify-center p-2 rounded-full bg-et-color-button-primary-bg text-et-color-button-primary"
                   (click)="editMode()">
-                  <mat-icon class="text-gray-700">edit</mat-icon>
+                  <mat-icon>edit</mat-icon>
                 </button>
               </ng-container>
             </div>
@@ -39,9 +40,12 @@
           </div>
         </ng-container>
         <ng-container *ngIf="flags.user.fail">
-          <div class="grid place-content-center">User Information Available</div>
+          <div
+            class="grid border place-content-center bg-et-color-button-danger-bg text-et-color-fg-danger border-et-color-button-danger-border">
+            User information not available
+          </div>
         </ng-container>
       </ng-container>
     </ng-container>
-  </ng-container>
-</div>
+  </div>
+</ng-container>

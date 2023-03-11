@@ -1,0 +1,47 @@
+<ng-container *ngIf="pocketbook$ | async as pocketbook">
+  <ng-container *ngIf="!pocketbook; else displayPocketbook">
+    Pocketbook not found
+  </ng-container>
+  <ng-template #displayPocketbook>
+    <div class="grid">
+      <div class="flex flex-col gap-2 md:flex-row md:gap-8">
+        <div class="flex items-center justify-center gap-2 py-12 md:justify-start">
+          <div class="grid self-center place-content-center">
+            <expenses-tracker-add-pocketbook-graphic
+              class="w-20 fill-et-replace-emphasis"></expenses-tracker-add-pocketbook-graphic>
+          </div>
+          <div class="flex">
+            <p class="text-2xl font-bold text-et-color-fg-default">{{ pocketbook.name }}</p>
+          </div>
+        </div>
+        <div class="grid items-center grid-cols-4 gap-2 justify-items-center">
+          <mat-icon class="justify-self-end text-et-replace-emphasis">verified_user</mat-icon>
+          <div class="flex justify-self-start">
+            <ng-container *ngIf="owner$ | async as owner">
+              <div
+                class="p-4 transition-colors duration-200 border rounded-full w-14 h-14 cursor-default bg-et-color-fg-default-bg text-et-color-fg-default hover:bg-et-color-fg-default-bg-hover"
+                #tooltip="matTooltip"
+                [matTooltip]="owner.displayName ?? owner.email ?? ''"
+                matTooltipPosition="above">
+                <p class="text-center">{{ owner | extractInitials }}</p>
+              </div>
+            </ng-container>
+          </div>
+          <mat-icon class="justify-self-end text-et-replace-emphasis">group</mat-icon>
+          <div class="flex gap-2 justify-self-start">
+            <ng-container *ngFor="let collaborator of collaboratorList$ | async">
+              <div
+                class="p-4 transition-colors duration-200 border rounded-full w-14 h-14 cursor-default bg-et-color-fg-default-bg text-et-color-fg-default hover:bg-et-color-fg-default-bg-hover"
+                #tooltip="matTooltip"
+                [matTooltip]="collaborator.displayName ?? collaborator.email ?? ''"
+                matTooltipPosition="above">
+                <p class="text-center">{{ collaborator | extractInitials }}</p>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+    <router-outlet></router-outlet>
+  </ng-template>
+</ng-container>
