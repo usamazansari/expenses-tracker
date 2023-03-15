@@ -1,5 +1,5 @@
 <div
-  class="fixed bottom-0 left-0 right-0 z-10 flex flex-row justify-between h-24 p-2 text-white bg-blue-700 md:flex-col md:w-24 md:h-screen md:bottom-0 md:left-0 md:top-0">
+  class="fixed bottom-0 left-0 right-0 z-10 flex flex-row justify-between h-24 p-2 text-white bg-et-layer-alternate md:flex-col md:w-24 md:h-screen md:bottom-0 md:left-0 md:top-0">
   <div class="flex flex-row gap-2 md:flex-col">
     <button
       matRipple
@@ -7,7 +7,8 @@
       type="button"
       title="Home"
       (click)="gotoHome()">
-      <expenses-tracker-logo-graphic class="w-20 fill-white"></expenses-tracker-logo-graphic>
+      <expenses-tracker-logo-graphic
+        class="w-20 fill-et-color-fg-default"></expenses-tracker-logo-graphic>
     </button>
     <ng-container *ngIf="user$ | async">
       <button
@@ -17,7 +18,7 @@
         class="flex items-center justify-center"
         (click)="gotoDashboard()">
         <expenses-tracker-dashboard-graphic
-          class="w-20 fill-white"></expenses-tracker-dashboard-graphic>
+          class="w-20 fill-et-color-fg-default"></expenses-tracker-dashboard-graphic>
       </button>
       <button
         matRipple
@@ -26,7 +27,7 @@
         class="flex items-center justify-center"
         (click)="gotoPocketbook()">
         <expenses-tracker-pocketbook-graphic
-          class="w-20 fill-white"></expenses-tracker-pocketbook-graphic>
+          class="w-20 fill-et-color-fg-default"></expenses-tracker-pocketbook-graphic>
       </button>
     </ng-container>
   </div>
@@ -40,7 +41,7 @@
           title="Auth"
           (click)="gotoProfile()">
           <expenses-tracker-account-graphic
-            class="w-20 fill-white"></expenses-tracker-account-graphic>
+            class="w-20 fill-et-color-fg-default"></expenses-tracker-account-graphic>
         </button>
       </ng-container>
     </ng-container>
@@ -51,7 +52,8 @@
         type="button"
         title="Auth"
         (click)="gotoAuth()">
-        <expenses-tracker-auth-graphic class="w-20 fill-white"></expenses-tracker-auth-graphic>
+        <expenses-tracker-auth-graphic
+          class="w-20 fill-et-color-fg-default"></expenses-tracker-auth-graphic>
       </button>
     </ng-template>
   </div>

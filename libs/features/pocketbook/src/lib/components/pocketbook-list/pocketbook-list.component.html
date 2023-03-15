@@ -1,8 +1,8 @@
-<div class="grid grid-cols-1 grid-rows-1 gap-2 justify-items-center">
+<div class="grid grid-cols-1 grid-rows-1 gap-4 justify-items-center">
   <div class="flex items-center justify-center gap-2 py-12">
     <expenses-tracker-pocketbook-graphic
-      class="w-20 fill-blue-700"></expenses-tracker-pocketbook-graphic>
-    <span class="text-3xl text-blue-700 cursor-default"> My Pocketbooks </span>
+      class="w-20 fill-et-color-accent-emphasis"></expenses-tracker-pocketbook-graphic>
+    <span class="text-3xl cursor-default text-et-color-accent-emphasis">My Pocketbooks</span>
   </div>
   <ng-container *ngIf="viewMode$ | async as viewMode">
     <div class="flex justify-center">
@@ -12,8 +12,8 @@
         class="flex items-center justify-center w-48 gap-2 p-4 text-center rounded-tl-lg rounded-bl-lg cursor-pointer"
         [ngClass]="
           viewMode === 'owner'
-            ? 'bg-blue-700 text-white'
-            : 'border border-r-0 bg-white text-gray-700'
+            ? 'text-et-color-fg-on-accent-emphasis bg-et-color-accent-emphasis'
+            : 'text-et-color-fg-default bg-et-color-button-default-bg'
         "
         (click)="gotoOwnerPocketbookList()">
         <mat-icon>verified_user</mat-icon>
@@ -25,8 +25,8 @@
         class="flex items-center justify-center w-48 gap-2 p-4 text-center rounded-tr-lg rounded-br-lg cursor-pointer"
         [ngClass]="
           viewMode === 'collaborator'
-            ? 'bg-blue-700 text-white'
-            : 'border border-l-0 bg-white text-gray-700'
+            ? 'text-et-color-fg-on-accent-emphasis bg-et-color-accent-emphasis'
+            : 'text-et-color-fg-default bg-et-color-button-default-bg'
         "
         (click)="gotoCollaboratorPocketbookList()">
         <mat-icon>group</mat-icon>
@@ -34,14 +34,16 @@
       </button>
     </div>
   </ng-container>
-  <div class="relative grid grid-cols-1 gap-2">
+
+  <div class="grid">
     <router-outlet></router-outlet>
   </div>
+
   <div class="flex justify-center">
     <button
       matRipple
       type="button"
-      class="flex items-center justify-center gap-2 px-6 py-3 mx-2 text-white bg-blue-700 rounded-lg md:justify-self-center"
+      class="flex items-center justify-center gap-2 px-6 py-3 mx-2 rounded-lg text-et-color-button-primary bg-et-color-button-primary-bg md:justify-self-center"
       (click)="addPocketbook()">
       <mat-icon>add</mat-icon>
       <span>ADD POCKETBOOK</span>

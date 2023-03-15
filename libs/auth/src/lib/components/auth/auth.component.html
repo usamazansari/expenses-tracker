@@ -4,11 +4,11 @@
       <button
         matRipple
         type="button"
-        class="flex items-center gap-2 justify-center w-48 p-4 text-center rounded-tl-lg rounded-bl-lg cursor-pointer"
+        class="flex items-center justify-center w-48 gap-2 p-4 text-center rounded-tl-lg rounded-bl-lg cursor-pointer"
         [ngClass]="
           authMode === 'login'
-            ? 'bg-blue-700 text-white'
-            : 'border border-r-0 bg-white text-gray-700'
+            ? 'text-et-color-fg-on-accent-emphasis bg-et-color-accent-emphasis'
+            : 'text-et-color-fg-default bg-et-color-button-default-bg'
         "
         (click)="gotoLogin()">
         <mat-icon>login</mat-icon>
@@ -17,23 +17,17 @@
       <button
         matRipple
         type="button"
-        class="flex items-center gap-2 justify-center w-48 p-4 text-center rounded-tr-lg rounded-br-lg cursor-pointer"
+        class="flex items-center justify-center w-48 gap-2 p-4 text-center rounded-tr-lg rounded-br-lg cursor-pointer"
         [ngClass]="
           authMode === 'signup'
-            ? 'bg-blue-700 text-white'
-            : 'border border-l-0 bg-white text-gray-700'
+            ? 'text-et-color-fg-on-accent-emphasis bg-et-color-accent-emphasis'
+            : 'text-et-color-fg-default bg-et-color-button-default-bg'
         "
         (click)="gotoSignup()">
         <mat-icon>person_add</mat-icon>
         <span>Signup</span>
       </button>
     </div>
-    <!-- <ng-container *ngIf="authMode === 'login'">
-      <expenses-tracker-login></expenses-tracker-login>
-    </ng-container>
-    <ng-container *ngIf="authMode === 'signup'">
-      <expenses-tracker-signup></expenses-tracker-signup>
-    </ng-container> -->
     <router-outlet></router-outlet>
   </ng-container>
 </div>
