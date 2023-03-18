@@ -5,7 +5,7 @@ import { User } from 'firebase/auth';
 import { map, Observable, of, switchMap, throwError } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
-import { IPocketbook } from '@expenses-tracker/shared/interfaces';
+import { IPocketbook, ITransaction } from '@expenses-tracker/shared/interfaces';
 
 import { ContextService } from '../context/context.service';
 
@@ -19,7 +19,7 @@ export class FirestoreService {
    * @deprecated Use individual fetch methods
    * @returns `{ owner: Pocketbooks owner, collaborator: Pocketbooks collaborated }`
    */
-  getPocketbookList$() {
+  watchPocketbookList$() {
     return this._context.watchUser$().pipe(
       switchMap(user =>
         this._firestore
@@ -98,7 +98,11 @@ export class FirestoreService {
       );
   }
 
-  createPocketbook$({ name, collaboratorList = [], transactions = [] }: Partial<IPocketbook>) {
+  createPocketbook$({
+    name,
+    collaboratorList = [],
+    transactionList: transactions = []
+  }: Partial<IPocketbook>) {
     return this._context.watchUser$().pipe(
       switchMap(user =>
         this._firestore.collection<IPocketbook>(Collections.Pocketbook).add({
@@ -106,7 +110,7 @@ export class FirestoreService {
           owner: user?.uid ?? '',
           name,
           collaboratorList,
-          transactions,
+          transactionList: transactions,
           createdAt: new Date()
         })
       )
@@ -215,5 +219,93 @@ export class FirestoreService {
             ref.where('uid', 'in', pocketbook?.collaboratorList ?? [])
           )
           .valueChanges();
+  }
+
+  watchTransactionList$(): Observable<ITransaction[]> {
+    return this._context.watchPocketbook$().pipe(
+      switchMap(pocketbook =>
+        this._firestore
+          .collection<ITransaction<Timestamp>>(Collections.Transaction, ref =>
+            ref.where('pocketbook', '==', pocketbook?.id ?? '')
+          )
+          .valueChanges()
+          .pipe(
+            map(transactionList =>
+              transactionList.map(t => ({
+                ...t,
+                date: t.date.toDate()
+              }))
+            )
+          )
+      )
+    );
+  }
+
+  createTransaction$({
+    name,
+    collaboratorList = [],
+    transactionList: transactions = []
+  }: Partial<IPocketbook>) {
+    return this._context.watchUser$().pipe(
+      switchMap(user =>
+        this._firestore.collection<IPocketbook>(Collections.Pocketbook).add({
+          id: this._firestore.createId(),
+          owner: user?.uid ?? '',
+          name,
+          collaboratorList,
+          transactionList: transactions,
+          createdAt: new Date()
+        })
+      )
+    );
+  }
+
+  updateTransaction$(pocketbook: Partial<IPocketbook>) {
+    return this._context.watchPocketbook$().pipe(
+      switchMap(pb =>
+        this._firestore
+          .collection<IPocketbook>(Collections.Pocketbook, ref =>
+            ref.where('id', '==', pb?.id ?? '')
+          )
+          .get()
+          .pipe(
+            map(ref => (ref.docs ?? [])[0]?.id ?? ''),
+            switchMap(id =>
+              this._firestore
+                .collection<IPocketbook>(Collections.Pocketbook)
+                .doc(id)
+                .update({ ...pocketbook })
+            )
+          )
+      )
+    );
+  }
+
+  deleteTransaction$(pocketbook: Partial<IPocketbook>) {
+    return this._context.watchUser$().pipe(
+      switchMap(user =>
+        this._firestore
+          .collection<IPocketbook>(Collections.Pocketbook, ref =>
+            ref.where('id', '==', pocketbook.id ?? '')
+          )
+          .get()
+          .pipe(
+            map(ref => ({
+              id: (ref.docs ?? [])[0]?.id ?? '',
+              data: (ref.docs ?? [])[0]?.data() ?? null
+            })),
+            switchMap(({ data, id }) => {
+              console.log({ data, id });
+              if (data?.owner === user?.uid) {
+                return this._firestore
+                  .collection<IPocketbook>(Collections.Pocketbook)
+                  .doc(id)
+                  .delete();
+              }
+              return throwError(() => new Error('You cannot delete this pocketbook!'));
+            })
+          )
+      )
+    );
   }
 }

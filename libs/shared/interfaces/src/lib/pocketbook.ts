@@ -6,7 +6,7 @@ interface IPocketbook<T extends DateOrTimestamp = Date> {
   name?: string;
   collaboratorList: string[];
   createdAt: T;
-  transactions: string[];
+  transactionList: string[];
 }
 
 export { IPocketbook };

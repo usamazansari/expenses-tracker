@@ -1,11 +1,15 @@
-interface ITransaction {
+import { DateOrTimestamp } from './common';
+
+type TransactionDirection = 'income' | 'expense';
+
+interface ITransaction<T extends DateOrTimestamp = Date> {
   id: string;
   pocketbook: string;
-  createdAt: Date;
+  date: T;
   category: string;
   amount: number;
-  direction: string;
+  direction: TransactionDirection;
   message: string;
 }
 
-export { ITransaction };
+export { ITransaction, TransactionDirection };
