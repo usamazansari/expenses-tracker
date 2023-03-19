@@ -1,1 +1,10 @@
-<pre>{{ transactionList$ | async | json }}</pre>
+<div class="grid">
+  <ng-container *ngIf="transactionList$ | async as transactionList">
+    <div class="grid gap-2">
+      <ng-container *ngFor="let transaction of transactionList">
+        <expenses-tracker-transaction-list-item
+          [transaction]="transaction"></expenses-tracker-transaction-list-item>
+      </ng-container>
+    </div>
+  </ng-container>
+</div>

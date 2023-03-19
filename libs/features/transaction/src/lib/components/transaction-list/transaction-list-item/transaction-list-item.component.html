@@ -1,1 +1,31 @@
-<p>transaction-list-item works!</p>
+<div
+  class="flex items-center justify-between p-2 rounded-lg bg-et-layer text-et-color-fg-default">
+  <div class="flex items-center gap-2">
+    <span
+      class="grid w-24 h-24 text-4xl rounded-full cursor-default place-content-center"
+      [ngClass]="{
+        'text-et-color-fg-danger bg-et-color-bg-danger': transaction?.direction === 'expense',
+        'text-et-color-fg-success bg-et-color-bg-success': transaction?.direction === 'income'
+      }">
+      {{ transaction?.category?.at(0)?.toUpperCase() }}
+    </span>
+    <div class="grid gap-2">
+      <span class="font-bold">{{ transaction?.message }}</span>
+      <p class="text-sm italic">
+        {{ transaction?.date | date : 'long' }}
+      </p>
+    </div>
+  </div>
+  <div class="flex">
+    <span
+      class="text-xl font-bold"
+      [ngClass]="{
+        'text-et-color-fg-danger': transaction?.direction === 'expense',
+        'text-et-color-fg-success': transaction?.direction === 'income'
+      }">
+      <ng-container *ngIf="transaction?.direction === 'expense'"> - </ng-container>
+      <ng-container *ngIf="transaction?.direction === 'income'"> + </ng-container>
+      € {{ transaction?.amount }}
+    </span>
+  </div>
+</div>

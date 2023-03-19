@@ -231,10 +231,12 @@ export class FirestoreService {
           .valueChanges()
           .pipe(
             map(transactionList =>
-              transactionList.map(t => ({
-                ...t,
-                date: t.date.toDate()
-              }))
+              transactionList
+                .map(t => ({
+                  ...t,
+                  date: t.date.toDate()
+                }))
+                .sort((a, b) => b.date.getTime() - a.date.getTime())
             )
           )
       )
