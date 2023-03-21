@@ -5,7 +5,7 @@ type TransactionDirection = 'income' | 'expense';
 interface ITransaction<T extends DateOrTimestamp = Date> {
   id: string;
   pocketbook: string;
-  date: T;
+  timestamp: T;
   category: string;
   amount: number;
   direction: TransactionDirection;

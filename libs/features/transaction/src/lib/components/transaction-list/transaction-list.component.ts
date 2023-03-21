@@ -18,6 +18,7 @@ export class TransactionListComponent implements OnInit {
   constructor(private _service: TransactionListService) {}
 
   ngOnInit() {
+    this._service.fetchTransactionList$();
     this.transactionList$ = this._service.watchTransactionList$();
   }
 }

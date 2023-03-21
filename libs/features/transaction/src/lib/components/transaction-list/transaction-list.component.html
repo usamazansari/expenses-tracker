@@ -1,10 +1,20 @@
 <div class="grid">
   <ng-container *ngIf="transactionList$ | async as transactionList">
-    <div class="grid gap-2">
-      <ng-container *ngFor="let transaction of transactionList">
-        <expenses-tracker-transaction-list-item
-          [transaction]="transaction"></expenses-tracker-transaction-list-item>
+    <ng-container *ngIf="!transactionList; else showTransactionList">
+      <div class="grid gap-2">Error in fetching transaction list</div>
+    </ng-container>
+    <ng-template #showTransactionList>
+      <ng-container *ngIf="transactionList.length > 0; else noTransaction">
+        <div class="grid gap-2">
+          <ng-container *ngFor="let transaction of transactionList">
+            <expenses-tracker-transaction-list-item
+              [transaction]="transaction"></expenses-tracker-transaction-list-item>
+          </ng-container>
+        </div>
       </ng-container>
-    </div>
+      <ng-template #noTransaction>
+        <div class="grid gap-2">No Transactions found</div>
+      </ng-template>
+    </ng-template>
   </ng-container>
 </div>

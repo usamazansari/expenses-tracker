@@ -111,7 +111,11 @@ export class FirestoreService {
           name,
           collaboratorList,
           transactionList: transactions,
-          createdAt: new Date()
+          createdAt: new Date(),
+          balance: {
+            amount: 0,
+            timestamp: new Date()
+          }
         })
       )
     );
@@ -226,17 +230,15 @@ export class FirestoreService {
       switchMap(pocketbook =>
         this._firestore
           .collection<ITransaction<Timestamp>>(Collections.Transaction, ref =>
-            ref.where('pocketbook', '==', pocketbook?.id ?? '')
+            ref.where('pocketbook', '==', pocketbook?.id ?? '').orderBy('timestamp', 'desc')
           )
           .valueChanges()
           .pipe(
             map(transactionList =>
-              transactionList
-                .map(t => ({
-                  ...t,
-                  date: t.date.toDate()
-                }))
-                .sort((a, b) => b.date.getTime() - a.date.getTime())
+              transactionList.map(t => ({
+                ...t,
+                timestamp: t.timestamp?.toDate()
+              }))
             )
           )
       )
@@ -256,7 +258,11 @@ export class FirestoreService {
           name,
           collaboratorList,
           transactionList: transactions,
-          createdAt: new Date()
+          createdAt: new Date(),
+          balance: {
+            amount: 0,
+            timestamp: new Date()
+          }
         })
       )
     );
