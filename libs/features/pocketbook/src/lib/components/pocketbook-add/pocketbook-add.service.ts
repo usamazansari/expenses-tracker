@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { FirebaseError } from '@angular/fire/app';
 import { Router } from '@angular/router';
 import { User } from 'firebase/auth';
-import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, of, tap } from 'rxjs';
 
 import { ErrorService, FirestoreService } from '@expenses-tracker/core';
 import { NotificationService } from '@expenses-tracker/shared/common';
@@ -89,7 +88,7 @@ export class PocketbookAddService {
     return this.#flags$.asObservable();
   }
 
-  addPocketbook$(pocketbook: Partial<IPocketbook>) {
+  addPocketbook$(pocketbook: IPocketbook) {
     this.resetFlags();
     this.#setFlags({
       ...this.#flags,
@@ -107,8 +106,7 @@ export class PocketbookAddService {
         this.resetFlags();
         this._router.navigate(['pocketbook/list']);
       }),
-      catchError(({ code }: FirebaseError) => {
-        const error = this._error.getError(code);
+      catchError(error => {
         this._notification.error({
           description: `${error}.`,
           title: 'Login failed'
@@ -122,7 +120,7 @@ export class PocketbookAddService {
             visible: true
           }
         });
-        return throwError(() => new Error(code));
+        return of(error);
       })
     );
   }

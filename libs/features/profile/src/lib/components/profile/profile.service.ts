@@ -2,7 +2,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { Injectable } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 import { Router } from '@angular/router';
-import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, of, tap, throwError } from 'rxjs';
 
 import { AuthService, ContextService, ErrorService } from '@expenses-tracker/core';
 import { NotificationService } from '@expenses-tracker/shared/common';
@@ -93,8 +93,7 @@ export class ProfileService {
         this.#resetFlags();
         this._router.navigate(['auth', 'login']);
       }),
-      catchError(({ code }: FirebaseError) => {
-        const error = this._error.getError(code);
+      catchError(error => {
         this._notification.error({
           description: `${error}.`,
           title: 'Login failed'
@@ -109,7 +108,7 @@ export class ProfileService {
           }
         };
         this.#setFlags(this.#flags);
-        return throwError(() => new Error(code));
+        return of(error);
       })
     );
   }

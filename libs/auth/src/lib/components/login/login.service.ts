@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { FirebaseError } from '@angular/fire/app';
 import { Router } from '@angular/router';
-import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, of, tap } from 'rxjs';
 
+import { AuthService, ErrorService } from '@expenses-tracker/core';
 import { NotificationService } from '@expenses-tracker/shared/common';
 import { IFlag, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
-import { AuthService, ErrorService } from '@expenses-tracker/core';
 
 export type ComponentFlags = {
   login: IFlag;
@@ -55,8 +54,7 @@ export class LoginService {
         this.#resetFlags();
         this._router.navigate(['dashboard']);
       }),
-      catchError(({ code }: FirebaseError) => {
-        const error = this._error.getError(code);
+      catchError(error => {
         this._notification.error({
           description: `${error}.`,
           title: 'Login failed'
@@ -71,7 +69,7 @@ export class LoginService {
           }
         };
         this.#setFlags(this.#flags);
-        return throwError(() => new Error(code));
+        return of(error);
       })
     );
   }

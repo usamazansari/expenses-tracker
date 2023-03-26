@@ -18,6 +18,7 @@ import { filter, map, Observable, Subscription } from 'rxjs';
 
 import { ContextService } from '@expenses-tracker/core';
 import { AddPocketbookGraphicComponent } from '@expenses-tracker/shared/assets';
+import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
 import { ComponentFlags, PocketbookAddService } from './pocketbook-add.service';
 
@@ -87,7 +88,7 @@ export class PocketbookAddComponent implements OnInit, OnDestroy {
         .addPocketbook$({
           name: name ?? '',
           collaboratorList: collaborators?.map(({ uid }) => uid)
-        })
+        } as IPocketbook)
         .subscribe({
           next: () => {
             this.formGroup.reset();

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { FirebaseError } from '@angular/fire/app';
 import { Router } from '@angular/router';
 import { User } from 'firebase/auth';
 import {
@@ -143,10 +142,7 @@ export class PocketbookEditService {
         this.resetFlags();
         this._router.navigate(['pocketbook/list']);
       }),
-      catchError((e: FirebaseError) => {
-        console.error({ e });
-        const { code } = e;
-        const error = this._error.getError(code);
+      catchError(error => {
         this._notification.error({
           description: `${error}.`,
           title: 'Pocketbook not updated'
@@ -160,7 +156,7 @@ export class PocketbookEditService {
             visible: true
           }
         });
-        return throwError(() => new Error(code));
+        return throwError(() => new Error(error));
       })
     );
   }
