@@ -48,8 +48,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.isEditing = true;
   }
 
-  editUserInfo($: { uid: string; displayName: string }) {
-    this._service.editUserInfo$($).subscribe({
+  updateUserInfo($: User) {
+    this._service.updateUserInfo$($).subscribe({
       next: () => {
         this._notification.success({
           title: 'Successful!',

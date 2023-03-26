@@ -30,10 +30,7 @@ type ProfileEditForm = {
 export class ProfileEditComponent implements OnInit {
   formGroup!: FormGroup<ProfileEditForm>;
   @Input() user!: User;
-  @Output() editUserInfo$ = new EventEmitter<{
-    uid: string;
-    displayName: string;
-  }>();
+  @Output() updateUserInfo$ = new EventEmitter<User>();
   @Output() cancelEdit$ = new EventEmitter<void>();
 
   constructor(private _fb: FormBuilder) {}
@@ -46,11 +43,11 @@ export class ProfileEditComponent implements OnInit {
     });
   }
 
-  editUserInfo() {
-    this.editUserInfo$.emit({
-      uid: this.user.uid,
-      ...(this.formGroup.value as { displayName: string })
-    });
+  updateUserInfo() {
+    this.updateUserInfo$.emit({
+      ...(this.formGroup.value as User),
+      uid: this.user.uid
+    } as User);
   }
 
   cancelEdit() {

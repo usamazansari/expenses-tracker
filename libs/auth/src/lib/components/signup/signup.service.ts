@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from 'firebase/auth';
-import { BehaviorSubject, catchError, of, switchMap, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, of, switchMap, tap } from 'rxjs';
 
 import { AuthService, ErrorService, FirestoreService } from '@expenses-tracker/core';
 import { NotificationService } from '@expenses-tracker/shared/common';
@@ -48,7 +48,8 @@ export class SignupService {
     this.#setFlags(this.#flags);
 
     return this._auth.signup$({ email, password }).pipe(
-      tap(({ user }) => {
+      switchMap(({ user }) => this._firestore.saveUser$(user as User)),
+      tap(user => {
         this._notification.success({
           description: `Registered successfully as ${user?.email}.`,
           title: 'Signup Successful!'
@@ -56,11 +57,6 @@ export class SignupService {
         this.#resetFlags();
         this._router.navigate(['dashboard']);
       }),
-      switchMap(({ user }) =>
-        !user
-          ? throwError(() => new Error(`Cannot Register user with email ${email}!`))
-          : this._firestore.saveUser$(user as User)
-      ),
       catchError(error => {
         this._notification.error({
           description: `${error}.`,

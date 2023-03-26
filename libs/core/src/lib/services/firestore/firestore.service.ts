@@ -167,48 +167,43 @@ export class FirestoreService {
           from(
             this._firestore.collection<IPocketbook>(Collections.Pocketbook).doc(id).delete()
           ).pipe(
-            catchError(({ code }: FirebaseError) =>
-              throwError(() => new Error(this._error.getError(code)))
-            )
+            catchError(({ code }: FirebaseError) => {
+              console.log({ code });
+              return throwError(() => new Error(this._error.getError(code)));
+            })
           )
         )
       );
   }
 
-  saveUser$({ uid, displayName, email, phoneNumber, photoURL }: User) {
+  saveUser$({ uid, displayName, email }: User) {
     return from(
       this._firestore
         .collection<Partial<User>>(Collections.User)
         .doc(uid)
-        .set({ uid, displayName, email, phoneNumber, photoURL })
+        .set({ uid, displayName, email })
     ).pipe(
+      map(() => ({ uid, displayName, email } as User)),
       catchError(({ code }: FirebaseError) =>
         throwError(() => new Error(this._error.getError(code)))
       )
     );
   }
 
-  updateUser$({ displayName, email, phoneNumber, photoURL }: Partial<User>) {
+  updateUser$({ displayName }: User) {
     return this._context.watchUser$().pipe(
       switchMap(user =>
         this._firestore
-          .collection<Partial<User>>(Collections.User, ref =>
-            ref.where('uid', '==', user?.uid ?? '')
-          )
+          .collection<User>(Collections.User, ref => ref.where('uid', '==', user?.uid ?? ''))
           .get()
           .pipe(
-            map(({ docs: [doc] }) => ({ id: doc?.id, data: doc?.data() })),
-            switchMap(({ id, data }) =>
+            map(ref => (ref.docs ?? [])[0]?.id ?? ''),
+            switchMap(id =>
               from(
                 this._firestore
-                  .collection<Partial<User>>(Collections.User)
+                  .collection<User>(Collections.User)
                   .doc(id)
-                  .update({
-                    displayName: displayName ?? data?.displayName,
-                    email: email ?? data?.email,
-                    phoneNumber: phoneNumber ?? data?.phoneNumber,
-                    photoURL: photoURL ?? data?.photoURL
-                  })
+                  .update({ displayName })
               ).pipe(
                 catchError(({ code }: FirebaseError) =>
                   throwError(() => new Error(this._error.getError(code)))
@@ -329,7 +324,6 @@ export class FirestoreService {
               data: (ref.docs ?? [])[0]?.data() ?? null
             })),
             switchMap(({ data, id }) => {
-              console.log({ data, id });
               if (data?.owner === user?.uid) {
                 return this._firestore
                   .collection<IPocketbook>(Collections.Pocketbook)

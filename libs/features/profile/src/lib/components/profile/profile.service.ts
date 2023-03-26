@@ -2,6 +2,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { Injectable } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 import { Router } from '@angular/router';
+import { User } from 'firebase/auth';
 import { BehaviorSubject, catchError, of, tap, throwError } from 'rxjs';
 
 import { AuthService, ContextService, ErrorService } from '@expenses-tracker/core';
@@ -113,8 +114,8 @@ export class ProfileService {
     );
   }
 
-  editUserInfo$({ displayName }: { displayName: string }) {
-    return this._auth.editUserInfo$({ displayName });
+  updateUserInfo$(user: User) {
+    return this._auth.updateUserInfo$(user);
   }
 
   copyUID(uid: string | null) {
