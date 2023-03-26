@@ -4,24 +4,52 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     match /users/{userId} {
+      
       allow read;
       allow write: if request.auth != null && request.auth.uid == resource.data.uid;
     }
 
     match /pocketbooks/{pocketbookId} {
-      allow read, write: if debug(pocketbookId) && request.auth != null &&
-      (
-        request.auth.uid == get(/databases/$(database)/documents/pocketbooks/$(pocketbookId)).data.owner ||
-        request.auth.uid in get(/databases/$(database)/documents/pocketbooks/$(pocketbookId)).data.collaboratorList
-      );
+      allow get, create, update, delete: if hasAccess(pocketbookId);
+      allow list: if request.auth != null;
+
+      function hasAccess(pocketbookId) {
+        return request.auth != null && isRelatedToPocketbook(pocketbookId)
+      }
+
+      function isRelatedToPocketbook(pocketbookId) {
+        return isOwner(pocketbookId) || isCollaborator(pocketbookId);
+        
+      }
+
+      function isOwner(pocketbookId) {
+        return request.auth.uid == get(/databases/$(database)/documents/pocketbooks/$(pocketbookId)).data.owner;
+      }
+
+      function isCollaborator(pocketbookId) {
+        return request.auth.uid in get(/databases/$(database)/documents/pocketbooks/$(pocketbookId)).data.collaboratorList;
+      }
     }
 
     match /pocketbooks/{pocketbookId}/transactions/{transactionId} {
-      allow read, write: if request.auth != null &&
-      (
-        request.auth.uid == get(/databases/$(database)/documents/pocketbooks/$(pocketbookId)).data.owner ||
-        request.auth.uid in get(/databases/$(database)/documents/pocketbooks/$(pocketbookId)).data.collaboratorList
-      );
+      allow get, list, create, update, delete: if hasAccess(pocketbookId);
+
+      function hasAccess(pocketbookId) {
+        return request.auth != null && isRelatedToPocketbook(pocketbookId)
+      }
+
+      function isRelatedToPocketbook(pocketbookId) {
+        return debug(isOwner(pocketbookId)) || debug(isCollaborator(pocketbookId));
+        
+      }
+
+      function isOwner(pocketbookId) {
+        return request.auth.uid == get(/databases/$(database)/documents/pocketbooks/$(pocketbookId)).data.owner;
+      }
+
+      function isCollaborator(pocketbookId) {
+        return request.auth.uid in get(/databases/$(database)/documents/pocketbooks/$(pocketbookId)).data.collaboratorList;
+      }
     }
   }
 }
