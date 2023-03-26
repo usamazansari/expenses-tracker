@@ -43,6 +43,11 @@
           </div>
         </div>
       </div>
+      <div class="flex items-center justify-center">
+        <span class="text-3xl font-bold text-et-color-fg-success">
+          {{ pocketbook.balance | currency : 'EUR' }}
+        </span>
+      </div>
       <div class="p-4">
         <router-outlet></router-outlet>
       </div>
