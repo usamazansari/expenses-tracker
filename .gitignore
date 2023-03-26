@@ -151,3 +151,6 @@ typings/
 *-debug.log
 .runtimeconfig.json
 backup/
+
+# ChatGPT dump
+gpt-dump
