@@ -109,7 +109,7 @@ export class PocketbookAddService {
       catchError(error => {
         this._notification.error({
           description: `${error}.`,
-          title: 'Login failed'
+          title: 'Pocketbook Add'
         });
         this.#setFlags({
           ...this.#flags,
