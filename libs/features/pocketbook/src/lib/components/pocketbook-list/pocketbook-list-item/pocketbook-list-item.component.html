@@ -6,40 +6,53 @@
         class="w-20 fill-et-color-accent-emphasis"></expenses-tracker-add-pocketbook-graphic>
     </div>
 
-    <div class="flex items-center justify-between py-2">
+    <div class="grid gap-2 py-2">
       <p class="text-2xl font-bold">{{ pocketbook.name }}</p>
-      <ng-container *ngIf="owner$ | async as owner">
-        <div
-          class="p-4 border rounded-full w-14 h-14 text-et-color-button-default bg-et-color-button-default-bg border-et-color-button-default-border"
-          #tooltip="matTooltip"
-          [matTooltip]="owner.displayName ?? owner.email ?? ''"
-          matTooltipPosition="above">
-          <p class="text-center">{{ owner | extractInitials }}</p>
-        </div>
-      </ng-container>
-    </div>
-
-    <div class="flex flex-col gap-1">
-      <p>Collaborators</p>
-      <ng-container *ngIf="!pocketbook.collaboratorList.length; else showCollaborators">
-        <p class="text-et-color-fg-muted">No Collaborators Added</p>
-      </ng-container>
-      <ng-template #showCollaborators>
-        <div class="flex gap-2">
-          <ng-container *ngFor="let collaborator of collaboratorList$ | async">
+      <div class="flex justify-around gap-6">
+        <div class="flex items-center gap-2">
+          <ng-container *ngIf="owner$ | async as owner">
+            <mat-icon class="text-et-color-accent-emphasis">verified_user</mat-icon>
             <div
-              class="p-4 border rounded-full w-14 h-14 text-et-color-button-default bg-et-color-button-default-bg border-et-color-button-default-border"
+              class="p-4 transition-colors duration-200 border rounded-full cursor-default w-14 h-14 bg-et-color-button-default-bg text-et-color-button-default border-et-color-button-default-border"
               #tooltip="matTooltip"
-              [matTooltip]="collaborator.displayName ?? collaborator.email ?? ''"
+              [matTooltip]="owner.displayName ?? owner.email ?? ''"
               matTooltipPosition="above">
-              <p class="text-center">{{ collaborator | extractInitials }}</p>
+              <p class="text-center">{{ owner | extractInitials }}</p>
             </div>
           </ng-container>
         </div>
-      </ng-template>
+        <ng-container *ngIf="collaboratorList$ | async as collaboratorList">
+          <div class="flex items-center gap-2">
+            <mat-icon class="text-et-color-accent-emphasis">group</mat-icon>
+            <div class="flex items-center gap-1 justify-self-start">
+              <ng-container *ngIf="!!collaboratorList.length; else emptyCollaboratorList">
+                <div
+                  class="p-4 transition-colors duration-200 border rounded-full cursor-default w-14 h-14 bg-et-color-button-default-bg text-et-color-button-default border-et-color-button-default-border"
+                  #tooltip="matTooltip"
+                  [matTooltip]="
+                    collaboratorList[0].displayName ?? collaboratorList[0].email ?? ''
+                  "
+                  matTooltipPosition="above">
+                  <p class="text-center">{{ collaboratorList[0] | extractInitials }}</p>
+                </div>
+                <ng-container *ngIf="collaboratorList.length > 1">
+                  <button
+                    class="text-et-color-accent-emphasis hover:underline hover:underline-offset-4">
+                    +{{ collaboratorList.length - 1 }}
+                  </button>
+                </ng-container>
+              </ng-container>
+              <ng-template #emptyCollaboratorList>
+                <mat-icon class="text-et-color-fg-attention">clear</mat-icon>
+              </ng-template>
+            </div>
+          </div>
+        </ng-container>
+      </div>
     </div>
 
-    <div class="flex">
+    <div class="flex items-center gap-2">
+      <mat-icon class="text-et-color-accent-emphasis">today</mat-icon>
       <p class="text-sm italic">
         {{ pocketbook.createdAt | date : 'long' }}
       </p>
