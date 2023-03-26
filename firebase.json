@@ -5,6 +5,9 @@
   "measurementId": "G-ZM3ZXXJKQ0",
   "messagingSenderId": "996752641056",
   "projectId": "ua-expenses-tracker",
+  "firestore": {
+    "rules": "firestore.rules"
+  },
   "storageBucket": "ua-expenses-tracker.appspot.com",
   "hosting": {
     "target": "client",
@@ -54,4 +57,3 @@
     "singleProjectMode": true
   }
 }
-
