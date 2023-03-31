@@ -123,33 +123,20 @@ export class FirestorePocketbookService {
   }
 
   updatePocketbook$(pocketbook: Partial<IPocketbook>) {
-    return this._context.watchPocketbook$().pipe(
-      switchMap(pb =>
-        this._firestore
-          .collection<IPocketbook>(Collections.Pocketbook)
-          .doc(pb?.id)
-          .get()
-          .pipe(
-            map(ref => ref.data()?.id ?? ''),
-            switchMap(pocketbookId =>
-              from(
-                this._firestore
-                  .collection<IPocketbook>(Collections.Pocketbook)
-                  .doc(pocketbookId)
-                  .update({ ...pocketbook })
-              ).pipe(
-                map(pb => {
-                  console.log({ pb });
-                  return pb;
-                }),
-                catchError(({ code }: FirebaseError) => {
-                  console.error({ code });
-                  return throwError(() => new Error(this._error.getError(code)));
-                })
-              )
-            )
-          )
-      )
+    return from(
+      this._firestore
+        .collection<IPocketbook>(Collections.Pocketbook)
+        .doc(pocketbook?.id ?? '')
+        .update({ ...pocketbook })
+    ).pipe(
+      map(pb => {
+        console.log({ pb });
+        return pb;
+      }),
+      catchError(({ code }: FirebaseError) => {
+        console.error({ code });
+        return throwError(() => new Error(this._error.getError(code)));
+      })
     );
   }
 

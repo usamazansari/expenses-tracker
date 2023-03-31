@@ -11,9 +11,7 @@ export class PocketbookListService {
   #viewMode$ = new BehaviorSubject<PocketbookViewMode>('owner');
   #viewMode: PocketbookViewMode = 'owner';
 
-  constructor(private _router: Router) {
-    this.fetchViewMode();
-  }
+  constructor(private _router: Router) {}
 
   fetchViewMode() {
     this._router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(e => {

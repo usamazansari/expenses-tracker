@@ -11,9 +11,7 @@ export class AuthService {
   #authMode$ = new BehaviorSubject<AuthMode>('login');
   #authMode: AuthMode = 'login';
 
-  constructor(private _router: Router) {
-    this.fetchAuthMode();
-  }
+  constructor(private _router: Router) {}
 
   fetchAuthMode() {
     this._router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(e => {

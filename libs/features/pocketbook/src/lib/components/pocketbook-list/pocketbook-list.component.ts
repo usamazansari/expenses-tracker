@@ -9,7 +9,6 @@ import {
   PocketbookGraphicComponent
 } from '@expenses-tracker/shared/assets';
 
-import { PocketbookListItemComponent } from './pocketbook-list-item/pocketbook-list-item.component';
 import { PocketbookListService, PocketbookViewMode } from './pocketbook-list.service';
 
 @Component({
@@ -21,8 +20,7 @@ import { PocketbookListService, PocketbookViewMode } from './pocketbook-list.ser
     MatIconModule,
 
     EmptyPocketbookListGraphicComponent,
-    PocketbookGraphicComponent,
-    PocketbookListItemComponent
+    PocketbookGraphicComponent
   ],
   templateUrl: './pocketbook-list.component.html',
   styles: []
@@ -33,6 +31,7 @@ export class PocketbookListComponent implements OnInit {
   constructor(private _service: PocketbookListService) {}
 
   ngOnInit() {
+    this._service.fetchViewMode();
     this.viewMode$ = this._service.watchViewMode$();
   }
 
