@@ -60,7 +60,7 @@ export class FirestoreTransactionService {
             category: category ?? '',
             direction: direction ?? 'expense',
             message: message ?? '',
-            pocketbook: pocketbook?.id ?? ''
+            pocketbookId: pocketbook?.id ?? ''
           })
       )
     );
