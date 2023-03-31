@@ -50,9 +50,9 @@ export class PocketbookListItemComponent implements OnInit {
   constructor(private _service: PocketbookListItemService, private _dialog: MatDialog) {}
 
   ngOnInit() {
-    this._service.fetchCollaboratorList$(this.pocketbook);
+    this._service.initializeComponent(this.pocketbook);
     this.collaboratorList$ = this._service.watchCollaboratorList$();
-    this.owner$ = this._service.watchOwner$(this.pocketbook) as Observable<User>;
+    this.owner$ = this._service.watchOwner$();
   }
 
   editPocketbook() {

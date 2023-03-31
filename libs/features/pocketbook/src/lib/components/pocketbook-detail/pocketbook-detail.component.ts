@@ -33,8 +33,8 @@ export class PocketbookDetailComponent implements OnInit {
   constructor(private _service: PocketbookDetailService) {}
 
   ngOnInit() {
+    this._service.initializeComponent();
     this.pocketbook$ = this._service.watchPocketbook$();
-    this._service.fetchCollaboratorList$();
     this.collaboratorList$ = this._service.watchCollaboratorList$();
     this.owner$ = this._service.watchOwner$();
   }

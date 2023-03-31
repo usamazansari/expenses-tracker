@@ -4,15 +4,17 @@ import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 
 import { Router } from '@angular/router';
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
-import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 import { NotificationService } from '@expenses-tracker/shared/common';
+import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PocketbookListItemService {
   #collaboratorList$ = new BehaviorSubject<User[]>([]);
+  #owner$ = new BehaviorSubject<User | null>(null);
   #collaboratorList: User[] = [];
+  #owner: User | null = null;
 
   constructor(
     private _router: Router,
@@ -21,10 +23,18 @@ export class PocketbookListItemService {
     private _notification: NotificationService
   ) {}
 
-  fetchCollaboratorList$(pocketbook: IPocketbook | null) {
-    this._firestore.watchCollaboratorList$(pocketbook).subscribe(collaboratorList => {
-      this.setCollaboratorList(collaboratorList as User[]);
-    });
+  initializeComponent(pocketbook: IPocketbook | null) {
+    this._firestore
+      .watchPocketbookOwner$((pocketbook as IPocketbook)?.owner)
+      .subscribe(owner => {
+        this.setOwner(owner as User);
+      });
+
+    this._firestore
+      .watchPocketbookCollaboratorList$((pocketbook as IPocketbook)?.collaboratorList)
+      .subscribe(collaboratorList => {
+        this.setCollaboratorList(collaboratorList as User[]);
+      });
   }
 
   setCollaboratorList(collaboratorList: User[]) {
@@ -36,8 +46,13 @@ export class PocketbookListItemService {
     return this.#collaboratorList$.asObservable();
   }
 
-  watchOwner$(pocketbook: IPocketbook | null) {
-    return this._firestore.watchOwner$(pocketbook);
+  setOwner(owner: User | null) {
+    this.#owner = owner ?? null;
+    this.#owner$.next(this.#owner);
+  }
+
+  watchOwner$() {
+    return this.#owner$.asObservable();
   }
 
   editPocketbook(pocketbook: IPocketbook) {

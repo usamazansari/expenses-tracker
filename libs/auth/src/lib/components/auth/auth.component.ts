@@ -30,6 +30,7 @@ export class AuthComponent implements OnInit {
   constructor(private _service: AuthService) {}
 
   ngOnInit() {
+    this._service.fetchAuthMode();
     this.authMode$ = this._service.watchAuthMode$();
   }
 

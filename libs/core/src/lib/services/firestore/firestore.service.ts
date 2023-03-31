@@ -3,7 +3,7 @@ import { FirebaseError } from '@angular/fire/app';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Timestamp } from '@angular/fire/firestore';
 import { User } from 'firebase/auth';
-import { catchError, from, map, of, switchMap, throwError } from 'rxjs';
+import { catchError, map, switchMap, throwError } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
 import { IPocketbook, ITransaction } from '@expenses-tracker/shared/interfaces';
@@ -12,6 +12,7 @@ import { ContextService } from '../context/context.service';
 import { ErrorService } from '../error/error.service';
 
 import { FirestorePocketbookService } from './firestore-pocketbook/firestore-pocketbook.service';
+import { FirestoreUserService } from './firestore-user/firestore-user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,8 @@ export class FirestoreService {
     private _firestore: AngularFirestore,
     private _context: ContextService,
     private _error: ErrorService,
-    private _pocketbook: FirestorePocketbookService
+    private _pocketbook: FirestorePocketbookService,
+    private _user: FirestoreUserService
   ) {}
 
   watchOwnedPocketbookList$() {
@@ -48,71 +50,24 @@ export class FirestoreService {
     return this._pocketbook.deletePocketbook$(pocketbookId);
   }
 
-  saveUser$({ uid, displayName, email }: User) {
-    return from(
-      this._firestore
-        .collection<Partial<User>>(Collections.User)
-        .doc(uid)
-        .set({ uid, displayName, email })
-    ).pipe(
-      map(() => ({ uid, displayName, email } as User)),
-      catchError(({ code }: FirebaseError) =>
-        throwError(() => new Error(this._error.getError(code)))
-      )
-    );
+  saveUser$(user: User) {
+    return this._user.saveUser$(user);
   }
 
-  updateUser$({ displayName }: User) {
-    return this._context.watchUser$().pipe(
-      switchMap(user =>
-        this._firestore
-          .collection<User>(Collections.User, ref => ref.where('uid', '==', user?.uid ?? ''))
-          .get()
-          .pipe(
-            map(ref => (ref.docs ?? [])[0]?.id ?? ''),
-            switchMap(id =>
-              from(
-                this._firestore
-                  .collection<User>(Collections.User)
-                  .doc(id)
-                  .update({ displayName })
-              ).pipe(
-                catchError(({ code }: FirebaseError) =>
-                  throwError(() => new Error(this._error.getError(code)))
-                )
-              )
-            )
-          )
-      )
-    );
+  updateUser$(user: Partial<User>) {
+    return this._user.updateUser$(user);
   }
 
   watchUserList$() {
-    return this._firestore.collection<Partial<User>>(Collections.User).valueChanges();
+    return this._user.watchUserList$();
   }
 
-  watchOwner$(pocketbook: IPocketbook | null) {
-    return this._firestore
-      .collection<Partial<User>>(Collections.User, ref =>
-        ref.where('uid', '==', pocketbook?.owner ?? '')
-      )
-      .valueChanges()
-      .pipe(
-        map(([owner]) => owner),
-        catchError(({ code }: FirebaseError) =>
-          throwError(() => new Error(this._error.getError(code)))
-        )
-      );
+  watchPocketbookOwner$(pocketbookOwner: string) {
+    return this._user.watchPocketbookOwner$(pocketbookOwner);
   }
 
-  watchCollaboratorList$(pocketbook: IPocketbook | null) {
-    return !pocketbook?.collaboratorList?.length
-      ? of([] as User[])
-      : this._firestore
-          .collection<User>(Collections.User, ref =>
-            ref.where('uid', 'in', pocketbook?.collaboratorList ?? [])
-          )
-          .valueChanges();
+  watchPocketbookCollaboratorList$(pocketbookCollaboratorList: string[]) {
+    return this._user.watchPocketbookCollaboratorList$(pocketbookCollaboratorList);
   }
 
   watchTransactionList$() {

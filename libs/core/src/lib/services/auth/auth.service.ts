@@ -40,13 +40,15 @@ export class AuthService {
     return from(this._auth.createUserWithEmailAndPassword(email ?? '', password ?? ''));
   }
 
-  updateUserInfo$(update: User) {
+  updateUserInfo$(update: Partial<User>) {
     return this._context
       .watchUser$()
       .pipe(
         switchMap(user =>
           from(updateProfile(user as User, { ...update })).pipe(
-            switchMap(() => this._firestore.updateUser$({ ...user, ...update } as User))
+            switchMap(() =>
+              this._firestore.updateUser$({ ...user, ...update } as Partial<User>)
+            )
           )
         )
       );
