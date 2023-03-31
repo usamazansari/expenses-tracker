@@ -98,7 +98,7 @@ export class FirestorePocketbookService {
       switchMap(user =>
         from(
           this._firestore
-            .collection<IPocketbook>(Collections.Pocketbook)
+            .collection<Partial<IPocketbook>>(Collections.Pocketbook)
             .doc(docId)
             .set({
               id: docId,
