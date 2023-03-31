@@ -1,17 +1,10 @@
 import { Injectable } from '@angular/core';
-import { FirebaseError } from '@angular/fire/app';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Timestamp } from '@angular/fire/firestore';
 import { User } from 'firebase/auth';
-import { catchError, map, switchMap, throwError } from 'rxjs';
 
-import { Collections } from '@expenses-tracker/shared/common';
 import { IPocketbook, ITransaction } from '@expenses-tracker/shared/interfaces';
 
-import { ContextService } from '../context/context.service';
-import { ErrorService } from '../error/error.service';
-
 import { FirestorePocketbookService } from './firestore-pocketbook/firestore-pocketbook.service';
+import { FirestoreTransactionService } from './firestore-transaction/firestore-transaction.service';
 import { FirestoreUserService } from './firestore-user/firestore-user.service';
 
 @Injectable({
@@ -19,11 +12,9 @@ import { FirestoreUserService } from './firestore-user/firestore-user.service';
 })
 export class FirestoreService {
   constructor(
-    private _firestore: AngularFirestore,
-    private _context: ContextService,
-    private _error: ErrorService,
     private _pocketbook: FirestorePocketbookService,
-    private _user: FirestoreUserService
+    private _user: FirestoreUserService,
+    private _transaction: FirestoreTransactionService
   ) {}
 
   watchOwnedPocketbookList$() {
@@ -71,96 +62,18 @@ export class FirestoreService {
   }
 
   watchTransactionList$() {
-    return this._context.watchPocketbook$().pipe(
-      switchMap(pocketbook =>
-        this._firestore
-          .collection<ITransaction<Timestamp>>(Collections.Transaction, ref =>
-            ref.where('pocketbook', '==', pocketbook?.id ?? '').orderBy('timestamp', 'desc')
-          )
-          .valueChanges()
-          .pipe(
-            map(transactionList =>
-              transactionList.map(
-                t =>
-                  ({
-                    ...t,
-                    timestamp: t.timestamp?.toDate()
-                  } as ITransaction)
-              )
-            ),
-            catchError(({ code }: FirebaseError) =>
-              throwError(() => new Error(this._error.getError(code)))
-            )
-          )
-      )
-    );
+    return this._transaction.watchTransactionList$();
   }
 
-  createTransaction$({ amount, category, direction, message }: Partial<ITransaction>) {
-    const docId = this._firestore.createId();
-    return this._context.watchPocketbook$().pipe(
-      switchMap(pocketbook =>
-        this._firestore
-          .collection<ITransaction>(Collections.Transaction)
-          .doc(docId)
-          .set({
-            id: docId,
-            timestamp: new Date(),
-            amount: amount ?? 0,
-            category: category ?? '',
-            direction: direction ?? 'expense',
-            message: message ?? '',
-            pocketbook: pocketbook?.id ?? ''
-          })
-      )
-    );
+  createTransaction$(transaction: Partial<ITransaction>) {
+    return this._transaction.createTransaction$(transaction);
   }
 
-  updateTransaction$(pocketbook: Partial<IPocketbook>) {
-    return this._context.watchPocketbook$().pipe(
-      switchMap(pb =>
-        this._firestore
-          .collection<IPocketbook>(Collections.Pocketbook, ref =>
-            ref.where('id', '==', pb?.id ?? '')
-          )
-          .get()
-          .pipe(
-            map(ref => (ref.docs ?? [])[0]?.id ?? ''),
-            switchMap(id =>
-              this._firestore
-                .collection<IPocketbook>(Collections.Pocketbook)
-                .doc(id)
-                .update({ ...pocketbook })
-            )
-          )
-      )
-    );
+  updateTransaction$(transaction: Partial<ITransaction>) {
+    return this._transaction.updateTransaction$(transaction);
   }
 
-  deleteTransaction$(pocketbook: Partial<IPocketbook>) {
-    return this._context.watchUser$().pipe(
-      switchMap(user =>
-        this._firestore
-          .collection<IPocketbook>(Collections.Pocketbook, ref =>
-            ref.where('id', '==', pocketbook.id ?? '')
-          )
-          .get()
-          .pipe(
-            map(ref => ({
-              id: (ref.docs ?? [])[0]?.id ?? '',
-              data: (ref.docs ?? [])[0]?.data() ?? null
-            })),
-            switchMap(({ data, id }) => {
-              if (data?.owner === user?.uid) {
-                return this._firestore
-                  .collection<IPocketbook>(Collections.Pocketbook)
-                  .doc(id)
-                  .delete();
-              }
-              return throwError(() => new Error('You cannot delete this pocketbook!'));
-            })
-          )
-      )
-    );
+  deleteTransaction$(transactionId: string) {
+    return this._transaction.deleteTransaction$(transactionId);
   }
 }
