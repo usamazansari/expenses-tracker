@@ -11,6 +11,8 @@ import { IPocketbook, ITransaction } from '@expenses-tracker/shared/interfaces';
 import { ContextService } from '../context/context.service';
 import { ErrorService } from '../error/error.service';
 
+import { FirestorePocketbookService } from './firestore-pocketbook/firestore-pocketbook.service';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -18,162 +20,32 @@ export class FirestoreService {
   constructor(
     private _firestore: AngularFirestore,
     private _context: ContextService,
-    private _error: ErrorService
+    private _error: ErrorService,
+    private _pocketbook: FirestorePocketbookService
   ) {}
 
   watchOwnedPocketbookList$() {
-    return this._context.watchUser$().pipe(
-      switchMap(user =>
-        this._firestore
-          .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
-            ref.where('owner', '==', user?.uid ?? '')
-          )
-          .valueChanges()
-          .pipe(
-            map(pocketbookList =>
-              pocketbookList.map(
-                pb =>
-                  ({
-                    ...pb,
-                    createdAt: (pb.createdAt as Timestamp).toDate()
-                  } as IPocketbook)
-              )
-            ),
-            catchError(({ code }: FirebaseError) =>
-              throwError(() => new Error(this._error.getError(code)))
-            )
-          )
-      )
-    );
+    return this._pocketbook.watchOwnedPocketbookList$();
   }
 
   watchCollaboratedPocketbookList$() {
-    return this._context.watchUser$().pipe(
-      switchMap(user =>
-        this._firestore
-          .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
-            ref.where('collaboratorList', 'array-contains', user?.uid ?? '')
-          )
-          .valueChanges()
-          .pipe(
-            map(pocketbookList =>
-              pocketbookList.map(
-                pb =>
-                  ({
-                    ...pb,
-                    createdAt: (pb.createdAt as Timestamp).toDate()
-                  } as IPocketbook)
-              )
-            ),
-            catchError(({ code }: FirebaseError) =>
-              throwError(() => new Error(this._error.getError(code)))
-            )
-          )
-      )
-    );
+    return this._pocketbook.watchCollaboratedPocketbookList$();
   }
 
-  watchPocketbook$(id: string) {
-    return this._firestore
-      .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
-        ref.where('id', '==', id ?? '')
-      )
-      .valueChanges()
-      .pipe(
-        map(
-          ([pb]) =>
-            ({
-              ...pb,
-              createdAt: (pb?.createdAt as Timestamp)?.toDate()
-            } as IPocketbook)
-        ),
-        catchError(({ code }: FirebaseError) =>
-          throwError(() => new Error(this._error.getError(code)))
-        )
-      );
+  watchPocketbook$(pocketbookId: string) {
+    return this._pocketbook.watchPocketbook$(pocketbookId);
   }
 
-  createPocketbook$({ name, collaboratorList = [], transactionList = [] }: IPocketbook) {
-    const docId = this._firestore.createId();
-    return this._context.watchUser$().pipe(
-      switchMap(user =>
-        from(
-          this._firestore
-            .collection<IPocketbook>(Collections.Pocketbook)
-            .doc(docId)
-            .set({
-              id: docId,
-              owner: user?.uid ?? '',
-              name,
-              collaboratorList,
-              transactionList,
-              createdAt: new Date(),
-              balance: 0
-            })
-        ).pipe(
-          map(pb => {
-            console.log({ pb });
-            return pb;
-          }),
-          catchError(({ code }: FirebaseError) =>
-            throwError(() => new Error(this._error.getError(code)))
-          )
-        )
-      )
-    );
+  createPocketbook$(pocketbook: IPocketbook) {
+    return this._pocketbook.createPocketbook$(pocketbook);
   }
 
   updatePocketbook$(pocketbook: Partial<IPocketbook>) {
-    return this._context.watchPocketbook$().pipe(
-      switchMap(pb =>
-        this._firestore
-          .collection<IPocketbook>(Collections.Pocketbook, ref =>
-            ref.where('id', '==', pb?.id ?? '')
-          )
-          .get()
-          .pipe(
-            map(ref => (ref.docs ?? [])[0]?.id ?? ''),
-            switchMap(id =>
-              from(
-                this._firestore
-                  .collection<IPocketbook>(Collections.Pocketbook)
-                  .doc(id)
-                  .update({ ...pocketbook })
-              ).pipe(
-                map(pb => {
-                  console.log({ pb });
-                  return pb;
-                }),
-                catchError(({ code }: FirebaseError) => {
-                  console.error({ code });
-                  return throwError(() => new Error(this._error.getError(code)));
-                })
-              )
-            )
-          )
-      )
-    );
+    return this._pocketbook.updatePocketbook$(pocketbook);
   }
 
-  deletePocketbook$(pocketbook: Partial<IPocketbook>) {
-    return this._firestore
-      .collection<IPocketbook>(Collections.Pocketbook, ref =>
-        ref.where('id', '==', pocketbook.id ?? '')
-      )
-      .get()
-      .pipe(
-        map(ref => (ref.docs ?? [])[0]?.id ?? ''),
-        switchMap(id =>
-          from(
-            this._firestore.collection<IPocketbook>(Collections.Pocketbook).doc(id).delete()
-          ).pipe(
-            catchError(({ code }: FirebaseError) => {
-              console.log({ code });
-              return throwError(() => new Error(this._error.getError(code)));
-            })
-          )
-        )
-      );
+  deletePocketbook$(pocketbookId: string) {
+    return this._pocketbook.deletePocketbook$(pocketbookId);
   }
 
   saveUser$({ uid, displayName, email }: User) {

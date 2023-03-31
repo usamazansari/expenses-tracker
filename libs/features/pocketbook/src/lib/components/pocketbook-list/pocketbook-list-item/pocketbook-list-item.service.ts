@@ -45,8 +45,8 @@ export class PocketbookListItemService {
     this._router.navigate(['pocketbook', pocketbook.id, 'edit']);
   }
 
-  deletePocketbook$(pocketbook: IPocketbook) {
-    return this._firestore.deletePocketbook$(pocketbook).pipe(
+  deletePocketbook$(pocketbookId: string) {
+    return this._firestore.deletePocketbook$(pocketbookId).pipe(
       tap(() => {
         this._notification.success({
           title: 'Deleted Successfully',

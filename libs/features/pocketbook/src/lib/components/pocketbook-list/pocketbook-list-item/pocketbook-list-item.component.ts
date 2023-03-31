@@ -66,7 +66,9 @@ export class PocketbookListItemComponent implements OnInit {
       .afterClosed()
       .pipe(
         switchMap(result =>
-          result ? this._service.deletePocketbook$(this.pocketbook as IPocketbook) : of(EMPTY)
+          result
+            ? this._service.deletePocketbook$((this.pocketbook as IPocketbook)?.id ?? '')
+            : of(EMPTY)
         )
       )
       .subscribe();
