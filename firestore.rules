@@ -31,15 +31,16 @@ service cloud.firestore {
       }
     }
 
-    match /pocketbooks/{pocketbookId}/transactions/{transactionId} {
-      allow get, list, create, update, delete: if hasAccess(pocketbookId);
+    match /transactions/{transactionId} {
+      allow get, create, update, delete: if hasAccess(request.resource.data.pocketbookId);
+      allow list: if request.auth != null;
 
       function hasAccess(pocketbookId) {
         return request.auth != null && isRelatedToPocketbook(pocketbookId)
       }
 
       function isRelatedToPocketbook(pocketbookId) {
-        return debug(isOwner(pocketbookId)) || debug(isCollaborator(pocketbookId));
+        return isOwner(pocketbookId) || isCollaborator(pocketbookId);
         
       }
 
