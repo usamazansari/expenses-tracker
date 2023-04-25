@@ -14,23 +14,20 @@
       "configurations": {
         "production": {
           "devServerTarget": "client:serve:production"
+        },
+        "ci": {
+          "devServerTarget": "client:serve-static"
         }
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "apps/client-e2e/**/*.{js,ts}"
-        ]
+        "lintFilePatterns": ["apps/client-e2e/**/*.{js,ts}"]
       }
     }
   },
   "tags": [],
-  "implicitDependencies": [
-    "client"
-  ]
+  "implicitDependencies": ["client"]
 }
