@@ -2,8 +2,8 @@ import { provideImgixLoader } from '@angular/common';
 import { importProvidersFrom, isDevMode } from '@angular/core';
 import { AngularFireModule } from '@angular/fire/compat';
 import {
-  AngularFireAuthModule,
-  USE_EMULATOR as AUTH_EMULATOR
+  USE_EMULATOR as AUTH_EMULATOR,
+  AngularFireAuthModule
 } from '@angular/fire/compat/auth';
 import {
   AngularFirestoreModule,
@@ -49,3 +49,4 @@ bootstrapApplication(AppComponent, {
     }
   ]
 }).catch(err => console.error(err));
+

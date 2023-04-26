@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 
-import { FirestoreService } from '@expenses-tracker/core';
+import { ContextService, FirestoreService } from '@expenses-tracker/core';
 import { ITransaction } from '@expenses-tracker/shared/interfaces';
 
 @Injectable({
@@ -10,10 +11,12 @@ import { ITransaction } from '@expenses-tracker/shared/interfaces';
 export class TransactionListService {
   #transactionList$ = new BehaviorSubject<ITransaction[]>([]);
   #transactionList: ITransaction[] = [];
-  constructor(private _firestore: FirestoreService) {}
+  #firestore = inject(FirestoreService);
+  #router = inject(Router);
+  #context = inject(ContextService);
 
   fetchTransactionList$() {
-    this._firestore.watchTransactionList$().subscribe(transactionList => {
+    this.#firestore.watchTransactionList$().subscribe(transactionList => {
       this.setTransactionList(transactionList);
     });
   }
@@ -28,6 +31,15 @@ export class TransactionListService {
   }
 
   watchTransactionList$() {
-    return this._firestore.watchTransactionList$();
+    return this.#firestore.watchTransactionList$();
+  }
+
+  gotoAddTransaction() {
+    this.#router.navigate([
+      'pocketbook',
+      this.#context.getPocketbook()?.id,
+      'transaction',
+      'add'
+    ]);
   }
 }
