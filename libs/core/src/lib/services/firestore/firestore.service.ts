@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { User } from 'firebase/auth';
 
 import { IPocketbook, ITransaction } from '@expenses-tracker/shared/interfaces';
@@ -11,69 +11,67 @@ import { FirestoreUserService } from './firestore-user/firestore-user.service';
   providedIn: 'root'
 })
 export class FirestoreService {
-  constructor(
-    private _pocketbook: FirestorePocketbookService,
-    private _user: FirestoreUserService,
-    private _transaction: FirestoreTransactionService
-  ) {}
+  #pocketbook = inject(FirestorePocketbookService);
+  #user = inject(FirestoreUserService);
+  #transaction = inject(FirestoreTransactionService);
 
   watchOwnedPocketbookList$() {
-    return this._pocketbook.watchOwnedPocketbookList$();
+    return this.#pocketbook.watchOwnedPocketbookList$();
   }
 
   watchCollaboratedPocketbookList$() {
-    return this._pocketbook.watchCollaboratedPocketbookList$();
+    return this.#pocketbook.watchCollaboratedPocketbookList$();
   }
 
   watchPocketbook$(pocketbookId: string) {
-    return this._pocketbook.watchPocketbook$(pocketbookId);
+    return this.#pocketbook.watchPocketbook$(pocketbookId);
   }
 
   createPocketbook$(pocketbook: IPocketbook) {
-    return this._pocketbook.createPocketbook$(pocketbook);
+    return this.#pocketbook.createPocketbook$(pocketbook);
   }
 
   updatePocketbook$(pocketbook: Partial<IPocketbook>) {
-    return this._pocketbook.updatePocketbook$(pocketbook);
+    return this.#pocketbook.updatePocketbook$(pocketbook);
   }
 
   deletePocketbook$(pocketbookId: string) {
-    return this._pocketbook.deletePocketbook$(pocketbookId);
+    return this.#pocketbook.deletePocketbook$(pocketbookId);
   }
 
   saveUser$(user: User) {
-    return this._user.saveUser$(user);
+    return this.#user.saveUser$(user);
   }
 
   updateUser$(user: Partial<User>) {
-    return this._user.updateUser$(user);
+    return this.#user.updateUser$(user);
   }
 
   watchUserList$() {
-    return this._user.watchUserList$();
+    return this.#user.watchUserList$();
   }
 
   watchPocketbookOwner$(pocketbookOwner: string) {
-    return this._user.watchPocketbookOwner$(pocketbookOwner);
+    return this.#user.watchPocketbookOwner$(pocketbookOwner);
   }
 
   watchPocketbookCollaboratorList$(pocketbookCollaboratorList: string[]) {
-    return this._user.watchPocketbookCollaboratorList$(pocketbookCollaboratorList);
+    return this.#user.watchPocketbookCollaboratorList$(pocketbookCollaboratorList);
   }
 
   watchTransactionList$() {
-    return this._transaction.watchTransactionList$();
+    return this.#transaction.watchTransactionList$();
   }
 
   createTransaction$(transaction: Partial<ITransaction>) {
-    return this._transaction.createTransaction$(transaction);
+    return this.#transaction.createTransaction$(transaction);
   }
 
   updateTransaction$(transaction: Partial<ITransaction>) {
-    return this._transaction.updateTransaction$(transaction);
+    return this.#transaction.updateTransaction$(transaction);
   }
 
   deleteTransaction$(transactionId: string) {
-    return this._transaction.deleteTransaction$(transactionId);
+    return this.#transaction.deleteTransaction$(transactionId);
   }
 }

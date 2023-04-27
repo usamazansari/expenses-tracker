@@ -8,10 +8,18 @@
           'text-et-color-fg-danger bg-et-color-bg-danger': transaction.direction === 'expense',
           'text-et-color-fg-success bg-et-color-bg-success': transaction.direction === 'income'
         }">
-        {{ transaction.category.at(0)?.toUpperCase() }}
+        <ng-container *ngIf="!transaction.category; else showCategory">?</ng-container>
+        <ng-template #showCategory>
+          {{ transaction.category.at(0)?.toUpperCase() }}
+        </ng-template>
       </span>
       <div class="grid gap-2">
-        <span class="font-bold">{{ transaction.message }}</span>
+        <ng-container *ngIf="!transaction.message; else displayMessage">
+          <span class="text-et-color-fg-muted">Unknown {{ transaction.direction }}</span>
+        </ng-container>
+        <ng-template #displayMessage>
+          <span class="font-bold">{{ transaction.message }}</span>
+        </ng-template>
         <p class="text-sm italic">
           {{ transaction.timestamp | date : 'long' }}
         </p>

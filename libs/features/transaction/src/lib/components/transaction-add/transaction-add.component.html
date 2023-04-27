@@ -10,7 +10,7 @@
       <div class="grid grid-rows-[1fr_auto] gap-2">
         <div class="grid gap-2">
           <div class="flex items-center gap-2">
-            <mat-icon class="min-w-[24px]">book</mat-icon>
+            <mat-icon class="min-w-[24px]">payments</mat-icon>
             <mat-form-field class="w-full">
               <mat-label>Amount</mat-label>
               <span matPrefix class="mr-1">€</span>
@@ -23,6 +23,45 @@
               <mat-error *ngIf="this.formGroup.get('name')?.invalid">
                 {{ getError('name') }}
               </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="flex items-center gap-2">
+            <mat-icon class="min-w-[24px]">category</mat-icon>
+            <mat-form-field class="w-full">
+              <mat-label>Category</mat-label>
+              <input
+                matInput
+                formControlName="category"
+                type="text"
+                placeholder="Grocery"
+                required />
+              <mat-error *ngIf="this.formGroup.get('category')?.invalid">
+                {{ getError('category') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="flex items-center gap-2">
+            <mat-icon class="min-w-[24px]">swap_horiz</mat-icon>
+            <mat-form-field class="w-full">
+              <mat-label>Direction</mat-label>
+              <mat-select formControlName="direction">
+                <mat-option value="income">Income</mat-option>
+                <mat-option value="expense">Expense</mat-option>
+              </mat-select>
+              <mat-error *ngIf="this.formGroup.get('direction')?.invalid">
+                {{ getError('direction') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="flex items-center gap-2">
+            <mat-icon class="min-w-[24px]">comment</mat-icon>
+            <mat-form-field class="w-full">
+              <mat-label>Message</mat-label>
+              <input
+                matInput
+                formControlName="message"
+                type="text"
+                placeholder="Groceries for this month" />
             </mat-form-field>
           </div>
         </div>

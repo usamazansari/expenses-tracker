@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Timestamp } from '@angular/fire/firestore';
@@ -14,16 +14,14 @@ import { ErrorService } from '../../error/error.service';
   providedIn: 'root'
 })
 export class FirestorePocketbookService {
-  constructor(
-    private _firestore: AngularFirestore,
-    private _context: ContextService,
-    private _error: ErrorService
-  ) {}
+  #firestore = inject(AngularFirestore);
+  #context = inject(ContextService);
+  #error = inject(ErrorService);
 
   watchOwnedPocketbookList$() {
-    return this._context.watchUser$().pipe(
+    return this.#context.watchUser$().pipe(
       switchMap(user =>
-        this._firestore
+        this.#firestore
           .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
             ref.where('owner', '==', user?.uid ?? '')
           )
@@ -39,7 +37,7 @@ export class FirestorePocketbookService {
               )
             ),
             catchError(({ code }: FirebaseError) =>
-              throwError(() => new Error(this._error.getError(code)))
+              throwError(() => new Error(this.#error.getError(code)))
             )
           )
       )
@@ -47,9 +45,9 @@ export class FirestorePocketbookService {
   }
 
   watchCollaboratedPocketbookList$() {
-    return this._context.watchUser$().pipe(
+    return this.#context.watchUser$().pipe(
       switchMap(user =>
-        this._firestore
+        this.#firestore
           .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
             ref.where('collaboratorList', 'array-contains', user?.uid ?? '')
           )
@@ -65,7 +63,7 @@ export class FirestorePocketbookService {
               )
             ),
             catchError(({ code }: FirebaseError) =>
-              throwError(() => new Error(this._error.getError(code)))
+              throwError(() => new Error(this.#error.getError(code)))
             )
           )
       )
@@ -73,7 +71,7 @@ export class FirestorePocketbookService {
   }
 
   watchPocketbook$(pocketbookId: string) {
-    return this._firestore
+    return this.#firestore
       .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
         ref.where('id', '==', pocketbookId ?? '')
       )
@@ -87,17 +85,17 @@ export class FirestorePocketbookService {
             } as IPocketbook)
         ),
         catchError(({ code }: FirebaseError) =>
-          throwError(() => new Error(this._error.getError(code)))
+          throwError(() => new Error(this.#error.getError(code)))
         )
       );
   }
 
   createPocketbook$({ name, collaboratorList = [], transactionList = [] }: IPocketbook) {
-    const docId = this._firestore.createId();
-    return this._context.watchUser$().pipe(
+    const docId = this.#firestore.createId();
+    return this.#context.watchUser$().pipe(
       switchMap(user =>
         from(
-          this._firestore
+          this.#firestore
             .collection<Partial<IPocketbook>>(Collections.Pocketbook)
             .doc(docId)
             .set({
@@ -115,7 +113,7 @@ export class FirestorePocketbookService {
             return pb;
           }),
           catchError(({ code }: FirebaseError) =>
-            throwError(() => new Error(this._error.getError(code)))
+            throwError(() => new Error(this.#error.getError(code)))
           )
         )
       )
@@ -124,7 +122,7 @@ export class FirestorePocketbookService {
 
   updatePocketbook$(pocketbook: Partial<IPocketbook>) {
     return from(
-      this._firestore
+      this.#firestore
         .collection<IPocketbook>(Collections.Pocketbook)
         .doc(pocketbook?.id ?? '')
         .update({ ...pocketbook })
@@ -135,18 +133,18 @@ export class FirestorePocketbookService {
       }),
       catchError(({ code }: FirebaseError) => {
         console.error({ code });
-        return throwError(() => new Error(this._error.getError(code)));
+        return throwError(() => new Error(this.#error.getError(code)));
       })
     );
   }
 
   deletePocketbook$(pocketbookId: string) {
     return from(
-      this._firestore.collection<IPocketbook>(Collections.Pocketbook).doc(pocketbookId).delete()
+      this.#firestore.collection<IPocketbook>(Collections.Pocketbook).doc(pocketbookId).delete()
     ).pipe(
       catchError(({ code }: FirebaseError) => {
         console.log({ code });
-        return throwError(() => new Error(this._error.getError(code)));
+        return throwError(() => new Error(this.#error.getError(code)));
       })
     );
   }

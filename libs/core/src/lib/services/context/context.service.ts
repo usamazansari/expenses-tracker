@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Timestamp } from '@angular/fire/firestore';
@@ -7,7 +7,7 @@ import { User } from 'firebase/auth';
 import { BehaviorSubject, filter, map, switchMap } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
-import { IPocketbook } from '@expenses-tracker/shared/interfaces';
+import { IPocketbook, ITransaction } from '@expenses-tracker/shared/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -18,21 +18,21 @@ export class ContextService {
   #pocketbook$ = new BehaviorSubject<IPocketbook | null>(null);
   #pocketbook: IPocketbook | null = null;
 
-  constructor(
-    private _auth: AngularFireAuth,
-    private _router: Router,
-    private _firestore: AngularFirestore
-  ) {
-    this._auth.user.subscribe(user => {
+  #auth = inject(AngularFireAuth);
+  #router = inject(Router);
+  #firestore = inject(AngularFirestore);
+
+  constructor() {
+    this.#auth.user.subscribe(user => {
       this.setUser(user as User);
     });
 
-    this._router.events
+    this.#router.events
       .pipe(
         filter(e => e instanceof NavigationEnd),
         switchMap(e => {
           const { urlAfterRedirects } = e as NavigationEnd;
-          return this._firestore
+          return this.#firestore
             .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref => {
               return ref.where(
                 'id',
@@ -85,5 +85,11 @@ export class ContextService {
 
   watchPocketbook$() {
     return this.#pocketbook$.asObservable();
+  }
+
+  calculateBalance({ amount, direction }: ITransaction) {
+    return direction === 'expense'
+      ? (this.#pocketbook?.balance ?? 0) - amount
+      : (this.#pocketbook?.balance ?? 0) + amount;
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, catchError, of, tap } from 'rxjs';
+import { BehaviorSubject, catchError, distinctUntilChanged, of, switchMap, tap } from 'rxjs';
 
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
 import { NotificationService } from '@expenses-tracker/shared/common';
@@ -46,6 +46,20 @@ export class TransactionAddService {
     });
 
     return this.#firestore.createTransaction$(transaction).pipe(
+      switchMap(response =>
+        this.#context.watchPocketbook$().pipe(
+          distinctUntilChanged(
+            previous => !(previous?.transactionList ?? []).includes(transaction.id)
+          ),
+          switchMap(pocketbook =>
+            this.#firestore.updatePocketbook$({
+              ...pocketbook,
+              transactionList: [...(pocketbook?.transactionList ?? []), response?.id ?? ''],
+              balance: this.#context.calculateBalance(transaction)
+            })
+          )
+        )
+      ),
       tap(() => {
         this.#notification.success({
           title: 'Transaction added',
