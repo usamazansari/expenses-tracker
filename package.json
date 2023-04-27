@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "nx",
-    "start": "nx run client:serve",
+    "start": "nx run client:serve --host=127.0.0.1",
     "postinstall": "node ./decorate-angular-cli.js",
     "build:stats": "nx run client:build:development --stats-json --source-map",
     "build": "nx run client:build:production",
@@ -74,3 +74,4 @@
     "typescript": "~4.9.5"
   }
 }
+
