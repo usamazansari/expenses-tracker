@@ -11,6 +11,7 @@ import {
   PocketbookOwnerListComponent,
   PocketbookCollaboratorListComponent
 } from './components';
+import { inject } from '@angular/core';
 
 export const pocketbookRoutes: Route[] = [
   {
@@ -20,14 +21,18 @@ export const pocketbookRoutes: Route[] = [
       {
         path: 'list',
         component: PocketbookListComponent,
-        canActivate: [AuthGuard],
+        canActivate: [() => inject(AuthGuard).canActivate()],
         children: [
           { path: 'owner', component: PocketbookOwnerListComponent },
           { path: 'collaborator', component: PocketbookCollaboratorListComponent },
           { path: '', redirectTo: 'owner', pathMatch: 'full' }
         ]
       },
-      { path: 'add', component: PocketbookAddComponent, canActivate: [AuthGuard] },
+      {
+        path: 'add',
+        component: PocketbookAddComponent,
+        canActivate: [() => inject(AuthGuard).canActivate()]
+      },
       {
         path: ':id/transaction',
         component: PocketbookDetailComponent,
@@ -35,7 +40,11 @@ export const pocketbookRoutes: Route[] = [
           import('@expenses-tracker/features/transaction').then(m => m.transactionRoutes)
       },
       { path: ':id', redirectTo: ':id/transaction', pathMatch: 'full' },
-      { path: ':id/edit', component: PocketbookEditComponent, canActivate: [AuthGuard] },
+      {
+        path: ':id/edit',
+        component: PocketbookEditComponent,
+        canActivate: [() => inject(AuthGuard).canActivate()]
+      },
       { path: '', redirectTo: 'list', pathMatch: 'full' }
     ]
   }

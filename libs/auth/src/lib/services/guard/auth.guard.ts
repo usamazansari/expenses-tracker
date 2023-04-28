@@ -1,21 +1,22 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { CanActivate, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard implements CanActivate {
-  constructor(private _auth: AngularFireAuth, private _router: Router) {}
+export class AuthGuard {
+  #auth = inject(AngularFireAuth);
+  #router = inject(Router);
 
   canActivate() {
-    return this._auth.user.pipe(
+    return this.#auth.user.pipe(
       map(user => {
         if (!!user) {
           return true;
         } else {
-          this._router.navigate(['auth', 'login']);
+          this.#router.navigate(['auth', 'login']);
           return false;
         }
       })
@@ -26,16 +27,17 @@ export class AuthGuard implements CanActivate {
 @Injectable({
   providedIn: 'root'
 })
-export class ReverseAuthGuard implements CanActivate {
-  constructor(private _auth: AngularFireAuth, private _router: Router) {}
+export class ReverseAuthGuard {
+  #auth = inject(AngularFireAuth);
+  #router = inject(Router);
 
   canActivate() {
-    return this._auth.user.pipe(
+    return this.#auth.user.pipe(
       map(user => {
         if (!user) {
           return true;
         } else {
-          this._router.navigate(['dashboard']);
+          this.#router.navigate(['dashboard']);
           return false;
         }
       })
