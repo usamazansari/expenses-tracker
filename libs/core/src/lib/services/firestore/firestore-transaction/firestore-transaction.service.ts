@@ -19,31 +19,35 @@ export class FirestoreTransactionService {
   #error = inject(ErrorService);
 
   watchTransactionList$() {
-    return this.#context.watchPocketbook$().pipe(
-      switchMap(pocketbook =>
-        !pocketbook
-          ? of([])
-          : this.#firestore
-              .collection<Partial<ITransaction<Timestamp>>>(Collections.Transaction, ref =>
-                ref
-                  .where('pocketbookId', '==', pocketbook?.id ?? '')
-                  .orderBy('timestamp', 'desc')
-              )
-              .valueChanges()
-              .pipe(
-                map(transactionList =>
-                  transactionList.map(
-                    t =>
-                      ({
-                        ...t,
-                        timestamp: t.timestamp?.toDate()
-                      } as ITransaction)
+    return this.#context.watchUser$().pipe(
+      switchMap(user =>
+        this.#context.watchPocketbook$().pipe(
+          switchMap(pocketbook =>
+            !pocketbook
+              ? of([])
+              : this.#firestore
+                  .collection<Partial<ITransaction<Timestamp>>>(Collections.Transaction, ref =>
+                    ref
+                      .where('pocketbookId', '==', pocketbook?.id ?? '')
+                      .orderBy('timestamp', 'desc')
                   )
-                ),
-                catchError(({ code }: FirebaseError) =>
-                  throwError(() => new Error(this.#error.getError(code)))
-                )
-              )
+                  .valueChanges({ uid: user?.uid })
+                  .pipe(
+                    map(transactionList =>
+                      transactionList.map(
+                        t =>
+                          ({
+                            ...t,
+                            timestamp: t.timestamp?.toDate()
+                          } as ITransaction)
+                      )
+                    ),
+                    catchError(({ code }: FirebaseError) =>
+                      throwError(() => new Error(this.#error.getError(code)))
+                    )
+                  )
+          )
+        )
       )
     );
   }
