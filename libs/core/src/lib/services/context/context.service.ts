@@ -17,6 +17,8 @@ export class ContextService {
   #user: User | null = null;
   #pocketbook$ = new BehaviorSubject<IPocketbook | null>(null);
   #pocketbook: IPocketbook | null = null;
+  #transaction$ = new BehaviorSubject<ITransaction | null>(null);
+  #transaction: ITransaction | null = null;
 
   #auth = inject(AngularFireAuth);
   #router = inject(Router);
@@ -25,6 +27,7 @@ export class ContextService {
   constructor() {
     this.#fetchUser$();
     this.#fetchPocketbook$();
+    this.#fetchTransaction$();
   }
 
   setUser(user: User | null) {
@@ -57,6 +60,29 @@ export class ContextService {
     return this.#pocketbook$.asObservable();
   }
 
+  setTransaction(transaction: ITransaction | null) {
+    this.#transaction = transaction ?? null;
+    this.#transaction$.next(this.#transaction);
+  }
+
+  resetTransaction() {
+    this.setTransaction(null);
+  }
+
+  getTransaction() {
+    return this.#transaction;
+  }
+
+  watchTransaction$() {
+    return this.#transaction$.asObservable();
+  }
+
+  #fetchUser$() {
+    this.#auth.user.subscribe(user => {
+      this.setUser(user as User);
+    });
+  }
+
   #fetchPocketbook$() {
     this.#router.events
       .pipe(
@@ -87,10 +113,34 @@ export class ContextService {
       });
   }
 
-  #fetchUser$() {
-    this.#auth.user.subscribe(user => {
-      this.setUser(user as User);
-    });
+  #fetchTransaction$() {
+    this.#router.events
+      .pipe(
+        filter(e => e instanceof NavigationEnd),
+        map(e => (e as NavigationEnd).urlAfterRedirects),
+        switchMap(url =>
+          url.includes('transaction')
+            ? this.#firestore
+                .collection<ITransaction<Timestamp>>(Collections.Transaction, ref =>
+                  ref.where('id', '==', url.match(/transaction\/(\w+)\//)?.at(1) ?? '')
+                )
+                .valueChanges()
+                .pipe(
+                  map(([transaction]) =>
+                    !transaction
+                      ? null
+                      : ({
+                          ...transaction,
+                          timestamp: (transaction?.timestamp as Timestamp)?.toDate()
+                        } as ITransaction)
+                  )
+                )
+            : of(null)
+        )
+      )
+      .subscribe(transaction => {
+        this.setTransaction(transaction);
+      });
   }
 
   calculateBalance({ amount, direction }: ITransaction) {

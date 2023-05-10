@@ -63,6 +63,10 @@ export class FirestoreService {
     return this.#transaction.watchTransactionList$();
   }
 
+  watchTransaction$(transactionId: string) {
+    return this.#transaction.watchTransaction$(transactionId);
+  }
+
   createTransaction$(transaction: Partial<ITransaction>) {
     return this.#transaction.createTransaction$(transaction);
   }
