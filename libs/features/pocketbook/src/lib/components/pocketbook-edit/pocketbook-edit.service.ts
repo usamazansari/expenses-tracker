@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from 'firebase/auth';
 import {
@@ -40,13 +40,12 @@ export class PocketbookEditService {
     editPocketbook: INITIAL_FLAGS,
     fetchCollaborators: INITIAL_FLAGS
   };
-  constructor(
-    private _router: Router,
-    private _context: ContextService,
-    private _firestore: FirestoreService,
-    private _error: ErrorService,
-    private _notification: NotificationService
-  ) {}
+
+  #router = inject(Router);
+  #context = inject(ContextService);
+  #firestore = inject(FirestoreService);
+  #error = inject(ErrorService);
+  #notification = inject(NotificationService);
 
   fetchUserList$() {
     this.resetFlags();
@@ -57,7 +56,7 @@ export class PocketbookEditService {
         loading: true
       }
     });
-    this._firestore.watchUserList$().subscribe(userList => {
+    this.#firestore.watchUserList$().subscribe(userList => {
       this.#setFlags({
         ...this.#flags,
         fetchCollaborators: {
@@ -103,11 +102,11 @@ export class PocketbookEditService {
   }
 
   watchPocketbook$() {
-    const pocketbookId = this._router.url.match(/pocketbook\/(\w+)\//)?.at(1);
-    return this._context
+    const pocketbookId = this.#router.url.match(/pocketbook\/(\w+)\//)?.at(1);
+    return this.#context
       .watchPocketbook$()
       .pipe(
-        switchMap(pb => (!pb ? this._firestore.watchPocketbook$(pocketbookId ?? '') : of(pb)))
+        switchMap(pb => (!pb ? this.#firestore.watchPocketbook$(pocketbookId ?? '') : of(pb)))
       );
   }
 
@@ -133,36 +132,38 @@ export class PocketbookEditService {
         loading: true
       }
     });
-    return this._firestore.updatePocketbook$(pocketbook).pipe(
-      tap(() => {
-        this._notification.success({
-          title: 'Pocketbook Updated!',
-          description: `Pocketbook ${pocketbook.name} successfully updated!`
-        });
-        this.resetFlags();
-        this._router.navigate(['pocketbook/list']);
-      }),
-      catchError(error => {
-        this._notification.error({
-          description: `${error}.`,
-          title: 'Pocketbook not updated'
-        });
-        this.#setFlags({
-          ...this.#flags,
-          editPocketbook: {
-            ...this.#flags.editPocketbook,
-            loading: false,
-            fail: true,
-            visible: true
-          }
-        });
-        return throwError(() => new Error(error));
-      })
-    );
+    return this.#firestore
+      .updatePocketbook$({ ...this.#context.getPocketbook(), ...pocketbook })
+      .pipe(
+        tap(() => {
+          this.#notification.success({
+            title: 'Pocketbook Updated!',
+            description: `Pocketbook ${pocketbook.name} successfully updated!`
+          });
+          this.resetFlags();
+          this.#router.navigate(['pocketbook/list']);
+        }),
+        catchError(error => {
+          this.#notification.error({
+            description: `${error}.`,
+            title: 'Pocketbook not updated'
+          });
+          this.#setFlags({
+            ...this.#flags,
+            editPocketbook: {
+              ...this.#flags.editPocketbook,
+              loading: false,
+              fail: true,
+              visible: true
+            }
+          });
+          return throwError(() => new Error(error));
+        })
+      );
   }
 
   cancelEditPocketbook(pocketbook: string = '') {
-    if (!pocketbook) this._router.navigate(['pocketbook', 'list']);
-    else this._router.navigate(['pocketbook', pocketbook]);
+    if (!pocketbook) this.#router.navigate(['pocketbook', 'list']);
+    else this.#router.navigate(['pocketbook', pocketbook]);
   }
 }

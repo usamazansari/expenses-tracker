@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -54,30 +54,27 @@ export class PocketbookEditComponent implements OnInit, OnDestroy {
   #patchValues$!: Subscription;
   pocketbook$!: Observable<IPocketbook | null>;
   collaboratorList$!: Observable<User[]>;
-
-  constructor(
-    private _fb: FormBuilder,
-    private _context: ContextService,
-    private _service: PocketbookEditService
-  ) {}
+  #fb = inject(FormBuilder);
+  #context = inject(ContextService);
+  #service = inject(PocketbookEditService);
 
   ngOnInit() {
-    this._service.fetchUserList$();
-    this.userList$ = this._service.watchUserList$().pipe(
-      map(users => users.filter(({ uid }) => uid !== this._context.getUser()?.uid)),
+    this.#service.fetchUserList$();
+    this.userList$ = this.#service.watchUserList$().pipe(
+      map(users => users.filter(({ uid }) => uid !== this.#context.getUser()?.uid)),
       filter(Boolean)
     );
 
-    this.formGroup = this._fb.group<PocketbookEditForm>({
-      name: this._fb.control<string>('', Validators.required),
-      collaboratorList: this._fb.control<User[]>([])
+    this.formGroup = this.#fb.group<PocketbookEditForm>({
+      name: this.#fb.control<string>('', Validators.required),
+      collaboratorList: this.#fb.control<User[]>([])
     });
 
-    this.#patchValues$ = this._service.patchValues$().subscribe(patchValues => {
+    this.#patchValues$ = this.#service.patchValues$().subscribe(patchValues => {
       this.formGroup.patchValue(patchValues);
     });
 
-    this.flags$ = this._service.watchFlags$();
+    this.flags$ = this.#service.watchFlags$();
   }
 
   removeCollaborator(collaborator: User): void {
@@ -92,7 +89,7 @@ export class PocketbookEditComponent implements OnInit, OnDestroy {
   editPocketbook() {
     if (!this.formGroup.invalid) {
       const { name, collaboratorList } = this.formGroup.value;
-      this.#editPocketbook$ = this._service
+      this.#editPocketbook$ = this.#service
         .editPocketbook$({
           name: name ?? '',
           collaboratorList: collaboratorList?.map(({ uid }) => uid)
@@ -100,7 +97,7 @@ export class PocketbookEditComponent implements OnInit, OnDestroy {
         .subscribe({
           next: () => {
             this.formGroup.reset();
-            this._context.resetPocketbook();
+            this.#context.resetPocketbook();
           },
           error: error => {
             console.error({ error });
@@ -111,7 +108,7 @@ export class PocketbookEditComponent implements OnInit, OnDestroy {
 
   cancelEditPocketbook() {
     this.formGroup.reset();
-    this._service.cancelEditPocketbook();
+    this.#service.cancelEditPocketbook();
   }
 
   getError(formControlName = '') {

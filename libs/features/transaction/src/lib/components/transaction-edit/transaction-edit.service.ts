@@ -88,8 +88,9 @@ export class TransactionEditService {
       }
     });
 
-    return this.#firestore.updateTransaction$(transaction).pipe(
-      switchMap(response =>
+    const t = this.#context.getTransaction();
+    return this.#firestore.updateTransaction$({ ...t, ...transaction }).pipe(
+      switchMap(() =>
         this.#context.watchPocketbook$().pipe(
           distinctUntilChanged(
             previous => !(previous?.transactionList ?? []).includes(transaction.id)
@@ -97,8 +98,10 @@ export class TransactionEditService {
           switchMap(pocketbook =>
             this.#firestore.updatePocketbook$({
               ...pocketbook,
-              transactionList: [...(pocketbook?.transactionList ?? []), response?.id ?? ''],
-              balance: this.#context.calculateBalance(transaction)
+              balance: this.#context.updateTransactionCalculateBalance({
+                old: t as ITransaction,
+                new: transaction
+              })
             })
           )
         )
@@ -111,7 +114,7 @@ export class TransactionEditService {
         this.resetFlags();
         this.#router.navigate([
           'pocketbook',
-          this.#context.getPocketbook()?.id,
+          this.#context.getPocketbook()?.id ?? 'null',
           'transaction',
           'list'
         ]);

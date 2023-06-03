@@ -55,7 +55,7 @@ export class TransactionAddService {
             this.#firestore.updatePocketbook$({
               ...pocketbook,
               transactionList: [...(pocketbook?.transactionList ?? []), response?.id ?? ''],
-              balance: this.#context.calculateBalance(transaction)
+              balance: this.#context.addTransactionCalculateBalance(transaction)
             })
           )
         )

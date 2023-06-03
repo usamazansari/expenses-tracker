@@ -5,7 +5,7 @@ import { Timestamp } from '@angular/fire/firestore';
 import { catchError, from, map, of, switchMap, throwError } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
-import { IPocketbook, ITransaction } from '@expenses-tracker/shared/interfaces';
+import { ITransaction } from '@expenses-tracker/shared/interfaces';
 
 import { ContextService } from '../../context/context.service';
 import { ErrorService } from '../../error/error.service';
@@ -103,7 +103,7 @@ export class FirestoreTransactionService {
   updateTransaction$(transaction: Partial<ITransaction>) {
     return from(
       this.#firestore
-        .collection<IPocketbook>(Collections.Pocketbook)
+        .collection<ITransaction>(Collections.Transaction)
         .doc(transaction?.id)
         .update({ ...transaction })
     ).pipe(

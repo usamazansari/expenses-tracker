@@ -23,7 +23,6 @@ export class ContextService {
   #auth = inject(AngularFireAuth);
   #router = inject(Router);
   #firestore = inject(AngularFirestore);
-
   constructor() {
     this.#fetchUser$();
     this.#fetchPocketbook$();
@@ -143,9 +142,23 @@ export class ContextService {
       });
   }
 
-  calculateBalance({ amount, direction }: ITransaction) {
-    return direction === 'expense'
-      ? (this.#pocketbook?.balance ?? 0) - amount
-      : (this.#pocketbook?.balance ?? 0) + amount;
+  updateTransactionCalculateBalance({
+    old: { amount: oldAmount, direction: oldDirection },
+    new: { amount: newAmount, direction: newDirection }
+  }: {
+    old: ITransaction;
+    new: ITransaction;
+  }) {
+    const balance = this.#pocketbook?.balance ?? 0;
+    return oldDirection === newDirection
+      ? balance - oldAmount + newAmount
+      : oldDirection === 'expense'
+      ? balance + oldAmount + newAmount
+      : balance - oldAmount - newAmount;
+  }
+
+  addTransactionCalculateBalance({ amount, direction }: ITransaction) {
+    const balance = this.#pocketbook?.balance ?? 0;
+    return direction === 'expense' ? balance - amount : balance + amount;
   }
 }
