@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TransactionDeleteComponent } from './transaction-delete.component';
+import { TransactionDeleteDialogComponent } from './transaction-delete-dialog.component';
 
 describe('TransactionDeleteComponent', () => {
-  let component: TransactionDeleteComponent;
-  let fixture: ComponentFixture<TransactionDeleteComponent>;
+  let component: TransactionDeleteDialogComponent;
+  let fixture: ComponentFixture<TransactionDeleteDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TransactionDeleteComponent]
+      imports: [TransactionDeleteDialogComponent]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(TransactionDeleteComponent);
+    fixture = TestBed.createComponent(TransactionDeleteDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

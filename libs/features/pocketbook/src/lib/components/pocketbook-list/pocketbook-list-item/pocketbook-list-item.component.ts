@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -47,27 +47,28 @@ export class PocketbookListItemComponent implements OnInit {
     return this.#isOwner$.getValue();
   }
 
-  constructor(private _service: PocketbookListItemService, private _dialog: MatDialog) {}
+  #service = inject(PocketbookListItemService);
+  #dialog = inject(MatDialog);
 
   ngOnInit() {
-    this._service.initializeComponent(this.pocketbook);
-    this.collaboratorList$ = this._service.watchCollaboratorList$();
-    this.owner$ = this._service.watchOwner$();
+    this.#service.initializeComponent(this.pocketbook);
+    this.collaboratorList$ = this.#service.watchCollaboratorList$();
+    this.owner$ = this.#service.watchOwner$();
   }
 
-  editPocketbook() {
-    this._service.editPocketbook(this.pocketbook as IPocketbook);
+  gotoEditPocketbook() {
+    this.#service.gotoEditPocketbook(this.pocketbook as IPocketbook);
   }
 
   deletePocketbook() {
-    const _ref = this._dialog.open(PocketbookDeleteDialogComponent);
+    const _ref = this.#dialog.open(PocketbookDeleteDialogComponent);
 
     _ref
       .afterClosed()
       .pipe(
         switchMap(result =>
           result
-            ? this._service.deletePocketbook$((this.pocketbook as IPocketbook)?.id ?? '')
+            ? this.#service.deletePocketbook$((this.pocketbook as IPocketbook)?.id ?? '')
             : of(EMPTY)
         )
       )
@@ -75,6 +76,6 @@ export class PocketbookListItemComponent implements OnInit {
   }
 
   gotoPocketbookDetail() {
-    this._service.gotoPocketbook(this.pocketbook?.id ?? '');
+    this.#service.gotoPocketbook(this.pocketbook?.id ?? '');
   }
 }

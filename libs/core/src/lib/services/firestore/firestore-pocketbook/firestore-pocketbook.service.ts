@@ -141,7 +141,7 @@ export class FirestorePocketbookService {
       this.#firestore.collection<IPocketbook>(Collections.Pocketbook).doc(pocketbookId).delete()
     ).pipe(
       catchError(({ code }: FirebaseError) => {
-        console.log({ code });
+        console.error({ code });
         return throwError(() => new Error(this.#error.getError(code)));
       })
     );

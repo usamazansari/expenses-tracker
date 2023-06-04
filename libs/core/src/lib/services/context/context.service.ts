@@ -161,4 +161,9 @@ export class ContextService {
     const balance = this.#pocketbook?.balance ?? 0;
     return direction === 'expense' ? balance - amount : balance + amount;
   }
+
+  deleteTransactionCalculateBalance({ amount, direction }: ITransaction) {
+    const balance = this.#pocketbook?.balance ?? 0;
+    return direction === 'expense' ? balance + amount : balance - amount;
+  }
 }

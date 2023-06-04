@@ -123,7 +123,7 @@ export class FirestoreTransactionService {
         .delete()
     ).pipe(
       catchError(({ code }: FirebaseError) => {
-        console.log({ code });
+        console.error({ code });
         return throwError(() => new Error(this.#error.getError(code)));
       })
     );

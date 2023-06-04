@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { User } from 'firebase/auth';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 
@@ -15,22 +15,19 @@ export class PocketbookListItemService {
   #owner$ = new BehaviorSubject<User | null>(null);
   #collaboratorList: User[] = [];
   #owner: User | null = null;
-
-  constructor(
-    private _router: Router,
-    private _firestore: FirestoreService,
-    private _context: ContextService,
-    private _notification: NotificationService
-  ) {}
+  #router = inject(Router);
+  #firestore = inject(FirestoreService);
+  #context = inject(ContextService);
+  #notification = inject(NotificationService);
 
   initializeComponent(pocketbook: IPocketbook | null) {
-    this._firestore
+    this.#firestore
       .watchPocketbookOwner$((pocketbook as IPocketbook)?.owner)
       .subscribe(owner => {
         this.setOwner(owner as User);
       });
 
-    this._firestore
+    this.#firestore
       .watchPocketbookCollaboratorList$((pocketbook as IPocketbook)?.collaboratorList)
       .subscribe(collaboratorList => {
         this.setCollaboratorList(collaboratorList as User[]);
@@ -55,30 +52,31 @@ export class PocketbookListItemService {
     return this.#owner$.asObservable();
   }
 
-  editPocketbook(pocketbook: IPocketbook) {
-    this._context.setPocketbook(pocketbook);
-    this._router.navigate(['pocketbook', pocketbook.id, 'edit']);
+  gotoEditPocketbook(pocketbook: IPocketbook) {
+    this.#context.setPocketbook(pocketbook);
+    this.#router.navigate(['pocketbook', pocketbook.id, 'edit']);
+  }
+
+  gotoPocketbook(id: string) {
+    this.#router.navigate(['pocketbook', id]);
   }
 
   deletePocketbook$(pocketbookId: string) {
-    return this._firestore.deletePocketbook$(pocketbookId).pipe(
+    return this.#firestore.deletePocketbook$(pocketbookId).pipe(
       tap(() => {
-        this._notification.success({
+        this.#notification.success({
           title: 'Deleted Successfully',
           description: 'Pocketbook successfully deleted'
         });
+        this.#context.setPocketbook(null);
       }),
       catchError(e => {
-        this._notification.error({
+        this.#notification.error({
           title: 'Delete Failed',
           description: 'Unable to delete the pocketbook'
         });
         return throwError(() => new Error(e));
       })
     );
-  }
-
-  gotoPocketbook(id: string) {
-    this._router.navigate(['pocketbook', id]);
   }
 }

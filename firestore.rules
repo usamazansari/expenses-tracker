@@ -32,8 +32,8 @@ service cloud.firestore {
     }
 
     match /transactions/{transactionId} {
-      allow get, create, update, delete: if hasAccess(request.resource.data.pocketbookId);
-      allow list: if request.auth != null;
+      allow get, create, update: if hasAccess(request.resource.data.pocketbookId);
+      allow delete, list: if request.auth != null;
 
       function hasAccess(pocketbookId) {
         return request.auth != null && isRelatedToPocketbook(pocketbookId)
