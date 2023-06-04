@@ -1,0 +1,69 @@
+<form [formGroup]="formGroup" (ngSubmit)="updateUserInfo()">
+  <div class="grid gap-2 text-et-color-fg-default">
+    <div class="grid grid-rows-1 gap-8 m-0 sm:mx-32 lg:m-0 lg:grid-cols-3">
+      <div class="grid grid-rows-1 gap-2 place-content-center">
+        <ng-container *ngIf="user.photoURL">
+          <img
+            class="w-24 h-24 rounded-full cursor-default"
+            [src]="user.photoURL"
+            alt="User Image" />
+        </ng-container>
+        <ng-container *ngIf="!user.photoURL">
+          <span
+            class="grid w-24 h-24 text-4xl rounded-full cursor-default place-content-center">
+            {{ user | extractInitials }}
+          </span>
+        </ng-container>
+      </div>
+      <div class="grid grid-rows-1 gap-2">
+        <div class="flex items-center gap-2">
+          <mat-icon class="min-w-[24px] text-et-color-accent-emphasis">person</mat-icon>
+          <mat-form-field class="w-full">
+            <mat-label>Full Name</mat-label>
+            <input
+              matInput
+              formControlName="displayName"
+              type="text"
+              placeholder="John Doe"
+              autofocus />
+          </mat-form-field>
+        </div>
+        <div class="flex items-center gap-2">
+          <mat-icon class="min-w-[24px] text-et-color-accent-emphasis">
+            alternate_email
+          </mat-icon>
+          <span class="overflow-hidden whitespace-nowrap overflow-ellipsis">
+            {{ user.email }}
+          </span>
+        </div>
+      </div>
+      <div class="grid grid-rows-1 gap-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <mat-icon class="min-w-[24px] text-et-color-accent-emphasis">badge</mat-icon>
+            <span class="overflow-hidden whitespace-nowrap overflow-ellipsis">
+              {{ user.uid }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <button
+          matRipple
+          type="submit"
+          class="flex items-center justify-center gap-2 px-6 py-3 border rounded-lg bg-et-color-button-primary-bg text-et-color-button-primary border-et-color-button-primary-border">
+          <mat-icon class="min-w-[24px]">save</mat-icon>
+          <span>SAVE</span>
+        </button>
+        <button
+          matRipple
+          type="button"
+          (click)="cancelEdit()"
+          class="flex items-center justify-center gap-2 px-6 py-3 text-center border rounded-lg cursor-pointer text-et-color-button-danger bg-et-color-button-danger-bg border-et-color-button-danger-border hover:underline hover:underline-offset-4">
+          <mat-icon class="min-w-[24px]">clear</mat-icon>
+          <span>CANCEL</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</form>

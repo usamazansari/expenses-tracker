@@ -1,156 +1,81 @@
-import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Injectable, inject } from '@angular/core';
 import { User } from 'firebase/auth';
-import { map, of, switchMap, throwError } from 'rxjs';
 
-import { Collections } from '@expenses-tracker/shared/common';
-import { IPocketbook } from '@expenses-tracker/shared/interfaces';
+import { IPocketbook, ITransaction } from '@expenses-tracker/shared/interfaces';
 
-import { ContextService } from '../context/context.service';
+import { FirestorePocketbookService } from './firestore-pocketbook/firestore-pocketbook.service';
+import { FirestoreTransactionService } from './firestore-transaction/firestore-transaction.service';
+import { FirestoreUserService } from './firestore-user/firestore-user.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirestoreService {
-  constructor(private _firestore: AngularFirestore, private _context: ContextService) {}
+  #pocketbook = inject(FirestorePocketbookService);
+  #user = inject(FirestoreUserService);
+  #transaction = inject(FirestoreTransactionService);
 
-  getPocketbookList$() {
-    return this._context.watchUser$().pipe(
-      switchMap(user =>
-        this._firestore
-          .collection<IPocketbook>(Collections.Pocketbook, ref =>
-            ref.where('owner', '==', user?.uid ?? '')
-          )
-          .valueChanges()
-          .pipe(
-            switchMap(owner =>
-              this._firestore
-                .collection<IPocketbook>(Collections.Pocketbook, ref =>
-                  ref.where('collaboratorList', 'array-contains', user?.uid ?? '')
-                )
-                .valueChanges()
-                .pipe(map(collaborator => ({ owner, collaborator })))
-            )
-          )
-      )
-    );
+  watchOwnedPocketbookList$() {
+    return this.#pocketbook.watchOwnedPocketbookList$();
   }
 
-  createPocketbook$({ name, collaboratorList = [] }: Partial<IPocketbook>) {
-    return this._context.watchUser$().pipe(
-      switchMap(user =>
-        this._firestore.collection<IPocketbook>(Collections.Pocketbook).add({
-          id: this._firestore.createId(),
-          owner: user?.uid ?? '',
-          name,
-          collaboratorList,
-          createdAt: new Date()
-        })
-      )
-    );
+  watchCollaboratedPocketbookList$() {
+    return this.#pocketbook.watchCollaboratedPocketbookList$();
+  }
+
+  watchPocketbook$(pocketbookId: string) {
+    return this.#pocketbook.watchPocketbook$(pocketbookId);
+  }
+
+  createPocketbook$(pocketbook: IPocketbook) {
+    return this.#pocketbook.createPocketbook$(pocketbook);
   }
 
   updatePocketbook$(pocketbook: Partial<IPocketbook>) {
-    return this._context.watchPocketbook$().pipe(
-      switchMap(pb =>
-        this._firestore
-          .collection<IPocketbook>(Collections.Pocketbook, ref =>
-            ref.where('id', '==', pb?.id ?? '')
-          )
-          .get()
-          .pipe(
-            map(ref => (ref.docs ?? [])[0]?.id ?? ''),
-            switchMap(id =>
-              this._firestore
-                .collection<IPocketbook>(Collections.Pocketbook)
-                .doc(id)
-                .update({ ...pocketbook })
-            )
-          )
-      )
-    );
+    return this.#pocketbook.updatePocketbook$(pocketbook);
   }
 
-  deletePocketbook$(pocketbook: Partial<IPocketbook>) {
-    return this._context.watchUser$().pipe(
-      switchMap(user =>
-        this._firestore
-          .collection<IPocketbook>(Collections.Pocketbook, ref =>
-            ref.where('id', '==', pocketbook.id ?? '')
-          )
-          .get()
-          .pipe(
-            map(ref => ({
-              id: (ref.docs ?? [])[0]?.id ?? '',
-              data: (ref.docs ?? [])[0]?.data() ?? null
-            })),
-            switchMap(({ data, id }) => {
-              console.log({ data, id });
-              if (data?.owner === user?.uid) {
-                return this._firestore
-                  .collection<IPocketbook>(Collections.Pocketbook)
-                  .doc(id)
-                  .delete();
-              }
-              return throwError(() => new Error('You cannot delete this pocketbook!'));
-            })
-          )
-      )
-    );
+  deletePocketbook$(pocketbookId: string) {
+    return this.#pocketbook.deletePocketbook$(pocketbookId);
   }
 
-  saveUser$({ uid, displayName, email, phoneNumber, photoURL }: User) {
-    return this._firestore
-      .collection<Partial<User>>(Collections.User)
-      .add({ uid, displayName, email, phoneNumber, photoURL });
+  saveUser$(user: User) {
+    return this.#user.saveUser$(user);
   }
 
-  updateUser$({ displayName, email, phoneNumber, photoURL }: Partial<User>) {
-    return this._context.watchUser$().pipe(
-      switchMap(user =>
-        this._firestore
-          .collection<Partial<User>>(Collections.User, ref =>
-            ref.where('uid', '==', user?.uid ?? '')
-          )
-          .get()
-          .pipe(
-            map(({ docs: [doc] }) => ({ id: doc?.id, data: doc?.data() })),
-            switchMap(({ id, data }) =>
-              this._firestore
-                .collection<Partial<User>>(Collections.User)
-                .doc(id)
-                .update({
-                  displayName: displayName ?? data?.displayName,
-                  email: email ?? data?.email,
-                  phoneNumber: phoneNumber ?? data?.phoneNumber,
-                  photoURL: photoURL ?? data?.photoURL
-                })
-            )
-          )
-      )
-    );
+  updateUser$(user: Partial<User>) {
+    return this.#user.updateUser$(user);
   }
 
   watchUserList$() {
-    return this._firestore.collection<Partial<User>>(Collections.User).valueChanges();
+    return this.#user.watchUserList$();
   }
 
-  watchOwner$(pocketbook: IPocketbook | null) {
-    return this._firestore
-      .collection<Partial<User>>(Collections.User, ref =>
-        ref.where('uid', '==', pocketbook?.owner ?? '')
-      )
-      .valueChanges()
-      .pipe(map(([owner]) => owner));
+  watchPocketbookOwner$(pocketbookOwner: string) {
+    return this.#user.watchPocketbookOwner$(pocketbookOwner);
   }
 
-  watchCollaboratorList$(pocketbook: IPocketbook | null) {
-    return !pocketbook?.collaboratorList.length
-      ? of([])
-      : this._firestore
-          .collection<Partial<User>>(Collections.User, ref =>
-            ref.where('uid', 'in', pocketbook?.collaboratorList ?? [])
-          )
-          .valueChanges();
+  watchPocketbookCollaboratorList$(pocketbookCollaboratorList: string[]) {
+    return this.#user.watchPocketbookCollaboratorList$(pocketbookCollaboratorList);
+  }
+
+  watchTransactionList$() {
+    return this.#transaction.watchTransactionList$();
+  }
+
+  watchTransaction$(transactionId: string) {
+    return this.#transaction.watchTransaction$(transactionId);
+  }
+
+  createTransaction$(transaction: Partial<ITransaction>) {
+    return this.#transaction.createTransaction$(transaction);
+  }
+
+  updateTransaction$(transaction: Partial<ITransaction>) {
+    return this.#transaction.updateTransaction$(transaction);
+  }
+
+  deleteTransaction$(transactionId: string) {
+    return this.#transaction.deleteTransaction$(transactionId);
   }
 }

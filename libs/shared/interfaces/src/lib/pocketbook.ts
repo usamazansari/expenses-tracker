@@ -1,16 +1,13 @@
-interface IPocketbook {
+import { DateOrTimestamp } from './common';
+
+interface IPocketbook<T extends DateOrTimestamp = Date> {
   id: string;
   owner: string;
   name?: string;
   collaboratorList: string[];
-  createdAt: Date;
+  createdAt: T;
+  transactionList: string[];
+  balance: number;
 }
 
-const POCKETBOOK_STUB: IPocketbook = {
-  id: '',
-  owner: '',
-  collaboratorList: [],
-  createdAt: new Date(0)
-};
-
-export { IPocketbook, POCKETBOOK_STUB };
+export { IPocketbook };

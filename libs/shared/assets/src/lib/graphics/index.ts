@@ -8,3 +8,4 @@ export * from './login/login-graphic.component';
 export * from './logo/logo-graphic.component';
 export * from './pocketbook/pocketbook-graphic.component';
 export * from './register/register-graphic.component';
+export * from './transaction/transaction-graphic.component';

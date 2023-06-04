@@ -1,25 +1,9 @@
 const { createGlobPatternsForDependencies } = require('@nrwl/angular/tailwind');
 const { join } = require('path');
-const plugin = require('tailwindcss/plugin');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  plugins: [
-    plugin(({ addUtilities, theme }) => {
-      addUtilities({
-        '.gradient-light': {
-          '--tw-gradient-stops': `${theme('colors.green.100')}, ${theme(
-            'colors.cyan.100'
-          )}, ${theme('colors.indigo.100')}`
-        },
-        '.gradient-dark': {
-          '--tw-gradient-stops': `${theme('colors.green.900')}, ${theme(
-            'colors.cyan.900'
-          )}, ${theme('colors.indigo.900')}`
-        }
-      });
-    })
-  ],
+  plugins: [],
   content: [
     join(__dirname, 'src/**/!(*.stories|*.spec).{ts,html}'),
     ...createGlobPatternsForDependencies(__dirname)
@@ -51,7 +35,7 @@ module.exports = {
       /**
        * overlay color
        */
-      'et-color-overlay': '#f0f6fc1a',
+      'et-color-overlay': '#6e768166',
 
       // Borders
       /**
