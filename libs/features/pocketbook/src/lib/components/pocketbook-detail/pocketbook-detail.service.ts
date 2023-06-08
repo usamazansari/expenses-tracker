@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { User } from 'firebase/auth';
-import { BehaviorSubject, switchMap } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
@@ -16,31 +16,20 @@ export class PocketbookDetailService {
   #collaboratorList: User[] = [];
   #owner: User | null = null;
 
-  constructor(private _context: ContextService, private _firestore: FirestoreService) {}
+  #context = inject(ContextService);
+  #firestore = inject(FirestoreService);
 
   initializeComponent() {
-    this._context.watchPocketbook$().subscribe(pocketbook => {
+    this.#context.watchPocketbook$().subscribe(pocketbook => {
       this.setPocketbook(pocketbook as IPocketbook);
     });
-    this._context
-      .watchPocketbook$()
-      .pipe(
-        switchMap(pocketbook =>
-          this._firestore.watchPocketbookOwner$((pocketbook as IPocketbook)?.owner)
-        )
-      )
+    this.#firestore
+      .watchPocketbookOwner$((this.#pocketbook as IPocketbook)?.owner)
       .subscribe(owner => {
         this.setOwner(owner as User);
       });
-    this._context
-      .watchPocketbook$()
-      .pipe(
-        switchMap(pocketbook =>
-          this._firestore.watchPocketbookCollaboratorList$(
-            (pocketbook as IPocketbook)?.collaboratorList
-          )
-        )
-      )
+    this.#firestore
+      .watchPocketbookCollaboratorList$((this.#pocketbook as IPocketbook)?.collaboratorList)
       .subscribe(collaboratorList => {
         this.setCollaboratorList(collaboratorList as User[]);
       });

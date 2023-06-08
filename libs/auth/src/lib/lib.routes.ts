@@ -1,8 +1,8 @@
+import { inject } from '@angular/core';
 import { Route } from '@angular/router';
 
 import { AuthComponent, LoginComponent, SignupComponent } from './components';
 import { ReverseAuthGuard } from './services';
-import { inject } from '@angular/core';
 
 export const authRoutes: Route[] = [
   {

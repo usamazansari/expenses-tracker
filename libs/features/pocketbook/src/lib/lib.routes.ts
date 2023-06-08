@@ -36,6 +36,7 @@ export const pocketbookRoutes: Route[] = [
       {
         path: ':id/transaction',
         component: PocketbookDetailComponent,
+        canActivate: [() => inject(AuthGuard).canActivate()],
         loadChildren: () =>
           import('@expenses-tracker/features/transaction').then(m => m.transactionRoutes)
       },
