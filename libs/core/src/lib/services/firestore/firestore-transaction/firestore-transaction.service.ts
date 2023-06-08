@@ -24,7 +24,7 @@ export class FirestoreTransactionService {
         !pocketbook
           ? of([])
           : this.#firestore
-              .collection<Partial<ITransaction<Timestamp>>>(Collections.Transaction, ref =>
+              .collection<ITransaction<Timestamp>>(Collections.Transaction, ref =>
                 ref
                   .where('pocketbookId', '==', pocketbook?.id ?? '')
                   .orderBy('timestamp', 'desc')
