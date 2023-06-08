@@ -14,7 +14,8 @@ export class ErrorService {
     ['email-email', 'Email is invalid'],
     ['email-required', 'Email is required'],
     ['password-required', 'Password is required'],
-    ['permission-denied', 'You do not have sufficient permissions']
+    ['permission-denied', 'You do not have sufficient permissions'],
+    ['no-user-access', 'You do not have permission to view this resource']
   ]);
 
   getError(message: string) {

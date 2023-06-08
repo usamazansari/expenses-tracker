@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from 'firebase/auth';
 import { BehaviorSubject, catchError, of, tap } from 'rxjs';
 
-import { ErrorService, FirestoreService } from '@expenses-tracker/core';
+import { ContextService, FirestoreService } from '@expenses-tracker/core';
 import { NotificationService } from '@expenses-tracker/shared/common';
 import { IFlag, INITIAL_FLAGS, IPocketbook } from '@expenses-tracker/shared/interfaces';
 
@@ -27,12 +27,10 @@ export class PocketbookAddService {
     fetchCollaborators: INITIAL_FLAGS
   };
 
-  constructor(
-    private _router: Router,
-    private _firestore: FirestoreService,
-    private _error: ErrorService,
-    private _notification: NotificationService
-  ) {}
+  #router = inject(Router);
+  #context = inject(ContextService);
+  #firestore = inject(FirestoreService);
+  #notification = inject(NotificationService);
 
   fetchUserList$() {
     this.resetFlags();
@@ -43,7 +41,7 @@ export class PocketbookAddService {
         loading: true
       }
     });
-    this._firestore.watchUserList$().subscribe(userList => {
+    this.#firestore.watchUserList$().subscribe(userList => {
       this.#setFlags({
         ...this.#flags,
         fetchCollaborators: {
@@ -97,17 +95,17 @@ export class PocketbookAddService {
         loading: true
       }
     });
-    return this._firestore.createPocketbook$(pocketbook).pipe(
+    return this.#firestore.createPocketbook$(pocketbook).pipe(
       tap(() => {
-        this._notification.success({
+        this.#notification.success({
           title: 'Pocketbook Created!',
           description: `Pocketbook ${pocketbook.name} successfully created!`
         });
         this.resetFlags();
-        this._router.navigate(['pocketbook/list']);
+        this.#router.navigate(['pocketbook/list']);
       }),
       catchError(error => {
-        this._notification.error({
+        this.#notification.error({
           description: `${error}.`,
           title: 'Pocketbook Add'
         });
@@ -126,6 +124,6 @@ export class PocketbookAddService {
   }
 
   cancelAddPocketbook() {
-    this._router.navigate(['pocketbook/list']);
+    this.#router.navigate(['pocketbook/list']);
   }
 }

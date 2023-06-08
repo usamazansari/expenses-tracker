@@ -9,14 +9,16 @@ import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
 import { ContextService } from '../../context/context.service';
 import { ErrorService } from '../../error/error.service';
+import { FirestorePocketbookRulesService as Rules } from './firestore-pocketbook-rules.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirestorePocketbookService {
   #firestore = inject(AngularFirestore);
-  #context = inject(ContextService);
+  #rules = inject(Rules);
   #error = inject(ErrorService);
+  #context = inject(ContextService);
 
   watchOwnedPocketbookList$() {
     return this.#context.watchUser$().pipe(
@@ -29,15 +31,19 @@ export class FirestorePocketbookService {
               )
               .valueChanges()
               .pipe(
-                map(pocketbookList =>
-                  pocketbookList.map(
-                    pb =>
-                      ({
-                        ...pb,
-                        createdAt: (pb.createdAt as Timestamp).toDate()
-                      } as IPocketbook)
-                  )
-                ),
+                map(pocketbookList => {
+                  if (this.#rules.checkPocketbookAccess(pocketbookList[0], user)) {
+                    return pocketbookList.map(
+                      pb =>
+                        ({
+                          ...pb,
+                          createdAt: (pb.createdAt as Timestamp).toDate()
+                        } as IPocketbook)
+                    );
+                  } else {
+                    return throwError(() => new Error('no-user-access'));
+                  }
+                }),
                 catchError(({ code }: FirebaseError) =>
                   throwError(() => new Error(this.#error.getError(code)))
                 )
@@ -75,23 +81,32 @@ export class FirestorePocketbookService {
   }
 
   watchPocketbook$(pocketbookId: string) {
-    return this.#firestore
-      .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
-        ref.where('id', '==', pocketbookId ?? '')
+    return this.#context.watchUser$().pipe(
+      switchMap(user =>
+        !user
+          ? of(null)
+          : this.#firestore
+              .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
+                ref.where('id', '==', pocketbookId ?? '')
+              )
+              .valueChanges()
+              .pipe(
+                map(([pb]) => {
+                  if (this.#rules.checkPocketbookAccess(pb, user)) {
+                    return {
+                      ...pb,
+                      createdAt: (pb?.createdAt as Timestamp)?.toDate()
+                    } as IPocketbook;
+                  } else {
+                    return throwError(() => new Error('no-user-access'));
+                  }
+                }),
+                catchError(({ code }: FirebaseError) =>
+                  throwError(() => new Error(this.#error.getError(code)))
+                )
+              )
       )
-      .valueChanges()
-      .pipe(
-        map(
-          ([pb]) =>
-            ({
-              ...pb,
-              createdAt: (pb?.createdAt as Timestamp)?.toDate()
-            } as IPocketbook)
-        ),
-        catchError(({ code }: FirebaseError) =>
-          throwError(() => new Error(this.#error.getError(code)))
-        )
-      );
+    );
   }
 
   createPocketbook$({ name, collaboratorList = [], transactionList = [] }: IPocketbook) {
@@ -99,7 +114,7 @@ export class FirestorePocketbookService {
     return this.#context.watchUser$().pipe(
       switchMap(user =>
         !user
-          ? of([])
+          ? of(null)
           : from(
               this.#firestore
                 .collection<Partial<IPocketbook>>(Collections.Pocketbook)

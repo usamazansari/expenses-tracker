@@ -115,8 +115,10 @@ export class PocketbookEditService {
       switchMap(userList =>
         this.watchPocketbook$().pipe(
           map(pb => ({
-            name: pb?.name ?? '',
-            collaboratorList: userList.filter(({ uid }) => pb?.collaboratorList.includes(uid))
+            name: (pb as IPocketbook)?.name ?? '',
+            collaboratorList: userList.filter(({ uid }) =>
+              (pb as IPocketbook)?.collaboratorList.includes(uid)
+            )
           }))
         )
       )

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { FirestoreService } from '@expenses-tracker/core';
@@ -10,10 +10,10 @@ import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 export class PocketbookCollaboratorListService {
   #pocketbookList$ = new BehaviorSubject<IPocketbook[]>([]);
   #pocketbookList: IPocketbook[] = [];
-  constructor(private _firestore: FirestoreService) {}
+  #firestore = inject(FirestoreService);
 
   fetchPocketbookList$() {
-    this._firestore.watchCollaboratedPocketbookList$().subscribe(pocketbookList => {
+    this.#firestore.watchCollaboratedPocketbookList$().subscribe(pocketbookList => {
       this.setPocketbookList(pocketbookList);
     });
   }

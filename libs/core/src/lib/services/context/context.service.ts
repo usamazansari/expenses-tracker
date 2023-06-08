@@ -4,10 +4,12 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Timestamp } from '@angular/fire/firestore';
 import { NavigationEnd, Router } from '@angular/router';
 import { User } from 'firebase/auth';
-import { BehaviorSubject, filter, map, of, switchMap } from 'rxjs';
+import { BehaviorSubject, filter, map, of, switchMap, throwError } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
 import { IPocketbook, ITransaction } from '@expenses-tracker/shared/interfaces';
+
+import { FirestorePocketbookRulesService as Rules } from '../firestore/firestore-pocketbook/firestore-pocketbook-rules.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +24,7 @@ export class ContextService {
 
   #auth = inject(AngularFireAuth);
   #router = inject(Router);
+  #rules = inject(Rules);
   #firestore = inject(AngularFirestore);
   constructor() {
     this.#fetchUser$();
@@ -95,20 +98,22 @@ export class ContextService {
                 )
                 .valueChanges()
                 .pipe(
-                  map(([pb]) =>
-                    !pb
-                      ? null
-                      : ({
-                          ...pb,
-                          createdAt: (pb?.createdAt as Timestamp)?.toDate()
-                        } as IPocketbook)
-                  )
+                  map(([pb]) => {
+                    if (this.#rules.checkPocketbookAccess(pb, this.getUser() as User)) {
+                      return {
+                        ...pb,
+                        createdAt: (pb?.createdAt as Timestamp)?.toDate()
+                      } as IPocketbook;
+                    } else {
+                      return throwError(() => new Error('no-user-access'));
+                    }
+                  })
                 )
             : of(null)
         )
       )
       .subscribe(pb => {
-        this.setPocketbook(pb);
+        this.setPocketbook(pb as IPocketbook);
       });
   }
 
