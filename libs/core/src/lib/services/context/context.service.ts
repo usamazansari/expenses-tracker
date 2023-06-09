@@ -19,6 +19,10 @@ export class ContextService {
   #user: User | null = null;
   #pocketbook$ = new BehaviorSubject<IPocketbook | null>(null);
   #pocketbook: IPocketbook | null = null;
+  #owner$ = new BehaviorSubject<User | null>(null);
+  #owner: User | null = null;
+  #collaboratorList$ = new BehaviorSubject<User[]>([]);
+  #collaboratorList: User[] = [];
   #transaction$ = new BehaviorSubject<ITransaction | null>(null);
   #transaction: ITransaction | null = null;
 
@@ -26,9 +30,12 @@ export class ContextService {
   #router = inject(Router);
   #rules = inject(Rules);
   #firestore = inject(AngularFirestore);
+
   constructor() {
     this.#fetchUser$();
     this.#fetchPocketbook$();
+    this.#fetchOwner$();
+    this.#fetchCollaboratorList$();
     this.#fetchTransaction$();
   }
 
@@ -60,6 +67,40 @@ export class ContextService {
 
   watchPocketbook$() {
     return this.#pocketbook$.asObservable();
+  }
+
+  setOwner(owner: User | null) {
+    this.#owner = owner ?? null;
+    this.#owner$.next(this.#owner);
+  }
+
+  resetOwner() {
+    this.setOwner(null);
+  }
+
+  getOwner() {
+    return this.#owner;
+  }
+
+  watchOwner$() {
+    return this.#owner$.asObservable();
+  }
+
+  setCollaboratorList(collaboratorList: User[]) {
+    this.#collaboratorList = collaboratorList ?? [];
+    this.#collaboratorList$.next(this.#collaboratorList);
+  }
+
+  resetCollaboratorList() {
+    this.setCollaboratorList([]);
+  }
+
+  getCollaboratorList() {
+    return this.#collaboratorList;
+  }
+
+  watchCollaboratorList$() {
+    return this.#collaboratorList$.asObservable();
   }
 
   setTransaction(transaction: ITransaction | null) {
@@ -114,6 +155,29 @@ export class ContextService {
       )
       .subscribe(pb => {
         this.setPocketbook(pb as IPocketbook);
+      });
+  }
+
+  #fetchOwner$() {
+    this.#firestore
+      .collection<Partial<User>>(Collections.User, ref =>
+        ref.where('uid', '==', this.#pocketbook?.owner ?? '')
+      )
+      .valueChanges()
+      .pipe(map(([owner]) => owner))
+      .subscribe(owner => {
+        this.setOwner(owner as User);
+      });
+  }
+
+  #fetchCollaboratorList$() {
+    this.#firestore
+      .collection<User>(Collections.User, ref =>
+        ref.where('uid', 'in', this.#pocketbook?.collaboratorList ?? [''])
+      )
+      .valueChanges()
+      .subscribe(collaboratorList => {
+        this.setCollaboratorList(collaboratorList);
       });
   }
 

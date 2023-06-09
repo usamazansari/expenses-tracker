@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Timestamp } from '@angular/fire/firestore';
-import { catchError, from, map, of, switchMap, throwError } from 'rxjs';
+import { catchError, from, map, of, throwError } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
 import { ITransaction } from '@expenses-tracker/shared/interfaces';
@@ -19,33 +19,29 @@ export class FirestoreTransactionService {
   #error = inject(ErrorService);
 
   watchTransactionList$() {
-    return this.#context.watchPocketbook$().pipe(
-      switchMap(pocketbook =>
-        !pocketbook
-          ? of([])
-          : this.#firestore
-              .collection<ITransaction<Timestamp>>(Collections.Transaction, ref =>
-                ref
-                  .where('pocketbookId', '==', pocketbook?.id ?? '')
-                  .orderBy('timestamp', 'desc')
+    const pocketbook = this.#context.getPocketbook();
+    return !pocketbook
+      ? of([])
+      : this.#firestore
+          .collection<ITransaction<Timestamp>>(Collections.Transaction, ref =>
+            ref.where('pocketbookId', '==', pocketbook?.id ?? '').orderBy('timestamp', 'desc')
+          )
+          .valueChanges()
+          .pipe(
+            map(transactionList =>
+              transactionList.map(
+                t =>
+                  ({
+                    ...t,
+                    timestamp: t.timestamp?.toDate()
+                  } as ITransaction)
               )
-              .valueChanges()
-              .pipe(
-                map(transactionList =>
-                  transactionList.map(
-                    t =>
-                      ({
-                        ...t,
-                        timestamp: t.timestamp?.toDate()
-                      } as ITransaction)
-                  )
-                ),
-                catchError(({ code }: FirebaseError) =>
-                  throwError(() => new Error(this.#error.getError(code)))
-                )
-              )
-      )
-    );
+            ),
+            catchError(({ code }: FirebaseError) => {
+              console.error({ code });
+              return throwError(() => new Error(this.#error.getError(code)));
+            })
+          );
   }
 
   watchTransaction$(transactionId: string) {
@@ -62,41 +58,38 @@ export class FirestoreTransactionService {
               timestamp: (txn?.timestamp as Timestamp)?.toDate()
             } as ITransaction)
         ),
-        catchError(({ code }: FirebaseError) =>
-          throwError(() => new Error(this.#error.getError(code)))
-        )
+        catchError(({ code }: FirebaseError) => {
+          console.error({ code });
+          return throwError(() => new Error(this.#error.getError(code)));
+        })
       );
   }
 
   createTransaction$({ amount, category, direction, message }: Partial<ITransaction>) {
     const docId = this.#firestore.createId();
     const timestamp = new Date();
-    return this.#context.watchPocketbook$().pipe(
-      switchMap(pocketbook =>
-        this.#firestore
-          .collection<Partial<ITransaction>>(Collections.Transaction)
-          .doc(docId)
-          .set({
-            id: docId,
-            timestamp,
-            amount: amount ?? 0,
-            category: category ?? '',
-            direction: direction ?? 'expense',
-            message: message ?? '',
-            pocketbookId: pocketbook?.id ?? ''
-          })
-      ),
-      map(
-        () =>
-          ({
-            amount,
-            category,
-            direction,
-            id: docId,
-            message,
-            timestamp
-          } as ITransaction)
-      )
+    const pocketbook = this.#context.getPocketbook();
+    const transaction = {
+      id: docId,
+      timestamp,
+      amount: amount ?? 0,
+      category: category ?? '',
+      direction: direction ?? 'expense',
+      message: message ?? '',
+      pocketbookId: pocketbook?.id ?? ''
+    } as ITransaction;
+
+    return from(
+      this.#firestore
+        .collection<Partial<ITransaction>>(Collections.Transaction)
+        .doc(docId)
+        .set(transaction)
+    ).pipe(
+      map(() => transaction),
+      catchError(({ code }: FirebaseError) => {
+        console.error({ code });
+        return throwError(() => new Error(this.#error.getError(code)));
+      })
     );
   }
 

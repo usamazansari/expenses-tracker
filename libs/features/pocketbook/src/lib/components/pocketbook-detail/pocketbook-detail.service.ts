@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { User } from 'firebase/auth';
 import { BehaviorSubject } from 'rxjs';
 
-import { ContextService, FirestoreService } from '@expenses-tracker/core';
+import { ContextService } from '@expenses-tracker/core';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
 @Injectable({
@@ -17,22 +17,11 @@ export class PocketbookDetailService {
   #owner: User | null = null;
 
   #context = inject(ContextService);
-  #firestore = inject(FirestoreService);
 
   initializeComponent() {
-    this.#context.watchPocketbook$().subscribe(pocketbook => {
-      this.setPocketbook(pocketbook as IPocketbook);
-    });
-    this.#firestore
-      .watchPocketbookOwner$((this.#pocketbook as IPocketbook)?.owner)
-      .subscribe(owner => {
-        this.setOwner(owner as User);
-      });
-    this.#firestore
-      .watchPocketbookCollaboratorList$((this.#pocketbook as IPocketbook)?.collaboratorList)
-      .subscribe(collaboratorList => {
-        this.setCollaboratorList(collaboratorList as User[]);
-      });
+    this.setPocketbook(this.#context.getPocketbook() as IPocketbook);
+    this.setOwner(this.#context.getUser() as User);
+    this.setCollaboratorList(this.#context.getCollaboratorList() as User[]);
   }
 
   setPocketbook(pocketbook: IPocketbook | null) {

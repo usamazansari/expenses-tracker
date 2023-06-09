@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Timestamp } from '@angular/fire/firestore';
-import { catchError, from, map, of, switchMap, throwError } from 'rxjs';
+import { catchError, from, iif, of, switchMap, throwError } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
@@ -21,49 +21,19 @@ export class FirestorePocketbookService {
   #context = inject(ContextService);
 
   watchOwnedPocketbookList$() {
-    return this.#context.watchUser$().pipe(
-      switchMap(user =>
-        !user
-          ? of([])
-          : this.#firestore
-              .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
-                ref.where('owner', '==', user?.uid ?? '')
-              )
-              .valueChanges()
-              .pipe(
-                map(pocketbookList => {
-                  if (this.#rules.checkPocketbookAccess(pocketbookList[0], user)) {
-                    return pocketbookList.map(
-                      pb =>
-                        ({
-                          ...pb,
-                          createdAt: (pb.createdAt as Timestamp).toDate()
-                        } as IPocketbook)
-                    );
-                  } else {
-                    return throwError(() => new Error('no-user-access'));
-                  }
-                }),
-                catchError(({ code }: FirebaseError) =>
-                  throwError(() => new Error(this.#error.getError(code)))
-                )
-              )
-      )
-    );
-  }
-
-  watchCollaboratedPocketbookList$() {
-    return this.#context.watchUser$().pipe(
-      switchMap(user =>
-        !user
-          ? of([])
-          : this.#firestore
-              .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
-                ref.where('collaboratorList', 'array-contains', user?.uid ?? '')
-              )
-              .valueChanges()
-              .pipe(
-                map(pocketbookList =>
+    const user = this.#context.getUser();
+    return !user
+      ? of([])
+      : this.#firestore
+          .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
+            ref.where('owner', '==', user?.uid ?? '')
+          )
+          .valueChanges()
+          .pipe(
+            switchMap(pocketbookList =>
+              iif(
+                () => this.#rules.checkPocketbookAccess(pocketbookList[0], user),
+                of(
                   pocketbookList.map(
                     pb =>
                       ({
@@ -72,41 +42,73 @@ export class FirestorePocketbookService {
                       } as IPocketbook)
                   )
                 ),
-                catchError(({ code }: FirebaseError) =>
-                  throwError(() => new Error(this.#error.getError(code)))
-                )
+                throwError(() => new Error('no-user-access'))
               )
-      )
-    );
+            ),
+            catchError(({ code }: FirebaseError) => {
+              console.error({ code });
+              return throwError(() => new Error(this.#error.getError(code)));
+            })
+          );
+  }
+
+  watchCollaboratedPocketbookList$() {
+    const user = this.#context.getUser();
+    return !user
+      ? of([])
+      : this.#firestore
+          .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
+            ref.where('collaboratorList', 'array-contains', user?.uid ?? '')
+          )
+          .valueChanges()
+          .pipe(
+            switchMap(pocketbookList =>
+              iif(
+                () => this.#rules.checkPocketbookAccess(pocketbookList[0], user),
+                of(
+                  pocketbookList.map(
+                    pb =>
+                      ({
+                        ...pb,
+                        createdAt: (pb.createdAt as Timestamp).toDate()
+                      } as IPocketbook)
+                  )
+                ),
+                throwError(() => new Error('no-user-access'))
+              )
+            ),
+            catchError(({ code }: FirebaseError) => {
+              console.error({ code });
+              return throwError(() => new Error(this.#error.getError(code)));
+            })
+          );
   }
 
   watchPocketbook$(pocketbookId: string) {
-    return this.#context.watchUser$().pipe(
-      switchMap(user =>
-        !user
-          ? of(null)
-          : this.#firestore
-              .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
-                ref.where('id', '==', pocketbookId ?? '')
+    const user = this.#context.getUser();
+    return !user
+      ? of(null)
+      : this.#firestore
+          .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
+            ref.where('id', '==', pocketbookId ?? '')
+          )
+          .valueChanges()
+          .pipe(
+            switchMap(([pb]) =>
+              iif(
+                () => this.#rules.checkPocketbookAccess(pb, user),
+                of({
+                  ...pb,
+                  createdAt: (pb?.createdAt as Timestamp)?.toDate()
+                } as IPocketbook),
+                throwError(() => new Error('no-user-access'))
               )
-              .valueChanges()
-              .pipe(
-                map(([pb]) => {
-                  if (this.#rules.checkPocketbookAccess(pb, user)) {
-                    return {
-                      ...pb,
-                      createdAt: (pb?.createdAt as Timestamp)?.toDate()
-                    } as IPocketbook;
-                  } else {
-                    return throwError(() => new Error('no-user-access'));
-                  }
-                }),
-                catchError(({ code }: FirebaseError) =>
-                  throwError(() => new Error(this.#error.getError(code)))
-                )
-              )
-      )
-    );
+            ),
+            catchError(({ code }: FirebaseError) => {
+              console.error({ code });
+              return throwError(() => new Error(this.#error.getError(code)));
+            })
+          );
   }
 
   createPocketbook$({ name, collaboratorList = [], transactionList = [] }: IPocketbook) {
@@ -129,9 +131,10 @@ export class FirestorePocketbookService {
                   balance: 0
                 })
             ).pipe(
-              catchError(({ code }: FirebaseError) =>
-                throwError(() => new Error(this.#error.getError(code)))
-              )
+              catchError(({ code }: FirebaseError) => {
+                console.error({ code });
+                return throwError(() => new Error(this.#error.getError(code)));
+              })
             )
       )
     );

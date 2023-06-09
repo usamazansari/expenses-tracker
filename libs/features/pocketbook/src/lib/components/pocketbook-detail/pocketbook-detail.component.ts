@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
@@ -30,12 +30,17 @@ export class PocketbookDetailComponent implements OnInit {
   pocketbook$!: Observable<IPocketbook | null>;
   collaboratorList$!: Observable<User[]>;
   owner$!: Observable<User | null>;
-  constructor(private _service: PocketbookDetailService) {}
+
+  #service = inject(PocketbookDetailService);
 
   ngOnInit() {
-    this._service.initializeComponent();
-    this.pocketbook$ = this._service.watchPocketbook$();
-    this.collaboratorList$ = this._service.watchCollaboratorList$();
-    this.owner$ = this._service.watchOwner$();
+    this.#service.initializeComponent();
+    this.pocketbook$ = this.#service.watchPocketbook$();
+    this.collaboratorList$ = this.#service.watchCollaboratorList$();
+    this.owner$ = this.#service.watchOwner$();
+
+    this.pocketbook$.subscribe(pb => {
+      console.log({ pb });
+    });
   }
 }
