@@ -9,6 +9,6 @@ import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 })
 export class FirestorePocketbookRulesService {
   checkPocketbookAccess(pocketbook: IPocketbook<Timestamp>, { uid = '' }: User) {
-    return pocketbook.owner === uid || pocketbook.collaboratorList.includes(uid);
+    return (pocketbook?.owner === uid || pocketbook?.collaboratorList.includes(uid)) ?? false;
   }
 }
