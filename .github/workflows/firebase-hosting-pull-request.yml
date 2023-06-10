@@ -28,9 +28,9 @@ jobs:
       - name: Build the application
         uses: pnpm build
 
-      - name: Deploy Preview
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_UA_EXPENSES_TRACKER }}'
-          projectId: ua-expenses-tracker
+      # - name: Deploy Preview
+      #   uses: FirebaseExtended/action-hosting-deploy@v0
+      #   with:
+      #     repoToken: '${{ secrets.GITHUB_TOKEN }}'
+      #     firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_UA_EXPENSES_TRACKER }}'
+      #     projectId: ua-expenses-tracker
