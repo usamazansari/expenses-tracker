@@ -26,12 +26,12 @@ jobs:
         run: pnpm install
       
       - name: Build the application
-        uses: pnpm build
+        run: pnpm build
 
-      # - name: Deploy on Firebase
-      #   uses: FirebaseExtended/action-hosting-deploy@v0
-      #   with:
-      #     repoToken: '${{ secrets.GITHUB_TOKEN }}'
-      #     firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_UA_EXPENSES_TRACKER }}'
-      #     channelId: live
-      #     projectId: ua-expenses-tracker
+      - name: Deploy on Firebase
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_UA_EXPENSES_TRACKER }}'
+          channelId: live
+          projectId: ua-expenses-tracker
