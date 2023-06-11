@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'features-pocketbook',
+  displayName: 'pocketbook',
   preset: '../../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {

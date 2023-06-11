@@ -1,5 +1,5 @@
 {
-  "name": "features-profile",
+  "name": "profile",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
   "sourceRoot": "libs/features/profile/src",
