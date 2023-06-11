@@ -1,5 +1,5 @@
 {
-  "name": "features-pocketbook",
+  "name": "pocketbook",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
   "sourceRoot": "libs/features/pocketbook/src",
