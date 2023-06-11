@@ -14,6 +14,12 @@ jobs:
         with:
           node-version: 18
 
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@latest --activate
+
+      - name: Use Nx Set SHAs
+        uses: nrwl/nx-set-shas@v3
+
       - name: Cache dependencies
         uses: actions/cache@v2
         with:
@@ -21,9 +27,6 @@ jobs:
           key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-
-
-      - name: Install pnpm
-        run: corepack enable && corepack prepare pnpm@latest --activate
 
       - name: Install dependencies
         run: pnpm install --prod
