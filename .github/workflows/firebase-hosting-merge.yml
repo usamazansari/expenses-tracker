@@ -23,7 +23,7 @@ jobs:
         run: corepack enable && corepack prepare pnpm@latest --activate
 
       - name: Install dependencies
-        run: pnpm install --prod
+        run: pnpm install
       
       - name: Build the application
         run: pnpm build
