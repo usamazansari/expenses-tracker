@@ -1,8 +1,5 @@
-import { ApplicationConfig } from '@angular/core';
-import { provideRouter, withEnabledBlockingInitialNavigation } from '@angular/router';
-import { appRoutes } from './app.routes';
 import { provideImgixLoader } from '@angular/common';
-import { importProvidersFrom, isDevMode } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, isDevMode } from '@angular/core';
 import { AngularFireModule } from '@angular/fire/compat';
 import {
   USE_EMULATOR as AUTH_EMULATOR,
@@ -13,6 +10,20 @@ import {
   USE_EMULATOR as FIRESTORE_EMULATOR
 } from '@angular/fire/compat/firestore';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideRouter, withEnabledBlockingInitialNavigation } from '@angular/router';
+import { appRoutes } from './app.routes';
+
+const devEnv = isDevMode();
+const firebaseConfig = {
+  apiKey: 'AIzaSyDWMOv0m9vA37Uk7bUClfcB6dtJ0VwVv84',
+  appId: '1:996752641056:web:c4ab663b5a61a85b264045',
+  authDomain: 'ua-expenses-tracker.firebaseapp.com',
+  measurementId: 'G-ZM3ZXXJKQ0',
+  messagingSenderId: '996752641056',
+  projectId: 'ua-expenses-tracker',
+  storageBucket: 'ua-expenses-tracker.appspot.com'
+};
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
