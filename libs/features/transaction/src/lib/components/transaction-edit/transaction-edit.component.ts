@@ -7,15 +7,11 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { Subscription } from 'rxjs';
 
 import { ITransaction } from '@expenses-tracker/shared/interfaces';
 
-import { TransactionEditService, ITransactionEditForm } from './transaction-edit.service';
+import { ITransactionEditForm, TransactionEditService } from './transaction-edit.service';
 
 type TransactionEditForm<T extends ITransactionEditForm = ITransactionEditForm> = {
   amount: FormControl<T['amount']>;
@@ -27,14 +23,7 @@ type TransactionEditForm<T extends ITransactionEditForm = ITransactionEditForm> 
 @Component({
   selector: 'expenses-tracker-transaction-edit',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatSelectModule,
-    ReactiveFormsModule
-  ],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './transaction-edit.component.html',
   styles: []
 })

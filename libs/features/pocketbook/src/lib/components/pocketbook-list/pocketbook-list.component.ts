@@ -1,27 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
-
-import {
-  EmptyPocketbookListGraphicComponent,
-  PocketbookGraphicComponent
-} from '@expenses-tracker/shared/assets';
 
 import { PocketbookListService, PocketbookViewMode } from './pocketbook-list.service';
 
 @Component({
   selector: 'expenses-tracker-pocketbook-list',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatIconModule,
-
-    EmptyPocketbookListGraphicComponent,
-    PocketbookGraphicComponent
-  ],
+  imports: [CommonModule, RouterModule],
   templateUrl: './pocketbook-list.component.html',
   styles: []
 })

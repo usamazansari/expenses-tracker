@@ -17,21 +17,15 @@
       </div>
       <div class="grid grid-rows-1 gap-2">
         <div class="flex items-center gap-2">
-          <mat-icon class="min-w-[24px] text-et-color-accent-emphasis">person</mat-icon>
-          <mat-form-field class="w-full">
-            <mat-label>Full Name</mat-label>
-            <input
-              matInput
-              formControlName="displayName"
-              type="text"
-              placeholder="John Doe"
-              autofocus />
-          </mat-form-field>
+          <span class="material-icons min-w-[24px] text-et-color-accent-emphasis">person</span>
+
+          <label>Full Name</label>
+          <input formControlName="displayName" type="text" placeholder="John Doe" autofocus />
         </div>
         <div class="flex items-center gap-2">
-          <mat-icon class="min-w-[24px] text-et-color-accent-emphasis">
+          <span class="material-icons min-w-[24px] text-et-color-accent-emphasis">
             alternate_email
-          </mat-icon>
+          </span>
           <span class="overflow-hidden whitespace-nowrap overflow-ellipsis">
             {{ user.email }}
           </span>
@@ -40,7 +34,7 @@
       <div class="grid grid-rows-1 gap-2">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <mat-icon class="min-w-[24px] text-et-color-accent-emphasis">badge</mat-icon>
+            <span class="material-icons min-w-[24px] text-et-color-accent-emphasis">badge</span>
             <span class="overflow-hidden whitespace-nowrap overflow-ellipsis">
               {{ user.uid }}
             </span>
@@ -49,18 +43,16 @@
       </div>
       <div class="grid grid-cols-2 gap-2">
         <button
-          matRipple
           type="submit"
           class="flex items-center justify-center gap-2 px-6 py-3 border rounded-lg bg-et-color-button-primary-bg text-et-color-button-primary border-et-color-button-primary-border">
-          <mat-icon class="min-w-[24px]">save</mat-icon>
+          <span class="material-icons min-w-[24px]">save</span>
           <span>SAVE</span>
         </button>
         <button
-          matRipple
           type="button"
           (click)="cancelEdit()"
-          class="flex items-center justify-center gap-2 px-6 py-3 text-center border rounded-lg cursor-pointer text-et-color-button-danger bg-et-color-button-danger-bg border-et-color-button-danger-border hover:underline hover:underline-offset-4">
-          <mat-icon class="min-w-[24px]">clear</mat-icon>
+          class="flex items-center justify-center gap-2 px-6 py-3 text-center border rounded-lg cursor-pointer text-et-color-button-danger bg-et-color-button-danger-bg border-et-color-button-danger-border">
+          <span class="material-icons min-w-[24px]">clear</span>
           <span>CANCEL</span>
         </button>
       </div>

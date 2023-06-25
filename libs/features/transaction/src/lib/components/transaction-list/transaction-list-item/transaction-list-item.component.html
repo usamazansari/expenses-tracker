@@ -21,7 +21,7 @@
           <span class="font-bold">{{ transaction.message }}</span>
         </ng-template>
         <p class="text-sm italic">
-          {{ transaction.timestamp | date : 'long' }}
+          {{ transaction.timestamp | date: 'long' }}
         </p>
       </div>
     </div>
@@ -34,20 +34,20 @@
         }">
         <ng-container *ngIf="transaction.direction === 'expense'"> - </ng-container>
         <ng-container *ngIf="transaction.direction === 'income'"> + </ng-container>
-        {{ transaction.amount | currency : 'EUR' }}
+        {{ transaction.amount | currency: 'EUR' }}
       </span>
       <div class="flex gap-2">
         <button
           type="button"
           class="p-2 rounded-md bg-et-color-button-accent-bg text-et-color-button-accent"
           (click)="gotoEditTransaction()">
-          <mat-icon>edit</mat-icon>
+          <span class="material-icons">edit</span>
         </button>
         <button
           type="button"
           class="p-2 rounded-md bg-et-color-button-danger-bg text-et-color-button-danger"
           (click)="deleteTransaction()">
-          <mat-icon>delete</mat-icon>
+          <span class="material-icons">delete</span>
         </button>
         <button type="button"></button>
       </div>

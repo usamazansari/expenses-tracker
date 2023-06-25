@@ -1,9 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { User } from 'firebase/auth';
 
 import { ExtractInitialsPipe } from '../../pipes';
@@ -15,15 +12,7 @@ type ProfileEditForm = {
 @Component({
   selector: 'expenses-tracker-profile-edit',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    ReactiveFormsModule,
-
-    ExtractInitialsPipe
-  ],
+  imports: [CommonModule, ReactiveFormsModule, ExtractInitialsPipe],
   templateUrl: './profile-edit.component.html',
   styles: []
 })

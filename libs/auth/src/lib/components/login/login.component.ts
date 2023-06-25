@@ -7,13 +7,7 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { MatRippleModule } from '@angular/material/core';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
-
-import { LoginGraphicComponent } from '@expenses-tracker/shared/assets';
 
 import { ComponentFlags, LoginService } from './login.service';
 
@@ -25,15 +19,7 @@ type LoginForm = {
 @Component({
   selector: 'expenses-tracker-login',
   standalone: true,
-  imports: [
-    CommonModule,
-    LoginGraphicComponent,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatRippleModule,
-    ReactiveFormsModule
-  ],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit, OnDestroy {
