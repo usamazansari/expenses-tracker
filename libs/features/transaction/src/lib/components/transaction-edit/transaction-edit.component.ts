@@ -7,28 +7,39 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Subscription } from 'rxjs';
 
-import { ITransaction } from '@expenses-tracker/shared/interfaces';
+import {
+  ITransaction,
+  PaymentMode,
+  TransactionCategory,
+  TransactionDirection
+} from '@expenses-tracker/shared/interfaces';
 
-import { TransactionEditService, ITransactionEditForm } from './transaction-edit.service';
+import { TransactionFormFields } from '../../types';
+import { TransactionEditService } from './transaction-edit.service';
 
-type TransactionEditForm<T extends ITransactionEditForm = ITransactionEditForm> = {
+type TransactionEditForm<T extends TransactionFormFields = TransactionFormFields> = {
   amount: FormControl<T['amount']>;
   category: FormControl<T['category']>;
   direction: FormControl<T['direction']>;
   message: FormControl<T['message']>;
+  timestamp: FormControl<T['timestamp']>;
+  paymentMode: FormControl<T['paymentMode']>;
 };
 
+// TODO: @usamazansari - merge this with transaction-add component
 @Component({
   selector: 'expenses-tracker-transaction-edit',
   standalone: true,
   imports: [
     CommonModule,
+    MatDatepickerModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -49,10 +60,15 @@ export class TransactionEditComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.formGroup = this.#formBuilder.group<TransactionEditForm>({
-      amount: this.#formBuilder.control(null, Validators.required),
-      category: this.#formBuilder.control(null, Validators.required),
-      direction: this.#formBuilder.control('expense', Validators.required),
-      message: this.#formBuilder.control(null)
+      amount: this.#formBuilder.control<number>(0, Validators.required),
+      category: this.#formBuilder.control<TransactionCategory>('other', Validators.required),
+      direction: this.#formBuilder.control<TransactionDirection>(
+        'expense',
+        Validators.required
+      ),
+      message: this.#formBuilder.control<string>(''),
+      paymentMode: this.#formBuilder.control<PaymentMode>('card', Validators.required),
+      timestamp: this.#formBuilder.control<Date>(new Date(Date.now()), Validators.required)
     });
 
     this.#patchValues$ = this.#service.patchValues$().subscribe(patchValues => {
@@ -62,13 +78,16 @@ export class TransactionEditComponent implements OnInit, OnDestroy {
 
   editTransaction() {
     if (!this.formGroup.invalid) {
-      const { amount, category, direction, message } = this.formGroup.value;
+      const { amount, category, direction, message, paymentMode, timestamp } =
+        this.formGroup.value;
       this.#editTransaction$ = this.#service
         .editTransaction$({
           amount,
           category,
           direction,
-          message
+          message,
+          paymentMode,
+          timestamp
         } as ITransaction)
         .subscribe({
           next: () => {

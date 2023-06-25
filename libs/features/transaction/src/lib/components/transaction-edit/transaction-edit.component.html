@@ -1,8 +1,6 @@
 <div
   class="grid grid-cols-1 grid-rows-1 gap-2 p-4 border rounded-lg justify-items-center text-et-color-fg-default bg-et-layer-alternate border-et-color-border-default">
   <div class="flex items-center justify-center gap-2 py-12">
-    <!-- <expenses-tracker-add-transaction-graphic
-      class="w-20 fill-et-color-accent-emphasis"></expenses-tracker-add-transaction-graphic> -->
     <span class="text-3xl text-et-color-accent-emphasis">Edit Transaction</span>
   </div>
   <div class="grid min-w-[24rem]">
@@ -10,7 +8,7 @@
       <div class="grid grid-rows-[1fr_auto] gap-2">
         <div class="grid gap-2">
           <div class="flex items-center gap-2">
-            <mat-icon class="min-w-[24px]">payments</mat-icon>
+            <mat-icon class="min-w-[24px]">euro</mat-icon>
             <mat-form-field class="w-full">
               <mat-label>Amount</mat-label>
               <span matPrefix class="mr-1">€</span>
@@ -50,6 +48,31 @@
               </mat-select>
               <mat-error *ngIf="this.formGroup.get('direction')?.invalid">
                 {{ getError('direction') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="flex items-center gap-2">
+            <mat-icon class="min-w-[24px]">today</mat-icon>
+            <mat-form-field class="w-full">
+              <mat-label>Date of Transaction</mat-label>
+              <input matInput formControlName="timestamp" [matDatepicker]="picker" />
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              <mat-error *ngIf="this.formGroup.get('timestamp')?.invalid">
+                {{ getError('timestamp') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="flex items-center gap-2">
+            <mat-icon class="min-w-[24px]">payments</mat-icon>
+            <mat-form-field class="w-full">
+              <mat-label>Payment Mode</mat-label>
+              <mat-select formControlName="paymentMode">
+                <mat-option value="card">Card</mat-option>
+                <mat-option value="cash">Cash</mat-option>
+              </mat-select>
+              <mat-error *ngIf="this.formGroup.get('paymentMode')?.invalid">
+                {{ getError('paymentMode') }}
               </mat-error>
             </mat-form-field>
           </div>

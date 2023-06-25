@@ -9,8 +9,10 @@ import {
   AngularFirestoreModule,
   USE_EMULATOR as FIRESTORE_EMULATOR
 } from '@angular/fire/compat/firestore';
+import { MatNativeDateModule } from '@angular/material/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter, withEnabledBlockingInitialNavigation } from '@angular/router';
+
 import { appRoutes } from './app.routes';
 
 const devEnv = isDevMode();
@@ -34,7 +36,8 @@ export const appConfig: ApplicationConfig = {
       AngularFireModule.initializeApp(firebaseConfig),
       AngularFireAuthModule,
       AngularFirestoreModule,
-      BrowserAnimationsModule
+      BrowserAnimationsModule,
+      MatNativeDateModule
     ),
     {
       provide: AUTH_EMULATOR,

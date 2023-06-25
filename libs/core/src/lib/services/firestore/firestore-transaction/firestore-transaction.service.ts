@@ -68,9 +68,15 @@ export class FirestoreTransactionService {
       );
   }
 
-  createTransaction$({ amount, category, direction, message }: Partial<ITransaction>) {
+  createTransaction$({
+    amount,
+    category,
+    direction,
+    message,
+    paymentMode,
+    timestamp
+  }: Partial<ITransaction>) {
     const docId = this.#firestore.createId();
-    const timestamp = new Date();
     return this.#context.watchPocketbook$().pipe(
       switchMap(pocketbook =>
         this.#firestore
@@ -82,6 +88,7 @@ export class FirestoreTransactionService {
             amount: amount ?? 0,
             category: category ?? '',
             direction: direction ?? 'expense',
+            paymentMode: paymentMode ?? 'card',
             message: message ?? '',
             pocketbookId: pocketbook?.id ?? ''
           })

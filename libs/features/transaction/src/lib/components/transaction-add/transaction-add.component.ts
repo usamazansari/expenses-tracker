@@ -7,28 +7,39 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Subscription } from 'rxjs';
 
-import { ITransaction, TransactionDirection } from '@expenses-tracker/shared/interfaces';
+import {
+  ITransaction,
+  PaymentMode,
+  TransactionCategory,
+  TransactionDirection
+} from '@expenses-tracker/shared/interfaces';
 
+import { TransactionFormFields } from '../../types';
 import { TransactionAddService } from './transaction-add.service';
 
-type TransactionAddForm = {
-  category: FormControl<string | null>;
-  amount: FormControl<number | null>;
-  direction: FormControl<TransactionDirection | null>;
-  message: FormControl<string | null>;
+type TransactionAddForm<T extends TransactionFormFields = TransactionFormFields> = {
+  amount: FormControl<T['amount']>;
+  category: FormControl<T['category']>;
+  direction: FormControl<T['direction']>;
+  message: FormControl<T['message']>;
+  timestamp: FormControl<T['timestamp']>;
+  paymentMode: FormControl<T['paymentMode']>;
 };
 
+// TODO: @usamazansari - merge this with transaction-edit component
 @Component({
   selector: 'expenses-tracker-transaction-add',
   standalone: true,
   imports: [
     CommonModule,
+    MatDatepickerModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -48,22 +59,30 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.formGroup = this.#formBuilder.group<TransactionAddForm>({
-      amount: this.#formBuilder.control(null, Validators.required),
-      category: this.#formBuilder.control(null, Validators.required),
-      direction: this.#formBuilder.control('expense', Validators.required),
-      message: this.#formBuilder.control(null)
+      amount: this.#formBuilder.control<number>(0, Validators.required),
+      category: this.#formBuilder.control<TransactionCategory>('other', Validators.required),
+      direction: this.#formBuilder.control<TransactionDirection>(
+        'expense',
+        Validators.required
+      ),
+      message: this.#formBuilder.control<string>(''),
+      paymentMode: this.#formBuilder.control<PaymentMode>('card', Validators.required),
+      timestamp: this.#formBuilder.control<Date>(new Date(Date.now()), Validators.required)
     });
   }
 
   addTransaction() {
     if (!this.formGroup.invalid) {
-      const { amount, category, direction, message } = this.formGroup.value;
+      const { amount, category, direction, message, paymentMode, timestamp } =
+        this.formGroup.value;
       this.#addTransaction$ = this.#service
         .addTransaction$({
           amount,
           category,
           direction,
-          message
+          message,
+          timestamp,
+          paymentMode
         } as ITransaction)
         .subscribe({
           next: () => {

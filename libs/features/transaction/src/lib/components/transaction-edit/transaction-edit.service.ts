@@ -13,19 +13,9 @@ import {
 
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
 import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
-import {
-  IFlag,
-  INITIAL_FLAGS,
-  ITransaction,
-  TransactionDirection
-} from '@expenses-tracker/shared/interfaces';
+import { IFlag, INITIAL_FLAGS, ITransaction } from '@expenses-tracker/shared/interfaces';
 
-export interface ITransactionEditForm {
-  category: string | null;
-  amount: number | null;
-  direction: TransactionDirection | null;
-  message: string | null;
-}
+import { TransactionFormFields } from '../../types';
 
 export type ComponentFlags = {
   editTransaction: IFlag;
@@ -67,13 +57,15 @@ export class TransactionEditService {
       );
   }
 
-  patchValues$(): Observable<ITransactionEditForm> {
+  patchValues$(): Observable<TransactionFormFields> {
     return this.watchTransaction$().pipe(
       map(txn => ({
         category: txn?.category ?? null,
         amount: txn?.amount ?? null,
         direction: txn?.direction ?? null,
-        message: txn?.message ?? null
+        message: txn?.message ?? null,
+        timestamp: txn?.timestamp ?? null,
+        paymentMode: txn?.paymentMode ?? null
       }))
     );
   }
