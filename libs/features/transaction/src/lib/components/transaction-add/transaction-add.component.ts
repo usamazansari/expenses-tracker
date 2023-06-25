@@ -59,8 +59,8 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.formGroup = this.#formBuilder.group<TransactionAddForm>({
-      amount: this.#formBuilder.control<number>(0, Validators.required),
-      category: this.#formBuilder.control<TransactionCategory>('other', Validators.required),
+      amount: this.#formBuilder.control<number | null>(null, Validators.required),
+      category: this.#formBuilder.control<TransactionCategory | ''>('', Validators.required),
       direction: this.#formBuilder.control<TransactionDirection>(
         'expense',
         Validators.required
