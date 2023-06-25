@@ -17,9 +17,10 @@
                 formControlName="amount"
                 type="number"
                 placeholder="100"
-                required />
-              <mat-error *ngIf="this.formGroup.get('name')?.invalid">
-                {{ getError('name') }}
+                required
+                autofocus />
+              <mat-error *ngIf="this.formGroup.get('amount')?.invalid">
+                {{ getError('amount') }}
               </mat-error>
             </mat-form-field>
           </div>
