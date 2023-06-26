@@ -12,26 +12,29 @@ jobs:
       # TODO: Set SHA on main branch to have nx:affected command working
       # - name: Use Nx Set SHAs
       #   uses: nrwl/nx-set-shas@v3
-      
-      - name: Set up Node.js
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.6.5
+
+      - name: Set up NodeJS
         uses: actions/setup-node@v2
         with:
           node-version: 18
-
-      - name: Install pnpm
-        run: corepack enable && corepack prepare pnpm@latest --activate
+          cache: 'pnpm'
 
       # WIP: This cache does not really work
-      # - name: Cache dependencies
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: ~/.pnpm-store
-      #     key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-pnpm-
+      - name: Use cache if available
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
 
       - name: Install dependencies
         run: pnpm install
-      
+
       - name: Build the application
         run: pnpm build
