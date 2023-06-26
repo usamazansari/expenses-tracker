@@ -1,6 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { BehaviorSubject, filter } from 'rxjs';
+
+import { RoutePaths } from '@expenses-tracker/shared/common';
 
 export type AuthMode = 'login' | 'signup';
 
@@ -11,10 +13,10 @@ export class AuthService {
   #authMode$ = new BehaviorSubject<AuthMode>('login');
   #authMode: AuthMode = 'login';
 
-  constructor(private _router: Router) {}
+  #router = inject(Router);
 
   fetchAuthMode() {
-    this._router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(e => {
+    this.#router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(e => {
       const { url, urlAfterRedirects } = e as NavigationEnd;
       this.setAuthMode((urlAfterRedirects ?? url)?.split('/').at(-1) as AuthMode);
     });
@@ -31,11 +33,11 @@ export class AuthService {
 
   gotoLogin() {
     this.setAuthMode('login');
-    this._router.navigate(['auth', 'login']);
+    this.#router.navigate([RoutePaths.Auth, RoutePaths.AuthLogin]);
   }
 
   gotoSignup() {
     this.setAuthMode('signup');
-    this._router.navigate(['auth', 'signup']);
+    this.#router.navigate([RoutePaths.Auth, RoutePaths.AuthSignup]);
   }
 }

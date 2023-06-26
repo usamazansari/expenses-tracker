@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, of, tap } from 'rxjs';
 
-import { AuthService, ErrorService } from '@expenses-tracker/core';
-import { NotificationService } from '@expenses-tracker/shared/common';
+import { AuthService } from '@expenses-tracker/core';
+import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
 import { IFlag, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
 export type ComponentFlags = {
@@ -21,12 +21,9 @@ export class LoginService {
   });
   #flags: ComponentFlags = { login: INITIAL_FLAGS, saveUser: INITIAL_FLAGS };
 
-  constructor(
-    private _router: Router,
-    private _auth: AuthService,
-    private _error: ErrorService,
-    private _notification: NotificationService
-  ) {}
+  #router = inject(Router);
+  #auth = inject(AuthService);
+  #notification = inject(NotificationService);
 
   login$({
     email,
@@ -45,17 +42,17 @@ export class LoginService {
     };
     this.#setFlags(this.#flags);
 
-    return this._auth.login$({ email, password }).pipe(
+    return this.#auth.login$({ email, password }).pipe(
       tap(({ user }) => {
-        this._notification.success({
+        this.#notification.success({
           description: `Logged in as ${user?.displayName ?? user?.email}`,
           title: 'Login successful!'
         });
         this.#resetFlags();
-        this._router.navigate(['dashboard']);
+        this.#router.navigate([RoutePaths.Profile]);
       }),
       catchError(error => {
-        this._notification.error({
+        this.#notification.error({
           description: `${error}.`,
           title: 'Login failed'
         });

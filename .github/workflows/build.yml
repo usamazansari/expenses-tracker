@@ -1,16 +1,17 @@
-name: Deploy to Firebase Hosting on PR
-on:
-  pull_request:
-    branches:
-      - main
+name: Build on push
+on: push
 
 jobs:
-  build_and_preview:
-    if: '${{ github.event.pull_request.head.repo.full_name == github.repository }}'
+  build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
+
+      # TODO: Set SHA on main branch to have nx:affected command working
+      # - name: Use Nx Set SHAs
+      #   uses: nrwl/nx-set-shas@v3
 
       - name: Setup PNPM
         uses: pnpm/action-setup@v2
@@ -36,10 +37,3 @@ jobs:
 
       - name: Build the application
         run: pnpm build
-
-      - name: Deploy Preview
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_UA_EXPENSES_TRACKER }}'
-          projectId: ua-expenses-tracker
