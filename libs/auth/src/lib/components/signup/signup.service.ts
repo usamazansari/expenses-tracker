@@ -1,10 +1,10 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from 'firebase/auth';
 import { BehaviorSubject, catchError, of, switchMap, tap } from 'rxjs';
 
-import { AuthService, FirestoreService } from '@expenses-tracker/core';
-import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
+import { AuthService, ErrorService, FirestoreService } from '@expenses-tracker/core';
+import { NotificationService } from '@expenses-tracker/shared/common';
 import { IFlag, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
 export type ComponentFlags = {
@@ -22,10 +22,13 @@ export class SignupService {
   });
   #flags: ComponentFlags = { signup: INITIAL_FLAGS, saveUser: INITIAL_FLAGS };
 
-  #auth = inject(AuthService);
-  #firestore = inject(FirestoreService);
-  #router = inject(Router);
-  #notification = inject(NotificationService);
+  constructor(
+    private _auth: AuthService,
+    private _error: ErrorService,
+    private _firestore: FirestoreService,
+    private _router: Router,
+    private _notification: NotificationService
+  ) {}
 
   signup$({
     email,
@@ -44,18 +47,18 @@ export class SignupService {
     };
     this.#setFlags(this.#flags);
 
-    return this.#auth.signup$({ email, password }).pipe(
-      switchMap(({ user }) => this.#firestore.saveUser$(user as User)),
+    return this._auth.signup$({ email, password }).pipe(
+      switchMap(({ user }) => this._firestore.saveUser$(user as User)),
       tap(user => {
-        this.#notification.success({
+        this._notification.success({
           description: `Registered successfully as ${user?.email}.`,
           title: 'Signup Successful!'
         });
         this.#resetFlags();
-        this.#router.navigate([RoutePaths.Dashboard]);
+        this._router.navigate(['dashboard']);
       }),
       catchError(error => {
-        this.#notification.error({
+        this._notification.error({
           description: `${error}.`,
           title: 'Signup failed'
         });
