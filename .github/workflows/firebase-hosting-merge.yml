@@ -23,7 +23,6 @@ jobs:
           node-version: 18
           cache: 'pnpm'
 
-      # WIP: This cache does not really work
       - name: Use cache if available
         uses: actions/cache@v2
         with:
