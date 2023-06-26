@@ -13,7 +13,7 @@ import {
 } from 'rxjs';
 
 import { ContextService, ErrorService, FirestoreService } from '@expenses-tracker/core';
-import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
+import { NotificationService } from '@expenses-tracker/shared/common';
 import { IFlag, INITIAL_FLAGS, IPocketbook } from '@expenses-tracker/shared/interfaces';
 
 export interface IPocketbookEditForm {
@@ -141,7 +141,7 @@ export class PocketbookEditService {
             description: `Pocketbook ${pocketbook.name} successfully updated!`
           });
           this.resetFlags();
-          this.#router.navigate([RoutePaths.Pocketbook, RoutePaths.EntityList]);
+          this.#router.navigate(['pocketbook/list']);
         }),
         catchError(error => {
           this.#notification.error({
@@ -162,8 +162,8 @@ export class PocketbookEditService {
       );
   }
 
-  cancelEditPocketbook(pocketbook = '') {
-    if (!pocketbook) this.#router.navigate([RoutePaths.Pocketbook, RoutePaths.EntityList]);
-    else this.#router.navigate([RoutePaths.Pocketbook, pocketbook]);
+  cancelEditPocketbook(pocketbook: string = '') {
+    if (!pocketbook) this.#router.navigate(['pocketbook', 'list']);
+    else this.#router.navigate(['pocketbook', pocketbook]);
   }
 }

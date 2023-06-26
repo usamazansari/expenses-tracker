@@ -1,7 +1,7 @@
-# pocketbook
+# features-pocketbook
 
 This library was generated with [Nx](https://nx.dev).
 
 ## Running unit tests
 
-Run `nx test pocketbook` to execute the unit tests.
+Run `nx test features-pocketbook` to execute the unit tests.

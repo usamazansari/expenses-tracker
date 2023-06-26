@@ -1,8 +1,6 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { BehaviorSubject, filter } from 'rxjs';
-
-import { RoutePaths } from '@expenses-tracker/shared/common';
 
 export type PocketbookViewMode = 'owner' | 'collaborator';
 
@@ -13,10 +11,10 @@ export class PocketbookListService {
   #viewMode$ = new BehaviorSubject<PocketbookViewMode>('owner');
   #viewMode: PocketbookViewMode = 'owner';
 
-  #router = inject(Router);
+  constructor(private _router: Router) {}
 
   fetchViewMode() {
-    this.#router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(e => {
+    this._router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(e => {
       const { url, urlAfterRedirects } = e as NavigationEnd;
       this.setViewMode((urlAfterRedirects ?? url)?.split('/').at(-1) as PocketbookViewMode);
     });
@@ -32,24 +30,16 @@ export class PocketbookListService {
   }
 
   gotoAddPocketbook() {
-    this.#router.navigate([RoutePaths.Pocketbook, RoutePaths.EntityAdd]);
+    this._router.navigate(['pocketbook', 'add']);
   }
 
   gotoOwnerPocketbookList() {
     this.setViewMode('owner');
-    this.#router.navigate([
-      RoutePaths.Pocketbook,
-      RoutePaths.EntityList,
-      RoutePaths.PocketbookOwner
-    ]);
+    this._router.navigate(['pocketbook', 'list', 'owner']);
   }
 
   gotoCollaboratorPocketbookList() {
     this.setViewMode('collaborator');
-    this.#router.navigate([
-      RoutePaths.Pocketbook,
-      RoutePaths.EntityList,
-      RoutePaths.PocketbookCollaborator
-    ]);
+    this._router.navigate(['pocketbook', 'list', 'collaborator']);
   }
 }

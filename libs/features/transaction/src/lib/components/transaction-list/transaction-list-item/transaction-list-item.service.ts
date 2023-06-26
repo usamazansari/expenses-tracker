@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, distinctUntilChanged, switchMap, tap, throwError } from 'rxjs';
 
-import { ContextService, FirestoreService } from '@expenses-tracker/core';
-import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
 import { ITransaction } from '@expenses-tracker/shared/interfaces';
+import { ContextService, FirestoreService } from '@expenses-tracker/core';
+import { catchError, distinctUntilChanged, switchMap, tap, throwError } from 'rxjs';
+import { NotificationService } from '@expenses-tracker/shared/common';
 
 @Injectable({
   providedIn: 'root'
@@ -18,11 +18,11 @@ export class TransactionListItemService {
   gotoEditTransaction(transaction: ITransaction) {
     this.#context.setTransaction(transaction);
     this.#router.navigate([
-      RoutePaths.Pocketbook,
+      'pocketbook',
       this.#context.getPocketbook()?.id,
-      RoutePaths.Transaction,
+      'transaction',
       this.#context.getTransaction()?.id,
-      RoutePaths.EntityEdit
+      'edit'
     ]);
   }
 
@@ -49,10 +49,10 @@ export class TransactionListItemService {
         });
         this.#context.setTransaction(null);
         this.#router.navigate([
-          RoutePaths.Pocketbook,
+          'pocketbook',
           this.#context.getPocketbook()?.id,
-          RoutePaths.Transaction,
-          RoutePaths.EntityList
+          'transaction',
+          'list'
         ]);
       }),
       catchError(error => {

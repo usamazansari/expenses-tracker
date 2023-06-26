@@ -3,8 +3,6 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { map } from 'rxjs';
 
-import { RoutePaths } from '@expenses-tracker/shared/common';
-
 @Injectable({
   providedIn: 'root'
 })
@@ -18,7 +16,7 @@ export class AuthGuard {
         if (!!user) {
           return true;
         } else {
-          this.#router.navigate([RoutePaths.Auth, RoutePaths.AuthLogin]);
+          this.#router.navigate(['auth', 'login']);
           return false;
         }
       })
@@ -39,7 +37,7 @@ export class ReverseAuthGuard {
         if (!user) {
           return true;
         } else {
-          this.#router.navigate([RoutePaths.Dashboard]);
+          this.#router.navigate(['dashboard']);
           return false;
         }
       })

@@ -12,7 +12,7 @@ import {
 } from 'rxjs';
 
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
-import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
+import { NotificationService } from '@expenses-tracker/shared/common';
 import {
   IFlag,
   INITIAL_FLAGS,
@@ -113,10 +113,10 @@ export class TransactionEditService {
         });
         this.resetFlags();
         this.#router.navigate([
-          RoutePaths.Pocketbook,
+          'pocketbook',
           this.#context.getPocketbook()?.id ?? 'null',
-          RoutePaths.Transaction,
-          RoutePaths.EntityList
+          'transaction',
+          'list'
         ]);
       }),
       catchError(error => {
@@ -140,10 +140,10 @@ export class TransactionEditService {
 
   cancelEditTransaction() {
     this.#router.navigate([
-      RoutePaths.Pocketbook,
+      'pocketbook',
       this.#context.getPocketbook()?.id,
-      RoutePaths.Transaction,
-      RoutePaths.EntityList
+      'transaction',
+      'list'
     ]);
   }
 }

@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'profile',
+  displayName: 'features-profile',
   preset: '../../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {

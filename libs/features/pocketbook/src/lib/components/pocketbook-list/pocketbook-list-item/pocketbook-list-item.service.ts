@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
-import { Router } from '@angular/router';
 import { User } from 'firebase/auth';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 
+import { Router } from '@angular/router';
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
-import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
+import { NotificationService } from '@expenses-tracker/shared/common';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
 @Injectable({
@@ -15,7 +15,6 @@ export class PocketbookListItemService {
   #owner$ = new BehaviorSubject<User | null>(null);
   #collaboratorList: User[] = [];
   #owner: User | null = null;
-
   #router = inject(Router);
   #firestore = inject(FirestoreService);
   #context = inject(ContextService);
@@ -55,11 +54,11 @@ export class PocketbookListItemService {
 
   gotoEditPocketbook(pocketbook: IPocketbook) {
     this.#context.setPocketbook(pocketbook);
-    this.#router.navigate([RoutePaths.Pocketbook, pocketbook.id, RoutePaths.EntityEdit]);
+    this.#router.navigate(['pocketbook', pocketbook.id, 'edit']);
   }
 
   gotoPocketbook(id: string) {
-    this.#router.navigate([RoutePaths.Pocketbook, id]);
+    this.#router.navigate(['pocketbook', id]);
   }
 
   deletePocketbook$(pocketbookId: string) {

@@ -1,7 +1,7 @@
 {
   "root": true,
   "ignorePatterns": ["**/*"],
-  "plugins": ["@nx", "prettier"],
+  "plugins": ["@nrwl/nx", "prettier"],
   "extends": ["plugin:prettier/recommended"],
   "overrides": [
     {
@@ -13,7 +13,7 @@
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
-        "@nx/enforce-module-boundaries": [
+        "@nrwl/nx/enforce-module-boundaries": [
           "error",
           {
             "enforceBuildableLibDependency": true,
@@ -31,14 +31,14 @@
     },
     {
       "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@nx/typescript"],
+      "extends": ["plugin:@nrwl/nx/typescript"],
       "rules": {
         "no-extra-boolean-cast": "off"
       }
     },
     {
       "files": ["*.js", "*.jsx"],
-      "extends": ["plugin:@nx/javascript"],
+      "extends": ["plugin:@nrwl/nx/javascript"],
       "rules": {}
     },
     {

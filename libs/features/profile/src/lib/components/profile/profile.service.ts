@@ -1,12 +1,12 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 import { Router } from '@angular/router';
 import { User } from 'firebase/auth';
 import { BehaviorSubject, catchError, of, tap, throwError } from 'rxjs';
 
-import { AuthService, ContextService } from '@expenses-tracker/core';
-import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
+import { AuthService, ContextService, ErrorService } from '@expenses-tracker/core';
+import { NotificationService } from '@expenses-tracker/shared/common';
 import { IFlag, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
 export type ComponentFlags = {
@@ -27,11 +27,14 @@ export class ProfileService {
   #editMode$ = new BehaviorSubject<boolean>(false);
   #editMode = false;
 
-  #auth = inject(AuthService);
-  #context = inject(ContextService);
-  #notification = inject(NotificationService);
-  #router = inject(Router);
-  #clipboard = inject(Clipboard);
+  constructor(
+    private _auth: AuthService,
+    private _context: ContextService,
+    private _error: ErrorService,
+    private _notification: NotificationService,
+    private _router: Router,
+    private _clipboard: Clipboard
+  ) {}
 
   getUser$() {
     this.#flags = {
@@ -43,7 +46,7 @@ export class ProfileService {
       }
     };
     this.#setFlags(this.#flags);
-    return this.#context.watchUser$().pipe(
+    return this._context.watchUser$().pipe(
       tap(() => {
         this.#flags = {
           ...this.#flags,
@@ -82,17 +85,17 @@ export class ProfileService {
       }
     };
     this.#setFlags(this.#flags);
-    return this.#auth.logout$().pipe(
+    return this._auth.logout$().pipe(
       tap(() => {
-        this.#notification.info({
+        this._notification.info({
           title: 'Logout Successful',
           description: 'User has been logged out successfully'
         });
         this.#resetFlags();
-        this.#router.navigate([RoutePaths.Auth, RoutePaths.AuthLogin]);
+        this._router.navigate(['auth', 'login']);
       }),
       catchError(error => {
-        this.#notification.error({
+        this._notification.error({
           description: `${error}.`,
           title: 'Login failed'
         });
@@ -112,18 +115,18 @@ export class ProfileService {
   }
 
   updateUserInfo$(user: User) {
-    return this.#auth.updateUserInfo$(user);
+    return this._auth.updateUserInfo$(user);
   }
 
   copyUID(uid: string | null) {
-    const copyState = this.#clipboard.copy(uid ?? '');
+    const copyState = this._clipboard.copy(uid ?? '');
     if (copyState) {
-      this.#notification.info({
+      this._notification.info({
         title: 'Success!',
         description: 'UID copied to the clipboard'
       });
     } else {
-      this.#notification.info({
+      this._notification.info({
         title: 'Fail!',
         description: 'UID cannot be copied to the clipboard'
       });

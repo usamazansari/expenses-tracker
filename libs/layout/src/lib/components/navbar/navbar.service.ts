@@ -1,37 +1,35 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { ContextService } from '@expenses-tracker/core';
-import { RoutePaths } from '@expenses-tracker/shared/common';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NavbarService {
-  #context = inject(ContextService);
-  #router = inject(Router);
+  constructor(private _context: ContextService, private _router: Router) {}
 
   getUser$() {
-    return this.#context.watchUser$();
+    return this._context.watchUser$();
   }
 
   gotoHome() {
-    this.#router.navigate([RoutePaths.Home]);
+    this._router.navigate(['']);
   }
 
   gotoAuth() {
-    this.#router.navigate([RoutePaths.Auth]);
+    this._router.navigate(['auth', 'login']);
   }
 
   gotoDashboard() {
-    this.#router.navigate([RoutePaths.Dashboard]);
+    this._router.navigate(['dashboard']);
   }
 
   gotoPocketbook() {
-    this.#router.navigate([RoutePaths.Pocketbook]);
+    this._router.navigate(['pocketbook']);
   }
 
   gotoProfile() {
-    this.#router.navigate([RoutePaths.Profile]);
+    this._router.navigate(['profile']);
   }
 }

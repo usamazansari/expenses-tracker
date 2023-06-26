@@ -1,5 +1,5 @@
-import { getJestProjects } from '@nx/jest';
+import { getJestProjects } from '@nrwl/jest';
 
 export default {
-  projects: getJestProjects()
+  projects: getJestProjects(),
 };

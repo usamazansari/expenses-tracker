@@ -4,7 +4,6 @@ import { BehaviorSubject } from 'rxjs';
 
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
 import { ITransaction } from '@expenses-tracker/shared/interfaces';
-import { RoutePaths } from '@expenses-tracker/shared/common';
 
 @Injectable({
   providedIn: 'root'
@@ -37,10 +36,10 @@ export class TransactionListService {
 
   gotoAddTransaction() {
     this.#router.navigate([
-      RoutePaths.Pocketbook,
+      'pocketbook',
       this.#context.getPocketbook()?.id,
-      RoutePaths.Transaction,
-      RoutePaths.EntityAdd
+      'transaction',
+      'add'
     ]);
   }
 }

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, distinctUntilChanged, of, switchMap, tap } from 'rxjs';
 
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
-import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
+import { NotificationService } from '@expenses-tracker/shared/common';
 import { IFlag, INITIAL_FLAGS, ITransaction } from '@expenses-tracker/shared/interfaces';
 
 export type ComponentFlags = {
@@ -67,10 +67,10 @@ export class TransactionAddService {
         });
         this.resetFlags();
         this.#router.navigate([
-          RoutePaths.Pocketbook,
+          'pocketbook',
           this.#context.getPocketbook()?.id,
-          RoutePaths.Transaction,
-          RoutePaths.EntityList
+          'transaction',
+          'list'
         ]);
       }),
       catchError(error => {
@@ -94,10 +94,10 @@ export class TransactionAddService {
 
   cancelAddTransaction() {
     this.#router.navigate([
-      RoutePaths.Pocketbook,
+      'pocketbook',
       this.#context.getPocketbook()?.id,
-      RoutePaths.Transaction,
-      RoutePaths.EntityList
+      'transaction',
+      'list'
     ]);
   }
 }
