@@ -8,6 +8,7 @@ import {
   Validators
 } from '@angular/forms';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { InputTextModule } from 'primeng/inputtext';
 
 import { ComponentFlags, LoginService } from './login.service';
 
@@ -19,7 +20,7 @@ type LoginForm = {
 @Component({
   selector: 'expenses-tracker-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, InputTextModule],
   templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit, OnDestroy {

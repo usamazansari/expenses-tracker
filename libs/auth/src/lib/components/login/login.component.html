@@ -27,18 +27,29 @@
           class="grid grid-rows-[1fr_auto] gap-2"
           [ngClass]="{ 'opacity-50 pointer-events-none': flags.login.loading }">
           <div class="grid gap-2">
-            <div class="flex items-center gap-2">
-              <span class="material-icons min-w-[24px]">mail_outline</span>
-              <label>Email</label>
-              <input formControlName="email" type="email" placeholder="foo@bar.com" required />
+            <div class="flex flex-col justify-center">
+              <div class="flex items-center gap-2">
+                <span class="material-icons min-w-[24px]">mail_outline</span>
+                <input
+                  class="w-full ng-invalid"
+                  pInputText
+                  formControlName="email"
+                  id="email"
+                  type="email"
+                  placeholder="foo@bar.com"
+                  required />
+              </div>
+              <ng-container
+                *ngIf="formGroup.get('email')?.touched && formGroup.get('email')?.invalid">
+                <span class="text-et-color-fg-danger ml-[32px]">{{ getError('email') }}</span>
+              </ng-container>
             </div>
 
             <div class="flex items-center gap-2">
               <span class="material-icons min-w-[24px]">key</span>
-
-              <label>Password</label>
               <input
-                size="sm"
+                class="w-full"
+                pInputText
                 formControlName="password"
                 type="password"
                 placeholder="Password"

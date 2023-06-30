@@ -15,7 +15,11 @@
         "polyfills": ["zone.js"],
         "tsConfig": "apps/client/tsconfig.app.json",
         "assets": ["apps/client/src/favicon.ico", "apps/client/src/assets"],
-        "styles": ["apps/client/src/styles.scss"],
+        "styles": [
+          "apps/client/src/styles.scss",
+          "node_modules/primeng/resources/themes/soho-dark/theme.css",
+          "node_modules/primeng/resources/primeng.min.css"
+        ],
         "scripts": []
       },
       "configurations": {
