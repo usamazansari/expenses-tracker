@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
-import { InputTextModule } from 'primeng/inputtext';
 
 import { ComponentFlags, LoginService } from './login.service';
 
@@ -23,7 +22,7 @@ type FromControlExtras = {
 @Component({
   selector: 'expenses-tracker-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, InputTextModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit, OnDestroy {
