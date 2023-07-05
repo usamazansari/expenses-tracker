@@ -2,8 +2,9 @@
   <div
     class="relative grid gap-2 p-4 border rounded-lg w-96 bg-et-layer-alternate text-et-color-fg-default border-et-color-border-default">
     <div
-      class="grid grid-cols-[1fr_1fr] gap-2 items-center py-12 cursor-default"
+      class="flex items-center justify-center gap-2 py-12 cursor-default"
       [ngClass]="{ 'opacity-50 pointer-events-none': flags.login.loading }">
+      <span class="text-3xl material-icons text-et-color-accent-emphasis">login</span>
       <span class="text-3xl text-et-color-accent-emphasis">Login</span>
     </div>
     <ng-container *ngIf="flags.login.loading">
@@ -27,41 +28,51 @@
           class="grid grid-rows-[1fr_auto] gap-2"
           [ngClass]="{ 'opacity-50 pointer-events-none': flags.login.loading }">
           <div class="grid gap-2">
-            <div class="flex flex-col justify-center">
-              <div class="flex items-center gap-2">
-                <span class="material-icons min-w-[24px]">mail_outline</span>
+            <div class="flex flex-col gap-2 pb-8">
+              <label for="email-input" class="font-bold">Email</label>
+              <div class="relative flex flex-col justify-center flex-grow">
                 <input
-                  class="w-full ng-invalid"
-                  pInputText
+                  class="w-full p-3 transition-colors duration-200 border rounded-md bg-et-layer-alternate text-et-color-fg-default border-et-color-fg-default focus:ring-1 focus:ring-offset-1 focus:ring-opacity-75 focus:ring-et-color-fg-default focus:outline-none"
                   formControlName="email"
-                  id="email"
+                  id="email-input"
                   type="email"
                   placeholder="foo@bar.com"
+                  [ngClass]="{ 'border-et-color-button-danger focus:ring-et-color-button-danger': email().error.flag }"
                   required />
+                <ng-container *ngIf="email().error.flag">
+                  <span class="absolute left-0 p-1 top-full text-et-color-fg-danger">{{ email().error.message }}</span>
+                </ng-container>
               </div>
-              <ng-container
-                *ngIf="formGroup.get('email')?.touched && formGroup.get('email')?.invalid">
-                <span class="text-et-color-fg-danger ml-[32px]">{{ getError('email') }}</span>
-              </ng-container>
             </div>
 
-            <div class="flex items-center gap-2">
-              <span class="material-icons min-w-[24px]">key</span>
-              <input
-                class="w-full"
-                pInputText
-                formControlName="password"
-                type="password"
-                placeholder="Password"
-                required />
+            <div class="flex flex-col gap-2 pb-8">
+              <label for="password-input" class="font-bold">Password</label>
+              <div class="relative flex flex-col justify-center flex-grow">
+                <input
+                  class="w-full p-3 transition-colors duration-500 border rounded-md bg-et-layer-alternate text-et-color-fg-default border-et-color-fg-default focus:ring-1 focus:ring-offset-1 focus:ring-opacity-75 focus:ring-et-color-fg-default focus:outline-none"
+                  formControlName="password"
+                  type="password"
+                  id="password-input"
+                  placeholder="Password"
+                  [ngClass]="{
+                    'border-et-color-button-danger focus:ring-et-color-button-danger': password().error.flag
+                  }"
+                  required />
+                <ng-container *ngIf="password().error.flag">
+                  <span class="absolute left-0 p-1 top-full text-et-color-fg-danger">{{
+                    password().error.message
+                  }}</span>
+                </ng-container>
+              </div>
             </div>
           </div>
+
           <div class="flex flex-col gap-2">
             <button
               type="submit"
-              class="bg-et-color-button-primary-bg text-et-color-button-primary flex items-center gap-2 justify-center self-center py-3 text-white bg-primary w-[50%] rounded-lg">
+              class="flex items-center self-center justify-center w-full gap-2 py-3 text-white rounded-lg bg-et-color-button-primary-bg text-et-color-button-primary bg-primary">
               <span class="material-icons min-w-[24px]">login</span>
-              <span>LOGIN</span>
+              <span>Login</span>
             </button>
           </div>
         </div>
