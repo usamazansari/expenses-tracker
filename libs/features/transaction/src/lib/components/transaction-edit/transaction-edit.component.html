@@ -12,13 +12,7 @@
             <mat-form-field class="w-full">
               <mat-label>Amount</mat-label>
               <span matPrefix class="mr-1">€</span>
-              <input
-                matInput
-                formControlName="amount"
-                type="number"
-                placeholder="100"
-                required
-                autofocus />
+              <input matInput formControlName="amount" type="number" placeholder="100" required autofocus />
               <mat-error *ngIf="this.formGroup.get('amount')?.invalid">
                 {{ getError('amount') }}
               </mat-error>
@@ -28,12 +22,7 @@
             <mat-icon class="min-w-[24px]">category</mat-icon>
             <mat-form-field class="w-full">
               <mat-label>Category</mat-label>
-              <input
-                matInput
-                formControlName="category"
-                type="text"
-                placeholder="Grocery"
-                required />
+              <input matInput formControlName="category" type="text" placeholder="Grocery" required />
               <mat-error *ngIf="this.formGroup.get('category')?.invalid">
                 {{ getError('category') }}
               </mat-error>
@@ -81,11 +70,7 @@
             <mat-icon class="min-w-[24px]">comment</mat-icon>
             <mat-form-field class="w-full">
               <mat-label>Message</mat-label>
-              <input
-                matInput
-                formControlName="message"
-                type="text"
-                placeholder="Groceries for this month" />
+              <input matInput formControlName="message" type="text" placeholder="Groceries for this month" />
             </mat-form-field>
           </div>
         </div>
@@ -110,3 +95,4 @@
     </form>
   </div>
 </div>
+

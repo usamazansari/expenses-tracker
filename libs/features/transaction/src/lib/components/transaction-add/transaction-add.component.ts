@@ -1,12 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -61,10 +55,7 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
     this.formGroup = this.#formBuilder.group<TransactionAddForm>({
       amount: this.#formBuilder.control<number | null>(null, Validators.required),
       category: this.#formBuilder.control<TransactionCategory | ''>('', Validators.required),
-      direction: this.#formBuilder.control<TransactionDirection>(
-        'expense',
-        Validators.required
-      ),
+      direction: this.#formBuilder.control<TransactionDirection>('expense', Validators.required),
       message: this.#formBuilder.control<string>(''),
       paymentMode: this.#formBuilder.control<PaymentMode>('card', Validators.required),
       timestamp: this.#formBuilder.control<Date>(new Date(Date.now()), Validators.required)
@@ -73,8 +64,7 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
 
   addTransaction() {
     if (!this.formGroup.invalid) {
-      const { amount, category, direction, message, paymentMode, timestamp } =
-        this.formGroup.value;
+      const { amount, category, direction, message, paymentMode, timestamp } = this.formGroup.value;
       this.#addTransaction$ = this.#service
         .addTransaction$({
           amount,
@@ -101,9 +91,7 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
 
   getError(formControlName = '') {
     if (this.formGroup.get(formControlName)?.hasError('required')) {
-      return `${
-        formControlName.charAt(0).toUpperCase() + formControlName.slice(1)
-      } is required`;
+      return `${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)} is required`;
     }
     return '';
   }

@@ -7,17 +7,10 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatRippleModule } from '@angular/material/core';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { User } from 'firebase/auth';
-import { filter, map, Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, filter, map } from 'rxjs';
 
 import { ContextService } from '@expenses-tracker/core';
-import { AddPocketbookGraphicComponent } from '@expenses-tracker/shared/assets';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
 import { ComponentFlags, PocketbookAddService } from './pocketbook-add.service';
@@ -30,18 +23,7 @@ type PocketbookAddForm = {
 @Component({
   selector: 'expenses-tracker-pocketbook-add',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatChipsModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatRippleModule,
-    MatSelectModule,
-    ReactiveFormsModule,
-
-    AddPocketbookGraphicComponent
-  ],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './pocketbook-add.component.html',
   styles: []
 })

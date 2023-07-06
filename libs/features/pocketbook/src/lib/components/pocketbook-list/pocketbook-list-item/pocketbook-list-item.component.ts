@@ -1,29 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, inject } from '@angular/core';
-import { MatDialogModule, MatDialog } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { User } from 'firebase/auth';
-import { of, EMPTY, BehaviorSubject, Observable, switchMap } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, of } from 'rxjs';
 
 import { ExtractInitialsPipe } from '@expenses-tracker/features/profile';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
-import { AddPocketbookGraphicComponent } from '@expenses-tracker/shared/assets';
 
 import { PocketbookListItemService } from './pocketbook-list-item.service';
-import { PocketbookDeleteDialogComponent } from './pocketbook-delete-dialog.component';
 
 @Component({
   selector: 'expenses-tracker-pocketbook-list-item',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatDialogModule,
-    MatIconModule,
-    MatTooltipModule,
-    AddPocketbookGraphicComponent,
-    ExtractInitialsPipe
-  ],
+  imports: [CommonModule, ExtractInitialsPipe],
   providers: [PocketbookListItemService],
   templateUrl: './pocketbook-list-item.component.html'
 })
@@ -48,7 +36,6 @@ export class PocketbookListItemComponent implements OnInit {
   }
 
   #service = inject(PocketbookListItemService);
-  #dialog = inject(MatDialog);
 
   ngOnInit() {
     this.#service.initializeComponent(this.pocketbook);
@@ -61,18 +48,11 @@ export class PocketbookListItemComponent implements OnInit {
   }
 
   deletePocketbook() {
-    const _ref = this.#dialog.open(PocketbookDeleteDialogComponent);
-
-    _ref
-      .afterClosed()
-      .pipe(
-        switchMap(result =>
-          result
-            ? this.#service.deletePocketbook$((this.pocketbook as IPocketbook)?.id ?? '')
-            : of(EMPTY)
-        )
-      )
-      .subscribe();
+    const result = confirm('Delete Pocketbook?');
+    const deleteStream = result
+      ? this.#service.deletePocketbook$((this.pocketbook as IPocketbook)?.id ?? '')
+      : EMPTY;
+    deleteStream.subscribe();
   }
 
   gotoPocketbookDetail() {

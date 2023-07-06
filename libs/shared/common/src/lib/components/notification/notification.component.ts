@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { Notification, NotificationService } from './notification.service';
@@ -8,7 +7,7 @@ import { Notification, NotificationService } from './notification.service';
 @Component({
   selector: 'expenses-tracker-notification',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule],
   templateUrl: './notification.component.html'
 })
 export class NotificationComponent implements OnInit, OnDestroy {
