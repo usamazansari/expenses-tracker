@@ -1,13 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
+
 import { RouterModule } from '@angular/router';
 import { User } from 'firebase/auth';
 import { Observable } from 'rxjs';
 
 import { ExtractInitialsPipe } from '@expenses-tracker/features/profile';
-import { AddPocketbookGraphicComponent } from '@expenses-tracker/shared/assets';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
 import { PocketbookDetailService } from './pocketbook-detail.service';
@@ -15,15 +13,7 @@ import { PocketbookDetailService } from './pocketbook-detail.service';
 @Component({
   selector: 'expenses-tracker-pocketbook-detail',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatTooltipModule,
-    MatIconModule,
-    RouterModule,
-
-    ExtractInitialsPipe,
-    AddPocketbookGraphicComponent
-  ],
+  imports: [CommonModule, RouterModule, ExtractInitialsPipe],
   templateUrl: './pocketbook-detail.component.html'
 })
 export class PocketbookDetailComponent implements OnInit {

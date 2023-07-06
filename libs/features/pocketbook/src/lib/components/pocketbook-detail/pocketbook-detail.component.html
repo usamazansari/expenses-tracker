@@ -6,37 +6,29 @@
     <div class="grid bg-et-layer-alternate text-et-color-fg-default">
       <div class="flex flex-col gap-2 md:flex-row md:gap-8">
         <div class="flex items-center justify-center gap-2 py-12 md:justify-start">
-          <div class="grid self-center place-content-center">
-            <expenses-tracker-add-pocketbook-graphic
-              class="w-20 fill-et-color-accent-emphasis"></expenses-tracker-add-pocketbook-graphic>
-          </div>
           <div class="flex">
             <p class="text-2xl font-bold">{{ pocketbook.name }}</p>
           </div>
         </div>
         <div class="grid items-center grid-cols-4 gap-2 justify-items-center">
-          <mat-icon class="justify-self-end text-et-color-accent-emphasis">
+          <span class="material-icons justify-self-end text-et-color-accent-emphasis">
             verified_user
-          </mat-icon>
+          </span>
           <div class="flex justify-self-start">
             <ng-container *ngIf="owner$ | async as owner">
               <div
-                class="p-4 transition-colors duration-200 border rounded-full cursor-default w-14 h-14 bg-et-color-button-default-bg text-et-color-button-default border-et-color-button-default-border"
-                #tooltip="matTooltip"
-                [matTooltip]="owner.displayName ?? owner.email ?? ''"
-                matTooltipPosition="above">
+                class="p-4 transition-colors duration-200 border rounded-full cursor-default w-14 h-14 bg-et-color-button-default-bg text-et-color-button-default border-et-color-button-default-border">
                 <p class="text-center">{{ owner | extractInitials }}</p>
               </div>
             </ng-container>
           </div>
-          <mat-icon class="justify-self-end text-et-color-accent-emphasis">group</mat-icon>
+          <span class="material-icons justify-self-end text-et-color-accent-emphasis"
+            >group</span
+          >
           <div class="flex gap-2 justify-self-start">
             <ng-container *ngFor="let collaborator of collaboratorList$ | async">
               <div
-                class="p-4 transition-colors duration-200 border rounded-full cursor-default w-14 h-14 bg-et-color-button-default-bg text-et-color-button-default border-et-color-button-default-border"
-                #tooltip="matTooltip"
-                [matTooltip]="collaborator.displayName ?? collaborator.email ?? ''"
-                matTooltipPosition="above">
+                class="p-4 transition-colors duration-200 border rounded-full cursor-default w-14 h-14 bg-et-color-button-default-bg text-et-color-button-default border-et-color-button-default-border">
                 <p class="text-center">{{ collaborator | extractInitials }}</p>
               </div>
             </ng-container>
@@ -45,7 +37,7 @@
       </div>
       <div class="flex items-center justify-center">
         <span class="text-3xl font-bold text-et-color-fg-success">
-          {{ pocketbook.balance | currency : 'EUR' }}
+          {{ pocketbook.balance | currency: 'EUR' }}
         </span>
       </div>
       <div class="p-4">

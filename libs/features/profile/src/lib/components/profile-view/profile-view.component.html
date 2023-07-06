@@ -17,7 +17,7 @@
       </div>
       <div class="grid grid-rows-1 gap-2">
         <div class="flex items-center gap-2">
-          <mat-icon class="min-w-[24px] text-et-color-accent-emphasis">person</mat-icon>
+          <span class="material-icons min-w-[24px] text-et-color-accent-emphasis">person</span>
           <ng-container *ngIf="!user.displayName">
             <span class="text-et-color-fg-muted">Name unavailable</span>
           </ng-container>
@@ -28,9 +28,9 @@
           </ng-container>
         </div>
         <div class="flex items-center gap-2">
-          <mat-icon class="min-w-[24px] text-et-color-accent-emphasis">
+          <span class="material-icons min-w-[24px] text-et-color-accent-emphasis">
             alternate_email
-          </mat-icon>
+          </span>
           <span class="overflow-hidden whitespace-nowrap overflow-ellipsis">
             {{ user.email }}
           </span>
@@ -39,28 +39,27 @@
       <div class="grid grid-rows-1 gap-2">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <mat-icon class="min-w-[24px] text-et-color-accent-emphasis">badge</mat-icon>
+            <span class="material-icons min-w-[24px] text-et-color-accent-emphasis">badge</span>
             <span class="overflow-hidden whitespace-nowrap overflow-ellipsis">
               {{ user.uid }}
             </span>
           </div>
-          <button
-            matRipple
-            type="button"
-            class="flex items-center justify-center p-2 rounded-full">
-            <mat-icon class="text-et-color-accent-emphasis" (click)="copyUID(user.uid)">
+          <button type="button" class="flex items-center justify-center p-2 rounded-full">
+            <span
+              class="material-icons"
+              class="text-et-color-accent-emphasis"
+              (click)="copyUID(user.uid)">
               content_copy
-            </mat-icon>
+            </span>
           </button>
         </div>
       </div>
       <div class="grid grid-rows-1 gap-2"></div>
       <button
-        matRipple
         type="button"
         class="flex items-center justify-center gap-2 px-6 py-3 border rounded-lg bg-et-color-button-primary-bg text-et-color-button-primary border-et-color-button-primary-border"
         (click)="logout()">
-        <mat-icon class="min-w-[24px]">logout</mat-icon>
+        <span class="material-icons min-w-[24px]">logout</span>
         <span>LOGOUT</span>
       </button>
       <div class="grid grid-rows-1 gap-2"></div>

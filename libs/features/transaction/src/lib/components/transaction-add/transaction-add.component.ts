@@ -7,10 +7,6 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { Subscription } from 'rxjs';
 
 import { ITransaction, TransactionDirection } from '@expenses-tracker/shared/interfaces';
@@ -27,14 +23,7 @@ type TransactionAddForm = {
 @Component({
   selector: 'expenses-tracker-transaction-add',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatSelectModule,
-    ReactiveFormsModule
-  ],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './transaction-add.component.html',
   styles: []
 })
