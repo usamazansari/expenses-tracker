@@ -1,28 +1,15 @@
 <ng-container *ngIf="flags$ | async as flags">
-  <div
-    class="relative grid gap-2 p-4 border rounded-lg w-96 bg-et-layer-alternate text-et-color-fg-default border-et-color-border-default">
+  <div class="relative grid gap-2 p-4 border rounded-lg w-96 border-color-border-default">
     <div
       class="flex items-center justify-center gap-2 py-12 cursor-default"
       [ngClass]="{ 'opacity-50 pointer-events-none': flags.login.loading }">
-      <span class="text-3xl material-icons text-et-color-accent-emphasis">login</span>
-      <span class="text-3xl text-et-color-accent-emphasis">Login</span>
+      <span class="text-3xl material-icons text-color-accent-emphasis">login</span>
+      <span class="text-3xl text-color-accent-emphasis">Login</span>
     </div>
     <ng-container *ngIf="flags.login.loading">
-      <div class="absolute top-0 bottom-0 left-0 right-0 z-10 bg-et-color-overlay"></div>
+      <div class="absolute top-0 bottom-0 left-0 right-0 z-10 bg-color-canvas-overlay"></div>
     </ng-container>
     <ng-container *ngIf="flags.login.visible">
-      <ng-container *ngIf="flags.login.fail">
-        <div
-          class="absolute top-0 left-0 right-0 flex items-center justify-between gap-2 px-2 py-4 bg-red-100 rounded-lg bg-et-color-button-danger-bg text-et-color-fg-danger">
-          <div class="flex items-center gap-2">
-            <span class="material-icons">error</span>
-            <span class="font-bold">Login Failed</span>
-          </div>
-          <button class="flex items-center" (click)="dismissError()">
-            <span class="material-icons">clear</span>
-          </button>
-        </div>
-      </ng-container>
       <form [formGroup]="formGroup" (ngSubmit)="login()">
         <div
           class="grid grid-rows-[1fr_auto] gap-2"
@@ -32,15 +19,16 @@
               <label for="email-input" class="font-bold">Email</label>
               <div class="relative flex flex-col justify-center flex-grow">
                 <input
-                  class="w-full p-3 transition-colors duration-200 border rounded-md bg-et-layer-alternate text-et-color-fg-default border-et-color-fg-default focus:ring-1 focus:ring-offset-1 focus:ring-opacity-75 focus:ring-et-color-fg-default focus:outline-none"
+                  class="w-full p-3 transition-colors duration-200 border rounded-md bg-color-canvas-inset text-color-fg-default border-color-border-default focus:border-color-accent-fg focus:outline-none focus:bg-color-canvas-default"
                   formControlName="email"
                   id="email-input"
                   type="email"
                   placeholder="foo@bar.com"
-                  [ngClass]="{ 'border-et-color-button-danger focus:ring-et-color-button-danger': email().error.flag }"
+                  (blur)="checkControl(email())"
+                  [ngClass]="{ 'border-color-btn-danger-hover-border': email().error.flag }"
                   required />
                 <ng-container *ngIf="email().error.flag">
-                  <span class="absolute left-0 p-1 top-full text-et-color-fg-danger">{{ email().error.message }}</span>
+                  <span class="absolute left-0 p-1 top-full text-color-danger-fg">{{ email().error.message }}</span>
                 </ng-container>
               </div>
             </div>
@@ -49,19 +37,16 @@
               <label for="password-input" class="font-bold">Password</label>
               <div class="relative flex flex-col justify-center flex-grow">
                 <input
-                  class="w-full p-3 transition-colors duration-500 border rounded-md bg-et-layer-alternate text-et-color-fg-default border-et-color-fg-default focus:ring-1 focus:ring-offset-1 focus:ring-opacity-75 focus:ring-et-color-fg-default focus:outline-none"
+                  class="w-full p-3 transition-colors duration-200 border rounded-md bg-color-canvas-inset text-color-fg-default border-color-border-default focus:border-color-accent-fg focus:outline-none focus:bg-color-canvas-default"
                   formControlName="password"
                   type="password"
                   id="password-input"
                   placeholder="Password"
-                  [ngClass]="{
-                    'border-et-color-button-danger focus:ring-et-color-button-danger': password().error.flag
-                  }"
+                  (blur)="checkControl(password())"
+                  [ngClass]="{ 'border-color-btn-danger-hover-border': password().error.flag }"
                   required />
                 <ng-container *ngIf="password().error.flag">
-                  <span class="absolute left-0 p-1 top-full text-et-color-fg-danger">{{
-                    password().error.message
-                  }}</span>
+                  <span class="absolute left-0 p-1 top-full text-color-danger-fg">{{ password().error.message }}</span>
                 </ng-container>
               </div>
             </div>
@@ -70,7 +55,7 @@
           <div class="flex flex-col gap-2">
             <button
               type="submit"
-              class="flex items-center self-center justify-center w-full gap-2 py-3 text-white rounded-lg bg-et-color-button-primary-bg text-et-color-button-primary bg-primary">
+              class="flex items-center self-center justify-center w-full gap-2 py-3 text-white transition-colors duration-200 border rounded-lg bg-color-btn-primary-bg text-color-btn-primary-text border-color-btn-primary-border hover:bg-color-btn-primary-hover-bg hover:border-color-btn-primary-hover-border">
               <span class="material-icons min-w-[24px]">login</span>
               <span>Login</span>
             </button>

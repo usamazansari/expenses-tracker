@@ -11,7 +11,7 @@ type LoginForm = {
 };
 
 type FromControlExtras = {
-  name: string;
+  name: keyof LoginForm;
   value: string;
   error: {
     flag: boolean;
@@ -100,20 +100,42 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
-  dismissError() {
-    this.#service.dismissError();
-  }
-
-  getErrorMessage(formControlName = '') {
-    if (this.formGroup.get(formControlName)?.hasError('required')) {
+  private getErrorMessage(formControlName: keyof LoginForm) {
+    if (this.formGroup.controls[formControlName]?.hasError('required')) {
       return `${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)} is required`;
     }
 
-    if (this.formGroup.get(formControlName)?.hasError('email')) {
+    if (this.formGroup.controls[formControlName]?.hasError('email')) {
       return 'Invalid Email';
     }
 
     return `Unknown validation error for ${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)}`;
+  }
+
+  checkControl(formControl: FromControlExtras) {
+    switch (formControl.name) {
+      case 'email':
+        this.email.update(props => ({
+          ...props,
+          error: {
+            flag: this.getError(this.formGroup.controls.email),
+            message: this.getErrorMessage(props.name)
+          }
+        }));
+        break;
+      case 'password':
+        this.password.update(props => ({
+          ...props,
+          error: {
+            flag: this.getError(this.formGroup.controls.email),
+            message: this.getErrorMessage(props.name)
+          }
+        }));
+        break;
+
+      default:
+        break;
+    }
   }
 
   ngOnDestroy() {
