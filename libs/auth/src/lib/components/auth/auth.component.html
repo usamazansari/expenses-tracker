@@ -2,7 +2,6 @@
   <ng-container *ngIf="authMode$ | async as authMode">
     <div class="grid items-end grid-cols-2">
       <button
-        matRipple
         type="button"
         class="flex items-center justify-center w-48 gap-2 p-4 text-center rounded-tl-lg rounded-bl-lg cursor-pointer"
         [ngClass]="
@@ -11,11 +10,10 @@
             : 'text-et-color-fg-default bg-et-color-button-default-bg'
         "
         (click)="gotoLogin()">
-        <mat-icon>login</mat-icon>
+        <span class="material-icons">login</span>
         <span>Login</span>
       </button>
       <button
-        matRipple
         type="button"
         class="flex items-center justify-center w-48 gap-2 p-4 text-center rounded-tr-lg rounded-br-lg cursor-pointer"
         [ngClass]="
@@ -24,7 +22,7 @@
             : 'text-et-color-fg-default bg-et-color-button-default-bg'
         "
         (click)="gotoSignup()">
-        <mat-icon>person_add</mat-icon>
+        <span class="material-icons">person_add</span>
         <span>Signup</span>
       </button>
     </div>

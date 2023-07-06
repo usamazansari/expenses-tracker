@@ -1,8 +1,6 @@
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatRippleModule } from '@angular/material/core';
-import { MatIconModule } from '@angular/material/icon';
 import { User } from 'firebase/auth';
 import { Observable, Subscription } from 'rxjs';
 
@@ -20,8 +18,6 @@ import { ComponentFlags, ProfileService } from './profile.service';
     ClipboardModule,
     CommonModule,
     ExtractInitialsPipe,
-    MatIconModule,
-    MatRippleModule,
     ProfileEditComponent,
     ProfileViewComponent
   ],

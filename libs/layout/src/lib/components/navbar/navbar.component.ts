@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { MatRippleModule } from '@angular/material/core';
 import { User } from 'firebase/auth';
 import { Observable } from 'rxjs';
 
@@ -19,8 +18,6 @@ import { NavbarService } from './navbar.service';
   standalone: true,
   imports: [
     CommonModule,
-    MatRippleModule,
-
     AccountGraphicComponent,
     AuthGraphicComponent,
     DashboardGraphicComponent,

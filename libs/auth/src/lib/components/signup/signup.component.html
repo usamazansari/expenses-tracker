@@ -6,8 +6,6 @@
       [ngClass]="{
         'opacity-50 pointer-events-none': flags.signup.loading || flags.saveUser.loading
       }">
-      <expenses-tracker-register-graphic
-        class="w-16 fill-et-color-accent-emphasis justify-self-end"></expenses-tracker-register-graphic>
       <span class="text-3xl text-et-color-accent-emphasis">Signup</span>
     </div>
     <ng-container *ngIf="flags.signup.loading || flags.saveUser.loading">
@@ -18,11 +16,11 @@
         <div
           class="absolute top-0 left-0 right-0 flex items-center justify-between gap-2 px-2 py-4 bg-red-100 rounded-lg bg-et-color-button-danger-bg text-et-color-fg-danger">
           <div class="flex items-center gap-2">
-            <mat-icon>error</mat-icon>
+            <span class="material-icons">error</span>
             <span class="font-bold">Signup Failed</span>
           </div>
           <button class="flex items-center" (click)="dismissError()">
-            <mat-icon>clear</mat-icon>
+            <span class="material-icons">clear</span>
           </button>
         </div>
       </ng-container>
@@ -34,44 +32,29 @@
           }">
           <div class="grid gap-2">
             <div class="flex items-center gap-2">
-              <mat-icon class="min-w-[24px]">mail_outline</mat-icon>
-              <mat-form-field class="w-full">
-                <mat-label>Email</mat-label>
-                <input
-                  matInput
-                  formControlName="email"
-                  type="email"
-                  placeholder="foo@bar.com"
-                  required />
-                <mat-error *ngIf="this.formGroup.get('email')?.invalid">
-                  {{ getError('email') }}
-                </mat-error>
-              </mat-form-field>
+              <span class="material-icons min-w-[24px]">mail_outline</span>
+
+              <label>Email</label>
+              <input formControlName="email" type="email" placeholder="foo@bar.com" required />
             </div>
 
             <div class="flex items-center gap-2">
-              <mat-icon class="min-w-[24px]">key</mat-icon>
-              <mat-form-field class="w-full">
-                <mat-label>Password</mat-label>
-                <input
-                  size="sm"
-                  matInput
-                  formControlName="password"
-                  type="password"
-                  placeholder="Password"
-                  required />
-                <mat-error *ngIf="this.formGroup.get('password')?.invalid">
-                  {{ getError('password') }}
-                </mat-error>
-              </mat-form-field>
+              <span class="material-icons min-w-[24px]">key</span>
+
+              <label>Password</label>
+              <input
+                size="sm"
+                formControlName="password"
+                type="password"
+                placeholder="Password"
+                required />
             </div>
           </div>
           <div class="flex flex-col gap-2">
             <button
-              matRipple
               type="submit"
               class="bg-et-color-button-primary-bg text-et-color-button-primary flex items-center gap-2 justify-center self-center py-3 text-white bg-primary w-[50%] rounded-lg">
-              <mat-icon class="min-w-[24px]">person_add</mat-icon>
+              <span class="material-icons min-w-[24px]">person_add</span>
               <span>SIGNUP</span>
             </button>
           </div>
