@@ -3,20 +3,13 @@ import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
+import { FormGroupTypeGenerator, FromControlExtras } from '@expenses-tracker/shared/interfaces';
+
 import { ComponentFlags, LoginService } from './login.service';
 
 type LoginForm = {
-  email: FormControl<string>;
-  password: FormControl<string>;
-};
-
-type FromControlExtras = {
-  name: keyof LoginForm;
-  value: string;
-  error: {
-    flag: boolean;
-    message: string;
-  };
+  email: string;
+  password: string;
 };
 
 @Component({
@@ -26,7 +19,7 @@ type FromControlExtras = {
   templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  formGroup!: FormGroup<LoginForm>;
+  formGroup!: FormGroup<FormGroupTypeGenerator<LoginForm>>;
   error$ = new BehaviorSubject<string>('');
   flags$!: Observable<ComponentFlags>;
   #login$!: Subscription;
@@ -34,7 +27,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   #fb = inject(FormBuilder);
   #service = inject(LoginService);
 
-  email = signal<FromControlExtras>({
+  email = signal<FromControlExtras<LoginForm, 'email'>>({
     name: 'email',
     value: '',
     error: {
@@ -43,7 +36,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   });
 
-  password = signal<FromControlExtras>({
+  password = signal<FromControlExtras<LoginForm, 'password'>>({
     name: 'password',
     value: '',
     error: {
@@ -53,7 +46,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit() {
-    this.formGroup = this.#fb.group<LoginForm>({
+    this.formGroup = this.#fb.group<FormGroupTypeGenerator<LoginForm>>({
       email: this.#fb.control<string>('', {
         validators: [Validators.required, Validators.email]
       }) as FormControl<string>,
@@ -85,10 +78,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.flags$ = this.#service.watchFlags$();
   }
 
-  private getError(control: FormControl<string>): boolean {
-    return control.touched && !!control.errors;
-  }
-
   login() {
     if (!this.formGroup.invalid) {
       const { email, password } = this.formGroup.value;
@@ -98,6 +87,10 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  private getError(control: FormControl<string>): boolean {
+    return control.touched && !!control.errors;
   }
 
   private getErrorMessage(formControlName: keyof LoginForm) {
@@ -112,7 +105,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     return `Unknown validation error for ${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)}`;
   }
 
-  checkControl(formControl: FromControlExtras) {
+  checkControl(formControl: FromControlExtras<LoginForm, keyof LoginForm>) {
     switch (formControl.name) {
       case 'email':
         this.email.update(props => ({
