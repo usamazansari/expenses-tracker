@@ -3,10 +3,7 @@
     <div class="grid grid-rows-1 gap-8 m-0 sm:mx-32 lg:m-0 lg:grid-cols-3">
       <div class="grid grid-rows-1 gap-2 place-content-center">
         <ng-container *ngIf="user.photoURL">
-          <img
-            class="w-24 h-24 rounded-full cursor-default"
-            [src]="user.photoURL"
-            alt="User Image" />
+          <img class="w-24 h-24 rounded-full cursor-default" [src]="user.photoURL" alt="User Image" />
         </ng-container>
         <ng-container *ngIf="!user.photoURL">
           <span
@@ -28,9 +25,7 @@
           </ng-container>
         </div>
         <div class="flex items-center gap-2">
-          <span class="material-icons min-w-[24px] text-et-color-accent-emphasis">
-            alternate_email
-          </span>
+          <span class="material-icons min-w-[24px] text-et-color-accent-emphasis"> alternate_email </span>
           <span class="overflow-hidden whitespace-nowrap overflow-ellipsis">
             {{ user.email }}
           </span>
@@ -45,10 +40,7 @@
             </span>
           </div>
           <button type="button" class="flex items-center justify-center p-2 rounded-full">
-            <span
-              class="material-icons"
-              class="text-et-color-accent-emphasis"
-              (click)="copyUID(user.uid)">
+            <span class="material-icons" class="text-et-color-accent-emphasis" (click)="copyUID(user.uid)">
               content_copy
             </span>
           </button>

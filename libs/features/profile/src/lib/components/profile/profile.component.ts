@@ -1,11 +1,13 @@
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { User } from 'firebase/auth';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { NotificationService } from '@expenses-tracker/shared/common';
 
+import { INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 import { ExtractInitialsPipe } from '../../pipes';
 import { ProfileEditComponent } from '../profile-edit/profile-edit.component';
 import { ProfileViewComponent } from '../profile-view/profile-view.component';
@@ -19,63 +21,89 @@ import { ComponentFlags, ProfileService } from './profile.service';
     CommonModule,
     ExtractInitialsPipe,
     ProfileEditComponent,
-    ProfileViewComponent
+    ProfileViewComponent,
+    RouterModule
   ],
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit, OnDestroy {
-  user$!: Observable<User | null>;
-  isEditing = false;
-  flags$!: Observable<ComponentFlags>;
+  #user$!: Subscription;
   #logout$!: Subscription;
 
-  constructor(private _notification: NotificationService, private _service: ProfileService) {}
+  #notification = inject(NotificationService);
+  #service = inject(ProfileService);
+
+  isEditing = signal<boolean>(false);
+  flags = signal<ComponentFlags>({
+    logout: INITIAL_FLAGS,
+    user: INITIAL_FLAGS
+  });
+
+  user = signal<User | null>(null);
 
   ngOnInit() {
-    this.user$ = this._service.getUser$();
-    this.flags$ = this._service.watchFlags$();
+    this.flags.update(value => ({
+      ...value,
+      user: { ...value.user, loading: true }
+    }));
+    this.#user$ = this.#service.getUser$().subscribe({
+      next: user => {
+        this.flags.update(value => ({
+          ...value,
+          user: { ...value.user, loading: false, success: true, fail: false }
+        }));
+        this.user.set(user);
+      },
+      error: () => {
+        this.flags.update(value => ({
+          ...value,
+          user: { ...value.user, loading: false, success: true, fail: false }
+        }));
+      }
+    });
   }
 
   logout() {
-    this.#logout$ = this._service.logout$().subscribe();
+    this.#logout$ = this.#service.logout$().subscribe();
   }
 
   editMode() {
-    this.isEditing = true;
+    this.isEditing.set(true);
   }
 
   updateUserInfo($: User) {
-    this._service.updateUserInfo$($).subscribe({
+    this.#service.updateUserInfo$($).subscribe({
       next: () => {
-        this._notification.success({
+        this.#notification.success({
           title: 'Successful!',
           description: 'User details updated successfully.'
         });
-        this.isEditing = false;
+        this.isEditing.set(false);
       },
       error: error => {
-        this._notification.error({
+        this.#notification.error({
           title: 'Error!',
           description: `Unable to update the user details - ${error}.`
         });
-        this.isEditing = true;
+        this.isEditing.set(true);
       }
     });
   }
 
   cancelEdit() {
-    this._notification.info({
+    this.#notification.info({
       title: 'Changed not saved.',
       description: 'Profile details were not updated since you clicked cancel.'
     });
-    this.isEditing = false;
+    this.isEditing.set(false);
   }
 
   copyUID(uid: string | null) {
-    this._service.copyUID(uid);
+    this.#service.copyUID(uid);
   }
 
   ngOnDestroy() {
     this.#logout$?.unsubscribe();
+    this.#user$?.unsubscribe();
   }
 }
