@@ -1,23 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
-import { ComponentFlags, LoginService } from './login.service';
+import { FormGroupTypeGenerator, FromControlExtras, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
-type LoginForm = {
-  email: FormControl<string>;
-  password: FormControl<string>;
-};
-
-type FromControlExtras = {
-  name: keyof LoginForm;
-  value: string;
-  error: {
-    flag: boolean;
-    message: string;
-  };
-};
+import { ComponentFlags, ComponentForm, LoginService } from './login.service';
 
 @Component({
   selector: 'expenses-tracker-login',
@@ -26,15 +14,13 @@ type FromControlExtras = {
   templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  formGroup!: FormGroup<LoginForm>;
-  error$ = new BehaviorSubject<string>('');
-  flags$!: Observable<ComponentFlags>;
+  formGroup!: FormGroup<FormGroupTypeGenerator<ComponentForm>>;
   #login$!: Subscription;
 
   #fb = inject(FormBuilder);
   #service = inject(LoginService);
 
-  email = signal<FromControlExtras>({
+  email = signal<FromControlExtras<ComponentForm, 'email'>>({
     name: 'email',
     value: '',
     error: {
@@ -43,7 +29,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   });
 
-  password = signal<FromControlExtras>({
+  password = signal<FromControlExtras<ComponentForm, 'password'>>({
     name: 'password',
     value: '',
     error: {
@@ -52,8 +38,12 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   });
 
+  flags = signal<ComponentFlags>({
+    login: INITIAL_FLAGS
+  });
+
   ngOnInit() {
-    this.formGroup = this.#fb.group<LoginForm>({
+    this.formGroup = this.#fb.group<FormGroupTypeGenerator<ComponentForm>>({
       email: this.#fb.control<string>('', {
         validators: [Validators.required, Validators.email]
       }) as FormControl<string>,
@@ -80,39 +70,31 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
       }));
     });
-
-    this.#service.dismissError();
-    this.flags$ = this.#service.watchFlags$();
-  }
-
-  private getError(control: FormControl<string>): boolean {
-    return control.touched && !!control.errors;
   }
 
   login() {
     if (!this.formGroup.invalid) {
       const { email, password } = this.formGroup.value;
-      this.#login$ = this.#service.login$({ email, password }).subscribe({
+      this.flags.update(value => ({ ...value, login: { ...value.login, loading: true } }));
+      this.#login$ = this.#service.login$({ email, password } as ComponentForm).subscribe({
         next: () => {
+          this.flags.update(value => ({
+            ...value,
+            login: { ...value.login, loading: false, success: true, fail: false }
+          }));
           this.formGroup.reset();
+        },
+        error: () => {
+          this.flags.update(value => ({
+            ...value,
+            login: { ...value.login, loading: false, success: false, fail: true }
+          }));
         }
       });
     }
   }
 
-  private getErrorMessage(formControlName: keyof LoginForm) {
-    if (this.formGroup.controls[formControlName]?.hasError('required')) {
-      return `${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)} is required`;
-    }
-
-    if (this.formGroup.controls[formControlName]?.hasError('email')) {
-      return 'Invalid Email';
-    }
-
-    return `Unknown validation error for ${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)}`;
-  }
-
-  checkControl(formControl: FromControlExtras) {
+  checkControl(formControl: FromControlExtras<ComponentForm, keyof ComponentForm>) {
     switch (formControl.name) {
       case 'email':
         this.email.update(props => ({
@@ -136,6 +118,22 @@ export class LoginComponent implements OnInit, OnDestroy {
       default:
         break;
     }
+  }
+
+  private getError(control: FormControl<string>): boolean {
+    return control.touched && !!control.errors;
+  }
+
+  private getErrorMessage(formControlName: keyof ComponentForm) {
+    if (this.formGroup.controls[formControlName]?.hasError('required')) {
+      return `${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)} is required`;
+    }
+
+    if (this.formGroup.controls[formControlName]?.hasError('email')) {
+      return 'Invalid Email';
+    }
+
+    return `Unknown validation error for ${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)}`;
   }
 
   ngOnDestroy() {
