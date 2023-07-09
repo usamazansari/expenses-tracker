@@ -1,61 +1,61 @@
 <ng-container *ngIf="flags$ | async as flags">
-  <div
-    class="relative grid gap-2 p-4 border rounded-lg w-96 bg-et-layer-alternate text-et-color-fg-default border-et-color-border-default">
+  <div class="relative grid gap-2 et-card">
     <div
-      class="grid grid-cols-[1fr_1fr] gap-2 items-center py-12 cursor-default"
-      [ngClass]="{
-        'opacity-50 pointer-events-none': flags.signup.loading || flags.saveUser.loading
-      }">
-      <span class="text-3xl text-et-color-accent-emphasis">Signup</span>
+      class="flex items-center justify-center gap-2 py-12 cursor-default"
+      [ngClass]="{ 'opacity-50 pointer-events-none': flags.signup.loading }">
+      <span class="text-3xl material-icons text-color-accent-emphasis">person_add</span>
+      <span class="text-3xl text-color-accent-emphasis">Signup</span>
     </div>
-    <ng-container *ngIf="flags.signup.loading || flags.saveUser.loading">
-      <div class="absolute top-0 bottom-0 left-0 right-0 z-10 bg-et-color-overlay"></div>
+    <ng-container *ngIf="flags.signup.loading">
+      <div class="et-loading-overlay"></div>
     </ng-container>
     <ng-container *ngIf="flags.signup.visible">
-      <ng-container *ngIf="flags.signup.fail">
-        <div
-          class="absolute top-0 left-0 right-0 flex items-center justify-between gap-2 px-2 py-4 bg-red-100 rounded-lg bg-et-color-button-danger-bg text-et-color-fg-danger">
-          <div class="flex items-center gap-2">
-            <span class="material-icons">error</span>
-            <span class="font-bold">Signup Failed</span>
-          </div>
-          <button class="flex items-center" (click)="dismissError()">
-            <span class="material-icons">clear</span>
-          </button>
-        </div>
-      </ng-container>
       <form [formGroup]="formGroup" (ngSubmit)="signup()">
         <div
           class="grid grid-rows-[1fr_auto] gap-2"
-          [ngClass]="{
-            'opacity-50 pointer-events-none': flags.signup.loading || flags.saveUser.loading
-          }">
+          [ngClass]="{ 'opacity-50 pointer-events-none': flags.signup.loading }">
           <div class="grid gap-2">
-            <div class="flex items-center gap-2">
-              <span class="material-icons min-w-[24px]">mail_outline</span>
-
-              <label>Email</label>
-              <input formControlName="email" type="email" placeholder="foo@bar.com" required />
+            <div class="et-form-field-wrapper">
+              <label for="email-input" class="font-bold">Email</label>
+              <div class="et-form-field-input-wrapper">
+                <input
+                  class="w-full et-input"
+                  formControlName="email"
+                  id="email-input"
+                  type="email"
+                  placeholder="foo@bar.com"
+                  (blur)="checkControl(email())"
+                  [ngClass]="{ 'et-input-error-state': email().error.flag }"
+                  required />
+                <ng-container *ngIf="email().error.flag">
+                  <span class="et-form-field-input-error-message">{{ email().error.message }}</span>
+                </ng-container>
+              </div>
             </div>
 
-            <div class="flex items-center gap-2">
-              <span class="material-icons min-w-[24px]">key</span>
-
-              <label>Password</label>
-              <input
-                size="sm"
-                formControlName="password"
-                type="password"
-                placeholder="Password"
-                required />
+            <div class="et-form-field-wrapper">
+              <label for="password-input" class="font-bold">Password</label>
+              <div class="et-form-field-input-wrapper">
+                <input
+                  class="w-full et-input"
+                  formControlName="password"
+                  type="password"
+                  id="password-input"
+                  placeholder="Password"
+                  (blur)="checkControl(password())"
+                  [ngClass]="{ 'et-input-error-state': password().error.flag }"
+                  required />
+                <ng-container *ngIf="password().error.flag">
+                  <span class="et-form-field-input-error-message">{{ password().error.message }}</span>
+                </ng-container>
+              </div>
             </div>
           </div>
+
           <div class="flex flex-col gap-2">
-            <button
-              type="submit"
-              class="bg-et-color-button-primary-bg text-et-color-button-primary flex items-center gap-2 justify-center self-center py-3 text-white bg-primary w-[50%] rounded-lg">
+            <button type="submit" class="w-full et-button et-button-primary">
               <span class="material-icons min-w-[24px]">person_add</span>
-              <span>SIGNUP</span>
+              <span>Signup</span>
             </button>
           </div>
         </div>
