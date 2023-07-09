@@ -1,65 +1,63 @@
-<ng-container *ngIf="flags$ | async as flags">
-  <div class="relative grid gap-2 et-card">
-    <div
-      class="flex items-center justify-center gap-2 py-12 cursor-default"
-      [ngClass]="{ 'opacity-50 pointer-events-none': flags.login.loading }">
-      <span class="text-3xl material-icons text-color-accent-emphasis">login</span>
-      <span class="text-3xl text-color-accent-emphasis">Login</span>
-    </div>
-    <ng-container *ngIf="flags.login.loading">
-      <div class="et-loading-overlay"></div>
-    </ng-container>
-    <ng-container *ngIf="flags.login.visible">
-      <form [formGroup]="formGroup" (ngSubmit)="login()">
-        <div
-          class="grid grid-rows-[1fr_auto] gap-2"
-          [ngClass]="{ 'opacity-50 pointer-events-none': flags.login.loading }">
-          <div class="grid gap-2">
-            <div class="et-form-field-wrapper">
-              <label for="email-input" class="font-bold">Email</label>
-              <div class="et-form-field-input-wrapper">
-                <input
-                  class="w-full et-input"
-                  formControlName="email"
-                  id="email-input"
-                  type="email"
-                  placeholder="foo@bar.com"
-                  (blur)="checkControl(email())"
-                  [ngClass]="{ 'et-input-error-state': email().error.flag }"
-                  required />
-                <ng-container *ngIf="email().error.flag">
-                  <span class="et-form-field-input-error-message">{{ email().error.message }}</span>
-                </ng-container>
-              </div>
-            </div>
-
-            <div class="et-form-field-wrapper">
-              <label for="password-input" class="font-bold">Password</label>
-              <div class="et-form-field-input-wrapper">
-                <input
-                  class="w-full et-input"
-                  formControlName="password"
-                  type="password"
-                  id="password-input"
-                  placeholder="Password"
-                  (blur)="checkControl(password())"
-                  [ngClass]="{ 'et-input-error-state': password().error.flag }"
-                  required />
-                <ng-container *ngIf="password().error.flag">
-                  <span class="et-form-field-input-error-message">{{ password().error.message }}</span>
-                </ng-container>
-              </div>
+<div class="relative grid gap-2 et-card">
+  <div
+    class="flex items-center justify-center gap-2 py-12 cursor-default"
+    [ngClass]="{ 'opacity-50 pointer-events-none': flags().login.loading }">
+    <span class="text-3xl material-icons text-color-accent-emphasis">login</span>
+    <span class="text-3xl text-color-accent-emphasis">Login</span>
+  </div>
+  <ng-container *ngIf="flags().login.loading">
+    <div class="et-loading-overlay"></div>
+  </ng-container>
+  <ng-container *ngIf="flags().login.visible">
+    <form [formGroup]="formGroup" (ngSubmit)="login()">
+      <div
+        class="grid grid-rows-[1fr_auto] gap-2"
+        [ngClass]="{ 'opacity-50 pointer-events-none': flags().login.loading }">
+        <div class="grid gap-2">
+          <div class="et-form-field-wrapper">
+            <label for="email-input" class="font-bold">Email</label>
+            <div class="et-form-field-input-wrapper">
+              <input
+                class="w-full et-input"
+                formControlName="email"
+                id="email-input"
+                type="email"
+                placeholder="foo@bar.com"
+                (blur)="checkControl(email())"
+                [ngClass]="{ 'et-input-error-state': email().error.flag }"
+                required />
+              <ng-container *ngIf="email().error.flag">
+                <span class="et-form-field-input-error-message">{{ email().error.message }}</span>
+              </ng-container>
             </div>
           </div>
 
-          <div class="flex flex-col gap-2">
-            <button type="submit" class="w-full et-button et-button-primary">
-              <span class="material-icons min-w-[24px]">login</span>
-              <span>Login</span>
-            </button>
+          <div class="et-form-field-wrapper">
+            <label for="password-input" class="font-bold">Password</label>
+            <div class="et-form-field-input-wrapper">
+              <input
+                class="w-full et-input"
+                formControlName="password"
+                type="password"
+                id="password-input"
+                placeholder="Password"
+                (blur)="checkControl(password())"
+                [ngClass]="{ 'et-input-error-state': password().error.flag }"
+                required />
+              <ng-container *ngIf="password().error.flag">
+                <span class="et-form-field-input-error-message">{{ password().error.message }}</span>
+              </ng-container>
+            </div>
           </div>
         </div>
-      </form>
-    </ng-container>
-  </div>
-</ng-container>
+
+        <div class="flex flex-col gap-2">
+          <button type="submit" class="w-full et-button et-button-primary">
+            <span class="material-icons min-w-[24px]">login</span>
+            <span>Login</span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </ng-container>
+</div>
