@@ -1,13 +1,11 @@
 <div class="relative grid gap-2 w-96 et-card">
-  <div
-    class="flex items-center justify-center gap-2 py-12 cursor-default"
-    [ngClass]="{ 'opacity-50 pointer-events-none': flags().signup.loading }">
-    <span class="text-3xl material-icons text-color-accent-emphasis">person_add</span>
-    <span class="text-3xl text-color-accent-emphasis">Signup</span>
-  </div>
   <ng-container *ngIf="flags().signup.loading">
     <div class="et-loading-overlay"></div>
   </ng-container>
+  <div class="flex items-center justify-center gap-2 py-12 cursor-default">
+    <span class="text-3xl material-icons text-color-accent-emphasis">person_add</span>
+    <span class="text-3xl text-color-accent-emphasis">Signup</span>
+  </div>
   <ng-container *ngIf="flags().signup.visible">
     <form [formGroup]="formGroup" (ngSubmit)="signup()">
       <div
