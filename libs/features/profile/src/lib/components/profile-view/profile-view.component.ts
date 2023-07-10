@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { User } from 'firebase/auth';
-import { BehaviorSubject } from 'rxjs';
 
 import { ExtractInitialsPipe } from '../../pipes';
+
+import { ComponentFlags, ProfileViewService } from './profile-view.service';
+import { INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
 @Component({
   selector: 'expenses-tracker-profile-view',
@@ -11,23 +13,34 @@ import { ExtractInitialsPipe } from '../../pipes';
   imports: [CommonModule, ExtractInitialsPipe],
   templateUrl: './profile-view.component.html'
 })
-export class ProfileViewComponent {
-  #user$ = new BehaviorSubject<User | null>(null);
-  @Input()
-  set user(value: User | null) {
-    this.#user$.next(value);
-  }
-  get user() {
-    return this.#user$.getValue();
-  }
-  @Output() copyUID$ = new EventEmitter<string | null>();
-  @Output() logout$ = new EventEmitter<void>();
+export class ProfileViewComponent implements OnInit {
+  user = signal<User | null>(null);
+  flags = signal<ComponentFlags>({
+    logout: INITIAL_FLAGS,
+    user: INITIAL_FLAGS
+  });
 
-  copyUID(uid: string) {
-    this.copyUID$.emit(uid);
+  #service = inject(ProfileViewService);
+
+  ngOnInit() {
+    this.flags.update(value => ({ ...value, user: { ...value.user, loading: true } }));
+    this.#service.watchUser$().subscribe({
+      next: user => {
+        this.flags.update(value => ({ ...value, user: { ...value.user, loading: false, success: true, fail: false } }));
+        this.user.set(user);
+      },
+      error: error => {
+        this.flags.update(value => ({ ...value, user: { ...value.user, loading: false, success: false, fail: true } }));
+        // TODO: @usamazansari: investigate if there would ever be an error
+        console.error({ error });
+      }
+    });
+  }
+  copyUID(uid = '') {
+    // this.copyUID$.emit(uid);
   }
 
   logout() {
-    this.logout$.emit();
+    // this.logout$.emit();
   }
 }

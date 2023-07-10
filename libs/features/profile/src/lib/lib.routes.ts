@@ -9,10 +9,10 @@ export const profileRoutes: Route[] = [
   {
     path: '',
     component: ProfileComponent,
-    canActivate: [() => inject(AuthGuard).canActivate()]
-    // children: [
-    //   { path: '', component: ProfileViewComponent },
-    //   { path: 'edit', component: ProfileEditComponent }
-    // ]
+    canActivate: [() => inject(AuthGuard).canActivate()],
+    children: [
+      { path: '', component: ProfileViewComponent },
+      { path: 'edit', component: ProfileEditComponent }
+    ]
   }
 ];

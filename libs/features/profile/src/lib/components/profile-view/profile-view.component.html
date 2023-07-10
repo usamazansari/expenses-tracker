@@ -1,60 +1,43 @@
-<ng-container *ngIf="!!user">
-  <div class="grid gap-2 text-et-color-fg-default">
-    <div class="grid grid-rows-1 gap-8 m-0 sm:mx-32 lg:m-0 lg:grid-cols-3">
-      <div class="grid grid-rows-1 gap-2 place-content-center">
-        <ng-container *ngIf="user.photoURL">
-          <img class="w-24 h-24 rounded-full cursor-default" [src]="user.photoURL" alt="User Image" />
+<ng-container *ngIf="user(); else noUserInformation">
+  <div class="grid grid-rows-[1fr_auto] gap-4">
+    <div class="grid items-center grid-cols-2 gap-3">
+      <div class="grid place-content-center">
+        <ng-container *ngIf="user()?.photoURL">
+          <img
+            class="w-32 h-32 border rounded-full cursor-default border-color-border-default"
+            [src]="user()?.photoURL"
+            alt="User Image" />
         </ng-container>
-        <ng-container *ngIf="!user.photoURL">
+        <ng-container *ngIf="!user()?.photoURL">
           <span
-            class="grid w-24 h-24 text-4xl rounded-full cursor-default place-content-center bg-et-color-accent-subtle">
-            {{ user | extractInitials }}
+            class="grid w-32 h-32 text-4xl border rounded-full cursor-default place-content-center bg-color-accent-subtle border-color-border-default">
+            {{ user() | extractInitials }}
           </span>
         </ng-container>
       </div>
-      <div class="grid grid-rows-1 gap-2">
-        <div class="flex items-center gap-2">
-          <span class="material-icons min-w-[24px] text-et-color-accent-emphasis">person</span>
-          <ng-container *ngIf="!user.displayName">
-            <span class="text-et-color-fg-muted">Name unavailable</span>
-          </ng-container>
-          <ng-container *ngIf="user.displayName">
-            <span class="overflow-hidden whitespace-nowrap overflow-ellipsis">
-              {{ user.displayName }}
-            </span>
-          </ng-container>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="material-icons min-w-[24px] text-et-color-accent-emphasis"> alternate_email </span>
-          <span class="overflow-hidden whitespace-nowrap overflow-ellipsis">
-            {{ user.email }}
+      <div class="flex flex-col gap-2">
+        <ng-container *ngIf="!user()?.displayName">
+          <span class="cursor-default text-color-fg-muted">Name unavailable</span>
+        </ng-container>
+        <ng-container *ngIf="user()?.displayName">
+          <span class="text-2xl font-bold cursor-default">
+            {{ user()?.displayName }}
           </span>
-        </div>
+        </ng-container>
+
+        <span class="truncate transition-colors duration-200 cursor-pointer hover:text-color-accent-emphasis">
+          {{ user()?.email }}
+        </span>
       </div>
-      <div class="grid grid-rows-1 gap-2">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="material-icons min-w-[24px] text-et-color-accent-emphasis">badge</span>
-            <span class="overflow-hidden whitespace-nowrap overflow-ellipsis">
-              {{ user.uid }}
-            </span>
-          </div>
-          <button type="button" class="flex items-center justify-center p-2 rounded-full">
-            <span class="material-icons" class="text-et-color-accent-emphasis" (click)="copyUID(user.uid)">
-              content_copy
-            </span>
-          </button>
-        </div>
-      </div>
-      <div class="grid grid-rows-1 gap-2"></div>
-      <button
-        type="button"
-        class="flex items-center justify-center gap-2 px-6 py-3 border rounded-lg bg-et-color-button-primary-bg text-et-color-button-primary border-et-color-button-primary-border"
-        (click)="logout()">
+    </div>
+    <div class="flex justify-center">
+      <button type="button" class="et-button et-button-primary" (click)="logout()">
         <span class="material-icons min-w-[24px]">logout</span>
         <span>LOGOUT</span>
       </button>
-      <div class="grid grid-rows-1 gap-2"></div>
     </div>
   </div>
 </ng-container>
+<ng-template #noUserInformation>
+  <span class="text-color-danger-fg">User information not available</span>
+</ng-template>
