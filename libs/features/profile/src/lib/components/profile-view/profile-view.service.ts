@@ -1,9 +1,10 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { catchError, of, tap } from 'rxjs';
 
-import { ContextService, FirestoreService } from '@expenses-tracker/core';
-import { NotificationService } from '@expenses-tracker/shared/common';
+import { AuthService, ContextService, FirestoreService } from '@expenses-tracker/core';
+import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
 import { IFlag } from '@expenses-tracker/shared/interfaces';
 
 export type ComponentFlags = {
@@ -17,10 +18,12 @@ export type ComponentFlags = {
   providedIn: 'root'
 })
 export class ProfileViewService {
+  #auth = inject(AuthService);
+  #clipboard = inject(Clipboard);
   #context = inject(ContextService);
   #firestore = inject(FirestoreService);
+  #notification = inject(NotificationService);
   #router = inject(Router);
-  #clipboard = inject(Clipboard);
 
   watchUser$() {
     return this.#context.watchUser$();
@@ -32,5 +35,24 @@ export class ProfileViewService {
 
   watchCollaboratedPocketbookListCount$() {
     return this.#firestore.watchCollaboratedPocketbookListCount$();
+  }
+
+  logout$() {
+    return this.#auth.logout$().pipe(
+      tap(() => {
+        this.#notification.info({
+          title: 'Logout Successful',
+          description: 'User has been logged out successfully'
+        });
+        this.#router.navigate([RoutePaths.Auth, RoutePaths.AuthLogin]);
+      }),
+      catchError(error => {
+        this.#notification.error({
+          description: `${error}.`,
+          title: 'Logout failed'
+        });
+        return of(error);
+      })
+    );
   }
 }

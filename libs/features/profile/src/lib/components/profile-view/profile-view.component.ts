@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { User } from 'firebase/auth';
+import { Subscription } from 'rxjs';
+
+import { INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
 import { ExtractInitialsPipe } from '../../pipes';
-
 import { ComponentFlags, ProfileViewService } from './profile-view.service';
-import { INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
 @Component({
   selector: 'expenses-tracker-profile-view',
@@ -13,7 +14,7 @@ import { INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
   imports: [CommonModule, ExtractInitialsPipe],
   templateUrl: './profile-view.component.html'
 })
-export class ProfileViewComponent implements OnInit {
+export class ProfileViewComponent implements OnInit, OnDestroy {
   user = signal<User | null>(null);
   ownedPocketbookListCount = signal<number>(0);
   collaboratedPocketbookListCount = signal<number>(0);
@@ -23,6 +24,8 @@ export class ProfileViewComponent implements OnInit {
     ownedPocketbookListCount: INITIAL_FLAGS,
     collaboratedPocketbookListCount: INITIAL_FLAGS
   });
+
+  #logout$!: Subscription;
 
   #service = inject(ProfileViewService);
 
@@ -108,6 +111,25 @@ export class ProfileViewComponent implements OnInit {
   }
 
   logout() {
-    // this.logout$.emit();
+    this.flags.update(value => ({ ...value, logout: { ...value.logout, loading: true } }));
+    this.#logout$ = this.#service.logout$().subscribe({
+      next: () => {
+        this.flags.update(value => ({
+          ...value,
+          logout: { ...value.logout, loading: false, success: true, fail: false }
+        }));
+      },
+      error: error => {
+        this.flags.update(value => ({
+          ...value,
+          logout: { ...value.logout, loading: false, success: false, fail: true }
+        }));
+        console.error({ error });
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.#logout$?.unsubscribe();
   }
 }

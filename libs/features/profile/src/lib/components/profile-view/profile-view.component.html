@@ -4,67 +4,70 @@
 
 <ng-container *ngIf="flags().user.success">
   <div class="grid grid-rows-[1fr_auto] gap-4">
-    <div class="grid items-center grid-cols-2 gap-3">
-      <div class="grid place-content-center">
-        <ng-container *ngIf="user()?.photoURL">
-          <img
-            class="w-32 h-32 border rounded-full cursor-default border-color-border-default"
-            [src]="user()?.photoURL"
-            alt="User Image" />
-        </ng-container>
-        <ng-container *ngIf="!user()?.photoURL">
-          <span
-            class="grid w-32 h-32 text-4xl border rounded-full cursor-default place-content-center bg-color-accent-subtle border-color-border-default">
-            {{ user() | extractInitials }}
-          </span>
-        </ng-container>
-      </div>
-      <div class="flex flex-col gap-2">
-        <ng-container *ngIf="!user()?.displayName">
-          <span class="cursor-default text-color-fg-muted">Name unavailable</span>
-        </ng-container>
-        <ng-container *ngIf="user()?.displayName">
-          <span class="text-2xl font-bold cursor-default">
-            {{ user()?.displayName }}
-          </span>
-        </ng-container>
+    <div class="grid grid-cols-1 md:grid-cols-2">
+      <div class="grid items-center grid-cols-2 gap-3">
+        <div class="grid place-content-center">
+          <ng-container *ngIf="user()?.photoURL">
+            <img
+              class="w-32 h-32 border rounded-full cursor-default border-color-border-default"
+              [src]="user()?.photoURL"
+              alt="User Image" />
+          </ng-container>
+          <ng-container *ngIf="!user()?.photoURL">
+            <span
+              class="grid w-32 h-32 text-4xl border rounded-full cursor-default place-content-center bg-color-accent-subtle border-color-border-default">
+              {{ user() | extractInitials }}
+            </span>
+          </ng-container>
+        </div>
+        <div class="flex flex-col gap-2">
+          <ng-container *ngIf="!user()?.displayName">
+            <span class="cursor-default text-color-fg-muted">Name unavailable</span>
+          </ng-container>
+          <ng-container *ngIf="user()?.displayName">
+            <span class="text-2xl font-bold cursor-default">
+              {{ user()?.displayName }}
+            </span>
+          </ng-container>
 
-        <span class="truncate transition-colors duration-200 cursor-pointer hover:text-color-accent-emphasis">
-          {{ user()?.email }}
-        </span>
+          <span class="truncate transition-colors duration-200 cursor-pointer hover:text-color-accent-emphasis">
+            {{ user()?.email }}
+          </span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-rows-2 gap-2 cursor-pointer justify-items-center et-card">
+          <ng-container *ngIf="flags().ownedPocketbookListCount.loading">
+            <span class="grid w-8 h-8 place-content-center material-icons animate-spin">autorenew</span>
+          </ng-container>
+          <ng-container *ngIf="flags().ownedPocketbookListCount.success">
+            <span class="text-2xl text-color-accent-fg">{{ ownedPocketbookListCount() }}</span>
+          </ng-container>
+          <ng-container *ngIf="flags().ownedPocketbookListCount.fail">
+            <span class="w-8 material-icons text-color-danger-fg">error</span>
+          </ng-container>
+          <span class="">Owned</span>
+        </div>
+        <div class="grid grid-rows-2 gap-2 cursor-pointer justify-items-center et-card">
+          <ng-container *ngIf="flags().collaboratedPocketbookListCount.loading">
+            <span class="grid w-8 h-8 place-content-center material-icons animate-spin">autorenew</span>
+          </ng-container>
+          <ng-container *ngIf="flags().collaboratedPocketbookListCount.success">
+            <span class="text-2xl text-color-accent-fg">{{ collaboratedPocketbookListCount() }}</span>
+          </ng-container>
+          <ng-container *ngIf="flags().collaboratedPocketbookListCount.fail">
+            <span class="w-8 material-icons text-color-danger-fg">error</span>
+          </ng-container>
+          <span class="">Collaborated</span>
+        </div>
       </div>
     </div>
 
-    <div class="grid grid-cols-2 gap-2">
-      <div class="grid grid-rows-2 justify-items-center et-card">
-        <ng-container *ngIf="flags().ownedPocketbookListCount.loading">
-          <span class="text-2xl text-color-accent-fg">Fetching...</span>
-        </ng-container>
-        <ng-container *ngIf="flags().ownedPocketbookListCount.success">
-          <span class="text-2xl text-color-accent-fg">{{ ownedPocketbookListCount() }}</span>
-        </ng-container>
-        <ng-container *ngIf="flags().ownedPocketbookListCount.fail">
-          <span class="text-2xl text-color-accent-fg">❌</span>
-        </ng-container>
-        <span class="">Owned</span>
-      </div>
-      <div class="grid grid-rows-2 justify-items-center et-card">
-        <ng-container *ngIf="flags().collaboratedPocketbookListCount.loading">
-          <span class="text-2xl text-color-accent-fg">Fetching...</span>
-        </ng-container>
-        <ng-container *ngIf="flags().collaboratedPocketbookListCount.success">
-          <span class="text-2xl text-color-accent-fg">{{ collaboratedPocketbookListCount() }}</span>
-        </ng-container>
-        <ng-container *ngIf="flags().collaboratedPocketbookListCount.fail">
-          <span class="text-2xl text-color-accent-fg">❌</span>
-        </ng-container>
-        <span class="">Collaborated</span>
-      </div>
-    </div>
     <div class="flex justify-center">
       <button type="button" class="et-button et-button-primary" (click)="logout()">
         <span class="material-icons min-w-[24px]">logout</span>
-        <span>LOGOUT</span>
+        <span>Logout</span>
       </button>
     </div>
   </div>
