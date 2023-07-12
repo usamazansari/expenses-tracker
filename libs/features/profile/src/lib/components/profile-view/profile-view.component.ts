@@ -15,14 +15,24 @@ import { INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 })
 export class ProfileViewComponent implements OnInit {
   user = signal<User | null>(null);
+  ownedPocketbookListCount = signal<number>(0);
+  collaboratedPocketbookListCount = signal<number>(0);
   flags = signal<ComponentFlags>({
     logout: INITIAL_FLAGS,
-    user: INITIAL_FLAGS
+    user: INITIAL_FLAGS,
+    ownedPocketbookListCount: INITIAL_FLAGS,
+    collaboratedPocketbookListCount: INITIAL_FLAGS
   });
 
   #service = inject(ProfileViewService);
 
   ngOnInit() {
+    this.fetchUserInformation();
+    this.fetchOwnedPocketbookListCount();
+    this.fetchCollaboratedPocketbookListCount();
+  }
+
+  private fetchUserInformation() {
     this.flags.update(value => ({ ...value, user: { ...value.user, loading: true } }));
     this.#service.watchUser$().subscribe({
       next: user => {
@@ -36,6 +46,63 @@ export class ProfileViewComponent implements OnInit {
       }
     });
   }
+
+  private fetchCollaboratedPocketbookListCount() {
+    this.flags.update(value => ({
+      ...value,
+      collaboratedPocketbookListCount: { ...value.collaboratedPocketbookListCount, loading: true }
+    }));
+    this.#service.watchCollaboratedPocketbookListCount$().subscribe({
+      next: collaboratedPocketbookListCount => {
+        this.flags.update(value => ({
+          ...value,
+          collaboratedPocketbookListCount: {
+            ...value.collaboratedPocketbookListCount,
+            loading: false,
+            success: true,
+            fail: false
+          }
+        }));
+        this.collaboratedPocketbookListCount.set(+collaboratedPocketbookListCount);
+      },
+      error: error => {
+        this.flags.update(value => ({
+          ...value,
+          collaboratedPocketbookListCount: {
+            ...value.collaboratedPocketbookListCount,
+            loading: false,
+            success: false,
+            fail: true
+          }
+        }));
+        console.error({ error });
+      }
+    });
+  }
+
+  private fetchOwnedPocketbookListCount() {
+    this.flags.update(value => ({
+      ...value,
+      ownedPocketbookListCount: { ...value.ownedPocketbookListCount, loading: true }
+    }));
+    this.#service.watchOwnedPocketbookListCount$().subscribe({
+      next: ownedPocketbookListCount => {
+        this.flags.update(value => ({
+          ...value,
+          ownedPocketbookListCount: { ...value.ownedPocketbookListCount, loading: false, success: true, fail: false }
+        }));
+        this.ownedPocketbookListCount.set(+ownedPocketbookListCount);
+      },
+      error: error => {
+        this.flags.update(value => ({
+          ...value,
+          ownedPocketbookListCount: { ...value.ownedPocketbookListCount, loading: false, success: false, fail: true }
+        }));
+        console.error({ error });
+      }
+    });
+  }
+
   copyUID(uid = '') {
     // this.copyUID$.emit(uid);
   }

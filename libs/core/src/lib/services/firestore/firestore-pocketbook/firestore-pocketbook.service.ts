@@ -38,9 +38,25 @@ export class FirestorePocketbookService {
                       } as IPocketbook)
                   )
                 ),
-                catchError(({ code }: FirebaseError) =>
-                  throwError(() => new Error(this.#error.getError(code)))
-                )
+                catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
+              )
+      )
+    );
+  }
+
+  watchOwnedPocketbookListCount$() {
+    return this.#context.watchUser$().pipe(
+      switchMap(user =>
+        !user
+          ? of([])
+          : this.#firestore
+              .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
+                ref.where('owner', '==', user?.uid ?? '')
+              )
+              .snapshotChanges()
+              .pipe(
+                map(snapshot => snapshot.length),
+                catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
               )
       )
     );
@@ -66,9 +82,25 @@ export class FirestorePocketbookService {
                       } as IPocketbook)
                   )
                 ),
-                catchError(({ code }: FirebaseError) =>
-                  throwError(() => new Error(this.#error.getError(code)))
-                )
+                catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
+              )
+      )
+    );
+  }
+
+  watchCollaboratedPocketbookListCount$() {
+    return this.#context.watchUser$().pipe(
+      switchMap(user =>
+        !user
+          ? of([])
+          : this.#firestore
+              .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
+                ref.where('collaboratorList', 'array-contains', user?.uid ?? '')
+              )
+              .snapshotChanges()
+              .pipe(
+                map(snapshot => snapshot.length),
+                catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
               )
       )
     );
@@ -76,9 +108,7 @@ export class FirestorePocketbookService {
 
   watchPocketbook$(pocketbookId: string) {
     return this.#firestore
-      .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
-        ref.where('id', '==', pocketbookId ?? '')
-      )
+      .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref => ref.where('id', '==', pocketbookId ?? ''))
       .valueChanges()
       .pipe(
         map(
@@ -88,9 +118,7 @@ export class FirestorePocketbookService {
               createdAt: (pb?.createdAt as Timestamp)?.toDate()
             } as IPocketbook)
         ),
-        catchError(({ code }: FirebaseError) =>
-          throwError(() => new Error(this.#error.getError(code)))
-        )
+        catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
       );
   }
 
@@ -113,11 +141,7 @@ export class FirestorePocketbookService {
                   createdAt: new Date(),
                   balance: 0
                 })
-            ).pipe(
-              catchError(({ code }: FirebaseError) =>
-                throwError(() => new Error(this.#error.getError(code)))
-              )
-            )
+            ).pipe(catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code)))))
       )
     );
   }
@@ -137,9 +161,7 @@ export class FirestorePocketbookService {
   }
 
   deletePocketbook$(pocketbookId: string) {
-    return from(
-      this.#firestore.collection<IPocketbook>(Collections.Pocketbook).doc(pocketbookId).delete()
-    ).pipe(
+    return from(this.#firestore.collection<IPocketbook>(Collections.Pocketbook).doc(pocketbookId).delete()).pipe(
       catchError(({ code }: FirebaseError) => {
         console.error({ code });
         return throwError(() => new Error(this.#error.getError(code)));

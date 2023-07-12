@@ -1,4 +1,8 @@
-<ng-container *ngIf="user(); else noUserInformation">
+<ng-container *ngIf="flags().user.loading">
+  <span>Fetching user information</span>
+</ng-container>
+
+<ng-container *ngIf="flags().user.success">
   <div class="grid grid-rows-[1fr_auto] gap-4">
     <div class="grid items-center grid-cols-2 gap-3">
       <div class="grid place-content-center">
@@ -30,6 +34,33 @@
         </span>
       </div>
     </div>
+
+    <div class="grid grid-cols-2 gap-2">
+      <div class="grid grid-rows-2 justify-items-center et-card">
+        <ng-container *ngIf="flags().ownedPocketbookListCount.loading">
+          <span class="text-2xl text-color-accent-fg">Fetching...</span>
+        </ng-container>
+        <ng-container *ngIf="flags().ownedPocketbookListCount.success">
+          <span class="text-2xl text-color-accent-fg">{{ ownedPocketbookListCount() }}</span>
+        </ng-container>
+        <ng-container *ngIf="flags().ownedPocketbookListCount.fail">
+          <span class="text-2xl text-color-accent-fg">❌</span>
+        </ng-container>
+        <span class="">Owned</span>
+      </div>
+      <div class="grid grid-rows-2 justify-items-center et-card">
+        <ng-container *ngIf="flags().collaboratedPocketbookListCount.loading">
+          <span class="text-2xl text-color-accent-fg">Fetching...</span>
+        </ng-container>
+        <ng-container *ngIf="flags().collaboratedPocketbookListCount.success">
+          <span class="text-2xl text-color-accent-fg">{{ collaboratedPocketbookListCount() }}</span>
+        </ng-container>
+        <ng-container *ngIf="flags().collaboratedPocketbookListCount.fail">
+          <span class="text-2xl text-color-accent-fg">❌</span>
+        </ng-container>
+        <span class="">Collaborated</span>
+      </div>
+    </div>
     <div class="flex justify-center">
       <button type="button" class="et-button et-button-primary" (click)="logout()">
         <span class="material-icons min-w-[24px]">logout</span>
@@ -38,6 +69,7 @@
     </div>
   </div>
 </ng-container>
-<ng-template #noUserInformation>
+
+<ng-container *ngIf="flags().user.fail">
   <span class="text-color-danger-fg">User information not available</span>
-</ng-template>
+</ng-container>
