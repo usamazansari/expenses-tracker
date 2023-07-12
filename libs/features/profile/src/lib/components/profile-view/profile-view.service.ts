@@ -55,4 +55,12 @@ export class ProfileViewService {
       })
     );
   }
+
+  gotoOwnedPocketbookList() {
+    this.#router.navigate([RoutePaths.Pocketbook, RoutePaths.EntityList, RoutePaths.PocketbookOwner]);
+  }
+
+  gotoCollaboratedPocketbookList() {
+    this.#router.navigate([RoutePaths.Pocketbook, RoutePaths.EntityList, RoutePaths.PocketbookCollaborator]);
+  }
 }

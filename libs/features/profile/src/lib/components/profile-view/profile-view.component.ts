@@ -129,6 +129,14 @@ export class ProfileViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  gotoOwnedPocketbookList() {
+    this.#service.gotoOwnedPocketbookList();
+  }
+
+  gotoCollaboratedPocketbookList() {
+    this.#service.gotoCollaboratedPocketbookList();
+  }
+
   ngOnDestroy() {
     this.#logout$?.unsubscribe();
   }
