@@ -47,6 +47,29 @@ export class ProfileViewComponent implements OnInit {
     });
   }
 
+  private fetchOwnedPocketbookListCount() {
+    this.flags.update(value => ({
+      ...value,
+      ownedPocketbookListCount: { ...value.ownedPocketbookListCount, loading: true }
+    }));
+    this.#service.watchOwnedPocketbookListCount$().subscribe({
+      next: ownedPocketbookListCount => {
+        this.flags.update(value => ({
+          ...value,
+          ownedPocketbookListCount: { ...value.ownedPocketbookListCount, loading: false, success: true, fail: false }
+        }));
+        this.ownedPocketbookListCount.set(ownedPocketbookListCount);
+      },
+      error: error => {
+        this.flags.update(value => ({
+          ...value,
+          ownedPocketbookListCount: { ...value.ownedPocketbookListCount, loading: false, success: false, fail: true }
+        }));
+        console.error({ error });
+      }
+    });
+  }
+
   private fetchCollaboratedPocketbookListCount() {
     this.flags.update(value => ({
       ...value,
@@ -63,7 +86,7 @@ export class ProfileViewComponent implements OnInit {
             fail: false
           }
         }));
-        this.collaboratedPocketbookListCount.set(+collaboratedPocketbookListCount);
+        this.collaboratedPocketbookListCount.set(collaboratedPocketbookListCount);
       },
       error: error => {
         this.flags.update(value => ({
@@ -74,29 +97,6 @@ export class ProfileViewComponent implements OnInit {
             success: false,
             fail: true
           }
-        }));
-        console.error({ error });
-      }
-    });
-  }
-
-  private fetchOwnedPocketbookListCount() {
-    this.flags.update(value => ({
-      ...value,
-      ownedPocketbookListCount: { ...value.ownedPocketbookListCount, loading: true }
-    }));
-    this.#service.watchOwnedPocketbookListCount$().subscribe({
-      next: ownedPocketbookListCount => {
-        this.flags.update(value => ({
-          ...value,
-          ownedPocketbookListCount: { ...value.ownedPocketbookListCount, loading: false, success: true, fail: false }
-        }));
-        this.ownedPocketbookListCount.set(+ownedPocketbookListCount);
-      },
-      error: error => {
-        this.flags.update(value => ({
-          ...value,
-          ownedPocketbookListCount: { ...value.ownedPocketbookListCount, loading: false, success: false, fail: true }
         }));
         console.error({ error });
       }

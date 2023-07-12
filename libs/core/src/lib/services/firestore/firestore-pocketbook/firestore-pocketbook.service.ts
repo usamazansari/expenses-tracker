@@ -48,7 +48,7 @@ export class FirestorePocketbookService {
     return this.#context.watchUser$().pipe(
       switchMap(user =>
         !user
-          ? of([])
+          ? of(0)
           : this.#firestore
               .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
                 ref.where('owner', '==', user?.uid ?? '')
@@ -92,7 +92,7 @@ export class FirestorePocketbookService {
     return this.#context.watchUser$().pipe(
       switchMap(user =>
         !user
-          ? of([])
+          ? of(0)
           : this.#firestore
               .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
                 ref.where('collaboratorList', 'array-contains', user?.uid ?? '')
