@@ -106,8 +106,8 @@ export class ProfileViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  copyUID(uid = '') {
-    // this.copyUID$.emit(uid);
+  copyEmail() {
+    this.#service.copyEmail(this.user()?.email ?? '');
   }
 
   logout() {

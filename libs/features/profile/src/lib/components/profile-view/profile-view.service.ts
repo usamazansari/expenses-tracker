@@ -56,6 +56,21 @@ export class ProfileViewService {
     );
   }
 
+  copyEmail(email = '') {
+    const copyState = !email ? false : this.#clipboard.copy(email);
+    if (copyState) {
+      this.#notification.info({
+        title: 'Success!',
+        description: 'Email copied to the clipboard'
+      });
+    } else {
+      this.#notification.info({
+        title: 'Fail!',
+        description: 'Email cannot be copied to the clipboard'
+      });
+    }
+  }
+
   gotoOwnedPocketbookList() {
     this.#router.navigate([RoutePaths.Pocketbook, RoutePaths.EntityList, RoutePaths.PocketbookOwner]);
   }

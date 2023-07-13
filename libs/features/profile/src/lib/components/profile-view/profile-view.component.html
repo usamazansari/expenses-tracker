@@ -31,7 +31,8 @@
           </ng-container>
 
           <span
-            class="text-center truncate transition-colors duration-200 cursor-pointer hover:text-color-accent-emphasis">
+            class="text-center truncate transition-colors duration-200 cursor-pointer hover:text-color-accent-emphasis"
+            (click)="copyEmail()">
             {{ user()?.email }}
           </span>
         </div>
