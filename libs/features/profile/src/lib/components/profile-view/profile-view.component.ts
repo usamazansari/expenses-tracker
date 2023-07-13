@@ -140,4 +140,6 @@ export class ProfileViewComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.#logout$?.unsubscribe();
   }
+
+  // TODO: @usamazansari: add edit profile feature
 }
