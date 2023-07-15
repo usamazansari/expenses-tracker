@@ -42,10 +42,8 @@ export class ProfileViewComponent implements OnInit, OnDestroy {
         this.flags.update(value => ({ ...value, user: { ...value.user, loading: false, success: true, fail: false } }));
         this.user.set(user);
       },
-      error: error => {
+      error: () => {
         this.flags.update(value => ({ ...value, user: { ...value.user, loading: false, success: false, fail: true } }));
-        // TODO: @usamazansari: investigate if there would ever be an error
-        console.error({ error });
       }
     });
   }
