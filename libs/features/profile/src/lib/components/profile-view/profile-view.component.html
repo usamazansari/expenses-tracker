@@ -39,27 +39,29 @@
       </div>
 
       <div class="flex gap-3">
-        <div
-          class="group grid grid-rows-[1fr_auto] gap-2 cursor-pointer et-card p-0 h-48 w-40 justify-self-end"
-          (click)="gotoOwnedPocketbookList()">
-          <div class="grid place-content-center">
-            <ng-container *ngIf="flags().ownedPocketbookListCount.loading">
-              <span class="grid w-8 h-8 place-content-center material-icons animate-spin">autorenew</span>
-            </ng-container>
-            <ng-container *ngIf="flags().ownedPocketbookListCount.success">
-              <span class="text-2xl text-color-accent-fg">
-                {{ ownedPocketbookListCount() }}
-              </span>
-            </ng-container>
-            <ng-container *ngIf="flags().ownedPocketbookListCount.fail">
-              <span class="w-8 h-8 material-icons text-color-danger-fg place-content-center">error</span>
-            </ng-container>
+        <expenses-tracker-tooltip [tooltipTemplate]="ownedPocketbookTooltip">
+          <div
+            class="group grid grid-rows-[1fr_auto] gap-2 cursor-pointer et-card p-0 h-48 w-40 justify-self-end"
+            (click)="gotoOwnedPocketbookList()">
+            <div class="grid place-content-center">
+              <ng-container *ngIf="flags().ownedPocketbookListCount.loading">
+                <span class="grid w-8 h-8 place-content-center material-icons animate-spin">autorenew</span>
+              </ng-container>
+              <ng-container *ngIf="flags().ownedPocketbookListCount.success">
+                <span class="text-2xl text-color-accent-fg">
+                  {{ ownedPocketbookListCount() }}
+                </span>
+              </ng-container>
+              <ng-container *ngIf="flags().ownedPocketbookListCount.fail">
+                <span class="w-8 h-8 material-icons text-color-danger-fg place-content-center">error</span>
+              </ng-container>
+            </div>
+            <span
+              class="grid p-2 transition-colors duration-200 group-hover:bg-color-accent-emphasis group-hover:text-color-fg-on-emphasis place-content-center">
+              Owned
+            </span>
           </div>
-          <span
-            class="grid p-2 transition-colors duration-200 group-hover:bg-color-accent-emphasis group-hover:text-color-fg-on-emphasis place-content-center">
-            Owned
-          </span>
-        </div>
+        </expenses-tracker-tooltip>
         <div
           class="group grid grid-rows-[1fr_auto] gap-2 cursor-pointer et-card p-0 h-48 w-40"
           (click)="gotoCollaboratedPocketbookList()">
@@ -94,3 +96,7 @@
 <ng-container *ngIf="flags().user.fail">
   <span class="text-color-danger-fg">User information not available</span>
 </ng-container>
+
+<ng-template #ownedPocketbookTooltip>
+  <span class="text-color-accent-fg">Click to open the list of pocketbooks owned by you</span>
+</ng-template>
