@@ -1,90 +1,139 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
-import { MatRippleModule } from '@angular/material/core';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
-import { LoginGraphicComponent } from '@expenses-tracker/shared/assets';
+import { FormGroupTypeGenerator, FromControlExtras, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
-import { ComponentFlags, LoginService } from './login.service';
-
-type LoginForm = {
-  email: FormControl<string | null>;
-  password: FormControl<string | null>;
-};
+import { ComponentFlags, ComponentForm, LoginService } from './login.service';
 
 @Component({
   selector: 'expenses-tracker-login',
   standalone: true,
-  imports: [
-    CommonModule,
-    LoginGraphicComponent,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatRippleModule,
-    ReactiveFormsModule
-  ],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  formGroup!: FormGroup<LoginForm>;
-  error$ = new BehaviorSubject<string>('');
-  flags$!: Observable<ComponentFlags>;
+  formGroup!: FormGroup<FormGroupTypeGenerator<ComponentForm>>;
   #login$!: Subscription;
 
-  constructor(private _fb: FormBuilder, private _service: LoginService) {}
+  #fb = inject(FormBuilder);
+  #service = inject(LoginService);
+
+  email = signal<FromControlExtras<ComponentForm, 'email'>>({
+    name: 'email',
+    value: '',
+    error: {
+      flag: false,
+      message: ''
+    }
+  });
+
+  password = signal<FromControlExtras<ComponentForm, 'password'>>({
+    name: 'password',
+    value: '',
+    error: {
+      flag: false,
+      message: ''
+    }
+  });
+
+  flags = signal<ComponentFlags>({
+    login: INITIAL_FLAGS
+  });
 
   ngOnInit() {
-    this.formGroup = this._fb.group<LoginForm>({
-      email: this._fb.control<string>('', {
+    this.formGroup = this.#fb.group<FormGroupTypeGenerator<ComponentForm>>({
+      email: this.#fb.control<string>('', {
         validators: [Validators.required, Validators.email]
-      }),
-      password: this._fb.control<string>('', {
+      }) as FormControl<string>,
+      password: this.#fb.control<string>('', {
         validators: [Validators.required]
-      })
+      }) as FormControl<string>
     });
 
-    this._service.dismissError();
-    this.flags$ = this._service.watchFlags$();
+    this.formGroup.valueChanges.subscribe(() => {
+      this.email.update(props => ({
+        ...props,
+        value: this.formGroup.controls.email.value,
+        error: {
+          flag: this.getError(this.formGroup.controls.email),
+          message: this.getErrorMessage(props.name)
+        }
+      }));
+      this.password.update(props => ({
+        ...props,
+        value: this.formGroup.controls.password.value,
+        error: {
+          flag: this.getError(this.formGroup.controls.password),
+          message: this.getErrorMessage(props.name)
+        }
+      }));
+    });
   }
 
   login() {
     if (!this.formGroup.invalid) {
       const { email, password } = this.formGroup.value;
-      this.#login$ = this._service.login$({ email, password }).subscribe({
+      this.flags.update(value => ({ ...value, login: { ...value.login, loading: true } }));
+      this.#login$ = this.#service.login$({ email, password } as ComponentForm).subscribe({
         next: () => {
+          this.flags.update(value => ({
+            ...value,
+            login: { ...value.login, loading: false, success: true, fail: false }
+          }));
           this.formGroup.reset();
+        },
+        error: () => {
+          this.flags.update(value => ({
+            ...value,
+            login: { ...value.login, loading: false, success: false, fail: true }
+          }));
         }
       });
     }
   }
 
-  dismissError() {
-    this._service.dismissError();
+  checkControl(formControl: FromControlExtras<ComponentForm, keyof ComponentForm>) {
+    switch (formControl.name) {
+      case 'email':
+        this.email.update(props => ({
+          ...props,
+          error: {
+            flag: this.getError(this.formGroup.controls.email),
+            message: this.getErrorMessage(props.name)
+          }
+        }));
+        break;
+      case 'password':
+        this.password.update(props => ({
+          ...props,
+          error: {
+            flag: this.getError(this.formGroup.controls.email),
+            message: this.getErrorMessage(props.name)
+          }
+        }));
+        break;
+
+      default:
+        break;
+    }
   }
 
-  getError(formControlName = '') {
-    if (this.formGroup.get(formControlName)?.hasError('required')) {
-      return `${
-        formControlName.charAt(0).toUpperCase() + formControlName.slice(1)
-      } is required`;
+  private getError(control: FormControl<string>): boolean {
+    return control.touched && !!control.errors;
+  }
+
+  private getErrorMessage(formControlName: keyof ComponentForm) {
+    if (this.formGroup.controls[formControlName]?.hasError('required')) {
+      return `${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)} is required`;
     }
 
-    if (this.formGroup.get(formControlName)?.hasError('email')) {
+    if (this.formGroup.controls[formControlName]?.hasError('email')) {
       return 'Invalid Email';
     }
 
-    return '';
+    return `Unknown validation error for ${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)}`;
   }
 
   ngOnDestroy() {

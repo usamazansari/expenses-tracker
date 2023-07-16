@@ -1,78 +1,63 @@
-<ng-container *ngIf="flags$ | async as flags">
+<div class="relative grid gap-2 w-96 et-card">
   <div
-    class="relative grid gap-2 p-4 border rounded-lg w-96 bg-et-layer-alternate text-et-color-fg-default border-et-color-border-default">
-    <div
-      class="grid grid-cols-[1fr_1fr] gap-2 items-center py-12 cursor-default"
-      [ngClass]="{ 'opacity-50 pointer-events-none': flags.login.loading }">
-      <expenses-tracker-login-graphic
-        class="w-16 fill-et-color-accent-emphasis justify-self-end"></expenses-tracker-login-graphic>
-      <span class="text-3xl text-et-color-accent-emphasis">Login</span>
-    </div>
-    <ng-container *ngIf="flags.login.loading">
-      <div class="absolute top-0 bottom-0 left-0 right-0 z-10 bg-et-color-overlay"></div>
-    </ng-container>
-    <ng-container *ngIf="flags.login.visible">
-      <ng-container *ngIf="flags.login.fail">
-        <div
-          class="absolute top-0 left-0 right-0 flex items-center justify-between gap-2 px-2 py-4 bg-red-100 rounded-lg bg-et-color-button-danger-bg text-et-color-fg-danger">
-          <div class="flex items-center gap-2">
-            <mat-icon>error</mat-icon>
-            <span class="font-bold">Login Failed</span>
+    class="flex items-center justify-center gap-2 py-12 cursor-default"
+    [ngClass]="{ 'opacity-50 pointer-events-none': flags().login.loading }">
+    <span class="text-3xl material-icons text-color-accent-emphasis">login</span>
+    <span class="text-3xl text-color-accent-emphasis">Login</span>
+  </div>
+  <ng-container *ngIf="flags().login.loading">
+    <div class="et-loading-overlay"></div>
+  </ng-container>
+  <ng-container *ngIf="flags().login.visible">
+    <form [formGroup]="formGroup" (ngSubmit)="login()">
+      <div
+        class="grid grid-rows-[1fr_auto] gap-2"
+        [ngClass]="{ 'opacity-50 pointer-events-none': flags().login.loading }">
+        <div class="grid gap-2">
+          <div class="et-form-field-wrapper">
+            <label for="email-input" class="font-bold">Email</label>
+            <div class="et-form-field-input-wrapper">
+              <input
+                class="w-full et-input"
+                formControlName="email"
+                id="email-input"
+                type="email"
+                placeholder="foo@bar.com"
+                (blur)="checkControl(email())"
+                [ngClass]="{ 'et-input-error-state': email().error.flag }"
+                required />
+              <ng-container *ngIf="email().error.flag">
+                <span class="et-form-field-input-error-message">{{ email().error.message }}</span>
+              </ng-container>
+            </div>
           </div>
-          <button class="flex items-center" (click)="dismissError()">
-            <mat-icon>clear</mat-icon>
+
+          <div class="et-form-field-wrapper">
+            <label for="password-input" class="font-bold">Password</label>
+            <div class="et-form-field-input-wrapper">
+              <input
+                class="w-full et-input"
+                formControlName="password"
+                type="password"
+                id="password-input"
+                placeholder="Password"
+                (blur)="checkControl(password())"
+                [ngClass]="{ 'et-input-error-state': password().error.flag }"
+                required />
+              <ng-container *ngIf="password().error.flag">
+                <span class="et-form-field-input-error-message">{{ password().error.message }}</span>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <button type="submit" class="w-full et-button et-button-primary">
+            <span class="material-icons min-w-[24px]">login</span>
+            <span>Login</span>
           </button>
         </div>
-      </ng-container>
-      <form [formGroup]="formGroup" (ngSubmit)="login()">
-        <div
-          class="grid grid-rows-[1fr_auto] gap-2"
-          [ngClass]="{ 'opacity-50 pointer-events-none': flags.login.loading }">
-          <div class="grid gap-2">
-            <div class="flex items-center gap-2">
-              <mat-icon class="min-w-[24px]">mail_outline</mat-icon>
-              <mat-form-field class="w-full">
-                <mat-label>Email</mat-label>
-                <input
-                  matInput
-                  formControlName="email"
-                  type="email"
-                  placeholder="foo@bar.com"
-                  required />
-                <mat-error *ngIf="this.formGroup.get('email')?.invalid">
-                  {{ getError('email') }}
-                </mat-error>
-              </mat-form-field>
-            </div>
-
-            <div class="flex items-center gap-2">
-              <mat-icon class="min-w-[24px]">key</mat-icon>
-              <mat-form-field class="w-full">
-                <mat-label>Password</mat-label>
-                <input
-                  size="sm"
-                  matInput
-                  formControlName="password"
-                  type="password"
-                  placeholder="Password"
-                  required />
-                <mat-error *ngIf="this.formGroup.get('password')?.invalid">
-                  {{ getError('password') }}
-                </mat-error>
-              </mat-form-field>
-            </div>
-          </div>
-          <div class="flex flex-col gap-2">
-            <button
-              matRipple
-              type="submit"
-              class="bg-et-color-button-primary-bg text-et-color-button-primary flex items-center gap-2 justify-center self-center py-3 text-white bg-primary w-[50%] rounded-lg">
-              <mat-icon class="min-w-[24px]">login</mat-icon>
-              <span>LOGIN</span>
-            </button>
-          </div>
-        </div>
-      </form>
-    </ng-container>
-  </div>
-</ng-container>
+      </div>
+    </form>
+  </ng-container>
+</div>

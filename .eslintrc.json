@@ -7,7 +7,7 @@
     {
       "files": ["*.*"],
       "rules": {
-        "max-len": ["warn", { "code": 96 }]
+        "max-len": ["warn", { "code": 120 }]
       }
     },
     {
@@ -56,3 +56,4 @@
     }
   ]
 }
+

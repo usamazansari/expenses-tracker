@@ -14,11 +14,10 @@
               </h1>
               <ng-container *ngIf="!isEditing">
                 <button
-                  matRipple
                   type="button"
                   class="flex items-center justify-center p-2 rounded-full bg-et-color-button-primary-bg text-et-color-button-primary"
                   (click)="editMode()">
-                  <mat-icon>edit</mat-icon>
+                  <span class="material-icons">edit</span>
                 </button>
               </ng-container>
             </div>
