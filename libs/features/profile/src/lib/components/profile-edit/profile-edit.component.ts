@@ -18,7 +18,7 @@ type ProfileEditForm = {
 })
 export class ProfileEditComponent implements OnInit {
   formGroup!: FormGroup<ProfileEditForm>;
-  @Input() user!: User;
+  @Input() user!: User | null;
   @Output() updateUserInfo$ = new EventEmitter<User>();
   @Output() cancelEdit$ = new EventEmitter<void>();
 
@@ -26,7 +26,7 @@ export class ProfileEditComponent implements OnInit {
 
   ngOnInit() {
     this.formGroup = this._fb.group<ProfileEditForm>({
-      displayName: this._fb.control<string>(this.user.displayName ?? '', {
+      displayName: this._fb.control<string>(this.user?.displayName ?? '', {
         validators: []
       })
     });
@@ -35,7 +35,7 @@ export class ProfileEditComponent implements OnInit {
   updateUserInfo() {
     this.updateUserInfo$.emit({
       ...(this.formGroup.value as User),
-      uid: this.user.uid
+      uid: this.user?.uid
     } as User);
   }
 

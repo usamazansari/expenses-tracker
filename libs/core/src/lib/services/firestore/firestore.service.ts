@@ -19,8 +19,16 @@ export class FirestoreService {
     return this.#pocketbook.watchOwnedPocketbookList$();
   }
 
+  watchOwnedPocketbookListCount$() {
+    return this.#pocketbook.watchOwnedPocketbookListCount$();
+  }
+
   watchCollaboratedPocketbookList$() {
     return this.#pocketbook.watchCollaboratedPocketbookList$();
+  }
+
+  watchCollaboratedPocketbookListCount$() {
+    return this.#pocketbook.watchCollaboratedPocketbookListCount$();
   }
 
   watchPocketbook$(pocketbookId: string) {
