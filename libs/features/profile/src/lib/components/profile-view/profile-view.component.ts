@@ -3,9 +3,8 @@ import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { User } from 'firebase/auth';
 import { Subscription } from 'rxjs';
 
-import { INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
-
 import { TooltipComponent } from '@expenses-tracker/shared/common';
+import { INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
 import { ExtractInitialsPipe } from '../../pipes';
 import { ComponentFlags, ProfileViewService } from './profile-view.service';
