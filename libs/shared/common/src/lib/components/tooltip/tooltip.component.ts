@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, TemplateRef, signal } from '@angular/core';
+import { Component, HostListener, Input, TemplateRef, signal } from '@angular/core';
 
 @Component({
   selector: 'expenses-tracker-tooltip',
@@ -7,11 +7,12 @@ import { Component, Input, TemplateRef, signal } from '@angular/core';
   imports: [CommonModule],
   template: `
     <div class="relative" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
-      <div class="absolute bottom-full pb-3 left-0 cursor-pointer" [ngClass]="{ hidden: !showTooltip() }">
-        <div class="p-2 border rounded-md bg-color-canvas-overlay border-color-border-default ">
-          <div class="tooltip-arrow absolute top-full bg-color-border-default w-5 h-5"></div>
-          <ng-container [ngTemplateOutlet]="tooltipTemplate"></ng-container>
-        </div>
+      <div
+        class="absolute p-2 border rounded-md bg-color-canvas-overlay border-color-border-default bottom-full left-0"
+        [ngClass]="{ hidden: !showTooltip() }">
+        <div class="tooltip-arrow absolute top-full bg-color-border-default w-5 h-5"></div>
+        <!-- <div class="tooltip-content">{{ tooltipComponent }}</div> -->
+        <ng-container [ngTemplateOutlet]="tooltipTemplate"></ng-container>
       </div>
       <ng-content></ng-content>
     </div>
@@ -31,10 +32,13 @@ export class TooltipComponent {
 
   showTooltip = signal(false);
 
+  // @HostListener('mouseenter')
   onMouseEnter(): void {
     this.showTooltip.set(true);
   }
 
+  // TODO: improve mouseleave event to persist the card after a debounce time
+  // @HostListener('mouseleave')
   onMouseLeave(): void {
     this.showTooltip.set(false);
   }
