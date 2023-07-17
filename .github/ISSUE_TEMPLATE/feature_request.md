@@ -1,11 +1,16 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
+about: Suggest an idea for Expenses Tracker
 title: ''
-labels: ''
+labels: 'type: feature'
 assignees: usamazansari
 
 ---
 
-**Feature Description**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+## Short description
+
+Please provide a short description which summarizes the idea behind this feature request and why this is useful.
+
+## User stories
+
+* As a user, I want to ... so that ...
