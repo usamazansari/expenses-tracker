@@ -29,6 +29,7 @@ export class ProfileViewComponent implements OnInit, OnDestroy {
   #logout$!: Subscription;
 
   #service = inject(ProfileViewService);
+
   ngOnInit() {
     this.fetchUserInformation();
     this.fetchOwnedPocketbookListCount();
