@@ -38,29 +38,30 @@
       </div>
 
       <div class="flex gap-3">
-        <expenses-tracker-tooltip [tooltipTemplate]="ownedPocketbookTooltip">
-          <div
-            class="group grid grid-rows-[1fr_auto] gap-2 cursor-pointer et-card p-0 h-48 w-40 justify-self-end"
-            (click)="gotoOwnedPocketbookList()">
-            <div class="grid place-content-center">
-              <ng-container *ngIf="flags().ownedPocketbookListCount.loading">
-                <span class="grid w-8 h-8 place-content-center material-icons animate-spin">autorenew</span>
-              </ng-container>
-              <ng-container *ngIf="flags().ownedPocketbookListCount.success">
-                <span class="text-2xl text-color-accent-fg">
-                  {{ ownedPocketbookListCount() }}
-                </span>
-              </ng-container>
-              <ng-container *ngIf="flags().ownedPocketbookListCount.fail">
-                <span class="w-8 h-8 material-icons text-color-danger-fg place-content-center">error</span>
-              </ng-container>
-            </div>
-            <span
-              class="grid p-2 transition-colors duration-200 group-hover:bg-color-accent-emphasis group-hover:text-color-fg-on-emphasis place-content-center">
-              Owned
-            </span>
+        <!-- <expenses-tracker-tooltip [tooltipTemplate]="ownedPocketbookTooltip"> -->
+        <div
+          class="group grid grid-rows-[1fr_auto] gap-2 cursor-pointer et-card p-0 h-48 w-40 justify-self-end"
+          (click)="gotoOwnedPocketbookList()"
+          [expensesTrackerTooltip]="ownedPocketbookTooltip">
+          <div class="grid place-content-center">
+            <ng-container *ngIf="flags().ownedPocketbookListCount.loading">
+              <span class="grid w-8 h-8 place-content-center material-icons animate-spin">autorenew</span>
+            </ng-container>
+            <ng-container *ngIf="flags().ownedPocketbookListCount.success">
+              <span class="text-2xl text-color-accent-fg">
+                {{ ownedPocketbookListCount() }}
+              </span>
+            </ng-container>
+            <ng-container *ngIf="flags().ownedPocketbookListCount.fail">
+              <span class="w-8 h-8 material-icons text-color-danger-fg place-content-center">error</span>
+            </ng-container>
           </div>
-        </expenses-tracker-tooltip>
+          <span
+            class="grid p-2 transition-colors duration-200 group-hover:bg-color-accent-emphasis group-hover:text-color-fg-on-emphasis place-content-center">
+            Owned
+          </span>
+        </div>
+        <!-- </expenses-tracker-tooltip> -->
         <div
           class="group grid grid-rows-[1fr_auto] gap-2 cursor-pointer et-card p-0 h-48 w-40"
           (click)="gotoCollaboratedPocketbookList()">
@@ -96,9 +97,16 @@
   <span class="text-color-danger-fg">User information not available</span>
 </ng-container>
 
-<ng-template #ownedPocketbookTooltip>
+<!-- <ng-template #ownedPocketbookTooltip>
   <div class="grid gap-2 px-2">
     <span class="text-xl text-color-accent-fg whitespace-nowrap">Open Owned Pocketbooks</span>
     <span>Click on the card to open all the pocketbooks owned by you</span>
   </div>
-</ng-template>
+</ng-template> -->
+
+<expenses-tracker-tooltip #ownedPocketbookTooltip>
+  <div class="grid gap-2 px-2">
+    <span class="text-xl text-color-accent-fg whitespace-nowrap">Open Owned Pocketbooks</span>
+    <span>Click on the card to open all the pocketbooks owned by you</span>
+  </div>
+</expenses-tracker-tooltip>

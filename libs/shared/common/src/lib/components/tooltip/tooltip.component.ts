@@ -1,20 +1,15 @@
-import { CommonModule } from '@angular/common';
-import { Component, Input, TemplateRef, signal } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, Output, TemplateRef, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'expenses-tracker-tooltip',
-  standalone: true,
-  imports: [CommonModule],
   template: `
-    <div class="relative" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
-      <div class="absolute bottom-full pb-3 left-0 cursor-pointer" [ngClass]="{ hidden: !showTooltip() }">
-        <div class="p-2 border rounded-md bg-color-canvas-overlay border-color-border-default ">
-          <div class="tooltip-arrow absolute top-full bg-color-border-default w-5 h-5"></div>
-          <ng-container [ngTemplateOutlet]="tooltipTemplate"></ng-container>
-        </div>
+    <ng-template>
+      <div class="p-2 border rounded-md bg-color-canvas-overlay border-color-border-default">
+        <span [id]="id">
+          <ng-content></ng-content>
+        </span>
       </div>
-      <ng-content></ng-content>
-    </div>
+    </ng-template>
   `,
   styles: [
     `
@@ -24,18 +19,13 @@ import { Component, Input, TemplateRef, signal } from '@angular/core';
     `
   ]
 })
-export class TooltipComponent {
-  @Input() tooltipTemplate!: TemplateRef<unknown>;
+export class TooltipComponent implements OnDestroy {
+  @ViewChild(TemplateRef) tooltipTemplate!: TemplateRef<unknown>;
+  id = '';
+  @Output() tooltipClose$ = new EventEmitter<void>();
 
-  @Input() position: 'top' | 'bottom' | 'left' | 'right' = 'top';
-
-  showTooltip = signal(false);
-
-  onMouseEnter(): void {
-    this.showTooltip.set(true);
-  }
-
-  onMouseLeave(): void {
-    this.showTooltip.set(false);
+  ngOnDestroy() {
+    this.tooltipClose$.emit();
+    this.tooltipClose$.complete();
   }
 }
