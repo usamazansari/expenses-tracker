@@ -1,4 +1,4 @@
-import { Overlay, OverlayRef } from '@angular/cdk/overlay';
+import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import {
   AfterViewInit,
@@ -64,7 +64,24 @@ export class TooltipDirective implements AfterViewInit {
   #createOverlay() {
     if (!this.#overlayRef()) {
       this.#portal.set(new TemplatePortal(this.tooltip.tooltipTemplate, this.#viewContainerRef));
-      this.#overlayRef.set(this.#overlay.create());
+      const overlayState = new OverlayConfig({
+        positionStrategy: this.#overlay
+          .position()
+          .flexibleConnectedTo(this.#elementRef)
+          .withPositions([
+            {
+              originX: 'center',
+              originY: 'top',
+              overlayX: 'center',
+              overlayY: 'bottom',
+              offsetY: -5
+            }
+          ]),
+        scrollStrategy: this.#overlay.scrollStrategies.reposition(),
+        maxWidth: '100%',
+        maxHeight: '100%'
+      });
+      this.#overlayRef.set(this.#overlay.create(overlayState));
     }
   }
 }
