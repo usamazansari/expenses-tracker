@@ -10,7 +10,6 @@ import {
   inject,
   signal
 } from '@angular/core';
-import { EventManager } from '@angular/platform-browser';
 
 import { TooltipComponent } from './tooltip.component';
 
@@ -29,7 +28,6 @@ export class TooltipDirective implements AfterViewInit {
   #overlay = inject(Overlay);
   #elementRef = inject(ElementRef);
   #viewContainerRef = inject(ViewContainerRef);
-  #eventManager = inject(EventManager);
 
   @HostListener('mouseenter')
   showTooltip() {
@@ -74,12 +72,10 @@ export class TooltipDirective implements AfterViewInit {
               originY: 'top',
               overlayX: 'center',
               overlayY: 'bottom',
-              offsetY: -5
+              offsetY: 10
             }
           ]),
-        scrollStrategy: this.#overlay.scrollStrategies.reposition(),
-        maxWidth: '100%',
-        maxHeight: '100%'
+        scrollStrategy: this.#overlay.scrollStrategies.reposition()
       });
       this.#overlayRef.set(this.#overlay.create(overlayState));
     }
