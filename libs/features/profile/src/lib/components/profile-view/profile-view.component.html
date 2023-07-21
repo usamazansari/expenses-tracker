@@ -38,7 +38,6 @@
       </div>
 
       <div class="flex gap-3">
-        <!-- <expenses-tracker-tooltip [tooltipTemplate]="ownedPocketbookTooltip"> -->
         <div
           class="group grid grid-rows-[1fr_auto] gap-2 cursor-pointer et-card p-0 h-48 w-40 justify-self-end"
           (click)="gotoOwnedPocketbookList()"
@@ -61,7 +60,7 @@
             Owned
           </span>
         </div>
-        <!-- </expenses-tracker-tooltip> -->
+
         <div
           class="group grid grid-rows-[1fr_auto] gap-2 cursor-pointer et-card p-0 h-48 w-40"
           (click)="gotoCollaboratedPocketbookList()">
@@ -96,13 +95,6 @@
 <ng-container *ngIf="flags().user.fail">
   <span class="text-color-danger-fg">User information not available</span>
 </ng-container>
-
-<!-- <ng-template #ownedPocketbookTooltip>
-  <div class="grid gap-2 px-2">
-    <span class="text-xl text-color-accent-fg whitespace-nowrap">Open Owned Pocketbooks</span>
-    <span>Click on the card to open all the pocketbooks owned by you</span>
-  </div>
-</ng-template> -->
 
 <expenses-tracker-tooltip #ownedPocketbookTooltip>
   <div class="grid gap-2 px-2">
