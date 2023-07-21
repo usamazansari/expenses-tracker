@@ -4,10 +4,13 @@ import { Component, EventEmitter, OnDestroy, Output, TemplateRef, ViewChild } fr
   selector: 'expenses-tracker-tooltip',
   template: `
     <ng-template>
-      <div class="p-2 border rounded-md bg-color-canvas-overlay border-color-border-default">
-        <span [id]="id">
-          <ng-content></ng-content>
-        </span>
+      <div class="flex flex-col items-center max-w-xs">
+        <div class="p-2 border rounded-md bg-color-canvas-overlay border-color-border-default">
+          <span [id]="id">
+            <ng-content></ng-content>
+          </span>
+        </div>
+        <div class="tooltip-arrow bg-color-border-default w-5 h-5"></div>
       </div>
     </ng-template>
   `,
