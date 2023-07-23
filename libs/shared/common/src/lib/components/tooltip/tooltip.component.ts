@@ -1,4 +1,15 @@
-import { Attribute, Component, EventEmitter, Input, OnDestroy, Output, TemplateRef, ViewChild } from '@angular/core';
+import {
+  Attribute,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  Output,
+  TemplateRef,
+  ViewChild,
+  computed,
+  signal
+} from '@angular/core';
 
 export type TooltipPosition = 'above' | 'below' | 'left' | 'right';
 
@@ -6,15 +17,10 @@ export type TooltipPosition = 'above' | 'below' | 'left' | 'right';
   selector: 'expenses-tracker-tooltip',
   template: `
     <ng-template>
-      <div
-        class="flex  items-center max-w-xs"
-        [ngClass]="{ classList: true, 'flex-col': ['above', 'below'].includes(tooltipPosition) }">
+      <div class="flex items-center max-w-xs" [ngClass]="containerClassList()">
         <div
           class="p-2 border rounded-md bg-color-canvas-overlay border-color-border-default"
-          [ngClass]="{
-            'order-1': ['above', 'left'].includes(tooltipPosition),
-            'order-2': ['below', 'right'].includes(tooltipPosition)
-          }">
+          [ngClass]="contentClassList()">
           <span [id]="id">
             <ng-content></ng-content>
           </span>
@@ -42,12 +48,43 @@ export type TooltipPosition = 'above' | 'below' | 'left' | 'right';
 export class TooltipComponent implements OnDestroy {
   @ViewChild(TemplateRef) tooltipTemplate!: TemplateRef<unknown>;
   id = '';
-  classList = '';
+  attributeClassList = signal('');
+  containerClassList = computed(
+    () => `${this.attributeClassList()} ${['above', 'below'].includes(this.tooltipPosition) ? 'flex-col' : ''}`
+  );
+  contentClassList = computed(
+    () =>
+      `${this.attributeClassList()} ${
+        ['above', 'left'].includes(this.tooltipPosition)
+          ? 'order-1'
+          : ['below', 'right'].includes(this.tooltipPosition)
+          ? 'order-2'
+          : ''
+      }`
+  );
+  arrowClassList = computed(
+    () =>
+      `${this.attributeClassList()} ${
+        ['below', 'right'].includes(this.tooltipPosition)
+          ? 'order-1'
+          : ['above', 'left'].includes(this.tooltipPosition)
+          ? 'order-2'
+          : ''
+      } ${
+        this.tooltipPosition === 'left'
+          ? '-rotate-90'
+          : this.tooltipPosition === 'right'
+          ? 'rotate-90'
+          : this.tooltipPosition === 'below'
+          ? 'rotate-180'
+          : ''
+      }`
+  );
   @Input() tooltipPosition: TooltipPosition = 'above';
   @Output() tooltipClose$ = new EventEmitter<void>();
 
   constructor(@Attribute('class') public _classList: string) {
-    this.classList = _classList;
+    this.attributeClassList.set(_classList);
   }
 
   ngOnDestroy() {
