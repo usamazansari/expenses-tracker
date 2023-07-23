@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # TODO: Set SHA on main branch to have nx:affected command working
       # - name: Use Nx Set SHAs
@@ -19,7 +19,7 @@ jobs:
           version: 8.6.5
 
       - name: Set up NodeJS
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'pnpm'
