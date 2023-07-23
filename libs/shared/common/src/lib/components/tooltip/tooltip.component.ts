@@ -1,10 +1,10 @@
-import { Component, EventEmitter, OnDestroy, Output, TemplateRef, ViewChild } from '@angular/core';
+import { Attribute, Component, EventEmitter, OnDestroy, Output, TemplateRef, ViewChild, signal } from '@angular/core';
 
 @Component({
   selector: 'expenses-tracker-tooltip',
   template: `
     <ng-template>
-      <div class="flex flex-col items-center max-w-xs">
+      <div class="flex flex-col items-center max-w-xs" [ngClass]="classList()">
         <div class="p-2 border rounded-md bg-color-canvas-overlay border-color-border-default">
           <span [id]="id">
             <ng-content></ng-content>
@@ -25,7 +25,12 @@ import { Component, EventEmitter, OnDestroy, Output, TemplateRef, ViewChild } fr
 export class TooltipComponent implements OnDestroy {
   @ViewChild(TemplateRef) tooltipTemplate!: TemplateRef<unknown>;
   id = '';
+  classList = signal('');
   @Output() tooltipClose$ = new EventEmitter<void>();
+
+  constructor(@Attribute('class') public _classList: string) {
+    this.classList.set(_classList);
+  }
 
   ngOnDestroy() {
     this.tooltipClose$.emit();
