@@ -38,9 +38,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   });
 
-  flags = signal<ComponentFlags>({
-    login: INITIAL_FLAGS
-  });
+  flags = signal<ComponentFlags>({ login: INITIAL_FLAGS });
 
   ngOnInit() {
     this.formGroup = this.#fb.group<FormGroupTypeGenerator<ComponentForm>>({

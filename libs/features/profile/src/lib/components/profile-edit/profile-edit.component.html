@@ -1,55 +1,36 @@
-<form [formGroup]="formGroup" (ngSubmit)="updateUserInfo()">
-  <div class="grid gap-2 text-et-color-fg-default">
-    <div class="grid grid-rows-1 gap-8 m-0 sm:mx-32 lg:m-0 lg:grid-cols-3">
-      <div class="grid grid-rows-1 gap-2 place-content-center">
-        <ng-container *ngIf="user?.photoURL">
-          <img class="w-24 h-24 rounded-full cursor-default" [src]="user?.photoURL" alt="User Image" />
-        </ng-container>
-        <ng-container *ngIf="!user?.photoURL">
-          <span class="grid w-24 h-24 text-4xl rounded-full cursor-default place-content-center">
-            {{ user | extractInitials }}
-          </span>
-        </ng-container>
-      </div>
-      <div class="grid grid-rows-1 gap-2">
-        <div class="flex items-center gap-2">
-          <span class="material-icons min-w-[24px] text-et-color-accent-emphasis">person</span>
-
-          <label>Full Name</label>
-          <input formControlName="displayName" type="text" placeholder="John Doe" autofocus />
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="material-icons min-w-[24px] text-et-color-accent-emphasis"> alternate_email </span>
-          <span class="overflow-hidden whitespace-nowrap overflow-ellipsis">
-            {{ user?.email }}
-          </span>
-        </div>
-      </div>
-      <div class="grid grid-rows-1 gap-2">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="material-icons min-w-[24px] text-et-color-accent-emphasis">badge</span>
-            <span class="overflow-hidden whitespace-nowrap overflow-ellipsis">
-              {{ user?.uid }}
-            </span>
+<div class="relative grid gap-2 w-96 et-card">
+  <ng-container *ngIf="flags().edit.visible">
+    <form [formGroup]="formGroup" (ngSubmit)="editProfile()">
+      <div
+        class="grid grid-rows-[1fr_auto] gap-2"
+        [ngClass]="{ 'opacity-50 pointer-events-none': flags().edit.loading }">
+        <div class="grid gap-2">
+          <div class="et-form-field-wrapper">
+            <label for="email-input" class="font-bold">Email</label>
+            <div class="et-form-field-input-wrapper">
+              <input
+                class="w-full et-input"
+                formControlName="email"
+                id="email-input"
+                type="email"
+                placeholder="foo@bar.com"
+                (blur)="checkControl(displayName())"
+                [ngClass]="{ 'et-input-error-state': displayName().error.flag }"
+                required />
+              <ng-container *ngIf="displayName().error.flag">
+                <span class="et-form-field-input-error-message">{{ displayName().error.message }}</span>
+              </ng-container>
+            </div>
           </div>
         </div>
+
+        <div class="flex flex-col gap-2">
+          <button type="submit" class="w-full et-button et-button-primary">
+            <span class="material-icons min-w-[24px]">save</span>
+            <span>Save</span>
+          </button>
+        </div>
       </div>
-      <div class="grid grid-cols-2 gap-2">
-        <button
-          type="submit"
-          class="flex items-center justify-center gap-2 px-6 py-3 border rounded-lg bg-et-color-button-primary-bg text-et-color-button-primary border-et-color-button-primary-border">
-          <span class="material-icons min-w-[24px]">save</span>
-          <span>SAVE</span>
-        </button>
-        <button
-          type="button"
-          (click)="cancelEdit()"
-          class="flex items-center justify-center gap-2 px-6 py-3 text-center border rounded-lg cursor-pointer text-et-color-button-danger bg-et-color-button-danger-bg border-et-color-button-danger-border">
-          <span class="material-icons min-w-[24px]">clear</span>
-          <span>CANCEL</span>
-        </button>
-      </div>
-    </div>
-  </div>
-</form>
+    </form>
+  </ng-container>
+</div>
