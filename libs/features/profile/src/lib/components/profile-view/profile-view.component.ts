@@ -3,6 +3,7 @@ import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { User } from 'firebase/auth';
 import { Subscription } from 'rxjs';
 
+import { TooltipModule } from '@expenses-tracker/shared/common';
 import { INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
 import { ExtractInitialsPipe } from '../../pipes';
@@ -11,7 +12,7 @@ import { ComponentFlags, ProfileViewService } from './profile-view.service';
 @Component({
   selector: 'expenses-tracker-profile-view',
   standalone: true,
-  imports: [CommonModule, ExtractInitialsPipe],
+  imports: [CommonModule, ExtractInitialsPipe, TooltipModule],
   templateUrl: './profile-view.component.html'
 })
 export class ProfileViewComponent implements OnInit, OnDestroy {

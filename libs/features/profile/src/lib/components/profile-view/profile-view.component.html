@@ -29,7 +29,6 @@
               {{ user()?.displayName }}
             </span>
           </ng-container>
-
           <span
             class="text-center truncate transition-colors duration-200 cursor-pointer hover:text-color-accent-emphasis"
             (click)="copyEmail()">
@@ -41,7 +40,8 @@
       <div class="flex gap-3">
         <div
           class="group grid grid-rows-[1fr_auto] gap-2 cursor-pointer et-card p-0 h-48 w-40 justify-self-end"
-          (click)="gotoOwnedPocketbookList()">
+          (click)="gotoOwnedPocketbookList()"
+          [expensesTrackerTooltip]="ownedPocketbookTooltip">
           <div class="grid place-content-center">
             <ng-container *ngIf="flags().ownedPocketbookListCount.loading">
               <span class="grid w-8 h-8 place-content-center material-icons animate-spin">autorenew</span>
@@ -56,13 +56,15 @@
             </ng-container>
           </div>
           <span
-            class="grid p-2 transition-colors duration-200 group-hover:bg-color-accent-emphasis group-hover:text-color-fg-on-emphasis place-content-center">
+            class="grid p-2 transition-colors duration-200 rounded-bl-lg rounded-br-lg group-hover:bg-color-accent-emphasis group-hover:text-color-fg-on-emphasis place-content-center">
             Owned
           </span>
         </div>
+
         <div
           class="group grid grid-rows-[1fr_auto] gap-2 cursor-pointer et-card p-0 h-48 w-40"
-          (click)="gotoCollaboratedPocketbookList()">
+          (click)="gotoCollaboratedPocketbookList()"
+          [expensesTrackerTooltip]="collaboratedPocketbookTooltip">
           <div class="grid place-content-center">
             <ng-container *ngIf="flags().collaboratedPocketbookListCount.loading">
               <span class="grid w-8 h-8 place-content-center material-icons animate-spin">autorenew</span>
@@ -75,7 +77,7 @@
             </ng-container>
           </div>
           <span
-            class="grid p-2 transition-colors duration-200 group-hover:bg-color-accent-emphasis group-hover:text-color-fg-on-emphasis place-content-center">
+            class="grid p-2 transition-colors duration-200 rounded-bl-lg rounded-br-lg group-hover:bg-color-accent-emphasis group-hover:text-color-fg-on-emphasis place-content-center">
             Collaborated
           </span>
         </div>
@@ -94,3 +96,17 @@
 <ng-container *ngIf="flags().user.fail">
   <span class="text-color-danger-fg">User information not available</span>
 </ng-container>
+
+<expenses-tracker-tooltip #ownedPocketbookTooltip>
+  <div class="grid gap-2 px-2">
+    <span class="text-xl text-color-accent-fg whitespace-nowrap">Open Owned Pocketbooks</span>
+    <span>Click on the card to open all the pocketbooks owned by you</span>
+  </div>
+</expenses-tracker-tooltip>
+
+<expenses-tracker-tooltip #collaboratedPocketbookTooltip>
+  <div class="grid gap-2 px-2">
+    <span class="text-xl text-color-accent-fg whitespace-nowrap">Open Collaborated Pocketbooks</span>
+    <span>Click on the card to open all the pocketbooks you collaborate on</span>
+  </div>
+</expenses-tracker-tooltip>
