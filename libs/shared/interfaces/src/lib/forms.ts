@@ -5,7 +5,7 @@ type FormGroupTypeGenerator<T extends { [key: string]: unknown }> = {
 };
 
 // TODO: @usamazansari: rename this to `FormControlExtras`
-type FromControlExtras<T extends { [key: string]: unknown }, K extends keyof T> = {
+type FormControlExtras<T extends { [key: string]: unknown }, K extends keyof T> = {
   name: K;
   value: T[K];
   error: {
@@ -13,4 +13,4 @@ type FromControlExtras<T extends { [key: string]: unknown }, K extends keyof T> 
     message: string;
   };
 };
-export { FromControlExtras, FormGroupTypeGenerator };
+export { FormControlExtras, FormGroupTypeGenerator };

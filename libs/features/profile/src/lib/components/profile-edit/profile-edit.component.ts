@@ -3,7 +3,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { User } from 'firebase/auth';
 
-import { FormGroupTypeGenerator, FromControlExtras, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
+import { FormGroupTypeGenerator, FormControlExtras, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
 import { ExtractInitialsPipe } from '../../pipes';
 import { ComponentFlags, ComponentForm, ProfileEditService } from './profile-edit.service';
@@ -20,7 +20,7 @@ export class ProfileEditComponent implements OnInit {
   user = signal<User | null>(null);
   #fb = inject(FormBuilder);
   #service = inject(ProfileEditService);
-  displayName = signal<FromControlExtras<ComponentForm, 'displayName'>>({
+  displayName = signal<FormControlExtras<ComponentForm, 'displayName'>>({
     name: 'displayName',
     value: '',
     error: {
@@ -38,7 +38,7 @@ export class ProfileEditComponent implements OnInit {
     });
   }
 
-  checkControl(formControl: FromControlExtras<ComponentForm, keyof ComponentForm>) {
+  checkControl(formControl: FormControlExtras<ComponentForm, keyof ComponentForm>) {
     this.displayName.update(props => ({
       ...props,
       error: {

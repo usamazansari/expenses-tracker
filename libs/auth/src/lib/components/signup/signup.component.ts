@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
-import { FormGroupTypeGenerator, FromControlExtras, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
+import { FormGroupTypeGenerator, FormControlExtras, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
 import { ComponentFlags, ComponentForm, SignupService } from './signup.service';
 
@@ -20,7 +20,7 @@ export class SignupComponent implements OnInit, OnDestroy {
   #fb = inject(FormBuilder);
   #service = inject(SignupService);
 
-  email = signal<FromControlExtras<ComponentForm, 'email'>>({
+  email = signal<FormControlExtras<ComponentForm, 'email'>>({
     name: 'email',
     value: '',
     error: {
@@ -29,7 +29,7 @@ export class SignupComponent implements OnInit, OnDestroy {
     }
   });
 
-  password = signal<FromControlExtras<ComponentForm, 'password'>>({
+  password = signal<FormControlExtras<ComponentForm, 'password'>>({
     name: 'password',
     value: '',
     error: {
@@ -92,7 +92,7 @@ export class SignupComponent implements OnInit, OnDestroy {
     }
   }
 
-  checkControl(formControl: FromControlExtras<ComponentForm, keyof ComponentForm>) {
+  checkControl(formControl: FormControlExtras<ComponentForm, keyof ComponentForm>) {
     switch (formControl.name) {
       case 'email':
         this.email.update(props => ({
