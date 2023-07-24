@@ -1,4 +1,4 @@
-import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
+import { ConnectedPosition, Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import {
   AfterViewInit,
@@ -59,6 +59,42 @@ export class TooltipDirective implements AfterViewInit {
     this.#overlayRef()?.detach();
   }
 
+  #computePosition(): ConnectedPosition {
+    switch (this.tooltip.tooltipPosition) {
+      case 'above':
+      default:
+        return {
+          originX: 'center',
+          originY: 'top',
+          overlayX: 'center',
+          overlayY: 'bottom',
+          offsetY: 10
+        };
+      case 'below':
+        return {
+          originX: 'center',
+          originY: 'bottom',
+          overlayX: 'center',
+          overlayY: 'top',
+          offsetY: -10
+        };
+      case 'left':
+        return {
+          originX: 'start',
+          originY: 'center',
+          overlayX: 'end',
+          overlayY: 'center'
+        };
+      case 'right':
+        return {
+          originX: 'end',
+          originY: 'center',
+          overlayX: 'start',
+          overlayY: 'center'
+        };
+    }
+  }
+
   #createOverlay() {
     if (!this.#overlayRef()) {
       this.#portal.set(new TemplatePortal(this.tooltip.tooltipTemplate, this.#viewContainerRef));
@@ -66,15 +102,7 @@ export class TooltipDirective implements AfterViewInit {
         positionStrategy: this.#overlay
           .position()
           .flexibleConnectedTo(this.#elementRef)
-          .withPositions([
-            {
-              originX: 'center',
-              originY: 'top',
-              overlayX: 'center',
-              overlayY: 'bottom',
-              offsetY: 10
-            }
-          ]),
+          .withPositions([this.#computePosition()]),
         scrollStrategy: this.#overlay.scrollStrategies.reposition()
       });
       this.#overlayRef.set(this.#overlay.create(overlayState));

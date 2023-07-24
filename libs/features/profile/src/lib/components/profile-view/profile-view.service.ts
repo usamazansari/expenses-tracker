@@ -71,6 +71,10 @@ export class ProfileViewService {
     }
   }
 
+  gotoEditProfile() {
+    this.#router.navigate([RoutePaths.Profile, RoutePaths.EntityEdit]);
+  }
+
   gotoOwnedPocketbookList() {
     this.#router.navigate([RoutePaths.Pocketbook, RoutePaths.EntityList, RoutePaths.PocketbookOwner]);
   }
