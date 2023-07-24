@@ -1,19 +1,27 @@
 <div class="grid place-content-center">
   <ng-container *ngIf="flags().edit.visible">
-    <form [formGroup]="formGroup" class="w-96 et-card" (ngSubmit)="editProfile()">
-      <div
-        class="grid grid-rows-[1fr_auto] gap-2"
-        [ngClass]="{ 'opacity-50 pointer-events-none': flags().edit.loading }">
-        <div class="grid gap-2">
+    <div
+      class="grid grid-rows-1 gap-4 lg:grid-cols-3"
+      [ngClass]="{ 'opacity-50 pointer-events-none': flags().edit.loading }">
+      <div class="flex flex-col gap-4">
+        <h4 class="text-lg font-bold">Edit profile for {{ user()?.email }}</h4>
+        <ul class="border rounded-md border-color-border-default">
+          <li>Display Name</li>
+          <li>Password</li>
+        </ul>
+      </div>
+
+      <div class="grid gap-2">
+        <form [formGroup]="formGroup" class="w-96" (ngSubmit)="editProfile()">
           <div class="et-form-field-wrapper">
             <label for="email-input" class="font-bold">Display Name</label>
             <div class="et-form-field-input-wrapper">
               <input
                 class="w-full et-input"
-                formControlName="displayName"
-                id="displayName-input"
-                type="text"
-                placeholder="John Doe"
+                formControlName="email"
+                id="email-input"
+                type="email"
+                placeholder="foo@bar.com"
                 (blur)="checkControl(displayName())"
                 [ngClass]="{ 'et-input-error-state': displayName().error.flag }"
                 required />
@@ -22,15 +30,21 @@
               </ng-container>
             </div>
           </div>
-        </div>
 
-        <div class="flex flex-col gap-2">
-          <button type="submit" class="w-full et-button et-button-primary">
-            <span class="material-icons min-w-[24px]">save</span>
-            <span>Save</span>
-          </button>
-        </div>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="submit" class="w-full et-button et-button-danger">
+              <span class="material-icons min-w-[24px]">clear</span>
+              <span>Cancel</span>
+            </button>
+            <button type="submit" class="w-full et-button et-button-primary">
+              <span class="material-icons min-w-[24px]">save</span>
+              <span>Update</span>
+            </button>
+          </div>
+        </form>
       </div>
-    </form>
+
+      <div class="hidden lg:flex"></div>
+    </div>
   </ng-container>
 </div>
