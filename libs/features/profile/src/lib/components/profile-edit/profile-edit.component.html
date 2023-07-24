@@ -1,19 +1,19 @@
-<div class="relative grid gap-2 w-96 et-card">
+<div class="grid place-content-center">
   <ng-container *ngIf="flags().edit.visible">
-    <form [formGroup]="formGroup" (ngSubmit)="editProfile()">
+    <form [formGroup]="formGroup" class="w-96 et-card" (ngSubmit)="editProfile()">
       <div
         class="grid grid-rows-[1fr_auto] gap-2"
         [ngClass]="{ 'opacity-50 pointer-events-none': flags().edit.loading }">
         <div class="grid gap-2">
           <div class="et-form-field-wrapper">
-            <label for="email-input" class="font-bold">Email</label>
+            <label for="email-input" class="font-bold">Display Name</label>
             <div class="et-form-field-input-wrapper">
               <input
                 class="w-full et-input"
-                formControlName="email"
-                id="email-input"
-                type="email"
-                placeholder="foo@bar.com"
+                formControlName="displayName"
+                id="displayName-input"
+                type="text"
+                placeholder="John Doe"
                 (blur)="checkControl(displayName())"
                 [ngClass]="{ 'et-input-error-state': displayName().error.flag }"
                 required />

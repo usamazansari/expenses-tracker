@@ -7,6 +7,7 @@ import { FormGroupTypeGenerator, FormControlExtras, INITIAL_FLAGS } from '@expen
 
 import { ExtractInitialsPipe } from '../../pipes';
 import { ComponentFlags, ComponentForm, ProfileEditService } from './profile-edit.service';
+import { controlStateValidator } from '@expenses-tracker/shared/common';
 
 @Component({
   selector: 'expenses-tracker-profile-edit',
@@ -23,10 +24,7 @@ export class ProfileEditComponent implements OnInit {
   displayName = signal<FormControlExtras<ComponentForm, 'displayName'>>({
     name: 'displayName',
     value: '',
-    error: {
-      flag: false,
-      message: ''
-    }
+    error: { flag: false, message: '' }
   });
   flags = signal<ComponentFlags>({ edit: INITIAL_FLAGS });
 
@@ -39,24 +37,8 @@ export class ProfileEditComponent implements OnInit {
   }
 
   checkControl(formControl: FormControlExtras<ComponentForm, keyof ComponentForm>) {
-    this.displayName.update(props => ({
-      ...props,
-      error: {
-        flag: this.getError(this.formGroup.controls.displayName),
-        message: this.getErrorMessage(props.name)
-      }
-    }));
-  }
-
-  private getError(control: FormControl<string>): boolean {
-    return control.touched && !!control.errors;
-  }
-
-  private getErrorMessage(formControlName: keyof ComponentForm) {
-    if (this.formGroup.controls[formControlName]?.hasError('required')) {
-      return `${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)} is required`;
-    }
-    return `Unknown validation error for ${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)}`;
+    const { flag, message } = controlStateValidator(this.formGroup, formControl);
+    this.displayName.update(props => ({ ...props, error: { flag, message } }));
   }
 
   editProfile() {
