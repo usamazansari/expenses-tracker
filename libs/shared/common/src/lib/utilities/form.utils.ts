@@ -12,6 +12,9 @@ const getErrorMessage = <C extends { [key: string]: unknown }, F extends FormGro
   formControlName: keyof C
 ) => {
   const control = camelCaseToSentenceCase(formControlName as string);
+  if (formGroup['controls'][formControlName]?.hasError('email')) {
+    return `Invalid ${control.toLowerCase()} address`;
+  }
   if (formGroup['controls'][formControlName]?.hasError('required')) {
     return `${control} is required`;
   }

@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { FormGroupTypeGenerator, FormControlExtras, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
 import { ComponentFlags, ComponentForm, LoginService } from './login.service';
+import { controlStateValidator } from '@expenses-tracker/shared/common';
 
 @Component({
   selector: 'expenses-tracker-login',
@@ -51,21 +52,17 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
 
     this.formGroup.valueChanges.subscribe(() => {
+      const { flag: emailFlag, message: emailMessage } = controlStateValidator(this.formGroup, this.email());
+      const { flag: passwordFlag, message: passwordMessage } = controlStateValidator(this.formGroup, this.password());
       this.email.update(props => ({
         ...props,
         value: this.formGroup.controls.email.value,
-        error: {
-          flag: this.getError(this.formGroup.controls.email),
-          message: this.getErrorMessage(props.name)
-        }
+        error: { flag: emailFlag, message: emailMessage }
       }));
       this.password.update(props => ({
         ...props,
         value: this.formGroup.controls.password.value,
-        error: {
-          flag: this.getError(this.formGroup.controls.password),
-          message: this.getErrorMessage(props.name)
-        }
+        error: { flag: passwordFlag, message: passwordMessage }
       }));
     });
   }
@@ -93,45 +90,18 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   checkControl(formControl: FormControlExtras<ComponentForm, keyof ComponentForm>) {
+    const { flag, message } = controlStateValidator(this.formGroup, formControl);
     switch (formControl.name) {
       case 'email':
-        this.email.update(props => ({
-          ...props,
-          error: {
-            flag: this.getError(this.formGroup.controls.email),
-            message: this.getErrorMessage(props.name)
-          }
-        }));
+        this.email.update(props => ({ ...props, error: { flag, message } }));
         break;
       case 'password':
-        this.password.update(props => ({
-          ...props,
-          error: {
-            flag: this.getError(this.formGroup.controls.email),
-            message: this.getErrorMessage(props.name)
-          }
-        }));
+        this.password.update(props => ({ ...props, error: { flag, message } }));
         break;
 
       default:
         break;
     }
-  }
-
-  private getError(control: FormControl<string>): boolean {
-    return control.touched && !!control.errors;
-  }
-
-  private getErrorMessage(formControlName: keyof ComponentForm) {
-    if (this.formGroup.controls[formControlName]?.hasError('required')) {
-      return `${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)} is required`;
-    }
-
-    if (this.formGroup.controls[formControlName]?.hasError('email')) {
-      return 'Invalid Email';
-    }
-
-    return `Unknown validation error for ${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)}`;
   }
 
   ngOnDestroy() {
