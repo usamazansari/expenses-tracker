@@ -3,11 +3,11 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { User } from 'firebase/auth';
 
-import { FormGroupTypeGenerator, FormControlExtras, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
+import { FormControlExtras, FormGroupTypeGenerator, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
+import { controlStateValidator } from '@expenses-tracker/shared/common';
 import { ExtractInitialsPipe } from '../../pipes';
 import { ComponentFlags, ComponentForm, ProfileEditService } from './profile-edit.service';
-import { controlStateValidator } from '@expenses-tracker/shared/common';
 
 @Component({
   selector: 'expenses-tracker-profile-edit',
