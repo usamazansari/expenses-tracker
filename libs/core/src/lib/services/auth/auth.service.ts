@@ -10,19 +10,9 @@ import { FirestoreService } from '../firestore/firestore.service';
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(
-    private _auth: AngularFireAuth,
-    private _firestore: FirestoreService,
-    private _context: ContextService
-  ) {}
+  constructor(private _auth: AngularFireAuth, private _firestore: FirestoreService, private _context: ContextService) {}
 
-  login$({
-    email,
-    password
-  }: {
-    email: string | null | undefined;
-    password: string | null | undefined;
-  }) {
+  login$({ email, password }: { email: string | null | undefined; password: string | null | undefined }) {
     return from(this._auth.signInWithEmailAndPassword(email ?? '', password ?? ''));
   }
 
@@ -30,14 +20,12 @@ export class AuthService {
     return from(this._auth.signOut());
   }
 
-  signup$({
-    email,
-    password
-  }: {
-    email: string | null | undefined;
-    password: string | null | undefined;
-  }) {
+  signup$({ email, password }: { email: string | null | undefined; password: string | null | undefined }) {
     return from(this._auth.createUserWithEmailAndPassword(email ?? '', password ?? ''));
+  }
+
+  updateDisplayName$(displayName: string) {
+    return this._context.watchUser$().pipe(switchMap(user => this.updateUserInfo$({ ...user, displayName })));
   }
 
   updateUserInfo$(update: Partial<User>) {
@@ -46,9 +34,7 @@ export class AuthService {
       .pipe(
         switchMap(user =>
           from(updateProfile(user as User, { ...update })).pipe(
-            switchMap(() =>
-              this._firestore.updateUser$({ ...user, ...update } as Partial<User>)
-            )
+            switchMap(() => this._firestore.updateUser$({ ...user, ...update } as Partial<User>))
           )
         )
       );

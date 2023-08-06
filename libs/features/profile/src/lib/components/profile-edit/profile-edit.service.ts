@@ -6,10 +6,10 @@ import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common
 import { IFlag } from '@expenses-tracker/shared/interfaces';
 
 export type ComponentFlags = {
-  edit: IFlag;
+  edit: { displayName: IFlag; password: IFlag };
 };
 
-export type ComponentForm = {
+export type DisplayNameEditForm = {
   displayName: string;
 };
 
@@ -25,6 +25,14 @@ export class ProfileEditService {
 
   watchUser$() {
     return this.#context.watchUser$();
+  }
+
+  gotoEditProperty(property: 'displayName' | 'password') {
+    this.#router.navigate([RoutePaths.Profile, RoutePaths.EntityEdit, property]);
+  }
+
+  editDisplayName$(displayName: string) {
+    return this.#auth.updateDisplayName$(displayName);
   }
 
   cancelEdit() {

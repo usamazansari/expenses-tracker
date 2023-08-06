@@ -1,9 +1,15 @@
-import { Route } from '@angular/router';
 import { inject } from '@angular/core';
+import { Route } from '@angular/router';
 
 import { AuthGuard } from '@expenses-tracker/auth';
 
-import { ProfileComponent, ProfileEditComponent, ProfileViewComponent } from './components';
+import {
+  ProfileComponent,
+  ProfileEditComponent,
+  ProfileEditDisplayNameComponent,
+  ProfileEditPasswordComponent,
+  ProfileViewComponent
+} from './components';
 
 export const profileRoutes: Route[] = [
   {
@@ -12,7 +18,15 @@ export const profileRoutes: Route[] = [
     canActivate: [() => inject(AuthGuard).canActivate()],
     children: [
       { path: '', component: ProfileViewComponent },
-      { path: 'edit', component: ProfileEditComponent }
+      {
+        path: 'edit',
+        component: ProfileEditComponent,
+        children: [
+          { path: 'displayName', component: ProfileEditDisplayNameComponent },
+          { path: 'password', component: ProfileEditPasswordComponent },
+          { path: '', redirectTo: 'displayName', pathMatch: 'full' }
+        ]
+      }
     ]
   }
 ];
