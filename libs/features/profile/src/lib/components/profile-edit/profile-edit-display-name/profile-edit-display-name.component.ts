@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { User } from 'firebase/auth';
 
 import { FormControlExtras, FormGroupTypeGenerator } from '@expenses-tracker/shared/interfaces';
 
@@ -16,7 +15,6 @@ import { DisplayNameEditForm, ProfileEditService } from '../profile-edit.service
 })
 export class ProfileEditDisplayNameComponent implements OnInit, OnDestroy {
   formGroup!: FormGroup<FormGroupTypeGenerator<DisplayNameEditForm>>;
-  user = signal<User | null>(null);
   #fb = inject(FormBuilder);
   #service = inject(ProfileEditService);
   displayName = signal<FormControlExtras<DisplayNameEditForm, 'displayName'>>({
@@ -25,13 +23,11 @@ export class ProfileEditDisplayNameComponent implements OnInit, OnDestroy {
     error: { flag: false, message: '' }
   });
   #editDisplayName$!: Subscription;
+  user = computed(() => this.#service.user());
 
   ngOnInit() {
     this.formGroup = this.#fb.group<FormGroupTypeGenerator<DisplayNameEditForm>>({
       displayName: this.#fb.control<string>(this.user()?.displayName ?? '') as FormControl<string>
-    });
-    this.#service.watchUser$().subscribe(user => {
-      this.user.set(user);
     });
   }
 

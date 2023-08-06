@@ -1,5 +1,5 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, of, tap } from 'rxjs';
 
@@ -8,7 +8,6 @@ import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common
 import { IFlag } from '@expenses-tracker/shared/interfaces';
 
 export type ComponentFlags = {
-  user: IFlag;
   logout: IFlag;
   ownedPocketbookListCount: IFlag;
   collaboratedPocketbookListCount: IFlag;
@@ -24,10 +23,7 @@ export class ProfileViewService {
   #firestore = inject(FirestoreService);
   #notification = inject(NotificationService);
   #router = inject(Router);
-
-  watchUser$() {
-    return this.#context.watchUser$();
-  }
+  user = computed(() => this.#context.user());
 
   watchOwnedPocketbookListCount$() {
     return this.#firestore.watchOwnedPocketbookListCount$();

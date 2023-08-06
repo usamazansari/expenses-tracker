@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
-import { User } from 'firebase/auth';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { TooltipModule } from '@expenses-tracker/shared/common';
@@ -16,12 +15,11 @@ import { ComponentFlags, ProfileViewService } from './profile-view.service';
   templateUrl: './profile-view.component.html'
 })
 export class ProfileViewComponent implements OnInit, OnDestroy {
-  user = signal<User | null>(null);
   ownedPocketbookListCount = signal<number>(0);
   collaboratedPocketbookListCount = signal<number>(0);
   flags = signal<ComponentFlags>({
     logout: INITIAL_FLAGS,
-    user: INITIAL_FLAGS,
+
     ownedPocketbookListCount: INITIAL_FLAGS,
     collaboratedPocketbookListCount: INITIAL_FLAGS
   });
@@ -29,24 +27,11 @@ export class ProfileViewComponent implements OnInit, OnDestroy {
   #logout$!: Subscription;
 
   #service = inject(ProfileViewService);
+  user = computed(() => this.#service.user());
 
   ngOnInit() {
-    this.fetchUserInformation();
     this.fetchOwnedPocketbookListCount();
     this.fetchCollaboratedPocketbookListCount();
-  }
-
-  private fetchUserInformation() {
-    this.flags.update(value => ({ ...value, user: { ...value.user, loading: true } }));
-    this.#service.watchUser$().subscribe({
-      next: user => {
-        this.flags.update(value => ({ ...value, user: { ...value.user, loading: false, success: true, fail: false } }));
-        this.user.set(user);
-      },
-      error: () => {
-        this.flags.update(value => ({ ...value, user: { ...value.user, loading: false, success: false, fail: true } }));
-      }
-    });
   }
 
   private fetchOwnedPocketbookListCount() {

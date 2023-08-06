@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { User } from 'firebase/auth';
 
 import { RouterModule } from '@angular/router';
 import { ExtractInitialsPipe } from '../../pipes';
@@ -13,15 +12,10 @@ import { ProfileEditService } from './profile-edit.service';
   imports: [CommonModule, ReactiveFormsModule, RouterModule, ExtractInitialsPipe],
   templateUrl: './profile-edit.component.html'
 })
-export class ProfileEditComponent implements OnInit {
-  user = signal<User | null>(null);
+export class ProfileEditComponent {
   #service = inject(ProfileEditService);
-
-  ngOnInit() {
-    this.#service.watchUser$().subscribe(user => {
-      this.user.set(user);
-    });
-  }
+  editMode = computed(() => this.#service.editMode());
+  user = computed(() => this.#service.user());
 
   gotoEditProperty(property: 'displayName' | 'password') {
     this.#service.gotoEditProperty(property);
