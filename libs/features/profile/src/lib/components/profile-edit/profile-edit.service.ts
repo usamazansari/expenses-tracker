@@ -1,5 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { tap } from 'rxjs';
 
 import { AuthService, ContextService, ErrorService } from '@expenses-tracker/core';
 import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
@@ -34,13 +35,21 @@ export class ProfileEditService {
     this.editMode.set(url);
   }
 
-  gotoEditProperty(property: 'displayName' | 'password') {
+  gotoEditProperty(property: EditMode = 'displayName') {
     this.editMode.set(property);
     this.#router.navigate([RoutePaths.Profile, RoutePaths.EntityEdit, property]);
   }
 
   editDisplayName$(displayName: string) {
-    return this.#auth.updateDisplayName$(displayName);
+    return this.#auth.updateDisplayName$(displayName).pipe(
+      tap(() => {
+        this.#notification.success({
+          title: 'Success',
+          description: 'Your display name has been updated.'
+        });
+        this.#router.navigate([RoutePaths.Profile]);
+      })
+    );
   }
 
   cancelEdit() {
