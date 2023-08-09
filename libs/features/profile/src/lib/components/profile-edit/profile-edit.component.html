@@ -5,7 +5,7 @@
       <ul class="p-2 my-0 list-none">
         <li
           class="relative p-2 rounded-md cursor-pointer hover:bg-color-action-list-item-default-hover-bg lg:w-60"
-          [ngClass]="{ 'bg-color-action-list-item-default-selected-bg': true }">
+          [ngClass]="{ 'bg-color-action-list-item-default-selected-bg': this.editMode() === 'displayName' }">
           <a class="flex items-center gap-2" (click)="gotoEditProperty('displayName')">
             <span class="material-icons text-color-fg-muted">format_quote</span>
             <span>Display Name</span>
@@ -13,7 +13,7 @@
         </li>
         <li
           class="relative p-2 rounded-md cursor-pointer hover:bg-color-action-list-item-default-hover-bg lg:w-60"
-          [ngClass]="{ 'bg-color-action-list-item-default-selected-bg': false }">
+          [ngClass]="{ 'bg-color-action-list-item-default-selected-bg': this.editMode() === 'password' }">
           <a class="flex items-center gap-2" (click)="gotoEditProperty('password')">
             <span class="material-icons text-color-fg-muted">key</span>
             <span>Password</span>

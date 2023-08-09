@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
+import { Component, OnInit, computed, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { RouterModule } from '@angular/router';
 import { ExtractInitialsPipe } from '../../pipes';
-import { ProfileEditService } from './profile-edit.service';
+import { EditMode, ProfileEditService } from './profile-edit.service';
 
 @Component({
   selector: 'expenses-tracker-profile-edit',
@@ -12,12 +12,16 @@ import { ProfileEditService } from './profile-edit.service';
   imports: [CommonModule, ReactiveFormsModule, RouterModule, ExtractInitialsPipe],
   templateUrl: './profile-edit.component.html'
 })
-export class ProfileEditComponent {
+export class ProfileEditComponent implements OnInit {
   #service = inject(ProfileEditService);
   editMode = computed(() => this.#service.editMode());
   user = computed(() => this.#service.user());
 
-  gotoEditProperty(property: 'displayName' | 'password') {
+  ngOnInit() {
+    this.#service.fetchEditMode();
+  }
+
+  gotoEditProperty(property: EditMode) {
     this.#service.gotoEditProperty(property);
   }
 

@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, computed, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Observable } from 'rxjs';
 
 import { LoginComponent } from '../login/login.component';
 import { SignupComponent } from '../signup/signup.component';
 
-import { AuthMode, AuthService } from './auth.service';
+import { AuthService } from './auth.service';
 
 @Component({
   selector: 'expenses-tracker-auth',
@@ -15,20 +14,18 @@ import { AuthMode, AuthService } from './auth.service';
   templateUrl: './auth.component.html'
 })
 export class AuthComponent implements OnInit {
-  authMode$!: Observable<AuthMode>;
-
-  constructor(private _service: AuthService) {}
+  #service = inject(AuthService);
+  authMode = computed(() => this.#service.authMode());
 
   ngOnInit() {
-    this._service.fetchAuthMode();
-    this.authMode$ = this._service.watchAuthMode$();
+    this.#service.fetchAuthMode();
   }
 
   gotoLogin() {
-    this._service.gotoLogin();
+    this.#service.gotoLogin();
   }
 
   gotoSignup() {
-    this._service.gotoSignup();
+    this.#service.gotoSignup();
   }
 }

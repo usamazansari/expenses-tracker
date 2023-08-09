@@ -1,10 +1,9 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { AuthService, ContextService, ErrorService } from '@expenses-tracker/core';
 import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
 import { IFlag } from '@expenses-tracker/shared/interfaces';
-import { filter } from 'rxjs';
 
 export type EditMode = 'displayName' | 'password';
 
@@ -20,23 +19,23 @@ export type DisplayNameEditForm = {
   providedIn: 'root'
 })
 export class ProfileEditService {
-  editMode = signal<EditMode>('displayName');
   #router = inject(Router);
   #context = inject(ContextService);
   #auth = inject(AuthService);
+
   #notification = inject(NotificationService);
   #error = inject(ErrorService);
 
+  editMode = signal<EditMode>('displayName');
   user = computed(() => this.#context.user());
 
   fetchEditMode() {
-    this.#router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(e => {
-      const { url, urlAfterRedirects } = e as NavigationEnd;
-      this.editMode.set((urlAfterRedirects ?? url)?.split('/').at(-1) as EditMode);
-    });
+    const url = this.#router.url.split('/').at(-1) as EditMode;
+    this.editMode.set(url);
   }
 
   gotoEditProperty(property: 'displayName' | 'password') {
+    this.editMode.set(property);
     this.#router.navigate([RoutePaths.Profile, RoutePaths.EntityEdit, property]);
   }
 
