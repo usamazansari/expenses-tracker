@@ -1,19 +1,28 @@
-<div class="grid">
+<div class="grid gap-2">
+  <div class="grid place-content-center">
+    <span class="text-xl">Edit profile for {{ user()?.displayName ?? user()?.email }}</span>
+  </div>
+
   <div class="grid grid-rows-1 gap-4 lg:grid-cols-[1fr_2fr]">
     <div class="flex flex-col gap-4 lg:items-end">
-      <h4 class="text-lg font-bold">Edit profile for {{ user()?.displayName ?? user()?.email }}</h4>
       <ul class="p-2 my-0 list-none">
         <li
-          class="relative p-2 rounded-md cursor-pointer hover:bg-color-action-list-item-default-hover-bg lg:w-60"
-          [ngClass]="{ 'bg-color-action-list-item-default-selected-bg': this.editMode() === 'displayName' }">
+          class="relative p-2 pl-3 transition-colors duration-200 border-2 rounded-md cursor-pointer hover:bg-color-action-list-item-default-hover-bg lg:w-60 border-color-transparent"
+          [ngClass]="{
+            'bg-color-action-list-item-default-selected-bg border-l-color-primer-border-active':
+              this.editMode() === 'displayName'
+          }">
           <a class="flex items-center gap-2" (click)="gotoEditProperty('displayName')">
             <span class="material-icons text-color-fg-muted">format_quote</span>
             <span>Display Name</span>
           </a>
         </li>
         <li
-          class="relative p-2 rounded-md cursor-pointer hover:bg-color-action-list-item-default-hover-bg lg:w-60"
-          [ngClass]="{ 'bg-color-action-list-item-default-selected-bg': this.editMode() === 'password' }">
+          class="relative p-2 pl-3 transition-colors duration-200 border-2 rounded-md cursor-pointer hover:bg-color-action-list-item-default-hover-bg lg:w-60 border-color-transparent"
+          [ngClass]="{
+            'bg-color-action-list-item-default-selected-bg border-l-color-primer-border-active':
+              this.editMode() === 'password'
+          }">
           <a class="flex items-center gap-2" (click)="gotoEditProperty('password')">
             <span class="material-icons text-color-fg-muted">key</span>
             <span>Password</span>
