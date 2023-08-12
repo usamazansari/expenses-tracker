@@ -1,36 +1,36 @@
-<div class="relative grid gap-2 w-96 et-card">
-  <ng-container *ngIf="flags().edit.visible">
-    <form [formGroup]="formGroup" (ngSubmit)="editProfile()">
-      <div
-        class="grid grid-rows-[1fr_auto] gap-2"
-        [ngClass]="{ 'opacity-50 pointer-events-none': flags().edit.loading }">
-        <div class="grid gap-2">
-          <div class="et-form-field-wrapper">
-            <label for="email-input" class="font-bold">Email</label>
-            <div class="et-form-field-input-wrapper">
-              <input
-                class="w-full et-input"
-                formControlName="email"
-                id="email-input"
-                type="email"
-                placeholder="foo@bar.com"
-                (blur)="checkControl(displayName())"
-                [ngClass]="{ 'et-input-error-state': displayName().error.flag }"
-                required />
-              <ng-container *ngIf="displayName().error.flag">
-                <span class="et-form-field-input-error-message">{{ displayName().error.message }}</span>
-              </ng-container>
-            </div>
-          </div>
-        </div>
+<div class="grid gap-2">
+  <div class="grid place-content-center">
+    <span class="text-xl">Edit profile for {{ user()?.displayName ?? user()?.email }}</span>
+  </div>
 
-        <div class="flex flex-col gap-2">
-          <button type="submit" class="w-full et-button et-button-primary">
-            <span class="material-icons min-w-[24px]">save</span>
-            <span>Save</span>
-          </button>
-        </div>
-      </div>
-    </form>
-  </ng-container>
+  <div class="grid grid-rows-1 gap-4 lg:grid-cols-[1fr_0fr_2fr] place-content-center">
+    <div class="flex flex-col gap-4 lg:items-end">
+      <ul class="p-2 my-0 list-none">
+        <li
+          class="relative p-2 pl-3 transition-colors duration-200 border-2 rounded-md cursor-pointer hover:bg-color-action-list-item-default-hover-bg lg:w-60 border-color-transparent"
+          [ngClass]="{
+            'bg-color-action-list-item-default-selected-bg border-l-color-primer-border-active':
+              this.editMode() === 'displayName'
+          }">
+          <a class="flex items-center gap-2" (click)="gotoEditProperty('displayName')">
+            <span class="material-icons text-color-fg-muted">format_quote</span>
+            <span>Display Name</span>
+          </a>
+        </li>
+        <li
+          class="relative p-2 pl-3 transition-colors duration-200 border-2 rounded-md cursor-pointer hover:bg-color-action-list-item-default-hover-bg lg:w-60 border-color-transparent"
+          [ngClass]="{
+            'bg-color-action-list-item-default-selected-bg border-l-color-primer-border-active':
+              this.editMode() === 'password'
+          }">
+          <a class="flex items-center gap-2" (click)="gotoEditProperty('password')">
+            <span class="material-icons text-color-fg-muted">key</span>
+            <span>Password</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <router-outlet></router-outlet>
+  </div>
 </div>

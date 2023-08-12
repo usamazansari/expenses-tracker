@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { computed, inject, Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { updateProfile, User } from 'firebase/auth';
 import { from, switchMap } from 'rxjs';
@@ -10,47 +10,30 @@ import { FirestoreService } from '../firestore/firestore.service';
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(
-    private _auth: AngularFireAuth,
-    private _firestore: FirestoreService,
-    private _context: ContextService
-  ) {}
+  #auth = inject(AngularFireAuth);
+  #firestore = inject(FirestoreService);
+  #context = inject(ContextService);
+  user = computed(() => this.#context.user());
 
-  login$({
-    email,
-    password
-  }: {
-    email: string | null | undefined;
-    password: string | null | undefined;
-  }) {
-    return from(this._auth.signInWithEmailAndPassword(email ?? '', password ?? ''));
+  login$({ email, password }: { email: string | null | undefined; password: string | null | undefined }) {
+    return from(this.#auth.signInWithEmailAndPassword(email ?? '', password ?? ''));
   }
 
   logout$() {
-    return from(this._auth.signOut());
+    return from(this.#auth.signOut());
   }
 
-  signup$({
-    email,
-    password
-  }: {
-    email: string | null | undefined;
-    password: string | null | undefined;
-  }) {
-    return from(this._auth.createUserWithEmailAndPassword(email ?? '', password ?? ''));
+  signup$({ email, password }: { email: string | null | undefined; password: string | null | undefined }) {
+    return from(this.#auth.createUserWithEmailAndPassword(email ?? '', password ?? ''));
+  }
+
+  updateDisplayName$(displayName: string) {
+    return this.updateUserInfo$({ ...this.user(), displayName });
   }
 
   updateUserInfo$(update: Partial<User>) {
-    return this._context
-      .watchUser$()
-      .pipe(
-        switchMap(user =>
-          from(updateProfile(user as User, { ...update })).pipe(
-            switchMap(() =>
-              this._firestore.updateUser$({ ...user, ...update } as Partial<User>)
-            )
-          )
-        )
-      );
+    return from(updateProfile(this.user() as User, { ...update })).pipe(
+      switchMap(() => this.#firestore.updateUser$({ ...this.user(), ...update } as Partial<User>))
+    );
   }
 }

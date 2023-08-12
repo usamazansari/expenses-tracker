@@ -1,23 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
+import { Component, OnDestroy, OnInit, computed, inject } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { User } from 'firebase/auth';
 import { Observable, Subscription, filter, map } from 'rxjs';
 
 import { ContextService } from '@expenses-tracker/core';
 
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
-import {
-  ComponentFlags,
-  IPocketbookEditForm,
-  PocketbookEditService
-} from './pocketbook-edit.service';
+import { ComponentFlags, IPocketbookEditForm, PocketbookEditService } from './pocketbook-edit.service';
 
 type PocketbookEditForm<T extends IPocketbookEditForm = IPocketbookEditForm> = {
   name: FormControl<T['name']>;
@@ -41,11 +31,12 @@ export class PocketbookEditComponent implements OnInit, OnDestroy {
   #fb = inject(FormBuilder);
   #context = inject(ContextService);
   #service = inject(PocketbookEditService);
+  user = computed(() => this.#context.user());
 
   ngOnInit() {
     this.#service.fetchUserList$();
     this.userList$ = this.#service.watchUserList$().pipe(
-      map(users => users.filter(({ uid }) => uid !== this.#context.getUser()?.uid)),
+      map(users => users.filter(({ uid }) => uid !== this.user()?.uid)),
       filter(Boolean)
     );
 
@@ -97,9 +88,7 @@ export class PocketbookEditComponent implements OnInit, OnDestroy {
 
   getError(formControlName = '') {
     if (this.formGroup.get(formControlName)?.hasError('required')) {
-      return `${
-        formControlName.charAt(0).toUpperCase() + formControlName.slice(1)
-      } is required`;
+      return `${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)} is required`;
     }
     return '';
   }

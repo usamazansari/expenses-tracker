@@ -1,70 +1,31 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { User } from 'firebase/auth';
+import { Component, OnInit, computed, inject } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 
-import { FormGroupTypeGenerator, FormControlExtras, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
-
+import { RouterModule } from '@angular/router';
 import { ExtractInitialsPipe } from '../../pipes';
-import { ComponentFlags, ComponentForm, ProfileEditService } from './profile-edit.service';
+import { EditMode, ProfileEditService } from './profile-edit.service';
 
 @Component({
   selector: 'expenses-tracker-profile-edit',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ExtractInitialsPipe],
-  templateUrl: './profile-edit.component.html',
-  styles: []
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, ExtractInitialsPipe],
+  templateUrl: './profile-edit.component.html'
 })
 export class ProfileEditComponent implements OnInit {
-  formGroup!: FormGroup<FormGroupTypeGenerator<ComponentForm>>;
-  user = signal<User | null>(null);
-  #fb = inject(FormBuilder);
   #service = inject(ProfileEditService);
-  displayName = signal<FormControlExtras<ComponentForm, 'displayName'>>({
-    name: 'displayName',
-    value: '',
-    error: {
-      flag: false,
-      message: ''
-    }
-  });
-  flags = signal<ComponentFlags>({ edit: INITIAL_FLAGS });
+  editMode = computed(() => this.#service.editMode());
+  user = computed(() => this.#service.user());
 
   ngOnInit() {
-    this.formGroup = this.#fb.group<FormGroupTypeGenerator<ComponentForm>>({
-      displayName: this.#fb.control<string>(this.user()?.displayName ?? '', {
-        validators: [Validators.required]
-      }) as FormControl<string>
-    });
+    this.#service.fetchEditMode();
   }
 
-  checkControl(formControl: FormControlExtras<ComponentForm, keyof ComponentForm>) {
-    this.displayName.update(props => ({
-      ...props,
-      error: {
-        flag: this.getError(this.formGroup.controls.displayName),
-        message: this.getErrorMessage(props.name)
-      }
-    }));
-  }
-
-  private getError(control: FormControl<string>): boolean {
-    return control.touched && !!control.errors;
-  }
-
-  private getErrorMessage(formControlName: keyof ComponentForm) {
-    if (this.formGroup.controls[formControlName]?.hasError('required')) {
-      return `${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)} is required`;
-    }
-    return `Unknown validation error for ${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)}`;
+  gotoEditProperty(property: EditMode) {
+    this.#service.gotoEditProperty(property);
   }
 
   editProfile() {
     throw new Error('Method not implemented.');
-  }
-
-  cancelEdit() {
-    this.formGroup.reset();
-    this.#service.cancelEdit();
   }
 }
