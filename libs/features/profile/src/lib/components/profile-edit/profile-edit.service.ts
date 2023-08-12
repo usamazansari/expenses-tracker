@@ -37,7 +37,7 @@ export class ProfileEditService {
   editMode = signal<EditMode>('displayName');
   user = computed(() => this.#context.user());
   flags = signal<ComponentFlags>({
-    edit: { displayName: INITIAL_FLAGS, password: INITIAL_FLAGS }
+    edit: { displayName: INITIAL_FLAGS, password: { ...INITIAL_FLAGS, loading: true } }
   });
 
   fetchEditMode() {

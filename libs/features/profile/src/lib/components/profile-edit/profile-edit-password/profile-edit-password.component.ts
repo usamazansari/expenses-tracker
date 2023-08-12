@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import { FormControlExtras, FormGroupTypeGenerator } from '@expenses-tracker/shared/interfaces';
@@ -10,7 +10,7 @@ import { PasswordEditForm, ProfileEditService } from '../profile-edit.service';
 @Component({
   selector: 'expenses-tracker-profile-edit-password',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './profile-edit-password.component.html'
 })
 export class ProfileEditPasswordComponent implements OnInit, OnDestroy {
