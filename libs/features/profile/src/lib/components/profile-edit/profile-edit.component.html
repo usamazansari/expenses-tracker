@@ -1,61 +1,36 @@
-<form [formGroup]="formGroup" (ngSubmit)="updateUserInfo()">
-  <div class="grid gap-2 text-et-color-fg-default">
-    <div class="grid grid-rows-1 gap-8 m-0 sm:mx-32 lg:m-0 lg:grid-cols-3">
-      <div class="grid grid-rows-1 gap-2 place-content-center">
-        <ng-container *ngIf="user.photoURL">
-          <img
-            class="w-24 h-24 rounded-full cursor-default"
-            [src]="user.photoURL"
-            alt="User Image" />
-        </ng-container>
-        <ng-container *ngIf="!user.photoURL">
-          <span
-            class="grid w-24 h-24 text-4xl rounded-full cursor-default place-content-center">
-            {{ user | extractInitials }}
-          </span>
-        </ng-container>
-      </div>
-      <div class="grid grid-rows-1 gap-2">
-        <div class="flex items-center gap-2">
-          <span class="material-icons min-w-[24px] text-et-color-accent-emphasis">person</span>
-
-          <label>Full Name</label>
-          <input formControlName="displayName" type="text" placeholder="John Doe" autofocus />
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="material-icons min-w-[24px] text-et-color-accent-emphasis">
-            alternate_email
-          </span>
-          <span class="overflow-hidden whitespace-nowrap overflow-ellipsis">
-            {{ user.email }}
-          </span>
-        </div>
-      </div>
-      <div class="grid grid-rows-1 gap-2">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="material-icons min-w-[24px] text-et-color-accent-emphasis">badge</span>
-            <span class="overflow-hidden whitespace-nowrap overflow-ellipsis">
-              {{ user.uid }}
-            </span>
-          </div>
-        </div>
-      </div>
-      <div class="grid grid-cols-2 gap-2">
-        <button
-          type="submit"
-          class="flex items-center justify-center gap-2 px-6 py-3 border rounded-lg bg-et-color-button-primary-bg text-et-color-button-primary border-et-color-button-primary-border">
-          <span class="material-icons min-w-[24px]">save</span>
-          <span>SAVE</span>
-        </button>
-        <button
-          type="button"
-          (click)="cancelEdit()"
-          class="flex items-center justify-center gap-2 px-6 py-3 text-center border rounded-lg cursor-pointer text-et-color-button-danger bg-et-color-button-danger-bg border-et-color-button-danger-border">
-          <span class="material-icons min-w-[24px]">clear</span>
-          <span>CANCEL</span>
-        </button>
-      </div>
-    </div>
+<div class="grid gap-2">
+  <div class="grid place-content-center">
+    <span class="text-xl">Edit profile for {{ user()?.displayName ?? user()?.email }}</span>
   </div>
-</form>
+
+  <div class="grid grid-rows-1 gap-4 lg:grid-cols-[1fr_0fr_2fr] place-content-center">
+    <div class="flex flex-col gap-4 lg:items-end">
+      <ul class="p-2 my-0 list-none">
+        <li
+          class="relative p-2 pl-3 transition-colors duration-200 border-2 rounded-md cursor-pointer hover:bg-color-action-list-item-default-hover-bg lg:w-60 border-color-transparent"
+          [ngClass]="{
+            'bg-color-action-list-item-default-selected-bg border-l-color-primer-border-active':
+              this.editMode() === 'displayName'
+          }">
+          <a class="flex items-center gap-2" (click)="gotoEditProperty('displayName')">
+            <span class="material-icons text-color-fg-muted">format_quote</span>
+            <span>Display Name</span>
+          </a>
+        </li>
+        <li
+          class="relative p-2 pl-3 transition-colors duration-200 border-2 rounded-md cursor-pointer hover:bg-color-action-list-item-default-hover-bg lg:w-60 border-color-transparent"
+          [ngClass]="{
+            'bg-color-action-list-item-default-selected-bg border-l-color-primer-border-active':
+              this.editMode() === 'password'
+          }">
+          <a class="flex items-center gap-2" (click)="gotoEditProperty('password')">
+            <span class="material-icons text-color-fg-muted">key</span>
+            <span>Password</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <router-outlet></router-outlet>
+  </div>
+</div>

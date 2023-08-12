@@ -1,12 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
+import { Component, OnDestroy, OnInit, computed, inject } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { User } from 'firebase/auth';
 import { Observable, Subscription, filter, map } from 'rxjs';
 
@@ -32,26 +26,24 @@ export class PocketbookAddComponent implements OnInit, OnDestroy {
   userList$!: Observable<User[]>;
   flags$!: Observable<ComponentFlags>;
   #addPocketbook$!: Subscription;
-
-  constructor(
-    private _fb: FormBuilder,
-    private _context: ContextService,
-    private _service: PocketbookAddService
-  ) {}
+  #fb = inject(FormBuilder);
+  #context = inject(ContextService);
+  #service = inject(PocketbookAddService);
+  user = computed(() => this.#context.user());
 
   ngOnInit() {
-    this._service.fetchUserList$();
-    this.userList$ = this._service.watchUserList$().pipe(
-      map(users => users.filter(({ uid }) => uid !== this._context.getUser()?.uid)),
+    this.#service.fetchUserList$();
+    this.userList$ = this.#service.watchUserList$().pipe(
+      map(users => users.filter(({ uid }) => uid !== this.user()?.uid)),
       filter(Boolean)
     );
 
-    this.formGroup = this._fb.group<PocketbookAddForm>({
-      name: this._fb.control<string>('', Validators.required),
-      collaboratorList: this._fb.control<User[]>([])
+    this.formGroup = this.#fb.group<PocketbookAddForm>({
+      name: this.#fb.control<string>('', Validators.required),
+      collaboratorList: this.#fb.control<User[]>([])
     });
 
-    this.flags$ = this._service.watchFlags$();
+    this.flags$ = this.#service.watchFlags$();
   }
 
   removeCollaborator(collaborator: User): void {
@@ -66,7 +58,7 @@ export class PocketbookAddComponent implements OnInit, OnDestroy {
   addPocketbook() {
     if (!this.formGroup.invalid) {
       const { name, collaboratorList: collaborators } = this.formGroup.value;
-      this.#addPocketbook$ = this._service
+      this.#addPocketbook$ = this.#service
         .addPocketbook$({
           name: name ?? '',
           collaboratorList: collaborators?.map(({ uid }) => uid)
@@ -84,14 +76,12 @@ export class PocketbookAddComponent implements OnInit, OnDestroy {
 
   cancelAddPocketbook() {
     this.formGroup.reset();
-    this._service.cancelAddPocketbook();
+    this.#service.cancelAddPocketbook();
   }
 
   getError(formControlName = '') {
     if (this.formGroup.get(formControlName)?.hasError('required')) {
-      return `${
-        formControlName.charAt(0).toUpperCase() + formControlName.slice(1)
-      } is required`;
+      return `${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)} is required`;
     }
     return '';
   }

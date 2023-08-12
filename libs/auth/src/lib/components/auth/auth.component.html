@@ -1,37 +1,37 @@
 <div class="grid justify-center gap-2 mt-24">
-  <ng-container *ngIf="authMode$ | async as authMode">
-    <div class="grid items-end grid-cols-2 gap-2 w-96 et-card">
-      <div
-        class="pb-2"
-        [ngClass]="
-          authMode === 'login' ? 'border-b-2 border-color-primer-border-active' : 'border-b border-color-border-default'
-        ">
-        <button
-          type="button"
-          class="w-full et-button"
-          [ngClass]="authMode === 'login' ? '' : 'bg-color-transparent border-0'"
-          (click)="gotoLogin()">
-          <span class="material-icons">login</span>
-          <span>Login</span>
-        </button>
-      </div>
-      <div
-        class="pb-2"
-        [ngClass]="
-          authMode === 'signup'
-            ? 'border-b-2 border-color-primer-border-active'
-            : 'border-b border-color-border-default'
-        ">
-        <button
-          type="button"
-          class="w-full et-button"
-          [ngClass]="authMode === 'signup' ? '' : 'bg-color-transparent border-0'"
-          (click)="gotoSignup()">
-          <span class="material-icons">person_add</span>
-          <span>Signup</span>
-        </button>
-      </div>
+  <div class="grid items-end grid-cols-2 gap-2 w-96 et-card">
+    <div
+      class="pb-2"
+      [ngClass]="
+        this.authMode() === 'login'
+          ? 'border-b-2 border-color-primer-border-active'
+          : 'border-b border-color-border-default'
+      ">
+      <button
+        type="button"
+        class="w-full et-button"
+        [ngClass]="this.authMode() === 'login' ? '' : 'bg-color-transparent border-0'"
+        (click)="gotoLogin()">
+        <span class="material-icons">login</span>
+        <span>Login</span>
+      </button>
     </div>
-    <router-outlet></router-outlet>
-  </ng-container>
+    <div
+      class="pb-2"
+      [ngClass]="
+        this.authMode() === 'signup'
+          ? 'border-b-2 border-color-primer-border-active'
+          : 'border-b border-color-border-default'
+      ">
+      <button
+        type="button"
+        class="w-full et-button"
+        [ngClass]="this.authMode() === 'signup' ? '' : 'bg-color-transparent border-0'"
+        (click)="gotoSignup()">
+        <span class="material-icons">person_add</span>
+        <span>Signup</span>
+      </button>
+    </div>
+  </div>
+  <router-outlet></router-outlet>
 </div>

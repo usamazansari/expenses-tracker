@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Timestamp } from '@angular/fire/firestore';
@@ -13,8 +13,7 @@ import { IPocketbook, ITransaction } from '@expenses-tracker/shared/interfaces';
   providedIn: 'root'
 })
 export class ContextService {
-  #user$ = new BehaviorSubject<User | null>(null);
-  #user: User | null = null;
+  user = signal<User | null>(null);
   #pocketbook$ = new BehaviorSubject<IPocketbook | null>(null);
   #pocketbook: IPocketbook | null = null;
   #transaction$ = new BehaviorSubject<ITransaction | null>(null);
@@ -27,19 +26,6 @@ export class ContextService {
     this.#fetchUser$();
     this.#fetchPocketbook$();
     this.#fetchTransaction$();
-  }
-
-  setUser(user: User | null) {
-    this.#user = user ?? null;
-    this.#user$.next(this.#user);
-  }
-
-  getUser() {
-    return this.#user;
-  }
-
-  watchUser$() {
-    return this.#user$.asObservable();
   }
 
   setPocketbook(pocketbook: IPocketbook | null) {
@@ -78,7 +64,7 @@ export class ContextService {
 
   #fetchUser$() {
     this.#auth.user.subscribe(user => {
-      this.setUser(user as User);
+      this.user.set(user as User);
     });
   }
 
