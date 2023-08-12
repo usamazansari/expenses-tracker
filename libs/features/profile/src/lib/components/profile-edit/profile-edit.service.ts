@@ -1,6 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { tap } from 'rxjs';
+import { FirebaseError } from 'firebase/app';
+import { catchError, of, tap } from 'rxjs';
 
 import { AuthService, ContextService, ErrorService } from '@expenses-tracker/core';
 import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
@@ -48,6 +49,14 @@ export class ProfileEditService {
           description: 'Your display name has been updated.'
         });
         this.#router.navigate([RoutePaths.Profile]);
+      }),
+      catchError(({ code }: FirebaseError) => {
+        const error = this.#error.getError(code);
+        this.#notification.error({
+          description: `${error}.`,
+          title: 'Login failed'
+        });
+        return of(error);
       })
     );
   }
