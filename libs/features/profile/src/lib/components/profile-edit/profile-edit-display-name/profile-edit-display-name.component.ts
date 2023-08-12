@@ -24,6 +24,7 @@ export class ProfileEditDisplayNameComponent implements OnInit, OnDestroy {
   });
   #editDisplayName$!: Subscription;
   user = computed(() => this.#service.user());
+  flags = computed(() => this.#service.flags().edit.displayName);
 
   ngOnInit() {
     this.formGroup = this.#fb.group<FormGroupTypeGenerator<DisplayNameEditForm>>({

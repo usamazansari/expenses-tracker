@@ -3,7 +3,7 @@
     <span class="text-xl">Edit profile for {{ user()?.displayName ?? user()?.email }}</span>
   </div>
 
-  <div class="grid grid-rows-1 gap-4 lg:grid-cols-[1fr_2fr]">
+  <div class="grid grid-rows-1 gap-4 lg:grid-cols-[1fr_0fr_2fr] place-content-center">
     <div class="flex flex-col gap-4 lg:items-end">
       <ul class="p-2 my-0 list-none">
         <li
@@ -31,8 +31,6 @@
       </ul>
     </div>
 
-    <div class="grid gap-2">
-      <router-outlet></router-outlet>
-    </div>
+    <router-outlet></router-outlet>
   </div>
 </div>
