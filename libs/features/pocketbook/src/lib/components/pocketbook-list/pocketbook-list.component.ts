@@ -1,36 +1,33 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Component, OnInit, inject } from '@angular/core';
 
-import { PocketbookListService, PocketbookViewMode } from './pocketbook-list.service';
+import { PocketbookListService } from './pocketbook-list.service';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { PocketbookOwnerListComponent } from './pocketbook-owner-list/pocketbook-owner-list.component';
+import { PocketbookCollaboratorListComponent } from './pocketbook-collaborator-list/pocketbook-collaborator-list.component';
 
 @Component({
   selector: 'expenses-tracker-pocketbook-list',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, PocketbookOwnerListComponent, PocketbookCollaboratorListComponent],
   templateUrl: './pocketbook-list.component.html',
   styles: []
 })
 export class PocketbookListComponent implements OnInit {
-  viewMode$!: Observable<PocketbookViewMode>;
-
-  constructor(private _service: PocketbookListService) {}
+  #searchText$ = new Subject<string>();
+  #service = inject(PocketbookListService);
 
   ngOnInit() {
-    this._service.fetchViewMode();
-    this.viewMode$ = this._service.watchViewMode$();
+    this.#searchText$.pipe(debounceTime(250), distinctUntilChanged()).subscribe(searchText => {
+      console.log({ searchText });
+    });
+  }
+
+  debounceSearch($: KeyboardEvent) {
+    this.#searchText$.next(($.target as HTMLInputElement).value);
   }
 
   addPocketbook() {
-    this._service.gotoAddPocketbook();
-  }
-
-  gotoOwnerPocketbookList() {
-    this._service.gotoOwnerPocketbookList();
-  }
-
-  gotoCollaboratorPocketbookList() {
-    this._service.gotoCollaboratorPocketbookList();
+    this.#service.gotoAddPocketbook();
   }
 }
