@@ -7,10 +7,13 @@ enum RoutePaths {
   EntityAdd = 'add',
   EntityEdit = 'edit',
   Home = '',
+  Empty = '',
   Pocketbook = 'pocketbook',
   PocketbookCollaborator = 'collaborator',
   PocketbookOwner = 'owner',
   Profile = 'profile',
+  ProfileDisplayName = 'displayName',
+  ProfilePassword = 'password',
   Transaction = 'transaction'
 }
 
