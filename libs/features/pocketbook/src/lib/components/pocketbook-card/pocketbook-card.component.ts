@@ -1,14 +1,13 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'expenses-tracker-pocketbook-card',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  template: `<div class="relative p-4 border rounded-lg min-h-[50vh]">
+  template: `<div class="relative et-card rounded-lg min-h-[50vh]">
     <router-outlet></router-outlet>
-  </div>`,
-  styles: []
+  </div>`
 })
 export class PocketbookCardComponent {}
