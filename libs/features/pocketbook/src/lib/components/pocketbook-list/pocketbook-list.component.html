@@ -22,11 +22,11 @@
     </div>
   </div>
 
-  <div class="flex flex-wrap items-center justify-center gap-2">
+  <div class="grid gap-2">
     <ng-container *ngFor="let pocketbook of pocketbookList(); trackBy: pocketbookListTrack">
       <expenses-tracker-pocketbook-list-item
-        [pocketbook]="pocketbook"
-        [isOwner]="isPocketbookOwner(pocketbook)"></expenses-tracker-pocketbook-list-item>
+        [pocketbookInput]="pocketbook"
+        [isOwnerInput]="isPocketbookOwner(pocketbook)"></expenses-tracker-pocketbook-list-item>
     </ng-container>
   </div>
 </div>

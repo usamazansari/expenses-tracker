@@ -1,56 +1,39 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from 'firebase/auth';
-import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
+import { catchError, tap, throwError } from 'rxjs';
 
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
 import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
-import { IPocketbook } from '@expenses-tracker/shared/interfaces';
+import { IFlag, IPocketbook } from '@expenses-tracker/shared/interfaces';
+
+export type ComponentFlags = {
+  owner: IFlag;
+  collaboratorList: IFlag;
+  deletePocketbook: IFlag;
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class PocketbookListItemService {
-  #collaboratorList$ = new BehaviorSubject<User[]>([]);
-  #owner$ = new BehaviorSubject<User | null>(null);
-  #collaboratorList: User[] = [];
-  #owner: User | null = null;
-
   #router = inject(Router);
   #firestore = inject(FirestoreService);
   #context = inject(ContextService);
   #notification = inject(NotificationService);
+  owner = signal<User | null>(null);
+  collaboratorList = signal<User[]>([]);
 
   initializeComponent(pocketbook: IPocketbook | null) {
-    this.#firestore
-      .watchPocketbookOwner$((pocketbook as IPocketbook)?.owner)
-      .subscribe(owner => {
-        this.setOwner(owner as User);
-      });
+    this.#firestore.watchPocketbookOwner$((pocketbook as IPocketbook)?.owner).subscribe(owner => {
+      this.owner.set(owner as User);
+    });
 
     this.#firestore
       .watchPocketbookCollaboratorList$((pocketbook as IPocketbook)?.collaboratorList)
       .subscribe(collaboratorList => {
-        this.setCollaboratorList(collaboratorList as User[]);
+        this.collaboratorList.set(collaboratorList as User[]);
       });
-  }
-
-  setCollaboratorList(collaboratorList: User[]) {
-    this.#collaboratorList = collaboratorList ?? [];
-    this.#collaboratorList$.next(this.#collaboratorList);
-  }
-
-  watchCollaboratorList$() {
-    return this.#collaboratorList$.asObservable();
-  }
-
-  setOwner(owner: User | null) {
-    this.#owner = owner ?? null;
-    this.#owner$.next(this.#owner);
-  }
-
-  watchOwner$() {
-    return this.#owner$.asObservable();
   }
 
   gotoEditPocketbook(pocketbook: IPocketbook) {

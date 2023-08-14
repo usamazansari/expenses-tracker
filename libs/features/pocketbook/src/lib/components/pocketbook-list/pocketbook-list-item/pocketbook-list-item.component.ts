@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { User } from 'firebase/auth';
-import { BehaviorSubject, EMPTY, Observable, of } from 'rxjs';
+import { EMPTY } from 'rxjs';
 
 import { ExtractInitialsPipe } from '@expenses-tracker/features/profile';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
@@ -16,46 +16,46 @@ import { PocketbookListItemService } from './pocketbook-list-item.service';
   templateUrl: './pocketbook-list-item.component.html'
 })
 export class PocketbookListItemComponent implements OnInit {
-  #pocketbook$ = new BehaviorSubject<IPocketbook | null>(null);
-  #isOwner$ = new BehaviorSubject<boolean>(false);
-  collaboratorList$!: Observable<User[]>;
-  owner$!: Observable<User | null>;
+  pocketbook = signal<IPocketbook | null>(null);
+  isOwner = signal(false);
+  collaboratorList = signal<User[]>([]);
+  owner = signal<User | null>(null);
 
-  @Input() set pocketbook(value: IPocketbook | null) {
-    this.#pocketbook$.next(value);
-  }
-  get pocketbook() {
-    return this.#pocketbook$.getValue();
+  @Input() set pocketbookInput(value: IPocketbook | null) {
+    this.pocketbook.set(value);
   }
 
-  @Input() set isOwner(value: boolean) {
-    this.#isOwner$.next(value);
-  }
-  get isOwner() {
-    return this.#isOwner$.getValue();
+  @Input() set isOwnerInput(value: boolean) {
+    this.isOwner.set(value);
   }
 
   #service = inject(PocketbookListItemService);
 
   ngOnInit() {
-    this.#service.initializeComponent(this.pocketbook);
-    this.collaboratorList$ = this.#service.watchCollaboratorList$();
-    this.owner$ = this.#service.watchOwner$();
+    if (this.pocketbook()) this.#service.initializeComponent(this.pocketbook());
   }
 
   gotoEditPocketbook() {
-    this.#service.gotoEditPocketbook(this.pocketbook as IPocketbook);
+    this.#service.gotoEditPocketbook(this.pocketbook() as IPocketbook);
+  }
+
+  showMenu() {
+    throw new Error('Method not implemented.');
+  }
+
+  showContributors() {
+    // string: Owned by `displayName || email`, `collaboratorList.length` collaborator/s
+    // open a dialog with showing all the contributors involved in the pocketbook with separate sections for Owners and Collaborators
+    throw new Error('Method not implemented.');
   }
 
   deletePocketbook() {
     const result = confirm('Delete Pocketbook?');
-    const deleteStream = result
-      ? this.#service.deletePocketbook$((this.pocketbook as IPocketbook)?.id ?? '')
-      : EMPTY;
+    const deleteStream = result ? this.#service.deletePocketbook$((this.pocketbook() as IPocketbook)?.id ?? '') : EMPTY;
     deleteStream.subscribe();
   }
 
   gotoPocketbookDetail() {
-    this.#service.gotoPocketbook(this.pocketbook?.id ?? '');
+    this.#service.gotoPocketbook(this.pocketbook()?.id ?? '');
   }
 }

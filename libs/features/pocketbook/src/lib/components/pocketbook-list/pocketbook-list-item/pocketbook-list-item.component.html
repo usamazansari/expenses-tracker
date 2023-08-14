@@ -1,76 +1,51 @@
-<ng-container *ngIf="pocketbook; else showError">
-  <div
-    class="flex flex-col h-full gap-2 p-4 border rounded-lg cursor-default w-96 bg-et-layer-alternate text-et-color-fg-default border-et-color-button-default-border">
-    <div class="grid gap-2 py-2">
-      <p class="text-2xl font-bold">{{ pocketbook.name }}</p>
-      <div class="flex justify-around gap-6">
-        <div class="flex items-center gap-2">
-          <ng-container *ngIf="owner$ | async as owner">
-            <span class="material-icons text-et-color-accent-emphasis">verified_user</span>
-            <div
-              class="p-4 transition-colors duration-200 border rounded-full cursor-default w-14 h-14 bg-et-color-button-default-bg text-et-color-button-default border-et-color-button-default-border">
-              <p class="text-center">{{ owner | extractInitials }}</p>
-            </div>
+<div class="et-card group">
+  <div class="grid grid-cols-2">
+    <div class="grid gap-2">
+      <a (click)="gotoPocketbookDetail()">
+        <div class="flex items-center gap-2 cursor-pointer">
+          <ng-container *ngIf="isOwner(); else isCollaborator">
+            <span class="material-icons text-[1.375rem] text-color-open-fg">verified_user</span>
           </ng-container>
+          <ng-template #isCollaborator>
+            <span class="material-icons text-[1.375rem] text-color-fg-default">group</span>
+          </ng-template>
+          <p class="text-2xl font-bold text-color-accent-fg hover:underline">
+            {{ pocketbook()?.name }}
+          </p>
         </div>
-        <ng-container *ngIf="collaboratorList$ | async as collaboratorList">
-          <div class="flex items-center gap-2">
-            <span class="material-icons text-et-color-accent-emphasis">group</span>
-            <div class="flex items-center gap-1 justify-self-start">
-              <ng-container *ngIf="!!collaboratorList.length; else emptyCollaboratorList">
-                <div
-                  class="p-4 transition-colors duration-200 border rounded-full cursor-default w-14 h-14 bg-et-color-button-default-bg text-et-color-button-default border-et-color-button-default-border">
-                  <p class="text-center">{{ collaboratorList[0] | extractInitials }}</p>
-                </div>
-                <ng-container *ngIf="collaboratorList.length > 1">
-                  <button class="text-et-color-accent-emphasis">
-                    +{{ collaboratorList.length - 1 }}
-                  </button>
-                </ng-container>
-              </ng-container>
-              <ng-template #emptyCollaboratorList>
-                <span class="material-icons text-et-color-fg-attention">clear</span>
-              </ng-template>
-            </div>
-          </div>
-        </ng-container>
+      </a>
+
+      <div class="flex gap-2">
+        <span
+          class="font-semibold transition-colors duration-200 cursor-pointer hover:text-color-accent-fg"
+          (click)="showContributors()">
+          {{ pocketbook()?.collaboratorList?.length }}
+          {{ (pocketbook()?.collaboratorList || []).length > 1 ? 'Collaborators' : 'Collaborator' }}
+        </span>
+      </div>
+
+      <div class="flex items-center gap-1 cursor-default">
+        <span class="text-[1.375rem] material-icons text-color-fg-muted">today</span>
+        <p class="text-sm italic font-semibold text-color-fg-muted">
+          {{ pocketbook()?.createdAt | date: 'longDate' }}
+        </p>
       </div>
     </div>
 
-    <div class="flex items-center gap-2">
-      <span class="material-icons text-et-color-accent-emphasis">today</span>
-      <p class="text-sm italic">
-        {{ pocketbook.createdAt | date: 'long' }}
+    <div class="grid grid-cols-[1fr_auto] gap-2 items-center">
+      <p
+        class="text-2xl font-bold text-right"
+        [ngClass]="{
+        'text-color-danger-fg': (pocketbook()?.balance || 0) <= 0,
+        'text-color-success-fg': (pocketbook()?.balance || 0) > 0,
+      }">
+        {{ pocketbook()?.balance | currency: 'EUR' }}
       </p>
-    </div>
-
-    <div class="flex gap-2">
-      <button
-        type="button"
-        class="flex items-center self-center justify-center w-full gap-2 py-3 rounded-lg text-et-color-button-primary bg-et-color-button-primary-bg"
-        (click)="gotoPocketbookDetail()">
-        <span class="material-icons min-w-[24px]">visibility</span>
-        <span>OPEN</span>
-      </button>
-      <ng-container *ngIf="isOwner">
-        <button
-          type="button"
-          class="flex items-center self-center justify-center w-full gap-2 py-3 rounded-lg text-et-color-button-accent bg-et-color-button-accent-bg"
-          (click)="gotoEditPocketbook()">
-          <span class="material-icons min-w-[24px]">edit</span>
-          <span>EDIT</span>
-        </button>
-        <button
-          type="button"
-          class="flex items-center self-center justify-center w-full gap-2 py-3 rounded-lg text-et-color-button-danger bg-et-color-button-danger-bg"
-          (click)="deletePocketbook()">
-          <span class="material-icons min-w-[24px]">delete</span>
-          <span>DELETE</span>
-        </button>
-      </ng-container>
+      <span
+        class="transition-all duration-200 opacity-0 cursor-pointer material-icons group-hover:opacity-100 text-color-fg-muted hover:text-color-fg-default"
+        (click)="showMenu()">
+        more_vert
+      </span>
     </div>
   </div>
-</ng-container>
-<ng-template #showError>
-  <p>error in displaying pocketbook</p>
-</ng-template>
+</div>
