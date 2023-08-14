@@ -22,6 +22,11 @@
     </div>
   </div>
 
-  <expenses-tracker-pocketbook-owner-list></expenses-tracker-pocketbook-owner-list>
-  <expenses-tracker-pocketbook-collaborator-list></expenses-tracker-pocketbook-collaborator-list>
+  <div class="flex flex-wrap items-center justify-center gap-2">
+    <ng-container *ngFor="let pocketbook of pocketbookList(); trackBy: pocketbookListTrack">
+      <expenses-tracker-pocketbook-list-item
+        [pocketbook]="pocketbook"
+        [isOwner]="isPocketbookOwner(pocketbook)"></expenses-tracker-pocketbook-list-item>
+    </ng-container>
+  </div>
 </div>
