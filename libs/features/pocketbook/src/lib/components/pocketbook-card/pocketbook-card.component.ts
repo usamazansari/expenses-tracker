@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
   selector: 'expenses-tracker-pocketbook-card',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  template: `<div class="relative et-card rounded-lg min-h-[50vh]">
+  template: `<div class="relative et-card rounded-lg mt-24">
     <router-outlet></router-outlet>
   </div>`
 })
