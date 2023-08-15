@@ -1,14 +1,11 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { MatDialogModule } from '@angular/material/dialog';
+import { Component, Inject, inject } from '@angular/core';
 
-/**
- * @deprecated - Removed with material
- */
 @Component({
   selector: 'expenses-tracker-pocketbook-delete-dialog',
   standalone: true,
-  imports: [CommonModule, MatDialogModule],
+  imports: [CommonModule],
   template: `
     <div
       class="grid p-6 gap-6 rounded-lg border bg-et-layer-alternate text-et-color-fg-default border-et-color-button-default-border">
@@ -21,16 +18,16 @@ import { MatDialogModule } from '@angular/material/dialog';
       <div class="flex flex-col">
         <div class="flex items-center justify-center gap-6">
           <button
-            [mat-dialog-close]="true"
             type="button"
-            class="flex justify-center items-center w-full gap-2 px-6 py-3 text-center text-et-color-button-danger bg-et-color-button-danger-bg rounded-lg cursor-pointer font-bold">
+            class="flex justify-center items-center w-full gap-2 px-6 py-3 text-center text-et-color-button-danger bg-et-color-button-danger-bg rounded-lg cursor-pointer font-bold"
+            (click)="deletePocketbook()">
             <span class="material-icons min-w-[24px]">delete</span>
             <span>YES</span>
           </button>
           <button
-            mat-dialog-close
             type="button"
-            class="flex justify-center items-center w-full gap-2 px-6 py-3 text-center rounded-lg cursor-pointer  text-et-color-button-default bg-et-color-button-default-bg hover:text-et-color-button-accent">
+            class="flex justify-center items-center w-full gap-2 px-6 py-3 text-center rounded-lg cursor-pointer  text-et-color-button-default bg-et-color-button-default-bg hover:text-et-color-button-accent"
+            (click)="dismissDialog()">
             <span class="material-icons min-w-[24px]">clear</span>
             <span>NO</span>
           </button>
@@ -40,4 +37,14 @@ import { MatDialogModule } from '@angular/material/dialog';
   `,
   styles: []
 })
-export class PocketbookDeleteDialogComponent {}
+export class PocketbookDeleteDialogComponent {
+  #dialogRef = inject(DialogRef);
+  constructor(@Inject(DIALOG_DATA) public data: unknown) {}
+
+  deletePocketbook() {
+    this.#dialogRef.close({ deletePocketbook: true });
+  }
+  dismissDialog() {
+    this.#dialogRef.close();
+  }
+}
