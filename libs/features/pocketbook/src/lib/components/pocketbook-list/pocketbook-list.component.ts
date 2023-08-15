@@ -3,10 +3,10 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
-import { INITIAL_FLAGS, IPocketbook } from '@expenses-tracker/shared/interfaces';
+import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
 import { PocketbookListItemComponent } from './pocketbook-list-item/pocketbook-list-item.component';
-import { ComponentFlags, PocketbookListService } from './pocketbook-list.service';
+import { PocketbookListService } from './pocketbook-list.service';
 
 @Component({
   selector: 'expenses-tracker-pocketbook-list',
@@ -19,9 +19,7 @@ export class PocketbookListComponent implements OnInit {
   #searchText$ = new Subject<string>();
   pocketbookList = signal<IPocketbook[]>([]);
   #service = inject(PocketbookListService);
-  flags = signal<ComponentFlags>({
-    pocketbookList: { ...INITIAL_FLAGS }
-  });
+  flags = computed(() => this.#service.flags().pocketbookList);
   user = computed(() => this.#service.user());
 
   constructor() {
@@ -37,25 +35,8 @@ export class PocketbookListComponent implements OnInit {
   }
 
   private fetchPocketbookList() {
-    this.flags.update(value => ({
-      ...value,
-      pocketbookList: { ...value.pocketbookList, loading: true }
-    }));
-    this.#service.fetchPocketbookList().subscribe({
-      next: pocketbookList => {
-        this.flags.update(value => ({
-          ...value,
-          pocketbookList: { ...value.pocketbookList, loading: false, success: true, fail: false }
-        }));
-        this.pocketbookList.set(pocketbookList);
-      },
-      error: () => {
-        this.flags.update(value => ({
-          ...value,
-          pocketbookList: { ...value.pocketbookList, loading: false, success: false, fail: true }
-        }));
-        this.pocketbookList.set([]);
-      }
+    this.#service.fetchPocketbookList().subscribe(pocketbookList => {
+      this.pocketbookList.set(pocketbookList);
     });
   }
 
