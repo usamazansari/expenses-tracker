@@ -4,6 +4,7 @@ import { User } from 'firebase/auth';
 import { EMPTY } from 'rxjs';
 
 import { ExtractInitialsPipe } from '@expenses-tracker/features/profile';
+import { TooltipModule } from '@expenses-tracker/shared/common';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
 import { PocketbookListItemService } from './pocketbook-list-item.service';
@@ -11,7 +12,7 @@ import { PocketbookListItemService } from './pocketbook-list-item.service';
 @Component({
   selector: 'expenses-tracker-pocketbook-list-item',
   standalone: true,
-  imports: [CommonModule, ExtractInitialsPipe],
+  imports: [CommonModule, ExtractInitialsPipe, TooltipModule],
   providers: [PocketbookListItemService],
   templateUrl: './pocketbook-list-item.component.html'
 })

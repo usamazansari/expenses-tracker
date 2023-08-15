@@ -18,9 +18,10 @@
       <div class="flex gap-2">
         <span
           class="font-semibold transition-colors duration-200 cursor-pointer hover:text-color-accent-fg"
+          [expensesTrackerTooltip]="showContributorsTooltip"
           (click)="showContributors()">
           {{ pocketbook()?.collaboratorList?.length }}
-          {{ (pocketbook()?.collaboratorList || []).length > 1 ? 'Collaborators' : 'Collaborator' }}
+          {{ (pocketbook()?.collaboratorList || []).length !== 1 ? 'Collaborators' : 'Collaborator' }}
         </span>
       </div>
 
@@ -49,3 +50,7 @@
     </div>
   </div>
 </div>
+
+<expenses-tracker-tooltip #showContributorsTooltip>
+  <span class="flex text-center">Click to show the owners and collaborators of this pocketbook</span>
+</expenses-tracker-tooltip>
