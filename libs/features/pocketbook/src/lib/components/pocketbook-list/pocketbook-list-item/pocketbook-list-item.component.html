@@ -1,5 +1,5 @@
 <div class="et-card group">
-  <div class="grid grid-cols-2">
+  <div class="grid grid-cols-[auto_1fr]">
     <div class="grid gap-2">
       <a (click)="gotoPocketbookDetail()">
         <div class="flex items-center gap-2 cursor-pointer">
@@ -15,10 +15,9 @@
         </div>
       </a>
 
-      <div class="flex gap-2">
+      <div class="flex gap-2" [expensesTrackerTooltip]="showContributorsTooltip">
         <span
           class="font-semibold transition-colors duration-200 cursor-pointer hover:text-color-accent-fg"
-          [expensesTrackerTooltip]="showContributorsTooltip"
           (click)="showContributors()">
           {{ pocketbook()?.collaboratorList?.length }}
           {{ (pocketbook()?.collaboratorList || []).length !== 1 ? 'Collaborators' : 'Collaborator' }}
