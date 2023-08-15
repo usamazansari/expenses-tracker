@@ -1,3 +1,4 @@
+import { Dialog, DialogModule } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { User } from 'firebase/auth';
@@ -7,12 +8,13 @@ import { ExtractInitialsPipe } from '@expenses-tracker/features/profile';
 import { TooltipModule } from '@expenses-tracker/shared/common';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
+import { PocketbookDeleteDialogComponent } from './pocketbook-delete-dialog.component';
 import { PocketbookListItemService } from './pocketbook-list-item.service';
 
 @Component({
   selector: 'expenses-tracker-pocketbook-list-item',
   standalone: true,
-  imports: [CommonModule, ExtractInitialsPipe, TooltipModule],
+  imports: [CommonModule, ExtractInitialsPipe, TooltipModule, DialogModule],
   providers: [PocketbookListItemService],
   templateUrl: './pocketbook-list-item.component.html'
 })
@@ -31,6 +33,7 @@ export class PocketbookListItemComponent implements OnInit {
   }
 
   #service = inject(PocketbookListItemService);
+  #dialog = inject(Dialog);
 
   ngOnInit() {
     if (this.pocketbook()) this.#service.initializeComponent(this.pocketbook());
@@ -45,9 +48,10 @@ export class PocketbookListItemComponent implements OnInit {
   }
 
   showContributors() {
-    // string: Owned by `displayName || email`, `collaboratorList.length` collaborator/s
-    // open a dialog with showing all the contributors involved in the pocketbook with separate sections for Owners and Collaborators
-    throw new Error('Method not implemented.');
+    const dialogRef = this.#dialog.open(PocketbookDeleteDialogComponent);
+    dialogRef.closed.subscribe(data => {
+      console.log({ data });
+    });
   }
 
   deletePocketbook() {
