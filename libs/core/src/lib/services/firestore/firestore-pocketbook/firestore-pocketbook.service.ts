@@ -2,7 +2,7 @@ import { Injectable, computed, inject } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Timestamp } from '@angular/fire/firestore';
-import { catchError, combineLatest, from, map, of, switchMap, throwError } from 'rxjs';
+import { catchError, combineLatest, from, map, of, throwError } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
