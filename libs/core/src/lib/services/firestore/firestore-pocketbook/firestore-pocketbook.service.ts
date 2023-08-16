@@ -2,7 +2,7 @@ import { Injectable, computed, inject } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Timestamp } from '@angular/fire/firestore';
-import { catchError, from, map, of, throwError } from 'rxjs';
+import { catchError, combineLatest, from, map, of, throwError } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
@@ -24,7 +24,7 @@ export class FirestorePocketbookService {
       ? of([])
       : this.#firestore
           .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
-            ref.where('owner', '==', this.user()?.uid ?? '')
+            ref.where('owner', '==', this.user()?.uid ?? '').orderBy('createdAt', 'desc')
           )
           .valueChanges()
           .pipe(
@@ -60,7 +60,7 @@ export class FirestorePocketbookService {
       ? of([])
       : this.#firestore
           .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
-            ref.where('collaboratorList', 'array-contains', this.user()?.uid ?? '')
+            ref.where('collaboratorList', 'array-contains', this.user()?.uid ?? '').orderBy('createdAt', 'desc')
           )
           .valueChanges()
           .pipe(
@@ -89,6 +89,15 @@ export class FirestorePocketbookService {
             map(snapshot => snapshot.length),
             catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
           );
+  }
+
+  watchPocketbookList$() {
+    return combineLatest([this.watchOwnedPocketbookList$(), this.watchCollaboratedPocketbookList$()]).pipe(
+      map(([watchOwnedPocketbookList, watchCollaboratedPocketbookList]) => [
+        ...watchOwnedPocketbookList,
+        ...watchCollaboratedPocketbookList
+      ])
+    );
   }
 
   watchPocketbook$(pocketbookId: string) {

@@ -35,7 +35,7 @@
   <div class="flex items-center justify-center gap-3">
     <div
       class="group grid grid-rows-[1fr_auto] gap-2 cursor-pointer et-card p-0 h-48 w-40"
-      (click)="gotoOwnedPocketbookList()"
+      (click)="gotoPocketbookList()"
       [expensesTrackerTooltip]="ownedPocketbookTooltip">
       <div class="grid place-content-center">
         <ng-container *ngIf="flags().ownedPocketbookListCount.loading">
@@ -58,7 +58,7 @@
 
     <div
       class="group grid grid-rows-[1fr_auto] gap-2 cursor-pointer et-card p-0 h-48 w-40"
-      (click)="gotoCollaboratedPocketbookList()"
+      (click)="gotoPocketbookList()"
       [expensesTrackerTooltip]="collaboratedPocketbookTooltip">
       <div class="grid place-content-center">
         <ng-container *ngIf="flags().collaboratedPocketbookListCount.loading">

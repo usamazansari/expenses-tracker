@@ -117,12 +117,8 @@ export class ProfileViewComponent implements OnInit, OnDestroy {
     this.#service.gotoEditProfile();
   }
 
-  gotoOwnedPocketbookList() {
-    this.#service.gotoOwnedPocketbookList();
-  }
-
-  gotoCollaboratedPocketbookList() {
-    this.#service.gotoCollaboratedPocketbookList();
+  gotoPocketbookList() {
+    this.#service.gotoPocketbookList();
   }
 
   ngOnDestroy() {

@@ -31,6 +31,10 @@ export class FirestoreService {
     return this.#pocketbook.watchCollaboratedPocketbookListCount$();
   }
 
+  watchPocketbookList$() {
+    return this.#pocketbook.watchPocketbookList$();
+  }
+
   watchPocketbook$(pocketbookId: string) {
     return this.#pocketbook.watchPocketbook$(pocketbookId);
   }

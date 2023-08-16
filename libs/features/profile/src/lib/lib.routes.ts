@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { Route } from '@angular/router';
 
 import { AuthGuard } from '@expenses-tracker/auth';
+import { RoutePaths } from '@expenses-tracker/shared/common';
 
 import {
   ProfileComponent,
@@ -13,18 +14,18 @@ import {
 
 export const profileRoutes: Route[] = [
   {
-    path: '',
+    path: RoutePaths.Empty,
     component: ProfileComponent,
     canActivate: [() => inject(AuthGuard).canActivate()],
     children: [
-      { path: '', component: ProfileViewComponent },
+      { path: RoutePaths.Empty, component: ProfileViewComponent },
       {
-        path: 'edit',
+        path: RoutePaths.EntityEdit,
         component: ProfileEditComponent,
         children: [
-          { path: 'displayName', component: ProfileEditDisplayNameComponent },
-          { path: 'password', component: ProfileEditPasswordComponent },
-          { path: '', redirectTo: 'displayName', pathMatch: 'full' }
+          { path: RoutePaths.ProfileDisplayName, component: ProfileEditDisplayNameComponent },
+          { path: RoutePaths.ProfilePassword, component: ProfileEditPasswordComponent },
+          { path: RoutePaths.Empty, redirectTo: RoutePaths.ProfileDisplayName, pathMatch: 'full' }
         ]
       }
     ]
