@@ -1,55 +1,52 @@
-import { Injectable, inject } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
-import { BehaviorSubject, filter } from 'rxjs';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { RoutePaths } from '@expenses-tracker/shared/common';
+import { ContextService, FirestoreService } from '@expenses-tracker/core';
+import { IFlag, INITIAL_FLAGS, IPocketbook } from '@expenses-tracker/shared/interfaces';
+import { catchError, of, tap } from 'rxjs';
 
-export type PocketbookViewMode = 'owner' | 'collaborator';
+export type ComponentFlags = {
+  pocketbookList: IFlag;
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class PocketbookListService {
-  #viewMode$ = new BehaviorSubject<PocketbookViewMode>('owner');
-  #viewMode: PocketbookViewMode = 'owner';
-
   #router = inject(Router);
+  #context = inject(ContextService);
+  #firestore = inject(FirestoreService);
+  flags = signal<ComponentFlags>({
+    pocketbookList: { ...INITIAL_FLAGS }
+  });
 
-  fetchViewMode() {
-    this.#router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(e => {
-      const { url, urlAfterRedirects } = e as NavigationEnd;
-      this.setViewMode((urlAfterRedirects ?? url)?.split('/').at(-1) as PocketbookViewMode);
-    });
-  }
+  user = computed(() => this.#context.user());
 
-  setViewMode(viewMode: PocketbookViewMode = 'owner') {
-    this.#viewMode = viewMode;
-    this.#viewMode$.next(this.#viewMode);
-  }
-
-  watchViewMode$() {
-    return this.#viewMode$.asObservable();
+  fetchPocketbookList() {
+    this.flags.update(value => ({
+      ...value,
+      pocketbookList: { ...value.pocketbookList, loading: true }
+    }));
+    return this.#firestore.watchPocketbookList$().pipe(
+      tap(() => {
+        this.flags.update(value => ({
+          ...value,
+          pocketbookList: { ...value.pocketbookList, loading: false, success: true, fail: false }
+        }));
+      }),
+      catchError(error => {
+        console.log({ error });
+        this.flags.update(value => ({
+          ...value,
+          pocketbookList: { ...value.pocketbookList, loading: false, success: false, fail: true }
+        }));
+        return of([] as IPocketbook<Date>[]);
+      })
+    );
   }
 
   gotoAddPocketbook() {
     this.#router.navigate([RoutePaths.Pocketbook, RoutePaths.EntityAdd]);
-  }
-
-  gotoOwnerPocketbookList() {
-    this.setViewMode('owner');
-    this.#router.navigate([
-      RoutePaths.Pocketbook,
-      RoutePaths.EntityList,
-      RoutePaths.PocketbookOwner
-    ]);
-  }
-
-  gotoCollaboratorPocketbookList() {
-    this.setViewMode('collaborator');
-    this.#router.navigate([
-      RoutePaths.Pocketbook,
-      RoutePaths.EntityList,
-      RoutePaths.PocketbookCollaborator
-    ]);
   }
 }

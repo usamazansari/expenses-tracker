@@ -20,10 +20,9 @@ export type TooltipPosition = 'above' | 'below' | 'left' | 'right';
       <div class="flex items-center max-w-xs" [ngClass]="containerClassList()">
         <div
           class="p-2 border rounded-md bg-color-canvas-overlay border-color-border-default"
-          [ngClass]="contentClassList()">
-          <span [id]="id">
-            <ng-content></ng-content>
-          </span>
+          [ngClass]="contentClassList()"
+          [id]="id">
+          <ng-content></ng-content>
         </div>
         <div
           class="tooltip-arrow bg-color-border-default w-5 h-5"
