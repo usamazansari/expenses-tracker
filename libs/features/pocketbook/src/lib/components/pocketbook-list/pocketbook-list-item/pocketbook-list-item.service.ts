@@ -1,11 +1,11 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from 'firebase/auth';
-import { catchError, tap, throwError } from 'rxjs';
+import { catchError, of, tap, throwError } from 'rxjs';
 
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
 import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
-import { IFlag, IPocketbook } from '@expenses-tracker/shared/interfaces';
+import { IFlag, INITIAL_FLAGS, IPocketbook } from '@expenses-tracker/shared/interfaces';
 
 export type ComponentFlags = {
   owner: IFlag;
@@ -23,17 +23,52 @@ export class PocketbookListItemService {
   #notification = inject(NotificationService);
   owner = signal<User | null>(null);
   collaboratorList = signal<User[]>([]);
+  flags = signal<ComponentFlags>({
+    owner: INITIAL_FLAGS,
+    collaboratorList: INITIAL_FLAGS,
+    deletePocketbook: INITIAL_FLAGS
+  });
 
-  initializeComponent(pocketbook: IPocketbook | null) {
-    this.#firestore.watchPocketbookOwner$((pocketbook as IPocketbook)?.owner).subscribe(owner => {
-      this.owner.set(owner as User);
-    });
+  watchPocketbookOwner$(owner: string) {
+    this.flags.update(value => ({ ...value, owner: { ...value.owner, loading: true } }));
+    return this.#firestore.watchPocketbookOwner$(owner).pipe(
+      tap(owner => {
+        this.flags.update(value => ({
+          ...value,
+          owner: { ...value.owner, loading: false, success: true, fail: false }
+        }));
+        this.owner.set(owner as User);
+      }),
+      catchError(error => {
+        console.error({ error });
+        this.flags.update(value => ({
+          ...value,
+          owner: { ...value.owner, loading: false, success: false, fail: true }
+        }));
+        return of(null);
+      })
+    );
+  }
 
-    this.#firestore
-      .watchPocketbookCollaboratorList$((pocketbook as IPocketbook)?.collaboratorList)
-      .subscribe(collaboratorList => {
+  watchPocketbookCollaboratorList$(collaboratorList: string[]) {
+    this.flags.update(value => ({ ...value, collaboratorList: { ...value.collaboratorList, loading: true } }));
+    return this.#firestore.watchPocketbookCollaboratorList$(collaboratorList).pipe(
+      tap(collaboratorList => {
+        this.flags.update(value => ({
+          ...value,
+          collaboratorList: { ...value.collaboratorList, loading: false, success: true, fail: false }
+        }));
         this.collaboratorList.set(collaboratorList as User[]);
-      });
+      }),
+      catchError(error => {
+        console.error({ error });
+        this.flags.update(value => ({
+          ...value,
+          collaboratorList: { ...value.collaboratorList, loading: false, success: false, fail: true }
+        }));
+        return of([]);
+      })
+    );
   }
 
   gotoEditPocketbook(pocketbook: IPocketbook) {

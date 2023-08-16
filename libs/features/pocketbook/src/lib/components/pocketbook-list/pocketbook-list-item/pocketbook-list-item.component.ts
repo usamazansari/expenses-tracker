@@ -1,13 +1,14 @@
 import { Dialog, DialogModule } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, inject, signal } from '@angular/core';
+import { Component, Input, OnDestroy, inject, signal } from '@angular/core';
 import { User } from 'firebase/auth';
-import { EMPTY } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { ExtractInitialsPipe } from '@expenses-tracker/features/profile';
 import { TooltipModule } from '@expenses-tracker/shared/common';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
+import { PocketbookContributorsDialogComponent } from './pocketbook-contributors-dialog.component';
 import { PocketbookDeleteDialogComponent } from './pocketbook-delete-dialog.component';
 import { PocketbookListItemService } from './pocketbook-list-item.service';
 
@@ -18,11 +19,14 @@ import { PocketbookListItemService } from './pocketbook-list-item.service';
   providers: [PocketbookListItemService],
   templateUrl: './pocketbook-list-item.component.html'
 })
-export class PocketbookListItemComponent implements OnInit {
+export class PocketbookListItemComponent implements OnDestroy {
   pocketbook = signal<IPocketbook | null>(null);
   isOwner = signal(false);
   collaboratorList = signal<User[]>([]);
   owner = signal<User | null>(null);
+  #deleteSubscription$!: Subscription;
+  #deleteDialogSubscription$!: Subscription;
+  #contributorsDialogSubscription$!: Subscription;
 
   @Input() set pocketbookInput(value: IPocketbook | null) {
     this.pocketbook.set(value);
@@ -35,10 +39,6 @@ export class PocketbookListItemComponent implements OnInit {
   #service = inject(PocketbookListItemService);
   #dialog = inject(Dialog);
 
-  ngOnInit() {
-    if (this.pocketbook()) this.#service.initializeComponent(this.pocketbook());
-  }
-
   gotoEditPocketbook() {
     this.#service.gotoEditPocketbook(this.pocketbook() as IPocketbook);
   }
@@ -48,19 +48,35 @@ export class PocketbookListItemComponent implements OnInit {
   }
 
   showContributors() {
-    const dialogRef = this.#dialog.open(PocketbookDeleteDialogComponent);
-    dialogRef.closed.subscribe(data => {
-      console.log({ data });
+    const dialogRef = this.#dialog.open(PocketbookContributorsDialogComponent, {
+      data: this.pocketbook(),
+      disableClose: true
     });
+    this.#contributorsDialogSubscription$ = dialogRef.closed.subscribe();
   }
 
   deletePocketbook() {
-    const result = confirm('Delete Pocketbook?');
-    const deleteStream = result ? this.#service.deletePocketbook$((this.pocketbook() as IPocketbook)?.id ?? '') : EMPTY;
-    deleteStream.subscribe();
+    const dialogRef = this.#dialog.open(PocketbookDeleteDialogComponent, { disableClose: true });
+    this.#deleteDialogSubscription$ = dialogRef.closed.subscribe(value => {
+      if (!!value) {
+        this.#deletePocketbook();
+      }
+    });
+  }
+
+  #deletePocketbook() {
+    this.#deleteSubscription$ = this.#service
+      .deletePocketbook$((this.pocketbook() as IPocketbook)?.id ?? '')
+      .subscribe();
   }
 
   gotoPocketbookDetail() {
     this.#service.gotoPocketbook(this.pocketbook()?.id ?? '');
+  }
+
+  ngOnDestroy() {
+    this.#deleteSubscription$?.unsubscribe();
+    this.#deleteDialogSubscription$?.unsubscribe();
+    this.#contributorsDialogSubscription$?.unsubscribe();
   }
 }

@@ -1,6 +1,6 @@
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { DialogRef } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
-import { Component, Inject, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 @Component({
   selector: 'expenses-tracker-pocketbook-delete-dialog',
@@ -39,12 +39,11 @@ import { Component, Inject, inject } from '@angular/core';
 })
 export class PocketbookDeleteDialogComponent {
   #dialogRef = inject(DialogRef);
-  constructor(@Inject(DIALOG_DATA) public data: unknown) {}
 
   deletePocketbook() {
-    this.#dialogRef.close({ deletePocketbook: true });
+    this.#dialogRef.close(true);
   }
   dismissDialog() {
-    this.#dialogRef.close();
+    this.#dialogRef.close(false);
   }
 }

@@ -35,7 +35,8 @@ export class PocketbookListService {
           pocketbookList: { ...value.pocketbookList, loading: false, success: true, fail: false }
         }));
       }),
-      catchError(() => {
+      catchError(error => {
+        console.log({ error });
         this.flags.update(value => ({
           ...value,
           pocketbookList: { ...value.pocketbookList, loading: false, success: false, fail: true }
