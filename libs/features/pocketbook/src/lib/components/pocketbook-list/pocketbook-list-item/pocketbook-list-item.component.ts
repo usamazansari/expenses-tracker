@@ -9,7 +9,6 @@ import { TooltipModule } from '@expenses-tracker/shared/common';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
 import { PocketbookContributorsDialogComponent } from './pocketbook-contributors-dialog/pocketbook-contributors-dialog.component';
-import { PocketbookDeleteDialogComponent } from './pocketbook-delete-dialog.component';
 import { PocketbookListItemService } from './pocketbook-list-item.service';
 
 @Component({
@@ -43,31 +42,12 @@ export class PocketbookListItemComponent implements OnDestroy {
     this.#service.gotoEditPocketbook(this.pocketbook() as IPocketbook);
   }
 
-  showMenu() {
-    throw new Error('Method not implemented.');
-  }
-
   showContributors() {
     const dialogRef = this.#dialog.open(PocketbookContributorsDialogComponent, {
       data: this.pocketbook(),
       disableClose: true
     });
     this.#contributorsDialogSubscription$ = dialogRef.closed.subscribe();
-  }
-
-  deletePocketbook() {
-    const dialogRef = this.#dialog.open(PocketbookDeleteDialogComponent, { disableClose: true });
-    this.#deleteDialogSubscription$ = dialogRef.closed.subscribe(value => {
-      if (!!value) {
-        this.#deletePocketbook();
-      }
-    });
-  }
-
-  #deletePocketbook() {
-    this.#deleteSubscription$ = this.#service
-      .deletePocketbook$((this.pocketbook() as IPocketbook)?.id ?? '')
-      .subscribe();
   }
 
   gotoPocketbookDetail() {
