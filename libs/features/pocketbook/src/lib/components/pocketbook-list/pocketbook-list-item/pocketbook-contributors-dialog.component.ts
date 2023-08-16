@@ -1,12 +1,12 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit, computed, inject } from '@angular/core';
+import { User } from 'firebase/auth';
+import { Subscription } from 'rxjs';
 
 import { ExtractInitialsPipe } from '@expenses-tracker/features/profile';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
-import { User } from 'firebase/auth';
-import { Subscription } from 'rxjs';
 import { PocketbookListItemService } from './pocketbook-list-item.service';
 
 @Component({
@@ -14,64 +14,66 @@ import { PocketbookListItemService } from './pocketbook-list-item.service';
   standalone: true,
   imports: [CommonModule, ExtractInitialsPipe],
   template: `
-    <div class="et-card grid gap-2 w-96 bg-color-codemirror-gutters-bg">
-      <div class="flex items-center justify-between">
-        <span class="text-xl font-bold text-color-accent-fg hover:underline cursor-pointer" (click)="gotoPocketbook()">
-          {{ pocketbook.name }}
-        </span>
-        <span class="material-icons text-color-fg-muted cursor-pointer" (click)="closeDialog()">clear</span>
-      </div>
-      <ng-container *ngIf="flags().owner.loading || flags().collaboratorList.loading">
-        <div class="grid place-content-center">
-          <div class="flex items-center gap-2 cursor-default">
-            <span class="material-icons animate-spin">autorenew</span>
-            <span class="font-bold">Loading</span>
-          </div>
+    <ng-container *ngIf="pocketbook">
+      <div class="et-card grid gap-2 w-96 bg-color-codemirror-gutters-bg">
+        <div class="flex items-center justify-between">
+          <span
+            class="text-xl font-bold text-color-accent-fg hover:underline cursor-pointer"
+            (click)="gotoPocketbook()">
+            {{ pocketbook.name }}
+          </span>
+          <span class="material-icons text-color-fg-muted cursor-pointer" (click)="closeDialog()">clear</span>
         </div>
-      </ng-container>
-      <div class="grid gap-2">
-        <ng-container *ngIf="flags().owner.success">
-          <div class="grid grid-cols-2 items-center gap-2">
-            <span class="font-bold">Owned by</span>
-            <div class="flex items-center">
-              <div
-                class="p-4 border rounded-full w-14 h-14 bg-color-avatar-bg border-color-border-default text-color-fg-default">
-                {{ owner() | extractInitials }}
-              </div>
-            </div>
-          </div>
-        </ng-container>
-        <ng-container *ngIf="flags().owner.fail">
-          <div class="grid  place-content-center">
+        <ng-container *ngIf="flags().contributorsFetch.loading">
+          <div class="grid place-content-center">
             <div class="flex items-center gap-2 cursor-default">
-              <span class="material-icons text-color-danger-fg">error</span>
-              <span class="font-bold text-color-danger-fg">Failed to load owner information</span>
+              <span class="material-icons animate-spin">autorenew</span>
+              <span class="font-bold">Loading</span>
             </div>
           </div>
         </ng-container>
-        <ng-container *ngIf="flags().collaboratorList.success">
-          <div class="grid grid-cols-2 items-center gap-2">
-            <span class="font-bold">Collaborators</span>
-            <div class="flex items-center">
-              <ng-container *ngFor="let collaborator of collaboratorList(); trackBy: collaboratorListTrack">
+        <div class="grid gap-2">
+          <ng-container *ngIf="flags().contributorsFetch.success">
+            <div class="grid grid-cols-2 items-center gap-2">
+              <span class="font-bold text-right">Owned by</span>
+              <div class="flex items-center">
                 <div
                   class="p-4 border rounded-full w-14 h-14 bg-color-avatar-bg border-color-border-default text-color-fg-default">
-                  {{ collaborator | extractInitials }}
+                  {{ owner() | extractInitials }}
                 </div>
-              </ng-container>
+              </div>
             </div>
-          </div>
-        </ng-container>
-        <ng-container *ngIf="flags().collaboratorList.fail">
-          <div class="grid  place-content-center">
-            <div class="flex items-center gap-2 cursor-default">
-              <span class="material-icons text-color-danger-fg">error</span>
-              <span class="font-bold text-color-danger-fg">Failed to load collaborators information</span>
+            <ng-container *ngIf="collaboratorList().length === 0; else showCollaborators">
+              <div class="flex items-center justify-center gap-2 cursor-default">
+                <span class="material-icons text-color-accent-fg">error</span>
+                <span class="text-color-accent-fg">No collaborators in this pocketbook</span>
+              </div>
+            </ng-container>
+            <ng-template #showCollaborators>
+              <div class="grid grid-cols-2 items-center gap-2">
+                <span class="font-bold text-right">Collaborators</span>
+                <div class="flex items-center">
+                  <ng-container *ngFor="let collaborator of collaboratorList(); trackBy: collaboratorListTrack">
+                    <div
+                      class="p-4 border rounded-full w-14 h-14 bg-color-avatar-bg border-color-border-default text-color-fg-default">
+                      {{ collaborator | extractInitials }}
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+            </ng-template>
+          </ng-container>
+          <ng-container *ngIf="flags().contributorsFetch.fail">
+            <div class="grid  place-content-center">
+              <div class="flex items-center gap-2 cursor-default">
+                <span class="material-icons text-color-danger-fg">error</span>
+                <span class="font-bold text-color-danger-fg">Failed to load owner information</span>
+              </div>
             </div>
-          </div>
-        </ng-container>
+          </ng-container>
+        </div>
       </div>
-    </div>
+    </ng-container>
   `
 })
 export class PocketbookContributorsDialogComponent implements OnInit, OnDestroy {
@@ -80,16 +82,14 @@ export class PocketbookContributorsDialogComponent implements OnInit, OnDestroy 
   owner = computed(() => this.#service.owner());
   collaboratorList = computed(() => this.#service.collaboratorList());
   flags = computed(() => this.#service.flags());
-  #pocketbookOwner$!: Subscription;
-  #pocketbookCollaboratorList$!: Subscription;
+  #pocketbookContributors$!: Subscription;
 
   constructor(@Inject(DIALOG_DATA) public pocketbook: IPocketbook) {}
 
   ngOnInit(): void {
-    this.#pocketbookOwner$ = this.#service.watchPocketbookOwner$(this.pocketbook.owner).subscribe();
-    this.#pocketbookCollaboratorList$ = this.#service
-      .watchPocketbookCollaboratorList$(this.pocketbook.collaboratorList)
-      .subscribe();
+    this.#service.resetPocketbookContributors();
+    this.#service.resetFlags();
+    this.#pocketbookContributors$ = this.#service.watchContributors$(this.pocketbook).subscribe();
   }
 
   collaboratorListTrack(index: number, user: User) {
@@ -105,7 +105,6 @@ export class PocketbookContributorsDialogComponent implements OnInit, OnDestroy 
   }
 
   ngOnDestroy() {
-    this.#pocketbookOwner$?.unsubscribe();
-    this.#pocketbookCollaboratorList$?.unsubscribe();
+    this.#pocketbookContributors$?.unsubscribe();
   }
 }
