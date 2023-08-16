@@ -1,10 +1,10 @@
 <ng-container *ngIf="pocketbook">
-  <div class="et-card grid gap-2 w-96 bg-color-codemirror-gutters-bg">
+  <div class="grid gap-2 et-card w-96 bg-color-codemirror-gutters-bg">
     <div class="flex items-center justify-between">
-      <span class="text-xl font-bold text-color-accent-fg hover:underline cursor-pointer" (click)="gotoPocketbook()">
+      <span class="text-xl font-bold cursor-pointer text-color-accent-fg hover:underline" (click)="gotoPocketbook()">
         {{ pocketbook.name }}
       </span>
-      <span class="material-icons text-color-fg-muted cursor-pointer" (click)="closeDialog()">clear</span>
+      <span class="cursor-pointer material-icons text-color-fg-muted" (click)="closeDialog()">clear</span>
     </div>
     <ng-container *ngIf="flags().contributorsFetch.loading">
       <div class="grid place-content-center">
@@ -16,13 +16,22 @@
     </ng-container>
     <div class="grid gap-2">
       <ng-container *ngIf="flags().contributorsFetch.success">
-        <div class="grid grid-cols-2 items-center gap-2">
+        <div class="grid items-center grid-cols-2 gap-2">
           <span class="font-bold text-right">Owned by</span>
           <div class="flex items-center">
             <div
-              class="p-4 border rounded-full w-14 h-14 bg-color-avatar-bg border-color-border-default text-color-fg-default">
+              class="p-4 border rounded-full cursor-pointer w-14 h-14 bg-color-avatar-bg border-color-border-default text-color-fg-default"
+              [expensesTrackerTooltip]="ownerTooltip">
               {{ owner() | extractInitials }}
             </div>
+            <expenses-tracker-tooltip #ownerTooltip>
+              <div class="grid gap-2 mx-4">
+                <ng-container *ngIf="owner()?.displayName">
+                  <span class="text-lg font-bold text-color-accent-fg">{{ owner()?.displayName }}</span>
+                </ng-container>
+                <span class="font-bold">{{ owner()?.email }}</span>
+              </div>
+            </expenses-tracker-tooltip>
           </div>
         </div>
         <ng-container *ngIf="collaboratorList().length === 0; else showCollaborators">
@@ -32,14 +41,23 @@
           </div>
         </ng-container>
         <ng-template #showCollaborators>
-          <div class="grid grid-cols-2 items-center gap-2">
+          <div class="grid items-center grid-cols-2 gap-2">
             <span class="font-bold text-right">Collaborators</span>
-            <div class="flex gap-1 items-center">
+            <div class="flex items-center gap-1">
               <ng-container *ngFor="let collaborator of collaboratorList(); trackBy: collaboratorListTrack">
                 <div
-                  class="p-4 border rounded-full w-14 h-14 bg-color-avatar-bg border-color-border-default text-color-fg-default">
+                  class="p-4 border rounded-full cursor-pointer w-14 h-14 bg-color-avatar-bg border-color-border-default text-color-fg-default"
+                  [expensesTrackerTooltip]="collaboratorTooltip">
                   {{ collaborator | extractInitials }}
                 </div>
+                <expenses-tracker-tooltip #collaboratorTooltip>
+                  <div class="grid gap-2 mx-4">
+                    <ng-container *ngIf="collaborator.displayName">
+                      <span class="text-lg font-bold text-color-accent-fg">{{ collaborator.displayName }}</span>
+                    </ng-container>
+                    <span class="font-bold">{{ collaborator.email }}</span>
+                  </div>
+                </expenses-tracker-tooltip>
               </ng-container>
             </div>
           </div>
