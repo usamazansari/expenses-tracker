@@ -2,50 +2,48 @@ import { Route } from '@angular/router';
 
 import { AuthGuard } from '@expenses-tracker/auth';
 
+import { inject } from '@angular/core';
+import { RoutePaths } from '@expenses-tracker/shared/common';
 import {
   PocketbookAddComponent,
   PocketbookCardComponent,
   PocketbookDetailComponent,
   PocketbookEditComponent,
-  PocketbookListComponent,
-  PocketbookOwnerListComponent,
-  PocketbookCollaboratorListComponent
+  PocketbookListComponent
 } from './components';
-import { inject } from '@angular/core';
 
 export const pocketbookRoutes: Route[] = [
   {
-    path: '',
+    path: RoutePaths.Empty,
     component: PocketbookCardComponent,
     children: [
       {
-        path: 'list',
+        path: RoutePaths.EntityList,
         component: PocketbookListComponent,
-        canActivate: [() => inject(AuthGuard).canActivate()],
-        children: [
-          { path: 'owner', component: PocketbookOwnerListComponent },
-          { path: 'collaborator', component: PocketbookCollaboratorListComponent },
-          { path: '', redirectTo: 'owner', pathMatch: 'full' }
-        ]
+        canActivate: [() => inject(AuthGuard).canActivate()]
       },
       {
-        path: 'add',
+        path: RoutePaths.EntityAdd,
         component: PocketbookAddComponent,
         canActivate: [() => inject(AuthGuard).canActivate()]
       },
       {
-        path: ':id/transaction',
+        path: RoutePaths.EntityDynamicId,
         component: PocketbookDetailComponent,
-        loadChildren: () =>
-          import('@expenses-tracker/features/transaction').then(m => m.transactionRoutes)
+        children: [
+          {
+            path: RoutePaths.Transaction,
+            loadChildren: () => import('@expenses-tracker/features/transaction').then(m => m.transactionRoutes)
+          },
+          {
+            path: RoutePaths.EntityEdit,
+            component: PocketbookEditComponent,
+            canActivate: [() => inject(AuthGuard).canActivate()]
+          },
+          { path: RoutePaths.Empty, redirectTo: RoutePaths.Transaction, pathMatch: 'full' }
+        ]
       },
-      { path: ':id', redirectTo: ':id/transaction', pathMatch: 'full' },
-      {
-        path: ':id/edit',
-        component: PocketbookEditComponent,
-        canActivate: [() => inject(AuthGuard).canActivate()]
-      },
-      { path: '', redirectTo: 'list', pathMatch: 'full' }
+      { path: RoutePaths.Empty, redirectTo: RoutePaths.EntityList, pathMatch: 'full' }
     ]
   }
 ];
