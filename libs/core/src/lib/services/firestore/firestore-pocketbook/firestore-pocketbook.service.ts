@@ -82,7 +82,7 @@ export class FirestorePocketbookService {
       ? of(0)
       : this.#firestore
           .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
-            ref.where('collaboratorList', 'array-contains', this.user()?.uid ?? '')
+            ref.where('collaboratorList', 'array-contains', this.user()?.uid ?? '').orderBy('createdAt', 'desc')
           )
           .snapshotChanges()
           .pipe(
