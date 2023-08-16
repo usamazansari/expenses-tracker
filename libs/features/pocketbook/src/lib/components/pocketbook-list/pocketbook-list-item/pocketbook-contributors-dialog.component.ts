@@ -52,7 +52,7 @@ import { PocketbookListItemService } from './pocketbook-list-item.service';
             <ng-template #showCollaborators>
               <div class="grid grid-cols-2 items-center gap-2">
                 <span class="font-bold text-right">Collaborators</span>
-                <div class="flex items-center">
+                <div class="flex gap-1 items-center">
                   <ng-container *ngFor="let collaborator of collaboratorList(); trackBy: collaboratorListTrack">
                     <div
                       class="p-4 border rounded-full w-14 h-14 bg-color-avatar-bg border-color-border-default text-color-fg-default">
