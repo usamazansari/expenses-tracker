@@ -8,7 +8,7 @@ import { ExtractInitialsPipe } from '@expenses-tracker/features/profile';
 import { TooltipModule } from '@expenses-tracker/shared/common';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
-import { PocketbookContributorsDialogComponent } from './pocketbook-contributors-dialog.component';
+import { PocketbookContributorsDialogComponent } from './pocketbook-contributors-dialog/pocketbook-contributors-dialog.component';
 import { PocketbookDeleteDialogComponent } from './pocketbook-delete-dialog.component';
 import { PocketbookListItemService } from './pocketbook-list-item.service';
 
