@@ -19,19 +19,7 @@
         <div class="grid items-center grid-cols-2 gap-2">
           <span class="font-bold text-right">Owned by</span>
           <div class="flex items-center">
-            <div
-              class="p-4 border rounded-full cursor-pointer w-14 h-14 bg-color-avatar-bg border-color-border-default text-color-fg-default"
-              [expensesTrackerTooltip]="ownerTooltip">
-              {{ owner() | extractInitials }}
-            </div>
-            <expenses-tracker-tooltip #ownerTooltip>
-              <div class="grid gap-2 mx-4">
-                <ng-container *ngIf="owner()?.displayName">
-                  <span class="text-lg font-bold text-color-accent-fg">{{ owner()?.displayName }}</span>
-                </ng-container>
-                <span class="font-bold">{{ owner()?.email }}</span>
-              </div>
-            </expenses-tracker-tooltip>
+            <expenses-tracker-avatar [userInput]="owner()"></expenses-tracker-avatar>
           </div>
         </div>
         <ng-container *ngIf="collaboratorList().length === 0; else showCollaborators">
@@ -45,19 +33,7 @@
             <span class="font-bold text-right">Collaborators</span>
             <div class="flex items-center gap-1">
               <ng-container *ngFor="let collaborator of collaboratorList(); trackBy: collaboratorListTrack">
-                <div
-                  class="p-4 border rounded-full cursor-pointer w-14 h-14 bg-color-avatar-bg border-color-border-default text-color-fg-default"
-                  [expensesTrackerTooltip]="collaboratorTooltip">
-                  {{ collaborator | extractInitials }}
-                </div>
-                <expenses-tracker-tooltip #collaboratorTooltip>
-                  <div class="grid gap-2 mx-4">
-                    <ng-container *ngIf="collaborator.displayName">
-                      <span class="text-lg font-bold text-color-accent-fg">{{ collaborator.displayName }}</span>
-                    </ng-container>
-                    <span class="font-bold">{{ collaborator.email }}</span>
-                  </div>
-                </expenses-tracker-tooltip>
+                <expenses-tracker-avatar [userInput]="collaborator"></expenses-tracker-avatar>
               </ng-container>
             </div>
           </div>

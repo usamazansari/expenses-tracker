@@ -1,42 +1,36 @@
-<ng-container *ngIf="pocketbook$ | async as pocketbook">
-  <ng-container *ngIf="!pocketbook; else displayPocketbook"> Pocketbook not found </ng-container>
-  <ng-template #displayPocketbook>
-    <div class="grid bg-et-layer-alternate text-et-color-fg-default">
-      <div class="flex flex-col gap-2 md:flex-row md:gap-8">
-        <div class="flex items-center justify-center gap-2 py-12 md:justify-start">
-          <div class="flex">
-            <p class="text-2xl font-bold">{{ pocketbook.name }}</p>
-          </div>
-        </div>
-        <div class="grid items-center grid-cols-4 gap-2 justify-items-center">
-          <span class="material-icons justify-self-end text-et-color-accent-emphasis"> verified_user </span>
-          <div class="flex justify-self-start">
-            <ng-container *ngIf="owner$ | async as owner">
-              <div
-                class="p-4 transition-colors duration-200 border rounded-full cursor-default w-14 h-14 bg-et-color-button-default-bg text-et-color-button-default border-et-color-button-default-border">
-                <p class="text-center">{{ owner | extractInitials }}</p>
-              </div>
-            </ng-container>
-          </div>
-          <span class="material-icons justify-self-end text-et-color-accent-emphasis">group</span>
-          <div class="flex gap-2 justify-self-start">
-            <ng-container *ngFor="let collaborator of collaboratorList$ | async">
-              <div
-                class="p-4 transition-colors duration-200 border rounded-full cursor-default w-14 h-14 bg-et-color-button-default-bg text-et-color-button-default border-et-color-button-default-border">
-                <p class="text-center">{{ collaborator | extractInitials }}</p>
-              </div>
-            </ng-container>
-          </div>
-        </div>
-      </div>
-      <div class="flex items-center justify-center">
-        <span class="text-3xl font-bold text-et-color-fg-success">
-          {{ pocketbook.balance | currency: 'EUR' }}
-        </span>
-      </div>
-      <div class="p-4">
-        <router-outlet></router-outlet>
+<div class="grid">
+  <div class="flex flex-col gap-2 md:flex-row md:gap-8">
+    <div class="flex items-center justify-center gap-2 py-12 md:justify-start">
+      <div class="flex">
+        <p class="text-2xl font-bold text-color-accent-fg">{{ pocketbook()?.name }}</p>
       </div>
     </div>
-  </ng-template>
-</ng-container>
+    <div class="grid items-center grid-cols-4 gap-2 justify-items-center">
+      <span class="material-icons justify-self-end text-et-color-accent-emphasis text-color-success-fg">
+        verified_user
+      </span>
+      <div class="flex justify-self-start">
+        <expenses-tracker-avatar [userInput]="owner()"></expenses-tracker-avatar>
+      </div>
+      <span class="material-icons justify-self-end text-et-color-accent-emphasis">group</span>
+      <div class="flex gap-2 justify-self-start">
+        <ng-container *ngFor="let collaborator of collaboratorList(); trackBy: collaboratorListTrack">
+          <expenses-tracker-avatar [userInput]="collaborator"></expenses-tracker-avatar>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+  <div class="flex items-center justify-center">
+    <span
+      class="text-3xl font-bold"
+      [ngClass]="{
+      'text-color-danger-fg': (pocketbook()?.balance || 0) <= 0,
+      'text-color-success-fg': (pocketbook()?.balance || 0) > 0,
+    }">
+      {{ pocketbook()?.balance | currency: 'EUR' }}
+    </span>
+  </div>
+  <div class="p-4">
+    <router-outlet></router-outlet>
+  </div>
+</div>
