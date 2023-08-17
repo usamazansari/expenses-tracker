@@ -51,7 +51,7 @@ export class PocketbookListItemComponent implements OnDestroy {
   }
 
   gotoPocketbookDetail() {
-    this.#service.gotoPocketbook(this.pocketbook()?.id ?? '');
+    this.#service.gotoPocketbook(this.pocketbook() as IPocketbook);
   }
 
   ngOnDestroy() {

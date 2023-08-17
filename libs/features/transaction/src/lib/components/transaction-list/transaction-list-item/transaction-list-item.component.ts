@@ -29,9 +29,7 @@ export class TransactionListItemComponent {
 
   deleteTransaction() {
     const result = confirm('Delete Transaction?');
-    const deleteStream = result
-      ? this.#service.deleteTransaction$(this.transaction as ITransaction)
-      : EMPTY;
-    deleteStream.subscribe();
+    const deleteStream = result ? this.#service.deleteTransaction$(this.transaction as ITransaction) : EMPTY;
+    // deleteStream.subscribe();
   }
 }

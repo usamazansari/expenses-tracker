@@ -1,16 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from 'firebase/auth';
-import {
-  BehaviorSubject,
-  catchError,
-  map,
-  Observable,
-  of,
-  switchMap,
-  tap,
-  throwError
-} from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 
 import { ContextService, ErrorService, FirestoreService } from '@expenses-tracker/core';
 import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
@@ -102,64 +93,60 @@ export class PocketbookEditService {
   }
 
   watchPocketbook$() {
-    const pocketbookId = this.#router.url.match(/pocketbook\/(\w+)\//)?.at(1);
-    return this.#context
-      .watchPocketbook$()
-      .pipe(
-        switchMap(pb => (!pb ? this.#firestore.watchPocketbook$(pocketbookId ?? '') : of(pb)))
-      );
+    // const pocketbookId = this.#router.url.match(/pocketbook\/(\w+)\//)?.at(1);
+    // return this.#context
+    //   .watchPocketbook$()
+    //   .pipe(switchMap(pb => (!pb ? this.#firestore.watchPocketbook$(pocketbookId ?? '') : of(pb))));
   }
 
-  patchValues$(): Observable<IPocketbookEditForm> {
-    return this.watchUserList$().pipe(
-      switchMap(userList =>
-        this.watchPocketbook$().pipe(
-          map(pb => ({
-            name: pb?.name ?? '',
-            collaboratorList: userList.filter(({ uid }) => pb?.collaboratorList.includes(uid))
-          }))
-        )
-      )
-    );
-  }
+  // patchValues$(): Observable<IPocketbookEditForm> {
+  // return this.watchUserList$().pipe(
+  //   switchMap(userList =>
+  //     this.watchPocketbook$().pipe(
+  //       map(pb => ({
+  //         name: pb?.name ?? '',
+  //         collaboratorList: userList.filter(({ uid }) => pb?.collaboratorList.includes(uid))
+  //       }))
+  //     )
+  //   )
+  // );
+  // }
 
   editPocketbook$(pocketbook: Partial<IPocketbook>) {
-    this.resetFlags();
-    this.#setFlags({
-      ...this.#flags,
-      editPocketbook: {
-        ...this.#flags.editPocketbook,
-        loading: true
-      }
-    });
-    return this.#firestore
-      .updatePocketbook$({ ...this.#context.getPocketbook(), ...pocketbook })
-      .pipe(
-        tap(() => {
-          this.#notification.success({
-            title: 'Pocketbook Updated!',
-            description: `Pocketbook ${pocketbook.name} successfully updated!`
-          });
-          this.resetFlags();
-          this.#router.navigate([RoutePaths.Pocketbook, RoutePaths.EntityList]);
-        }),
-        catchError(error => {
-          this.#notification.error({
-            description: `${error}.`,
-            title: 'Pocketbook not updated'
-          });
-          this.#setFlags({
-            ...this.#flags,
-            editPocketbook: {
-              ...this.#flags.editPocketbook,
-              loading: false,
-              fail: true,
-              visible: true
-            }
-          });
-          return throwError(() => new Error(error));
-        })
-      );
+    // this.resetFlags();
+    // this.#setFlags({
+    //   ...this.#flags,
+    //   editPocketbook: {
+    //     ...this.#flags.editPocketbook,
+    //     loading: true
+    //   }
+    // });
+    // return this.#firestore.updatePocketbook$({ ...this.#context.getPocketbook(), ...pocketbook }).pipe(
+    //   tap(() => {
+    //     this.#notification.success({
+    //       title: 'Pocketbook Updated!',
+    //       description: `Pocketbook ${pocketbook.name} successfully updated!`
+    //     });
+    //     this.resetFlags();
+    //     this.#router.navigate([RoutePaths.Pocketbook, RoutePaths.EntityList]);
+    //   }),
+    //   catchError(error => {
+    //     this.#notification.error({
+    //       description: `${error}.`,
+    //       title: 'Pocketbook not updated'
+    //     });
+    //     this.#setFlags({
+    //       ...this.#flags,
+    //       editPocketbook: {
+    //         ...this.#flags.editPocketbook,
+    //         loading: false,
+    //         fail: true,
+    //         visible: true
+    //       }
+    //     });
+    //     return throwError(() => new Error(error));
+    //   })
+    // );
   }
 
   cancelEditPocketbook(pocketbook = '') {

@@ -1,7 +1,5 @@
 <ng-container *ngIf="pocketbook$ | async as pocketbook">
-  <ng-container *ngIf="!pocketbook; else displayPocketbook">
-    Pocketbook not found
-  </ng-container>
+  <ng-container *ngIf="!pocketbook; else displayPocketbook"> Pocketbook not found </ng-container>
   <ng-template #displayPocketbook>
     <div class="grid bg-et-layer-alternate text-et-color-fg-default">
       <div class="flex flex-col gap-2 md:flex-row md:gap-8">
@@ -11,9 +9,7 @@
           </div>
         </div>
         <div class="grid items-center grid-cols-4 gap-2 justify-items-center">
-          <span class="material-icons justify-self-end text-et-color-accent-emphasis">
-            verified_user
-          </span>
+          <span class="material-icons justify-self-end text-et-color-accent-emphasis"> verified_user </span>
           <div class="flex justify-self-start">
             <ng-container *ngIf="owner$ | async as owner">
               <div
@@ -22,9 +18,7 @@
               </div>
             </ng-container>
           </div>
-          <span class="material-icons justify-self-end text-et-color-accent-emphasis"
-            >group</span
-          >
+          <span class="material-icons justify-self-end text-et-color-accent-emphasis">group</span>
           <div class="flex gap-2 justify-self-start">
             <ng-container *ngFor="let collaborator of collaboratorList$ | async">
               <div

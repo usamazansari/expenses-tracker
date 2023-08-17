@@ -19,31 +19,25 @@ export class PocketbookDetailService {
   constructor(private _context: ContextService, private _firestore: FirestoreService) {}
 
   initializeComponent() {
-    this._context.watchPocketbook$().subscribe(pocketbook => {
-      this.setPocketbook(pocketbook as IPocketbook);
-    });
-    this._context
-      .watchPocketbook$()
-      .pipe(
-        switchMap(pocketbook =>
-          this._firestore.watchPocketbookOwner$((pocketbook as IPocketbook)?.owner)
-        )
-      )
-      .subscribe(owner => {
-        this.setOwner(owner as User);
-      });
-    this._context
-      .watchPocketbook$()
-      .pipe(
-        switchMap(pocketbook =>
-          this._firestore.watchPocketbookCollaboratorList$(
-            (pocketbook as IPocketbook)?.collaboratorList
-          )
-        )
-      )
-      .subscribe(collaboratorList => {
-        this.setCollaboratorList(collaboratorList as User[]);
-      });
+    // this._context.watchPocketbook$().subscribe(pocketbook => {
+    //   this.setPocketbook(pocketbook as IPocketbook);
+    // });
+    // this._context
+    //   .watchPocketbook$()
+    //   .pipe(switchMap(pocketbook => this._firestore.watchPocketbookOwner$((pocketbook as IPocketbook)?.owner)))
+    //   .subscribe(owner => {
+    //     this.setOwner(owner as User);
+    //   });
+    // this._context
+    //   .watchPocketbook$()
+    //   .pipe(
+    //     switchMap(pocketbook =>
+    //       this._firestore.watchPocketbookCollaboratorList$((pocketbook as IPocketbook)?.collaboratorList)
+    //     )
+    //   )
+    //   .subscribe(collaboratorList => {
+    //     this.setCollaboratorList(collaboratorList as User[]);
+    //   });
   }
 
   setPocketbook(pocketbook: IPocketbook | null) {

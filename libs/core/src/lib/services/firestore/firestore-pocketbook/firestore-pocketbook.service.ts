@@ -9,6 +9,7 @@ import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
 import { ContextService } from '../../context/context.service';
 import { ErrorService } from '../../error/error.service';
+import { PocketbookMapper } from '../firestore.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -28,15 +29,7 @@ export class FirestorePocketbookService {
           )
           .valueChanges()
           .pipe(
-            map(pocketbookList =>
-              pocketbookList.map(
-                pb =>
-                  ({
-                    ...pb,
-                    createdAt: (pb.createdAt as Timestamp).toDate()
-                  } as IPocketbook)
-              )
-            ),
+            map(pocketbookList => pocketbookList.map(pb => PocketbookMapper(pb))),
             catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
           );
   }
@@ -64,15 +57,7 @@ export class FirestorePocketbookService {
           )
           .valueChanges()
           .pipe(
-            map(pocketbookList =>
-              pocketbookList.map(
-                pb =>
-                  ({
-                    ...pb,
-                    createdAt: (pb.createdAt as Timestamp).toDate()
-                  } as IPocketbook)
-              )
-            ),
+            map(pocketbookList => pocketbookList.map(pb => PocketbookMapper(pb))),
             catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
           );
   }
@@ -105,21 +90,16 @@ export class FirestorePocketbookService {
       .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref => ref.where('id', '==', pocketbookId ?? ''))
       .valueChanges()
       .pipe(
-        map(
-          ([pb]) =>
-            ({
-              ...pb,
-              createdAt: (pb?.createdAt as Timestamp)?.toDate()
-            } as IPocketbook)
-        ),
+        map(([pb]) => PocketbookMapper(pb)),
         catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
       );
   }
 
   createPocketbook$({ name, collaboratorList = [], transactionList = [] }: IPocketbook) {
     const docId = this.#firestore.createId();
+    const createdAt = new Date();
     return !this.user()
-      ? of()
+      ? throwError(() => new Error('User not logged in'))
       : from(
           this.#firestore
             .collection<Partial<IPocketbook>>(Collections.Pocketbook)
@@ -130,10 +110,24 @@ export class FirestorePocketbookService {
               name,
               collaboratorList,
               transactionList,
-              createdAt: new Date(),
+              createdAt,
               balance: 0
             })
-        ).pipe(catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code)))));
+        ).pipe(
+          map(
+            () =>
+              ({
+                id: docId,
+                owner: this.user()?.uid,
+                name,
+                collaboratorList,
+                transactionList,
+                createdAt,
+                balance: 0
+              } as IPocketbook)
+          ),
+          catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
+        );
   }
 
   updatePocketbook$(pocketbook: Partial<IPocketbook>) {

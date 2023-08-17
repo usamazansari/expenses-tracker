@@ -45,9 +45,9 @@ export class PocketbookEditComponent implements OnInit, OnDestroy {
       collaboratorList: this.#fb.control<User[]>([])
     });
 
-    this.#patchValues$ = this.#service.patchValues$().subscribe(patchValues => {
-      this.formGroup.patchValue(patchValues);
-    });
+    // this.#patchValues$ = this.#service.patchValues$().subscribe(patchValues => {
+    //   this.formGroup.patchValue(patchValues);
+    // });
 
     this.flags$ = this.#service.watchFlags$();
   }
@@ -64,20 +64,20 @@ export class PocketbookEditComponent implements OnInit, OnDestroy {
   editPocketbook() {
     if (!this.formGroup.invalid) {
       const { name, collaboratorList } = this.formGroup.value;
-      this.#editPocketbook$ = this.#service
-        .editPocketbook$({
-          name: name ?? '',
-          collaboratorList: collaboratorList?.map(({ uid }) => uid)
-        })
-        .subscribe({
-          next: () => {
-            this.formGroup.reset();
-            this.#context.resetPocketbook();
-          },
-          error: error => {
-            console.error({ error });
-          }
-        });
+      // this.#editPocketbook$ = this.#service
+      //   .editPocketbook$({
+      //     name: name ?? '',
+      //     collaboratorList: collaboratorList?.map(({ uid }) => uid)
+      //   })
+      //   .subscribe({
+      //     next: () => {
+      //       this.formGroup.reset();
+      //       this.#context.resetPocketbook();
+      //     },
+      //     error: error => {
+      //       console.error({ error });
+      //     }
+      //   });
     }
   }
 

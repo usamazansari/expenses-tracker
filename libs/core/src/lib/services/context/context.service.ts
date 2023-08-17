@@ -14,8 +14,7 @@ import { IPocketbook, ITransaction } from '@expenses-tracker/shared/interfaces';
 })
 export class ContextService {
   user = signal<User | null>(null);
-  #pocketbook$ = new BehaviorSubject<IPocketbook | null>(null);
-  #pocketbook: IPocketbook | null = null;
+  pocketbook = signal<IPocketbook | null>(null);
   #transaction$ = new BehaviorSubject<ITransaction | null>(null);
   #transaction: ITransaction | null = null;
 
@@ -29,20 +28,7 @@ export class ContextService {
   }
 
   setPocketbook(pocketbook: IPocketbook | null) {
-    this.#pocketbook = pocketbook ?? null;
-    this.#pocketbook$.next(this.#pocketbook);
-  }
-
-  resetPocketbook() {
-    this.setPocketbook(null);
-  }
-
-  getPocketbook() {
-    return this.#pocketbook;
-  }
-
-  watchPocketbook$() {
-    return this.#pocketbook$.asObservable();
+    this.pocketbook.set(pocketbook);
   }
 
   setTransaction(transaction: ITransaction | null) {
@@ -69,32 +55,23 @@ export class ContextService {
   }
 
   #fetchPocketbook$() {
-    this.#router.events
+    this.#firestore
+      .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
+        ref.where('id', '==', this.#router.url.match(/pocketbook\/(\w+)\//)?.at(1) ?? '')
+      )
+      .valueChanges()
       .pipe(
-        filter(e => e instanceof NavigationEnd),
-        map(e => (e as NavigationEnd).urlAfterRedirects),
-        switchMap(url =>
-          url.includes('pocketbook')
-            ? this.#firestore
-                .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
-                  ref.where('id', '==', url.match(/pocketbook\/(\w+)\//)?.at(1) ?? '')
-                )
-                .valueChanges()
-                .pipe(
-                  map(([pb]) =>
-                    !pb
-                      ? null
-                      : ({
-                          ...pb,
-                          createdAt: (pb?.createdAt as Timestamp)?.toDate()
-                        } as IPocketbook)
-                  )
-                )
-            : of(null)
+        map(([pb]) =>
+          !pb
+            ? null
+            : ({
+                ...pb,
+                createdAt: (pb?.createdAt as Timestamp)?.toDate()
+              } as IPocketbook)
         )
       )
       .subscribe(pb => {
-        this.setPocketbook(pb);
+        this.pocketbook.set(pb);
       });
   }
 
@@ -135,7 +112,7 @@ export class ContextService {
     old: ITransaction;
     new: ITransaction;
   }) {
-    const balance = this.#pocketbook?.balance ?? 0;
+    const balance = this.pocketbook()?.balance ?? 0;
     return oldDirection === newDirection
       ? balance - oldAmount + newAmount
       : oldDirection === 'expense'
@@ -144,12 +121,12 @@ export class ContextService {
   }
 
   addTransactionCalculateBalance({ amount, direction }: ITransaction) {
-    const balance = this.#pocketbook?.balance ?? 0;
+    const balance = this.pocketbook()?.balance ?? 0;
     return direction === 'expense' ? balance - amount : balance + amount;
   }
 
   deleteTransactionCalculateBalance({ amount, direction }: ITransaction) {
-    const balance = this.#pocketbook?.balance ?? 0;
+    const balance = this.pocketbook()?.balance ?? 0;
     return direction === 'expense' ? balance + amount : balance - amount;
   }
 }

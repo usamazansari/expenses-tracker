@@ -77,8 +77,9 @@ export class PocketbookListItemService {
     this.#router.navigate([RoutePaths.Pocketbook, pocketbook.id, RoutePaths.EntityEdit]);
   }
 
-  gotoPocketbook(id: string) {
-    this.#router.navigate([RoutePaths.Pocketbook, id]);
+  gotoPocketbook(pocketbook: IPocketbook) {
+    this.#context.setPocketbook(pocketbook);
+    this.#router.navigate([RoutePaths.Pocketbook, pocketbook.id]);
   }
 
   deletePocketbook$(pocketbookId: string) {
