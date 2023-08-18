@@ -1,36 +1,67 @@
-<div class="grid">
-  <div class="flex flex-col gap-2 md:flex-row md:gap-8">
-    <div class="flex items-center justify-center gap-2 py-12 md:justify-start">
-      <div class="flex">
-        <p class="text-2xl font-bold text-color-accent-fg">{{ pocketbook()?.name }}</p>
+<div class="grid gap-4">
+  <div class="grid py-12 place-content-center">
+    <span class="text-3xl cursor-default text-color-accent-emphasis">{{ pocketbook()?.name }}</span>
+  </div>
+  <div class="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
+    <div class="grid place-content-center">
+      <div class="grid grid-cols-2 gap-4 place-content-center">
+        <div class="flex items-center gap-2">
+          <span
+            class="cursor-default material-icons justify-self-end text-et-color-accent-emphasis text-color-success-fg">
+            verified_user
+          </span>
+          <expenses-tracker-avatar [userInput]="owner()"></expenses-tracker-avatar>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="cursor-default material-icons justify-self-end text-et-color-accent-emphasis">group</span>
+          <div class="flex gap-2">
+            <ng-container *ngFor="let collaborator of collaboratorList(); trackBy: collaboratorListTrack">
+              <expenses-tracker-avatar [userInput]="collaborator"></expenses-tracker-avatar>
+            </ng-container>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="grid items-center grid-cols-4 gap-2 justify-items-center">
-      <span class="material-icons justify-self-end text-et-color-accent-emphasis text-color-success-fg">
-        verified_user
+    <div class="flex items-center justify-center">
+      <span
+        class="text-3xl font-bold"
+        [ngClass]="{
+            'text-color-danger-fg': (pocketbook()?.balance || 0) <= 0,
+            'text-color-success-fg': (pocketbook()?.balance || 0) > 0,
+          }">
+        {{ pocketbook()?.balance | currency: 'EUR' }}
       </span>
-      <div class="flex justify-self-start">
-        <expenses-tracker-avatar [userInput]="owner()"></expenses-tracker-avatar>
-      </div>
-      <span class="material-icons justify-self-end text-et-color-accent-emphasis">group</span>
-      <div class="flex gap-2 justify-self-start">
-        <ng-container *ngFor="let collaborator of collaboratorList(); trackBy: collaboratorListTrack">
-          <expenses-tracker-avatar [userInput]="collaborator"></expenses-tracker-avatar>
-        </ng-container>
-      </div>
     </div>
+    <!-- TODO: @usamazansari: Make this button visible to only collaborators who can edit -->
+    <ng-container *ngIf="true">
+      <div class="">
+        <button type="button" class="et-button et-button-primary" (click)="addTransaction()">
+          <span class="material-icons">add</span>
+          <span class="hidden md:flex">Add Transaction</span>
+        </button>
+      </div>
+    </ng-container>
   </div>
-  <div class="flex items-center justify-center">
-    <span
-      class="text-3xl font-bold"
-      [ngClass]="{
-      'text-color-danger-fg': (pocketbook()?.balance || 0) <= 0,
-      'text-color-success-fg': (pocketbook()?.balance || 0) > 0,
-    }">
-      {{ pocketbook()?.balance | currency: 'EUR' }}
-    </span>
-  </div>
-  <div class="p-4">
+  <div class="grid grid-cols-1 md:grid-cols-[1fr_0fr_5fr] p-4">
+    <!-- TODO: @usamazansari: Set the colors of the list items correctly -->
+    <ul class="et-ul-list">
+      <li class="et-ul-list-item group" [ngClass]="{ 'et-ul-list-item-active': this.viewMode() === 'transaction' }">
+        <a
+          class="flex items-center gap-2 transition-colors duration-200 text-color-fg-muted group-hover:text-color-fg-default"
+          (click)="gotoTransactionList()">
+          <span class="material-icons">list_alt</span>
+          <span>Transactions</span>
+        </a>
+      </li>
+      <li class="et-ul-list-item group" [ngClass]="{ 'et-ul-list-item-active': this.viewMode() === 'settings' }">
+        <a
+          class="flex items-center gap-2 transition-colors duration-200 text-color-fg-muted group-hover:text-color-fg-default"
+          (click)="gotoSettings()">
+          <span class="material-icons">settings</span>
+          <span>Settings</span>
+        </a>
+      </li>
+    </ul>
     <router-outlet></router-outlet>
   </div>
 </div>

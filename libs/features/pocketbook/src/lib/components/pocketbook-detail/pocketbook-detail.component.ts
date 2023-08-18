@@ -18,8 +18,21 @@ export class PocketbookDetailComponent {
   pocketbook = computed(() => this.#service.pocketbook());
   collaboratorList = computed(() => this.#service.collaboratorList());
   owner = computed(() => this.#service.owner());
+  viewMode = computed(() => this.#service.viewMode());
 
   collaboratorListTrack(index: number, user: User) {
     return user.uid;
+  }
+
+  gotoTransactionList() {
+    this.#service.gotoTransactionList();
+  }
+
+  gotoSettings() {
+    this.#service.gotoSettings();
+  }
+
+  addTransaction() {
+    this.#service.addTransaction();
   }
 }
