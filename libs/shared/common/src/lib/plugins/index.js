@@ -4,5 +4,6 @@ module.exports = {
   card: require('./card.plugin'),
   form: require('./form.plugin'),
   input: require('./input.plugin'),
+  list: require('./list.plugin'),
   overlay: require('./overlay.plugin')
 };
