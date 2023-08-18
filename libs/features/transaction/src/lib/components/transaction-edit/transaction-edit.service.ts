@@ -1,6 +1,7 @@
+import { Location } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, catchError, distinctUntilChanged, map, of, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, Observable, map, of, switchMap } from 'rxjs';
 
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
 import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
@@ -28,6 +29,7 @@ export class TransactionEditService {
   #firestore = inject(FirestoreService);
   #notification = inject(NotificationService);
   #router = inject(Router);
+  #location = inject(Location);
 
   #setFlags(flags: ComponentFlags) {
     this.#flags = flags;
@@ -43,7 +45,10 @@ export class TransactionEditService {
   }
 
   watchTransaction$() {
-    const transactionId = this.#router.url.match(/pocketbook\/(\w+)\//)?.at(1);
+    const transactionId = this.#location
+      .path()
+      .match(/pocketbook\/(\w+)\//)
+      ?.at(1);
     return this.#context
       .watchTransaction$()
       .pipe(switchMap(txn => (!txn ? this.#firestore.watchTransaction$(transactionId ?? '') : of(txn))));

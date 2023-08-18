@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { FirebaseError } from 'firebase/app';
@@ -28,6 +29,7 @@ export type PasswordEditForm = {
 })
 export class ProfileEditService {
   #router = inject(Router);
+  #location = inject(Location);
   #context = inject(ContextService);
   #auth = inject(AuthService);
 
@@ -41,7 +43,7 @@ export class ProfileEditService {
   });
 
   fetchEditMode() {
-    const url = this.#router.url.split('/').at(-1) as EditMode;
+    const url = this.#location.path().split('/').at(-1) as EditMode;
     this.editMode.set(url);
   }
 
