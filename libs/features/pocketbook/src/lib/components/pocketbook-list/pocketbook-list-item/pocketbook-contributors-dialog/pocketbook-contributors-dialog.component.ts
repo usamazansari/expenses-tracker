@@ -4,7 +4,7 @@ import { Component, Inject, OnDestroy, OnInit, computed, inject } from '@angular
 import { User } from 'firebase/auth';
 import { Subscription } from 'rxjs';
 
-import { AvatarComponent, ExtractInitialsPipe } from '@expenses-tracker/shared/common';
+import { ExtractInitialsPipe } from '@expenses-tracker/features/profile';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 import { TooltipModule } from '@expenses-tracker/shared/common';
 
@@ -13,7 +13,7 @@ import { PocketbookListItemService } from '../pocketbook-list-item.service';
 @Component({
   selector: 'expenses-tracker-pocketbook-contributors-dialog',
   standalone: true,
-  imports: [AvatarComponent, CommonModule, ExtractInitialsPipe, TooltipModule],
+  imports: [CommonModule, ExtractInitialsPipe, TooltipModule],
   templateUrl: './pocketbook-contributors-dialog.component.html'
 })
 export class PocketbookContributorsDialogComponent implements OnInit, OnDestroy {

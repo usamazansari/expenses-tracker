@@ -1,25 +1,31 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+
 import { RouterModule } from '@angular/router';
 import { User } from 'firebase/auth';
+import { Observable } from 'rxjs';
 
-import { AvatarComponent, ExtractInitialsPipe } from '@expenses-tracker/shared/common';
+import { ExtractInitialsPipe } from '@expenses-tracker/features/profile';
+import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
 import { PocketbookDetailService } from './pocketbook-detail.service';
 
 @Component({
   selector: 'expenses-tracker-pocketbook-detail',
   standalone: true,
-  imports: [AvatarComponent, CommonModule, RouterModule, ExtractInitialsPipe],
+  imports: [CommonModule, RouterModule, ExtractInitialsPipe],
   templateUrl: './pocketbook-detail.component.html'
 })
-export class PocketbookDetailComponent {
-  #service = inject(PocketbookDetailService);
-  pocketbook = computed(() => this.#service.pocketbook());
-  collaboratorList = computed(() => this.#service.collaboratorList());
-  owner = computed(() => this.#service.owner());
+export class PocketbookDetailComponent implements OnInit {
+  pocketbook$!: Observable<IPocketbook | null>;
+  collaboratorList$!: Observable<User[]>;
+  owner$!: Observable<User | null>;
+  constructor(private _service: PocketbookDetailService) {}
 
-  collaboratorListTrack(index: number, user: User) {
-    return user.uid;
+  ngOnInit() {
+    this._service.initializeComponent();
+    this.pocketbook$ = this._service.watchPocketbook$();
+    this.collaboratorList$ = this._service.watchCollaboratorList$();
+    this.owner$ = this._service.watchOwner$();
   }
 }

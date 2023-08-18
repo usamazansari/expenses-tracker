@@ -1,4 +1,3 @@
-import { Location } from '@angular/common';
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -13,10 +12,9 @@ export class AuthService {
   authMode = signal<AuthMode>('login');
 
   #router = inject(Router);
-  #location = inject(Location);
 
   fetchAuthMode() {
-    this.authMode.set(this.#location.path().split('/').at(-1) as AuthMode);
+    this.authMode.set(this.#router.url.split('/').at(-1) as AuthMode);
   }
 
   gotoLogin() {
