@@ -31,6 +31,7 @@ export class PocketbookDetailService {
   });
 
   constructor() {
+    // TODO: @usamazansari: Pocketbook data is not fetched on page reload
     toObservable(this.pocketbookFromContext).subscribe(pb => {
       if (!pb) return;
       const { owner, collaboratorList, ...pocketbook } = pb;
