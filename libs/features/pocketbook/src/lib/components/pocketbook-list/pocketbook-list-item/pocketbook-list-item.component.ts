@@ -4,7 +4,7 @@ import { Component, Input, OnDestroy, inject, signal } from '@angular/core';
 import { User } from 'firebase/auth';
 import { Subscription } from 'rxjs';
 
-import { ExtractInitialsPipe } from '@expenses-tracker/features/profile';
+import { ExtractInitialsPipe } from '@expenses-tracker/shared/common';
 import { TooltipModule } from '@expenses-tracker/shared/common';
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
