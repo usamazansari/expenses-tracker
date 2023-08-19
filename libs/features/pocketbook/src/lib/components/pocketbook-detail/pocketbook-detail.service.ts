@@ -3,7 +3,7 @@ import { User } from 'firebase/auth';
 import { Router } from '@angular/router';
 
 import { toObservable } from '@angular/core/rxjs-interop';
-import { ContextService } from '@expenses-tracker/core';
+import { ContextService, PocketbookWithUserInformation } from '@expenses-tracker/core';
 import { IFlag, INITIAL_FLAGS, IPocketbook } from '@expenses-tracker/shared/interfaces';
 import { RoutePaths } from '@expenses-tracker/shared/common';
 
@@ -33,8 +33,7 @@ export class PocketbookDetailService {
   constructor() {
     // TODO: @usamazansari: Pocketbook data is not fetched on page reload
     toObservable(this.pocketbookFromContext).subscribe(pb => {
-      if (!pb) return;
-      const { owner, collaboratorList, ...pocketbook } = pb;
+      const { owner = null, collaboratorList = [], ...pocketbook } = pb as PocketbookWithUserInformation;
       this.pocketbook.set(pocketbook as IPocketbook);
       this.owner.set(owner as User);
       this.collaboratorList.set(collaboratorList as User[]);
@@ -42,10 +41,12 @@ export class PocketbookDetailService {
   }
 
   gotoTransactionList() {
+    this.viewMode.set(RoutePaths.Transaction);
     this.#router.navigate([RoutePaths.Pocketbook, this.pocketbook()?.id, RoutePaths.Transaction]);
   }
 
   gotoSettings() {
+    this.viewMode.set(RoutePaths.EntitySettings);
     this.#router.navigate([RoutePaths.Pocketbook, this.pocketbook()?.id, RoutePaths.EntitySettings]);
   }
 

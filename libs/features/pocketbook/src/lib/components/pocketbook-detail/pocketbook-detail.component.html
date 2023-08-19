@@ -2,7 +2,7 @@
   <div class="grid py-12 place-content-center">
     <span class="text-3xl cursor-default text-color-accent-emphasis">{{ pocketbook()?.name }}</span>
   </div>
-  <div class="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_2fr]">
     <div class="grid place-content-center">
       <div class="grid grid-cols-2 gap-4 place-content-center">
         <div class="flex items-center gap-2">
@@ -22,41 +22,41 @@
         </div>
       </div>
     </div>
-    <div class="flex items-center justify-center">
-      <span
-        class="text-3xl font-bold"
-        [ngClass]="{
-            'text-color-danger-fg': (pocketbook()?.balance || 0) <= 0,
-            'text-color-success-fg': (pocketbook()?.balance || 0) > 0,
-          }">
-        {{ pocketbook()?.balance | currency: 'EUR' }}
-      </span>
-    </div>
-    <!-- TODO: @usamazansari: Make this button visible to only collaborators who can edit -->
-    <ng-container *ngIf="true">
-      <div class="">
-        <button type="button" class="et-button et-button-primary" (click)="addTransaction()">
-          <span class="material-icons">add</span>
-          <span class="hidden md:flex">Add Transaction</span>
-        </button>
+    <div class="grid grid-cols-2">
+      <div class="flex items-center justify-center">
+        <span
+          class="text-3xl font-bold"
+          [ngClass]="{
+              'text-color-danger-fg': (pocketbook()?.balance || 0) <= 0,
+              'text-color-success-fg': (pocketbook()?.balance || 0) > 0,
+            }">
+          {{ pocketbook()?.balance | currency: 'EUR' }}
+        </span>
       </div>
-    </ng-container>
+      <ng-container *ngIf="true">
+        <div class="flex justify-end">
+          <button type="button" class="et-button et-button-primary" (click)="addTransaction()">
+            <span class="material-icons">add</span>
+            <span class="">Add Transaction</span>
+          </button>
+        </div>
+      </ng-container>
+    </div>
   </div>
   <div class="grid grid-cols-1 md:grid-cols-[1fr_0fr_5fr] p-4">
-    <!-- TODO: @usamazansari: Set the colors of the list items correctly -->
     <ul class="et-ul-list">
-      <li class="et-ul-list-item group" [ngClass]="{ 'et-ul-list-item-active': this.viewMode() === 'transaction' }">
-        <a
-          class="flex items-center gap-2 transition-colors duration-200 text-color-fg-muted group-hover:text-color-fg-default"
-          (click)="gotoTransactionList()">
+      <li
+        class="et-ul-list-item hover:et-ul-list-item-hover"
+        [ngClass]="{ 'et-ul-list-item-active': this.viewMode() === 'transaction' }">
+        <a class="flex items-center gap-2" (click)="gotoTransactionList()">
           <span class="material-icons">list_alt</span>
           <span>Transactions</span>
         </a>
       </li>
-      <li class="et-ul-list-item group" [ngClass]="{ 'et-ul-list-item-active': this.viewMode() === 'settings' }">
-        <a
-          class="flex items-center gap-2 transition-colors duration-200 text-color-fg-muted group-hover:text-color-fg-default"
-          (click)="gotoSettings()">
+      <li
+        class="et-ul-list-item hover:et-ul-list-item-hover"
+        [ngClass]="{ 'et-ul-list-item-active': this.viewMode() === 'settings' }">
+        <a class="flex items-center gap-2" (click)="gotoSettings()">
           <span class="material-icons">settings</span>
           <span>Settings</span>
         </a>
