@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from 'firebase/auth';
-import { catchError, combineLatest, tap, throwError } from 'rxjs';
+import { catchError, tap, throwError } from 'rxjs';
 
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
 import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
@@ -49,10 +49,7 @@ export class PocketbookListItemService {
 
   watchContributors$({ owner, collaboratorList }: IPocketbook) {
     this.flags.update(value => ({ ...value, contributorsFetch: { ...value.contributorsFetch, loading: true } }));
-    return combineLatest([
-      this.#watchPocketbookOwner$(owner),
-      this.#watchPocketbookCollaboratorList$(collaboratorList)
-    ]).pipe(
+    return this.#firestore.watchPocketbookContributors$({ owner, collaboratorList } as IPocketbook).pipe(
       tap(([o, cList]) => {
         this.flags.update(value => ({
           ...value,
