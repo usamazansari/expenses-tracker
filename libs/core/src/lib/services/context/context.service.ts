@@ -4,9 +4,8 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Timestamp } from '@angular/fire/firestore';
 import { NavigationEnd, Router } from '@angular/router';
-import { FirebaseError } from 'firebase/app';
 import { User } from 'firebase/auth';
-import { BehaviorSubject, catchError, combineLatest, filter, map, of, switchMap, throwError } from 'rxjs';
+import { BehaviorSubject, filter, map, of, switchMap } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
 import { IPocketbook, ITransaction } from '@expenses-tracker/shared/interfaces';
@@ -14,23 +13,12 @@ import { IPocketbook, ITransaction } from '@expenses-tracker/shared/interfaces';
 import { ErrorService } from '../error/error.service';
 import { PocketbookMapper } from '../firestore/firestore.utils';
 
-export type FirestoreUser = {
-  displayName: string;
-  email: string;
-  uid: string;
-};
-
-export type PocketbookWithUserInformation = Omit<IPocketbook, 'owner' | 'collaboratorList'> & {
-  owner: FirestoreUser | null;
-  collaboratorList: FirestoreUser[];
-};
-
 @Injectable({
   providedIn: 'root'
 })
 export class ContextService {
   user = signal<User | null>(null);
-  pocketbook = signal<PocketbookWithUserInformation | null>(null);
+  pocketbook = signal<IPocketbook | null>(null);
   #transaction$ = new BehaviorSubject<ITransaction | null>(null);
   #transaction: ITransaction | null = null;
 
@@ -46,36 +34,8 @@ export class ContextService {
     this.#fetchTransaction$();
   }
 
-  #watchPocketbookOwner$(owner: string) {
-    return this.#firestore
-      .collection<Partial<User>>(Collections.User, ref => ref.where('uid', '==', owner ?? ''))
-      .valueChanges()
-      .pipe(
-        map(([o]) => o),
-        catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
-      );
-  }
-
-  #watchPocketbookCollaboratorList$(collaboratorList: string[]) {
-    return !collaboratorList?.length
-      ? of([] as User[])
-      : this.#firestore
-          .collection<User>(Collections.User, ref => ref.where('uid', 'in', collaboratorList ?? []))
-          .valueChanges()
-          .pipe(catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code)))));
-  }
-
   setPocketbook(pocketbook: IPocketbook | null) {
-    combineLatest([
-      this.#watchPocketbookOwner$(pocketbook?.owner ?? ''),
-      this.#watchPocketbookCollaboratorList$(pocketbook?.collaboratorList ?? [])
-    ]).subscribe(([owner, collaboratorList]) => {
-      this.pocketbook.set({
-        ...(pocketbook as IPocketbook),
-        owner: { ...owner } as FirestoreUser,
-        collaboratorList: [...collaboratorList] as FirestoreUser[]
-      });
-    });
+    this.pocketbook.set(pocketbook);
   }
 
   setTransaction(transaction: ITransaction | null) {
