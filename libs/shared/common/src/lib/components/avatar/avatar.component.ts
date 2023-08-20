@@ -11,10 +11,10 @@ import { TooltipModule } from '../tooltip';
   imports: [CommonModule, TooltipModule, ExtractInitialsPipe],
   template: `<div
       class="p-4 border rounded-full cursor-pointer w-14 h-14 bg-color-avatar-bg border-color-border-default text-color-fg-default"
-      [expensesTrackerTooltip]="ownerTooltip">
+      [expensesTrackerTooltip]="userTooltip">
       {{ user() | extractInitials }}
     </div>
-    <expenses-tracker-tooltip #ownerTooltip>
+    <expenses-tracker-tooltip #userTooltip>
       <div class="grid gap-2 mx-4">
         <ng-container *ngIf="user()?.displayName">
           <span class="text-lg font-bold text-color-accent-fg">{{ user()?.displayName }}</span>
