@@ -1,11 +1,11 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { User } from 'firebase/auth';
 import { Router } from '@angular/router';
+import { User } from 'firebase/auth';
 
-import { toObservable } from '@angular/core/rxjs-interop';
-import { ContextService, PocketbookWithUserInformation } from '@expenses-tracker/core';
-import { IFlag, INITIAL_FLAGS, IPocketbook } from '@expenses-tracker/shared/interfaces';
+import { ContextService, FirestoreService } from '@expenses-tracker/core';
 import { RoutePaths } from '@expenses-tracker/shared/common';
+import { IFlag, INITIAL_FLAGS, IPocketbook } from '@expenses-tracker/shared/interfaces';
+import { catchError, map, of, tap, throwError } from 'rxjs';
 
 export type ComponentFlags = {
   contributorsFetch: IFlag;
@@ -20,8 +20,8 @@ export type ViewMode = RoutePaths.Transaction | RoutePaths.EntitySettings;
 export class PocketbookDetailService {
   #context = inject(ContextService);
   #router = inject(Router);
-  pocketbookFromContext = computed(() => this.#context.pocketbook());
-  pocketbook = signal<IPocketbook | null>(null);
+  #firestore = inject(FirestoreService);
+  pocketbook = computed(() => this.#context.pocketbook());
   collaboratorList = signal<User[]>([]);
   owner = signal<User | null>(null);
   viewMode = signal<ViewMode>(RoutePaths.Transaction);
@@ -29,16 +29,6 @@ export class PocketbookDetailService {
     contributorsFetch: INITIAL_FLAGS,
     pocketbookFetch: INITIAL_FLAGS
   });
-
-  constructor() {
-    // TODO: @usamazansari: Pocketbook data is not fetched on page reload
-    toObservable(this.pocketbookFromContext).subscribe(pb => {
-      const { owner = null, collaboratorList = [], ...pocketbook } = pb as PocketbookWithUserInformation;
-      this.pocketbook.set(pocketbook as IPocketbook);
-      this.owner.set(owner as User);
-      this.collaboratorList.set(collaboratorList as User[]);
-    });
-  }
 
   gotoTransactionList() {
     this.viewMode.set(RoutePaths.Transaction);
@@ -54,25 +44,42 @@ export class PocketbookDetailService {
     this.#router.navigate([RoutePaths.Pocketbook, this.pocketbook()?.id, RoutePaths.Transaction, RoutePaths.EntityAdd]);
   }
 
-  // initializeComponent() {
-  // this._context.watchPocketbook$().subscribe(pocketbook => {
-  //   this.setPocketbook(pocketbook as IPocketbook);
-  // });
-  // this._context
-  //   .watchPocketbook$()
-  //   .pipe(switchMap(pocketbook => this._firestore.watchPocketbookOwner$((pocketbook as IPocketbook)?.owner)))
-  //   .subscribe(owner => {
-  //     this.setOwner(owner as User);
-  //   });
-  // this._context
-  //   .watchPocketbook$()
-  //   .pipe(
-  //     switchMap(pocketbook =>
-  //       this._firestore.watchPocketbookCollaboratorList$((pocketbook as IPocketbook)?.collaboratorList)
-  //     )
-  //   )
-  //   .subscribe(collaboratorList => {
-  //     this.setCollaboratorList(collaboratorList as User[]);
-  //   });
-  // }
+  resetPocketbookContributors() {
+    this.owner.set(null);
+    this.collaboratorList.set([]);
+  }
+
+  resetFlags() {
+    this.flags.set({
+      contributorsFetch: INITIAL_FLAGS,
+      pocketbookFetch: INITIAL_FLAGS
+    });
+  }
+
+  watchPocketbookContributors$() {
+    if (!this.#context.pocketbook()) return of({ o: null as Partial<User> | null, cList: [] as User[] });
+    const { owner, collaboratorList } = this.#context.pocketbook() as IPocketbook;
+    this.resetFlags();
+    this.resetPocketbookContributors();
+    this.flags.update(value => ({ ...value, contributorsFetch: { ...value.contributorsFetch, loading: true } }));
+    return this.#firestore.watchPocketbookContributors$({ owner, collaboratorList } as IPocketbook).pipe(
+      map(([o, cList]) => ({ o, cList })),
+      tap(({ o, cList }) => {
+        this.flags.update(value => ({
+          ...value,
+          contributorsFetch: { ...value.contributorsFetch, loading: false, success: true, fail: false }
+        }));
+        this.owner.set(o as User);
+        this.collaboratorList.set(cList as User[]);
+      }),
+      catchError(error => {
+        console.error({ error });
+        this.flags.update(value => ({
+          ...value,
+          contributorsFetch: { ...value.contributorsFetch, loading: false, success: false, fail: true }
+        }));
+        return throwError(() => new Error(error));
+      })
+    );
+  }
 }
