@@ -40,11 +40,9 @@
         </ng-template>
       </ng-container>
       <ng-container *ngIf="flags().contributorsFetch.fail">
-        <div class="grid place-content-center">
-          <div class="flex items-center gap-2 cursor-default">
-            <span class="material-icons text-color-danger-fg">error</span>
-            <span class="font-bold text-color-danger-fg">Failed to load owner information</span>
-          </div>
+        <div class="flex items-center gap-2 cursor-default">
+          <span class="material-icons text-color-danger-fg">error</span>
+          <span class="font-bold text-color-danger-fg">Failed to load owner information</span>
         </div>
       </ng-container>
     </div>
