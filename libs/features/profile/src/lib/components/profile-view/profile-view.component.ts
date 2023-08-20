@@ -4,8 +4,8 @@ import { Subscription } from 'rxjs';
 
 import { TooltipModule } from '@expenses-tracker/shared/common';
 import { INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
+import { ExtractInitialsPipe } from '@expenses-tracker/shared/common';
 
-import { ExtractInitialsPipe } from '../../pipes';
 import { ComponentFlags, ProfileViewService } from './profile-view.service';
 
 @Component({
@@ -124,6 +124,4 @@ export class ProfileViewComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.#logout$?.unsubscribe();
   }
-
-  // TODO: @usamazansari: add edit profile feature
 }

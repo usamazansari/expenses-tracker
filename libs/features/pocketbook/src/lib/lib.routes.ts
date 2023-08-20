@@ -36,7 +36,7 @@ export const pocketbookRoutes: Route[] = [
             loadChildren: () => import('@expenses-tracker/features/transaction').then(m => m.transactionRoutes)
           },
           {
-            path: RoutePaths.EntityEdit,
+            path: RoutePaths.EntitySettings,
             component: PocketbookEditComponent,
             canActivate: [() => inject(AuthGuard).canActivate()]
           },

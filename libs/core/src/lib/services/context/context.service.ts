@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Injectable, inject, signal } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
@@ -8,6 +9,9 @@ import { BehaviorSubject, filter, map, of, switchMap } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
 import { IPocketbook, ITransaction } from '@expenses-tracker/shared/interfaces';
+
+import { ErrorService } from '../error/error.service';
+import { PocketbookMapper } from '../firestore/firestore.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +24,10 @@ export class ContextService {
 
   #auth = inject(AngularFireAuth);
   #router = inject(Router);
+  #location = inject(Location);
   #firestore = inject(AngularFirestore);
+  #error = inject(ErrorService);
+
   constructor() {
     this.#fetchUser$();
     this.#fetchPocketbook$();
@@ -55,23 +62,18 @@ export class ContextService {
   }
 
   #fetchPocketbook$() {
+    const pbId =
+      this.#location
+        .path()
+        .match(/pocketbook\/(\w+)\//)
+        ?.at(1) ?? '';
+
     this.#firestore
-      .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
-        ref.where('id', '==', this.#router.url.match(/pocketbook\/(\w+)\//)?.at(1) ?? '')
-      )
+      .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref => ref.where('id', '==', pbId))
       .valueChanges()
-      .pipe(
-        map(([pb]) =>
-          !pb
-            ? null
-            : ({
-                ...pb,
-                createdAt: (pb?.createdAt as Timestamp)?.toDate()
-              } as IPocketbook)
-        )
-      )
+      .pipe(map(([pb]) => (!pb ? null : PocketbookMapper(pb))))
       .subscribe(pb => {
-        this.pocketbook.set(pb);
+        this.setPocketbook(pb);
       });
   }
 

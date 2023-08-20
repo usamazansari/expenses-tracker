@@ -1,69 +1,85 @@
-import { Injectable } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { User } from 'firebase/auth';
-import { BehaviorSubject, switchMap } from 'rxjs';
 
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
-import { IPocketbook } from '@expenses-tracker/shared/interfaces';
+import { RoutePaths } from '@expenses-tracker/shared/common';
+import { IFlag, INITIAL_FLAGS, IPocketbook } from '@expenses-tracker/shared/interfaces';
+import { catchError, map, of, tap, throwError } from 'rxjs';
+
+export type ComponentFlags = {
+  contributorsFetch: IFlag;
+  pocketbookFetch: IFlag;
+};
+
+export type ViewMode = RoutePaths.Transaction | RoutePaths.EntitySettings;
 
 @Injectable({
   providedIn: 'root'
 })
 export class PocketbookDetailService {
-  #pocketbook$ = new BehaviorSubject<IPocketbook | null>(null);
-  #collaboratorList$ = new BehaviorSubject<User[]>([]);
-  #owner$ = new BehaviorSubject<User | null>(null);
-  #pocketbook: IPocketbook | null = null;
-  #collaboratorList: User[] = [];
-  #owner: User | null = null;
+  #context = inject(ContextService);
+  #router = inject(Router);
+  #firestore = inject(FirestoreService);
+  pocketbook = computed(() => this.#context.pocketbook());
+  collaboratorList = signal<User[]>([]);
+  owner = signal<User | null>(null);
+  viewMode = signal<ViewMode>(RoutePaths.Transaction);
+  flags = signal<ComponentFlags>({
+    contributorsFetch: INITIAL_FLAGS,
+    pocketbookFetch: INITIAL_FLAGS
+  });
 
-  constructor(private _context: ContextService, private _firestore: FirestoreService) {}
-
-  initializeComponent() {
-    // this._context.watchPocketbook$().subscribe(pocketbook => {
-    //   this.setPocketbook(pocketbook as IPocketbook);
-    // });
-    // this._context
-    //   .watchPocketbook$()
-    //   .pipe(switchMap(pocketbook => this._firestore.watchPocketbookOwner$((pocketbook as IPocketbook)?.owner)))
-    //   .subscribe(owner => {
-    //     this.setOwner(owner as User);
-    //   });
-    // this._context
-    //   .watchPocketbook$()
-    //   .pipe(
-    //     switchMap(pocketbook =>
-    //       this._firestore.watchPocketbookCollaboratorList$((pocketbook as IPocketbook)?.collaboratorList)
-    //     )
-    //   )
-    //   .subscribe(collaboratorList => {
-    //     this.setCollaboratorList(collaboratorList as User[]);
-    //   });
+  gotoTransactionList() {
+    this.viewMode.set(RoutePaths.Transaction);
+    this.#router.navigate([RoutePaths.Pocketbook, this.pocketbook()?.id, RoutePaths.Transaction]);
   }
 
-  setPocketbook(pocketbook: IPocketbook | null) {
-    this.#pocketbook = pocketbook ?? null;
-    this.#pocketbook$.next(this.#pocketbook);
+  gotoSettings() {
+    this.viewMode.set(RoutePaths.EntitySettings);
+    this.#router.navigate([RoutePaths.Pocketbook, this.pocketbook()?.id, RoutePaths.EntitySettings]);
   }
 
-  watchPocketbook$() {
-    return this.#pocketbook$.asObservable();
+  addTransaction() {
+    this.#router.navigate([RoutePaths.Pocketbook, this.pocketbook()?.id, RoutePaths.Transaction, RoutePaths.EntityAdd]);
   }
 
-  setCollaboratorList(collaboratorList: User[]) {
-    this.#collaboratorList = collaboratorList ?? [];
-    this.#collaboratorList$.next(this.#collaboratorList);
+  resetPocketbookContributors() {
+    this.owner.set(null);
+    this.collaboratorList.set([]);
   }
 
-  watchCollaboratorList$() {
-    return this.#collaboratorList$.asObservable();
+  resetFlags() {
+    this.flags.set({
+      contributorsFetch: INITIAL_FLAGS,
+      pocketbookFetch: INITIAL_FLAGS
+    });
   }
 
-  setOwner(owner: User | null) {
-    this.#owner = owner ?? null;
-    this.#owner$.next(this.#owner);
-  }
-
-  watchOwner$() {
-    return this.#owner$.asObservable();
+  watchPocketbookContributors$() {
+    if (!this.#context.pocketbook()) return of({ o: null as Partial<User> | null, cList: [] as User[] });
+    const { owner, collaboratorList } = this.#context.pocketbook() as IPocketbook;
+    this.resetFlags();
+    this.resetPocketbookContributors();
+    this.flags.update(value => ({ ...value, contributorsFetch: { ...value.contributorsFetch, loading: true } }));
+    return this.#firestore.watchPocketbookContributors$({ owner, collaboratorList } as IPocketbook).pipe(
+      map(([o, cList]) => ({ o, cList })),
+      tap(({ o, cList }) => {
+        this.flags.update(value => ({
+          ...value,
+          contributorsFetch: { ...value.contributorsFetch, loading: false, success: true, fail: false }
+        }));
+        this.owner.set(o as User);
+        this.collaboratorList.set(cList as User[]);
+      }),
+      catchError(error => {
+        console.error({ error });
+        this.flags.update(value => ({
+          ...value,
+          contributorsFetch: { ...value.contributorsFetch, loading: false, success: false, fail: true }
+        }));
+        return throwError(() => new Error(error));
+      })
+    );
   }
 }

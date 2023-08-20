@@ -7,6 +7,7 @@ enum RoutePaths {
   EntityAdd = 'add',
   EntityEdit = 'edit',
   EntityDynamicId = ':id',
+  EntitySettings = 'settings',
   Home = '',
   Empty = '',
   Pocketbook = 'pocketbook',
