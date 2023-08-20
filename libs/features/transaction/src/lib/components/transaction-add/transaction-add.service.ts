@@ -45,57 +45,55 @@ export class TransactionAddService {
       }
     });
 
-    return this.#firestore.createTransaction$(transaction).pipe(
-      switchMap(response =>
-        this.#context.watchPocketbook$().pipe(
-          distinctUntilChanged(
-            previous => !(previous?.transactionList ?? []).includes(transaction.id)
-          ),
-          switchMap(pocketbook =>
-            this.#firestore.updatePocketbook$({
-              ...pocketbook,
-              transactionList: [...(pocketbook?.transactionList ?? []), response?.id ?? ''],
-              balance: this.#context.addTransactionCalculateBalance(transaction)
-            })
-          )
-        )
-      ),
-      tap(() => {
-        this.#notification.success({
-          title: 'Transaction added',
-          description: 'The transaction has been added successfully'
-        });
-        this.resetFlags();
-        this.#router.navigate([
-          RoutePaths.Pocketbook,
-          this.#context.getPocketbook()?.id,
-          RoutePaths.Transaction,
-          RoutePaths.EntityList
-        ]);
-      }),
-      catchError(error => {
-        this.#notification.error({
-          description: `${error}.`,
-          title: 'Error adding transaction'
-        });
-        this.#setFlags({
-          ...this.#flags,
-          addTransaction: {
-            ...this.#flags.addTransaction,
-            loading: false,
-            fail: true,
-            visible: true
-          }
-        });
-        return of(error);
-      })
-    );
+    // return this.#firestore.createTransaction$(transaction).pipe(
+    //   switchMap(response =>
+    //     this.#context.watchPocketbook$().pipe(
+    //       distinctUntilChanged(previous => !(previous?.transactionList ?? []).includes(transaction.id)),
+    //       switchMap(pocketbook =>
+    //         this.#firestore.updatePocketbook$({
+    //           ...pocketbook,
+    //           transactionList: [...(pocketbook?.transactionList ?? []), response?.id ?? ''],
+    //           balance: this.#context.addTransactionCalculateBalance(transaction)
+    //         })
+    //       )
+    //     )
+    //   ),
+    //   tap(() => {
+    //     this.#notification.success({
+    //       title: 'Transaction added',
+    //       description: 'The transaction has been added successfully'
+    //     });
+    //     this.resetFlags();
+    //     this.#router.navigate([
+    //       RoutePaths.Pocketbook,
+    //       this.#context.getPocketbook()?.id,
+    //       RoutePaths.Transaction,
+    //       RoutePaths.EntityList
+    //     ]);
+    //   }),
+    //   catchError(error => {
+    //     this.#notification.error({
+    //       description: `${error}.`,
+    //       title: 'Error adding transaction'
+    //     });
+    //     this.#setFlags({
+    //       ...this.#flags,
+    //       addTransaction: {
+    //         ...this.#flags.addTransaction,
+    //         loading: false,
+    //         fail: true,
+    //         visible: true
+    //       }
+    //     });
+    //     return of(error);
+    //   })
+    // );
   }
 
   cancelAddTransaction() {
     this.#router.navigate([
       RoutePaths.Pocketbook,
-      this.#context.getPocketbook()?.id,
+      // this.#context.getPocketbook()?.id,
       RoutePaths.Transaction,
       RoutePaths.EntityList
     ]);

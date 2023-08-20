@@ -1,12 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import { ITransaction } from '@expenses-tracker/shared/interfaces';
@@ -52,21 +46,21 @@ export class TransactionEditComponent implements OnInit, OnDestroy {
   editTransaction() {
     if (!this.formGroup.invalid) {
       const { amount, category, direction, message } = this.formGroup.value;
-      this.#editTransaction$ = this.#service
-        .editTransaction$({
-          amount,
-          category,
-          direction,
-          message
-        } as ITransaction)
-        .subscribe({
-          next: () => {
-            this.formGroup.reset();
-          },
-          error: error => {
-            console.error({ error });
-          }
-        });
+      // this.#editTransaction$ = this.#service
+      //   .editTransaction$({
+      //     amount,
+      //     category,
+      //     direction,
+      //     message
+      //   } as ITransaction)
+      //   .subscribe({
+      //     next: () => {
+      //       this.formGroup.reset();
+      //     },
+      //     error: error => {
+      //       console.error({ error });
+      //     }
+      //   });
     }
   }
 
@@ -76,9 +70,7 @@ export class TransactionEditComponent implements OnInit, OnDestroy {
 
   getError(formControlName = '') {
     if (this.formGroup.get(formControlName)?.hasError('required')) {
-      return `${
-        formControlName.charAt(0).toUpperCase() + formControlName.slice(1)
-      } is required`;
+      return `${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)} is required`;
     }
     return '';
   }

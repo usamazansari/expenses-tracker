@@ -2,12 +2,13 @@ import { Injectable, computed, inject } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { User } from 'firebase/auth';
-import { catchError, from, map, of, switchMap, throwError } from 'rxjs';
+import { catchError, combineLatest, from, map, of, switchMap, throwError } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
 
 import { ContextService } from '../../context/context.service';
 import { ErrorService } from '../../error/error.service';
+import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,10 @@ export class FirestoreUserService {
       this.#firestore.collection<Partial<User>>(Collections.User).doc(uid).set({ uid, displayName, email })
     ).pipe(
       map(() => ({ uid, displayName, email } as User)),
-      catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
+      catchError((error: FirebaseError) => {
+        console.error({ error });
+        return throwError(() => new Error(this.#error.getError(error.code)));
+      })
     );
   }
 
@@ -37,7 +41,10 @@ export class FirestoreUserService {
             map(ref => (ref.docs ?? [])[0]?.id ?? ''),
             switchMap(id =>
               from(this.#firestore.collection<User>(Collections.User).doc(id).update({ displayName })).pipe(
-                catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
+                catchError((error: FirebaseError) => {
+                  console.error({ error });
+                  return throwError(() => new Error(this.#error.getError(error.code)));
+                })
               )
             )
           );
@@ -53,7 +60,10 @@ export class FirestoreUserService {
       .valueChanges()
       .pipe(
         map(([owner]) => owner),
-        catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
+        catchError((error: FirebaseError) => {
+          console.error({ error });
+          return throwError(() => new Error(this.#error.getError(error.code)));
+        })
       );
   }
 
@@ -63,6 +73,23 @@ export class FirestoreUserService {
       : this.#firestore
           .collection<User>(Collections.User, ref => ref.where('uid', 'in', pocketbookCollaboratorList ?? []))
           .valueChanges()
-          .pipe(catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code)))));
+          .pipe(
+            catchError((error: FirebaseError) => {
+              console.error({ error });
+              return throwError(() => new Error(this.#error.getError(error.code)));
+            })
+          );
+  }
+
+  watchPocketbookContributors$({ owner, collaboratorList }: IPocketbook) {
+    return combineLatest([
+      this.watchPocketbookOwner$(owner),
+      this.watchPocketbookCollaboratorList$(collaboratorList)
+    ]).pipe(
+      catchError((error: FirebaseError) => {
+        console.error({ error });
+        return throwError(() => new Error(this.#error.getError(error.code)));
+      })
+    );
   }
 }

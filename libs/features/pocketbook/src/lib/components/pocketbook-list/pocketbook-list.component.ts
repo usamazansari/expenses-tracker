@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Subject, Subscription, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
@@ -15,28 +15,26 @@ import { PocketbookListService } from './pocketbook-list.service';
   templateUrl: './pocketbook-list.component.html',
   styles: []
 })
-export class PocketbookListComponent implements OnInit {
+export class PocketbookListComponent implements OnInit, OnDestroy {
   #searchText$ = new Subject<string>();
   pocketbookList = signal<IPocketbook[]>([]);
   #service = inject(PocketbookListService);
   flags = computed(() => this.#service.flags().pocketbookList);
   user = computed(() => this.#service.user());
+  #pocketbookList$!: Subscription;
 
   constructor() {
-    toObservable(this.user).subscribe(() => {
-      this.fetchPocketbookList();
-    });
+    // NOTE: @usamazansari: be very careful while using toObservable as if may cause memory leak
+    this.#pocketbookList$ = toObservable(this.user)
+      .pipe(switchMap(() => this.#service.fetchPocketbookList()))
+      .subscribe((pocketbookList: IPocketbook[]) => {
+        this.pocketbookList.set(pocketbookList);
+      });
   }
 
   ngOnInit() {
     this.#searchText$.pipe(debounceTime(250), distinctUntilChanged()).subscribe(searchText => {
       console.log({ searchText });
-    });
-  }
-
-  private fetchPocketbookList() {
-    this.#service.fetchPocketbookList().subscribe(pocketbookList => {
-      this.pocketbookList.set(pocketbookList);
     });
   }
 
@@ -54,5 +52,9 @@ export class PocketbookListComponent implements OnInit {
 
   addPocketbook() {
     this.#service.gotoAddPocketbook();
+  }
+
+  ngOnDestroy() {
+    this.#pocketbookList$?.unsubscribe();
   }
 }

@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Injectable, inject, signal } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
@@ -9,19 +10,24 @@ import { BehaviorSubject, filter, map, of, switchMap } from 'rxjs';
 import { Collections } from '@expenses-tracker/shared/common';
 import { IPocketbook, ITransaction } from '@expenses-tracker/shared/interfaces';
 
+import { ErrorService } from '../error/error.service';
+import { PocketbookMapper } from '../firestore/firestore.utils';
+
 @Injectable({
   providedIn: 'root'
 })
 export class ContextService {
   user = signal<User | null>(null);
-  #pocketbook$ = new BehaviorSubject<IPocketbook | null>(null);
-  #pocketbook: IPocketbook | null = null;
+  pocketbook = signal<IPocketbook | null>(null);
   #transaction$ = new BehaviorSubject<ITransaction | null>(null);
   #transaction: ITransaction | null = null;
 
   #auth = inject(AngularFireAuth);
   #router = inject(Router);
+  #location = inject(Location);
   #firestore = inject(AngularFirestore);
+  #error = inject(ErrorService);
+
   constructor() {
     this.#fetchUser$();
     this.#fetchPocketbook$();
@@ -29,20 +35,7 @@ export class ContextService {
   }
 
   setPocketbook(pocketbook: IPocketbook | null) {
-    this.#pocketbook = pocketbook ?? null;
-    this.#pocketbook$.next(this.#pocketbook);
-  }
-
-  resetPocketbook() {
-    this.setPocketbook(null);
-  }
-
-  getPocketbook() {
-    return this.#pocketbook;
-  }
-
-  watchPocketbook$() {
-    return this.#pocketbook$.asObservable();
+    this.pocketbook.set(pocketbook);
   }
 
   setTransaction(transaction: ITransaction | null) {
@@ -69,30 +62,16 @@ export class ContextService {
   }
 
   #fetchPocketbook$() {
-    this.#router.events
-      .pipe(
-        filter(e => e instanceof NavigationEnd),
-        map(e => (e as NavigationEnd).urlAfterRedirects),
-        switchMap(url =>
-          url.includes('pocketbook')
-            ? this.#firestore
-                .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref =>
-                  ref.where('id', '==', url.match(/pocketbook\/(\w+)\//)?.at(1) ?? '')
-                )
-                .valueChanges()
-                .pipe(
-                  map(([pb]) =>
-                    !pb
-                      ? null
-                      : ({
-                          ...pb,
-                          createdAt: (pb?.createdAt as Timestamp)?.toDate()
-                        } as IPocketbook)
-                  )
-                )
-            : of(null)
-        )
-      )
+    const pbId =
+      this.#location
+        .path()
+        .match(/pocketbook\/(\w+)\//)
+        ?.at(1) ?? '';
+
+    this.#firestore
+      .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref => ref.where('id', '==', pbId))
+      .valueChanges()
+      .pipe(map(([pb]) => (!pb ? null : PocketbookMapper(pb))))
       .subscribe(pb => {
         this.setPocketbook(pb);
       });
@@ -135,7 +114,7 @@ export class ContextService {
     old: ITransaction;
     new: ITransaction;
   }) {
-    const balance = this.#pocketbook?.balance ?? 0;
+    const balance = this.pocketbook()?.balance ?? 0;
     return oldDirection === newDirection
       ? balance - oldAmount + newAmount
       : oldDirection === 'expense'
@@ -144,12 +123,12 @@ export class ContextService {
   }
 
   addTransactionCalculateBalance({ amount, direction }: ITransaction) {
-    const balance = this.#pocketbook?.balance ?? 0;
+    const balance = this.pocketbook()?.balance ?? 0;
     return direction === 'expense' ? balance - amount : balance + amount;
   }
 
   deleteTransactionCalculateBalance({ amount, direction }: ITransaction) {
-    const balance = this.#pocketbook?.balance ?? 0;
+    const balance = this.pocketbook()?.balance ?? 0;
     return direction === 'expense' ? balance + amount : balance - amount;
   }
 }

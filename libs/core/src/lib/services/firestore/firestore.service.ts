@@ -71,6 +71,10 @@ export class FirestoreService {
     return this.#user.watchPocketbookCollaboratorList$(pocketbookCollaboratorList);
   }
 
+  watchPocketbookContributors$({ owner, collaboratorList }: IPocketbook) {
+    return this.#user.watchPocketbookContributors$({ owner, collaboratorList } as IPocketbook);
+  }
+
   watchTransactionList$() {
     return this.#transaction.watchTransactionList$();
   }
