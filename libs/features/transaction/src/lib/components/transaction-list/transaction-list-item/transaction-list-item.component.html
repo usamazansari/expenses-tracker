@@ -1,59 +1,42 @@
-<ng-container *ngIf="transaction; else showError">
-  <div
-    class="flex items-center justify-between p-2 rounded-lg bg-et-layer text-et-color-fg-default">
-    <div class="flex items-center gap-2">
-      <span
-        class="grid w-16 h-16 text-2xl rounded-full cursor-default place-content-center"
-        [ngClass]="{
-          'text-et-color-fg-danger bg-et-color-bg-danger': transaction.direction === 'expense',
-          'text-et-color-fg-success bg-et-color-bg-success': transaction.direction === 'income'
-        }">
-        <ng-container *ngIf="!transaction.category; else showCategory">?</ng-container>
-        <ng-template #showCategory>
-          {{ transaction.category.at(0)?.toUpperCase() }}
-        </ng-template>
-      </span>
-      <div class="grid gap-2">
-        <ng-container *ngIf="!transaction.message; else displayMessage">
-          <span class="text-et-color-fg-muted">Unknown {{ transaction.direction }}</span>
-        </ng-container>
-        <ng-template #displayMessage>
-          <span class="font-bold">{{ transaction.message }}</span>
-        </ng-template>
-        <p class="text-sm italic">
-          {{ transaction.timestamp | date: 'long' }}
-        </p>
-      </div>
+<div class="flex items-center justify-between p-4 rounded-lg bg-et-layer text-et-color-fg-default">
+  <div class="flex items-center gap-4">
+    <div
+      class="grid w-16 h-16 text-2xl border rounded-full cursor-default place-content-center"
+      [ngClass]="{
+        'text-color-danger-fg border-color-danger-fg': transaction()?.direction === 'expense',
+        'text-color-success-fg border-color-success-fg': transaction()?.direction === 'income'
+      }">
+      <ng-container *ngIf="!transaction()?.category; else showCategory">
+        <span class="material-icons">question</span>
+      </ng-container>
+      <ng-template #showCategory>
+        <span class="font-bold">{{ transaction()?.category?.at(0)?.toUpperCase() }}</span>
+      </ng-template>
     </div>
-    <div class="flex items-center gap-4">
-      <span
-        class="text-xl font-bold"
-        [ngClass]="{
-          'text-et-color-fg-danger': transaction.direction === 'expense',
-          'text-et-color-fg-success': transaction.direction === 'income'
-        }">
-        <ng-container *ngIf="transaction.direction === 'expense'"> - </ng-container>
-        <ng-container *ngIf="transaction.direction === 'income'"> + </ng-container>
-        {{ transaction.amount | currency: 'EUR' }}
+    <div class="grid gap-2">
+      <ng-container *ngIf="!transaction()?.message; else displayMessage">
+        <span class="font-semibold transition-colors duration-200 cursor-pointer hover:text-color-accent-fg">
+          Unknown {{ transaction()?.direction }}
+        </span>
+      </ng-container>
+      <ng-template #displayMessage>
+        <span class="font-bold">{{ transaction()?.message }}</span>
+      </ng-template>
+      <span class="text-sm italic font-semibold text-color-fg-muted">
+        {{ transaction()?.timestamp | date: 'longDate' }}
       </span>
-      <div class="flex gap-2">
-        <button
-          type="button"
-          class="p-2 rounded-md bg-et-color-button-accent-bg text-et-color-button-accent"
-          (click)="gotoEditTransaction()">
-          <span class="material-icons">edit</span>
-        </button>
-        <button
-          type="button"
-          class="p-2 rounded-md bg-et-color-button-danger-bg text-et-color-button-danger"
-          (click)="deleteTransaction()">
-          <span class="material-icons">delete</span>
-        </button>
-        <button type="button"></button>
-      </div>
     </div>
   </div>
-</ng-container>
-<ng-template #showError>
-  <p>Error displaying transaction</p>
-</ng-template>
+  <div class="flex items-center gap-4">
+    <span
+      class="text-xl font-bold"
+      [ngClass]="{
+        'text-color-danger-fg': transaction()?.direction === 'expense',
+        'text-color-success-fg': transaction()?.direction === 'income'
+      }">
+      <ng-container *ngIf="transaction()?.direction === 'expense'"> - </ng-container>
+      <ng-container *ngIf="transaction()?.direction === 'income'"> + </ng-container>
+      {{ transaction()?.amount | currency: 'EUR' }}
+    </span>
+  </div>
+</div>

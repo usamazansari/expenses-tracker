@@ -1,46 +1,54 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
 
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
-import { ITransaction } from '@expenses-tracker/shared/interfaces';
 import { RoutePaths } from '@expenses-tracker/shared/common';
+import { IFlag, INITIAL_FLAGS, ITransaction } from '@expenses-tracker/shared/interfaces';
+import { catchError, of, tap } from 'rxjs';
+
+export type ComponentFlags = {
+  transactionList: IFlag;
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class TransactionListService {
-  #transactionList$ = new BehaviorSubject<ITransaction[]>([]);
-  #transactionList: ITransaction[] = [];
   #firestore = inject(FirestoreService);
   #router = inject(Router);
   #context = inject(ContextService);
 
+  user = computed(() => this.#context.user());
+  pocketbook = computed(() => this.#context.pocketbook());
+
+  flags = signal<ComponentFlags>({
+    transactionList: { ...INITIAL_FLAGS }
+  });
+
   fetchTransactionList$() {
-    this.#firestore.watchTransactionList$().subscribe(transactionList => {
-      this.setTransactionList(transactionList);
-    });
-  }
-
-  setTransactionList(transactionList: ITransaction[]) {
-    this.#transactionList = transactionList ?? [];
-    this.#transactionList$.next(this.#transactionList);
-  }
-
-  resetTransactionList() {
-    this.#transactionList$.next([]);
-  }
-
-  watchTransactionList$() {
-    return this.#firestore.watchTransactionList$();
+    this.flags.update(value => ({
+      ...value,
+      transactionList: { ...value.transactionList, loading: true }
+    }));
+    return this.#firestore.watchTransactionList$().pipe(
+      tap(() => {
+        this.flags.update(value => ({
+          ...value,
+          transactionList: { ...value.transactionList, loading: false, success: true, fail: false }
+        }));
+      }),
+      catchError(error => {
+        console.log({ error });
+        this.flags.update(value => ({
+          ...value,
+          transactionList: { ...value.transactionList, loading: false, success: false, fail: true }
+        }));
+        return of([] as ITransaction<Date>[]);
+      })
+    );
   }
 
   gotoAddTransaction() {
-    this.#router.navigate([
-      RoutePaths.Pocketbook,
-      // this.#context.getPocketbook()?.id,
-      RoutePaths.Transaction,
-      RoutePaths.EntityAdd
-    ]);
+    this.#router.navigate([RoutePaths.Pocketbook, this.pocketbook()?.id, RoutePaths.Transaction, RoutePaths.EntityAdd]);
   }
 }
