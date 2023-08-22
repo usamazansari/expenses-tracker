@@ -24,7 +24,7 @@ export class PocketbookListComponent implements OnInit, OnDestroy {
   #pocketbookList$!: Subscription;
 
   constructor() {
-    // NOTE: @usamazansari: be very careful while using toObservable as if may cause memory leak
+    // NOTE: @usamazansari: be very careful while using toObservable as it may cause memory leak
     this.#pocketbookList$ = toObservable(this.user)
       .pipe(switchMap(() => this.#service.fetchPocketbookList()))
       .subscribe((pocketbookList: IPocketbook[]) => {
