@@ -41,9 +41,9 @@
         <span
           class="text-3xl font-bold"
           [ngClass]="{
-              'text-color-danger-fg': (pocketbook()?.balance || 0) <= 0,
-              'text-color-success-fg': (pocketbook()?.balance || 0) > 0,
-            }">
+            'text-color-danger-fg': (pocketbook()?.balance || 0) <= 0,
+            'text-color-success-fg': (pocketbook()?.balance || 0) > 0
+          }">
           {{ pocketbook()?.balance | currency: 'EUR' }}
         </span>
       </div>

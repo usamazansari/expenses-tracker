@@ -1,10 +1,10 @@
-import { PaymentMode, TransactionDirection } from '@expenses-tracker/shared/interfaces';
+import { PaymentMode, TransactionCategory, TransactionDirection } from '@expenses-tracker/shared/interfaces';
 
 export type TransactionForm = {
-  category: string;
   amount: number;
+  category: TransactionCategory;
   direction: TransactionDirection;
   message: string;
-  timestamp: Date;
   paymentMode: PaymentMode;
+  timestamp: Date;
 };

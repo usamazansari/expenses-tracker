@@ -28,7 +28,7 @@ interface ITransaction<T extends DateOrTimestamp = Date> {
   id: string;
   pocketbookId: string;
   timestamp: T;
-  category: string;
+  category: TransactionCategory;
   amount: number;
   direction: TransactionDirection;
   message: string;

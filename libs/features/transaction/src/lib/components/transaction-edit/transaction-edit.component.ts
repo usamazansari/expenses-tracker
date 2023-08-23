@@ -32,7 +32,10 @@ export class TransactionEditComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.formGroup = this.#formBuilder.group<FormGroupTypeGenerator<TransactionForm>>({
       amount: this.#formBuilder.control<number | null>(null, Validators.required) as FormControl<number>,
-      category: this.#formBuilder.control<TransactionCategory>('other', Validators.required) as FormControl<string>,
+      category: this.#formBuilder.control<TransactionCategory>(
+        'other',
+        Validators.required
+      ) as FormControl<TransactionCategory>,
       direction: this.#formBuilder.control<TransactionDirection>(
         'expense',
         Validators.required

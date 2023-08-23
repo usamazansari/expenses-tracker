@@ -65,7 +65,7 @@ export class FirestoreTransactionService {
               id: docId,
               timestamp,
               amount: amount ?? 0,
-              category: category ?? '',
+              category: category ?? 'other',
               direction: direction ?? 'expense',
               message: message ?? '',
               pocketbookId: this.pocketbook()?.id ?? ''
