@@ -1,13 +1,11 @@
 import { Location } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, map, of, switchMap } from 'rxjs';
+import { BehaviorSubject, map, of, switchMap } from 'rxjs';
 
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
 import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
 import { IFlag, INITIAL_FLAGS, ITransaction } from '@expenses-tracker/shared/interfaces';
-
-import { TransactionFormFields } from '../../types';
 
 export type ComponentFlags = {
   editTransaction: IFlag;
@@ -49,7 +47,7 @@ export class TransactionEditService {
       .pipe(switchMap(txn => (!txn ? this.#firestore.watchTransaction$(transactionId ?? '') : of(txn))));
   }
 
-  patchValues$(): Observable<TransactionFormFields> {
+  patchValues$() {
     return this.watchTransaction$().pipe(
       map(txn => ({
         category: txn?.category ?? null,

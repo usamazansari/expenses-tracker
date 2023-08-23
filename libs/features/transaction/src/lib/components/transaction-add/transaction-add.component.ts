@@ -3,21 +3,16 @@ import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
-import { PaymentMode, TransactionCategory, TransactionDirection } from '@expenses-tracker/shared/interfaces';
+import {
+  FormGroupTypeGenerator,
+  PaymentMode,
+  TransactionCategory,
+  TransactionDirection
+} from '@expenses-tracker/shared/interfaces';
 
-import { TransactionFormFields } from '../../types';
+import { TransactionForm } from '../../types';
 import { TransactionAddService } from './transaction-add.service';
 
-type TransactionAddForm<T extends TransactionFormFields = TransactionFormFields> = {
-  amount: FormControl<T['amount']>;
-  category: FormControl<T['category']>;
-  direction: FormControl<T['direction']>;
-  message: FormControl<T['message']>;
-  timestamp: FormControl<T['timestamp']>;
-  paymentMode: FormControl<T['paymentMode']>;
-};
-
-// TODO: @usamazansari - merge this with transaction-edit component
 @Component({
   selector: 'expenses-tracker-transaction-add',
   standalone: true,
@@ -26,21 +21,22 @@ type TransactionAddForm<T extends TransactionFormFields = TransactionFormFields>
   styles: []
 })
 export class TransactionAddComponent implements OnInit, OnDestroy {
-  #addTransaction$!: Subscription;
-
+  formGroup!: FormGroup<FormGroupTypeGenerator<TransactionForm>>;
   #formBuilder = inject(FormBuilder);
   #service = inject(TransactionAddService);
-
-  formGroup!: FormGroup<TransactionAddForm>;
+  #addTransaction$!: Subscription;
 
   ngOnInit() {
-    this.formGroup = this.#formBuilder.group<TransactionAddForm>({
-      amount: this.#formBuilder.control<number | null>(null, Validators.required),
-      category: this.#formBuilder.control<TransactionCategory | ''>('', Validators.required),
-      direction: this.#formBuilder.control<TransactionDirection>('expense', Validators.required),
-      message: this.#formBuilder.control<string>(''),
-      paymentMode: this.#formBuilder.control<PaymentMode>('card', Validators.required),
-      timestamp: this.#formBuilder.control<Date>(new Date(Date.now()), Validators.required)
+    this.formGroup = this.#formBuilder.group<FormGroupTypeGenerator<TransactionForm>>({
+      amount: this.#formBuilder.control<number | null>(null, Validators.required) as FormControl<number>,
+      category: this.#formBuilder.control<TransactionCategory>('other', Validators.required) as FormControl<string>,
+      direction: this.#formBuilder.control<TransactionDirection>(
+        'expense',
+        Validators.required
+      ) as FormControl<TransactionDirection>,
+      message: this.#formBuilder.control<string>('') as FormControl<string>,
+      paymentMode: this.#formBuilder.control<PaymentMode>('card', Validators.required) as FormControl<PaymentMode>,
+      timestamp: this.#formBuilder.control<Date>(new Date(Date.now()), Validators.required) as FormControl<Date>
     });
   }
 
