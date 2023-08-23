@@ -2,7 +2,7 @@
   <div class="flex items-center justify-between p-2 rounded-lg bg-et-layer text-et-color-fg-default">
     <div class="flex items-center gap-2">
       <span
-        class="grid w-16 h-16 text-xl font-bold rounded-full cursor-default place-content-center"
+        class="grid w-16 h-16 text-2xl rounded-full cursor-default place-content-center"
         [ngClass]="{
           'text-et-color-fg-danger bg-et-color-bg-danger': transaction.direction === 'expense',
           'text-et-color-fg-success bg-et-color-bg-success': transaction.direction === 'income'
@@ -20,40 +20,33 @@
           <span class="font-bold">{{ transaction.message }}</span>
         </ng-template>
         <p class="text-sm italic">
-          {{ transaction.timestamp | date: 'longDate' }}
+          {{ transaction.timestamp | date: 'long' }}
         </p>
       </div>
     </div>
     <div class="flex items-center gap-4">
-      <div
-        class="flex items-center gap-2"
+      <span
+        class="text-xl font-bold"
         [ngClass]="{
           'text-et-color-fg-danger': transaction.direction === 'expense',
           'text-et-color-fg-success': transaction.direction === 'income'
         }">
-        <span class="text-lg font-bold">
-          <ng-container *ngIf="transaction.direction === 'expense'"> - </ng-container>
-          <ng-container *ngIf="transaction.direction === 'income'"> + </ng-container>
-          {{ transaction.amount | currency: 'EUR' }}
-        </span>
-        <ng-container [ngSwitch]="transaction.paymentMode">
-          <mat-icon *ngSwitchCase="'card'">credit_card</mat-icon>
-          <mat-icon *ngSwitchCase="'cash'">paid</mat-icon>
-          <mat-icon *ngSwitchDefault>credit_card_off</mat-icon>
-        </ng-container>
-      </div>
+        <ng-container *ngIf="transaction.direction === 'expense'"> - </ng-container>
+        <ng-container *ngIf="transaction.direction === 'income'"> + </ng-container>
+        {{ transaction.amount | currency: 'EUR' }}
+      </span>
       <div class="flex gap-2">
         <button
           type="button"
           class="p-2 rounded-md bg-et-color-button-accent-bg text-et-color-button-accent"
           (click)="gotoEditTransaction()">
-          <mat-icon>edit</mat-icon>
+          <span class="material-icons">edit</span>
         </button>
         <button
           type="button"
           class="p-2 rounded-md bg-et-color-button-danger-bg text-et-color-button-danger"
           (click)="deleteTransaction()">
-          <mat-icon>delete</mat-icon>
+          <span class="material-icons">delete</span>
         </button>
         <button type="button"></button>
       </div>
@@ -63,4 +56,3 @@
 <ng-template #showError>
   <p>Error displaying transaction</p>
 </ng-template>
-
