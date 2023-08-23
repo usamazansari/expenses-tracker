@@ -19,8 +19,20 @@ export class FirestoreService {
     return this.#pocketbook.watchOwnedPocketbookList$();
   }
 
+  watchOwnedPocketbookListCount$() {
+    return this.#pocketbook.watchOwnedPocketbookListCount$();
+  }
+
   watchCollaboratedPocketbookList$() {
     return this.#pocketbook.watchCollaboratedPocketbookList$();
+  }
+
+  watchCollaboratedPocketbookListCount$() {
+    return this.#pocketbook.watchCollaboratedPocketbookListCount$();
+  }
+
+  watchPocketbookList$() {
+    return this.#pocketbook.watchPocketbookList$();
   }
 
   watchPocketbook$(pocketbookId: string) {
@@ -57,6 +69,10 @@ export class FirestoreService {
 
   watchPocketbookCollaboratorList$(pocketbookCollaboratorList: string[]) {
     return this.#user.watchPocketbookCollaboratorList$(pocketbookCollaboratorList);
+  }
+
+  watchPocketbookContributors$({ owner, collaboratorList }: IPocketbook) {
+    return this.#user.watchPocketbookContributors$({ owner, collaboratorList } as IPocketbook);
   }
 
   watchTransactionList$() {

@@ -1,2 +1,3 @@
-export * from './notification/notification.component';
-export * from './notification/notification.service';
+export * from './avatar';
+export * from './notification';
+export * from './tooltip';

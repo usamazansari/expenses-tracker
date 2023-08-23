@@ -1,47 +1,52 @@
-<div class="grid grid-cols-1 grid-rows-1 gap-4 justify-items-center">
-  <div class="flex items-center justify-center gap-2 py-12">
-    <span class="text-3xl cursor-default text-et-color-accent-emphasis">My Pocketbooks</span>
+<div class="grid gap-4">
+  <div class="grid py-12 place-content-center">
+    <span class="text-3xl cursor-default text-color-accent-emphasis">My Pocketbooks</span>
   </div>
-  <ng-container *ngIf="viewMode$ | async as viewMode">
+
+  <div class="flex items-center gap-2">
+    <div class="flex-grow p-0 et-form-field-wrapper">
+      <div class="et-form-field-input-wrapper">
+        <input
+          class="w-full et-input"
+          formControlName="displayName"
+          type="text"
+          placeholder="Search for Pocketbooks"
+          (keyup)="debounceSearch($event)" />
+      </div>
+    </div>
     <div class="flex justify-center">
-      <button
-        type="button"
-        class="flex items-center justify-center w-48 gap-2 p-4 text-center rounded-tl-lg rounded-bl-lg cursor-pointer"
-        [ngClass]="
-          viewMode === 'owner'
-            ? 'text-et-color-fg-on-accent-emphasis bg-et-color-accent-emphasis'
-            : 'text-et-color-fg-default bg-et-color-button-default-bg'
-        "
-        (click)="gotoOwnerPocketbookList()">
-        <span class="material-icons">verified_user</span>
-        <span>Owned</span>
-      </button>
-      <button
-        type="button"
-        class="flex items-center justify-center w-48 gap-2 p-4 text-center rounded-tr-lg rounded-br-lg cursor-pointer"
-        [ngClass]="
-          viewMode === 'collaborator'
-            ? 'text-et-color-fg-on-accent-emphasis bg-et-color-accent-emphasis'
-            : 'text-et-color-fg-default bg-et-color-button-default-bg'
-        "
-        (click)="gotoCollaboratorPocketbookList()">
-        <span class="material-icons">group</span>
-        <span>Collaborated</span>
+      <button type="button" class="et-button et-button-primary" (click)="addPocketbook()">
+        <span class="material-icons">add</span>
+        <span class="hidden md:flex">New Pocketbook</span>
       </button>
     </div>
-  </ng-container>
-
-  <div class="grid">
-    <router-outlet></router-outlet>
   </div>
 
-  <div class="flex justify-center">
-    <button
-      type="button"
-      class="flex items-center justify-center gap-2 px-6 py-3 mx-2 rounded-lg text-et-color-button-primary bg-et-color-button-primary-bg md:justify-self-center"
-      (click)="addPocketbook()">
-      <span class="material-icons">add</span>
-      <span>ADD POCKETBOOK</span>
-    </button>
+  <div class="grid gap-2">
+    <ng-container *ngIf="flags().visible">
+      <ng-container *ngIf="flags().loading">
+        <div class="grid h-60 place-content-center">
+          <div class="flex items-center gap-2 cursor-default">
+            <span class="material-icons animate-spin">autorenew</span>
+            <span class="font-bold">Loading</span>
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="flags().success">
+        <ng-container *ngFor="let pocketbook of pocketbookList(); trackBy: pocketbookListTrack">
+          <expenses-tracker-pocketbook-list-item
+            [pocketbookInput]="pocketbook"
+            [isOwnerInput]="isPocketbookOwner(pocketbook)"></expenses-tracker-pocketbook-list-item>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="flags().fail">
+        <div class="grid h-60 place-content-center">
+          <div class="flex items-center gap-2 cursor-default">
+            <span class="material-icons text-color-danger-fg">error</span>
+            <span class="font-bold text-color-danger-fg">Failed to load the pocketbook list</span>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
   </div>
 </div>

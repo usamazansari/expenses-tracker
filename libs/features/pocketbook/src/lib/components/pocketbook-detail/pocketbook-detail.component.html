@@ -1,48 +1,81 @@
-<ng-container *ngIf="pocketbook$ | async as pocketbook">
-  <ng-container *ngIf="!pocketbook; else displayPocketbook">
-    Pocketbook not found
-  </ng-container>
-  <ng-template #displayPocketbook>
-    <div class="grid bg-et-layer-alternate text-et-color-fg-default">
-      <div class="flex flex-col gap-2 md:flex-row md:gap-8">
-        <div class="flex items-center justify-center gap-2 py-12 md:justify-start">
-          <div class="flex">
-            <p class="text-2xl font-bold">{{ pocketbook.name }}</p>
+<div class="grid gap-4">
+  <div class="grid py-12 place-content-center">
+    <span class="text-3xl cursor-default text-color-accent-emphasis">{{ pocketbook()?.name }}</span>
+  </div>
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_2fr]">
+    <div class="grid place-content-center">
+      <div class="grid grid-cols-2 gap-4 place-content-center">
+        <ng-container *ngIf="flags().contributorsFetch.loading">
+          <div class="flex items-center gap-2 cursor-default">
+            <span class="material-icons animate-spin">autorenew</span>
+            <span class="font-bold">Loading</span>
           </div>
-        </div>
-        <div class="grid items-center grid-cols-4 gap-2 justify-items-center">
-          <span class="material-icons justify-self-end text-et-color-accent-emphasis">
-            verified_user
-          </span>
-          <div class="flex justify-self-start">
-            <ng-container *ngIf="owner$ | async as owner">
-              <div
-                class="p-4 transition-colors duration-200 border rounded-full cursor-default w-14 h-14 bg-et-color-button-default-bg text-et-color-button-default border-et-color-button-default-border">
-                <p class="text-center">{{ owner | extractInitials }}</p>
-              </div>
-            </ng-container>
+        </ng-container>
+        <ng-container *ngIf="flags().contributorsFetch.success">
+          <div class="flex items-center gap-2">
+            <span
+              class="cursor-default material-icons justify-self-end text-et-color-accent-emphasis text-color-success-fg">
+              verified_user
+            </span>
+            <expenses-tracker-avatar [userInput]="owner()"></expenses-tracker-avatar>
           </div>
-          <span class="material-icons justify-self-end text-et-color-accent-emphasis"
-            >group</span
-          >
-          <div class="flex gap-2 justify-self-start">
-            <ng-container *ngFor="let collaborator of collaboratorList$ | async">
-              <div
-                class="p-4 transition-colors duration-200 border rounded-full cursor-default w-14 h-14 bg-et-color-button-default-bg text-et-color-button-default border-et-color-button-default-border">
-                <p class="text-center">{{ collaborator | extractInitials }}</p>
-              </div>
-            </ng-container>
+          <div class="flex items-center gap-2">
+            <span class="cursor-default material-icons justify-self-end text-et-color-accent-emphasis">group</span>
+            <div class="flex gap-2">
+              <ng-container *ngFor="let collaborator of collaboratorList(); trackBy: collaboratorListTrack">
+                <expenses-tracker-avatar [userInput]="collaborator"></expenses-tracker-avatar>
+              </ng-container>
+            </div>
           </div>
-        </div>
-      </div>
-      <div class="flex items-center justify-center">
-        <span class="text-3xl font-bold text-et-color-fg-success">
-          {{ pocketbook.balance | currency: 'EUR' }}
-        </span>
-      </div>
-      <div class="p-4">
-        <router-outlet></router-outlet>
+        </ng-container>
+        <ng-container *ngIf="flags().contributorsFetch.fail">
+          <div class="flex items-center gap-2 cursor-default">
+            <span class="material-icons text-color-danger-fg">error</span>
+            <span class="font-bold text-color-danger-fg">Failed to load owner information</span>
+          </div>
+        </ng-container>
       </div>
     </div>
-  </ng-template>
-</ng-container>
+    <div class="grid grid-cols-2">
+      <div class="flex items-center justify-center">
+        <span
+          class="text-3xl font-bold"
+          [ngClass]="{
+              'text-color-danger-fg': (pocketbook()?.balance || 0) <= 0,
+              'text-color-success-fg': (pocketbook()?.balance || 0) > 0,
+            }">
+          {{ pocketbook()?.balance | currency: 'EUR' }}
+        </span>
+      </div>
+      <ng-container *ngIf="true">
+        <div class="flex justify-end">
+          <button type="button" class="et-button et-button-primary" (click)="addTransaction()">
+            <span class="material-icons">add</span>
+            <span class="">Add Transaction</span>
+          </button>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-[1fr_0fr_5fr] p-4">
+    <ul class="et-ul-list">
+      <li
+        class="et-ul-list-item hover:et-ul-list-item-hover"
+        [ngClass]="{ 'et-ul-list-item-active': this.viewMode() === 'transaction' }">
+        <a class="flex items-center gap-2" (click)="gotoTransactionList()">
+          <span class="material-icons">list_alt</span>
+          <span>Transactions</span>
+        </a>
+      </li>
+      <li
+        class="et-ul-list-item hover:et-ul-list-item-hover"
+        [ngClass]="{ 'et-ul-list-item-active': this.viewMode() === 'settings' }">
+        <a class="flex items-center gap-2" (click)="gotoSettings()">
+          <span class="material-icons">settings</span>
+          <span>Settings</span>
+        </a>
+      </li>
+    </ul>
+    <router-outlet></router-outlet>
+  </div>
+</div>

@@ -1,19 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { Subscription } from 'rxjs';
 
-import {
-  ITransaction,
-  PaymentMode,
-  TransactionCategory,
-  TransactionDirection
-} from '@expenses-tracker/shared/interfaces';
+import { PaymentMode, TransactionCategory, TransactionDirection } from '@expenses-tracker/shared/interfaces';
 
 import { TransactionFormFields } from '../../types';
 import { TransactionAddService } from './transaction-add.service';
@@ -31,15 +21,7 @@ type TransactionAddForm<T extends TransactionFormFields = TransactionFormFields>
 @Component({
   selector: 'expenses-tracker-transaction-add',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatDatepickerModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatSelectModule,
-    ReactiveFormsModule
-  ],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './transaction-add.component.html',
   styles: []
 })
@@ -64,24 +46,22 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
 
   addTransaction() {
     if (!this.formGroup.invalid) {
-      const { amount, category, direction, message, paymentMode, timestamp } = this.formGroup.value;
-      this.#addTransaction$ = this.#service
-        .addTransaction$({
-          amount,
-          category,
-          direction,
-          message,
-          timestamp,
-          paymentMode
-        } as ITransaction)
-        .subscribe({
-          next: () => {
-            this.formGroup.reset();
-          },
-          error: error => {
-            console.error({ error });
-          }
-        });
+      const { amount, category, direction, message } = this.formGroup.value;
+      // this.#addTransaction$ = this.#service
+      //   .addTransaction$({
+      //     amount,
+      //     category,
+      //     direction,
+      //     message
+      //   } as ITransaction)
+      //   .subscribe({
+      //     next: () => {
+      //       this.formGroup.reset();
+      //     },
+      //     error: error => {
+      //       console.error({ error });
+      //     }
+      //   });
     }
   }
 

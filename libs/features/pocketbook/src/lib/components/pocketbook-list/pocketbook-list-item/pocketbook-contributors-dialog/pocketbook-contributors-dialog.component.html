@@ -1,0 +1,50 @@
+<ng-container *ngIf="pocketbook">
+  <div class="grid gap-2 et-card w-96 bg-color-codemirror-gutters-bg">
+    <div class="flex items-center justify-between">
+      <span class="text-xl font-bold cursor-pointer text-color-accent-fg hover:underline" (click)="gotoPocketbook()">
+        {{ pocketbook.name }}
+      </span>
+      <span class="cursor-pointer material-icons text-color-fg-muted" (click)="closeDialog()">clear</span>
+    </div>
+    <ng-container *ngIf="flags().contributorsFetch.loading">
+      <div class="grid place-content-center">
+        <div class="flex items-center gap-2 cursor-default">
+          <span class="material-icons animate-spin">autorenew</span>
+          <span class="font-bold">Loading</span>
+        </div>
+      </div>
+    </ng-container>
+    <div class="grid gap-2">
+      <ng-container *ngIf="flags().contributorsFetch.success">
+        <div class="grid items-center grid-cols-2 gap-2">
+          <span class="font-bold text-right">Owned by</span>
+          <div class="flex items-center">
+            <expenses-tracker-avatar [userInput]="owner()"></expenses-tracker-avatar>
+          </div>
+        </div>
+        <ng-container *ngIf="collaboratorList().length === 0; else showCollaborators">
+          <div class="flex items-center justify-center gap-2 cursor-default">
+            <span class="material-icons text-color-accent-fg">error</span>
+            <span class="text-color-accent-fg">No collaborators in this pocketbook</span>
+          </div>
+        </ng-container>
+        <ng-template #showCollaborators>
+          <div class="grid items-center grid-cols-2 gap-2">
+            <span class="font-bold text-right">Collaborators</span>
+            <div class="flex items-center gap-1">
+              <ng-container *ngFor="let collaborator of collaboratorList(); trackBy: collaboratorListTrack">
+                <expenses-tracker-avatar [userInput]="collaborator"></expenses-tracker-avatar>
+              </ng-container>
+            </div>
+          </div>
+        </ng-template>
+      </ng-container>
+      <ng-container *ngIf="flags().contributorsFetch.fail">
+        <div class="flex items-center gap-2 cursor-default">
+          <span class="material-icons text-color-danger-fg">error</span>
+          <span class="font-bold text-color-danger-fg">Failed to load owner information</span>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>

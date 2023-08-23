@@ -38,7 +38,7 @@ export class TransactionListService {
   gotoAddTransaction() {
     this.#router.navigate([
       RoutePaths.Pocketbook,
-      this.#context.getPocketbook()?.id,
+      // this.#context.getPocketbook()?.id,
       RoutePaths.Transaction,
       RoutePaths.EntityAdd
     ]);

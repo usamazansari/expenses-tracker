@@ -1,43 +1,31 @@
-import { Injectable, inject } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
-import { BehaviorSubject, filter } from 'rxjs';
+import { Location } from '@angular/common';
+import { Injectable, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { RoutePaths } from '@expenses-tracker/shared/common';
 
-export type AuthMode = 'login' | 'signup';
+type AuthMode = 'login' | 'signup';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  #authMode$ = new BehaviorSubject<AuthMode>('login');
-  #authMode: AuthMode = 'login';
+  authMode = signal<AuthMode>('login');
 
   #router = inject(Router);
+  #location = inject(Location);
 
   fetchAuthMode() {
-    this.#router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(e => {
-      const { url, urlAfterRedirects } = e as NavigationEnd;
-      this.setAuthMode((urlAfterRedirects ?? url)?.split('/').at(-1) as AuthMode);
-    });
-  }
-
-  setAuthMode(authMode: AuthMode) {
-    this.#authMode = authMode;
-    this.#authMode$.next(this.#authMode);
-  }
-
-  watchAuthMode$() {
-    return this.#authMode$.asObservable();
+    this.authMode.set(this.#location.path().split('/').at(-1) as AuthMode);
   }
 
   gotoLogin() {
-    this.setAuthMode('login');
+    this.authMode.set('login');
     this.#router.navigate([RoutePaths.Auth, RoutePaths.AuthLogin]);
   }
 
   gotoSignup() {
-    this.setAuthMode('signup');
+    this.authMode.set('signup');
     this.#router.navigate([RoutePaths.Auth, RoutePaths.AuthSignup]);
   }
 }
