@@ -1,26 +1,31 @@
-<div class="grid">
-  <ng-container *ngIf="transactionList$ | async as transactionList">
-    <ng-container *ngIf="!transactionList; else showTransactionList">
-      <div class="grid gap-2">Error in fetching transaction list</div>
+<div class="grid gap-2">
+  <ng-container *ngIf="flags().visible">
+    <ng-container *ngIf="flags().loading">
+      <div class="grid h-60 place-content-center">
+        <div class="flex items-center gap-2 cursor-default">
+          <span class="material-icons animate-spin">autorenew</span>
+          <span class="font-bold">Loading</span>
+        </div>
+      </div>
     </ng-container>
-    <ng-template #showTransactionList>
-      <ng-container *ngIf="transactionList.length > 0; else noTransaction">
-        <div class="grid gap-2">
-          <ng-container *ngFor="let transaction of transactionList">
-            <expenses-tracker-transaction-list-item
-              [transaction]="transaction"></expenses-tracker-transaction-list-item>
+    <ng-container *ngIf="flags().success">
+      <div class="grid gap-1 p-0 et-card">
+        <ng-container *ngFor="let transaction of transactionList(); trackBy: transactionListTrack; last as isLast">
+          <expenses-tracker-transaction-list-item [transactionInput]="transaction">
+          </expenses-tracker-transaction-list-item>
+          <ng-container *ngIf="!isLast">
+            <div class="border-b border-color-border-default"></div>
           </ng-container>
+        </ng-container>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="flags().fail">
+      <div class="grid h-60 place-content-center">
+        <div class="flex items-center gap-2 cursor-default">
+          <span class="material-icons text-color-danger-fg">error</span>
+          <span class="font-bold text-color-danger-fg">Failed to load the transaction list</span>
         </div>
-      </ng-container>
-      <ng-template #noTransaction>
-        <div class="grid place-content-center">
-          <div class="flex items-center justify-center h-48 gap-2">
-            <!-- <expenses-tracker-empty-pocketbook-list-graphic
-                class="w-16 fill-et-color-fg-danger"></expenses-tracker-empty-pocketbook-list-graphic> -->
-            <p class="cursor-default text-et-color-fg-danger">No transactions found.</p>
-          </div>
-        </div>
-      </ng-template>
-    </ng-template>
+      </div>
+    </ng-container>
   </ng-container>
 </div>

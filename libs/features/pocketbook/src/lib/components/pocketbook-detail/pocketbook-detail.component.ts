@@ -25,7 +25,7 @@ export class PocketbookDetailComponent implements OnDestroy {
   #pocketbookContributors$!: Subscription;
 
   constructor() {
-    // NOTE: @usamazansari: be very careful while using toObservable as if may cause memory leak
+    // NOTE: @usamazansari: be very careful while using toObservable as it may cause memory leak
     this.#pocketbookContributors$ = toObservable(this.pocketbook)
       .pipe(switchMap(() => this.#service.watchPocketbookContributors$()))
       .subscribe();
