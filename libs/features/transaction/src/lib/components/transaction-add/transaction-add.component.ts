@@ -4,6 +4,7 @@ import { Component, Inject, OnDestroy, OnInit, inject, signal } from '@angular/c
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
+import { controlStateValidator } from '@expenses-tracker/shared/common';
 import {
   FormControlExtras,
   FormGroupTypeGenerator,
@@ -97,6 +98,17 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
       //       console.error({ error });
       //     }
       //   });
+    }
+  }
+
+  checkControl(formControl: FormControlExtras<TransactionForm, keyof TransactionForm>) {
+    const { flag, message } = controlStateValidator(this.formGroup, formControl);
+    switch (formControl.name) {
+      case 'amount':
+        this.amount.update(props => ({ ...props, error: { flag, message } }));
+        break;
+      default:
+        break;
     }
   }
 

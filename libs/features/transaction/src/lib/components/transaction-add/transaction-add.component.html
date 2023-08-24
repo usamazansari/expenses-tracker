@@ -18,7 +18,14 @@
           <div class="et-form-field-wrapper">
             <label for="old-password-input" class="font-bold">Amount</label>
             <div class="et-form-field-input-wrapper">
-              <input class="w-full et-input" formControlName="amount" id="amount-input" type="number" min="0" />
+              <input
+                class="w-full et-input"
+                formControlName="amount"
+                id="amount-input"
+                type="number"
+                min="0"
+                autofocus="true"
+                (blur)="checkControl(amount())" />
               <ng-container *ngIf="amount().error.flag">
                 <span class="et-form-field-input-error-message">{{ amount().error.message }}</span>
               </ng-container>
