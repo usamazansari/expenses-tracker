@@ -2,72 +2,30 @@
 <div class="et-form-field-input-wrapper">
   <div class="grid gap-2">
     <input class="et-input" type="hidden" [value]="selectedDate()" (focus)="showPicker.set(true)" />
+    <ng-container *ngIf="formControlName()">
+      <input
+        class="cursor-pointer et-input"
+        type="text"
+        [value]="inputDisplayValue()"
+        (click)="togglePicker()"
+        [formControlName]="formControlName()"
+        readonly
+        cdkOverlayOrigin
+        #trigger="cdkOverlayOrigin" />
+    </ng-container>
     <input
       class="cursor-pointer et-input"
       type="text"
       [value]="inputDisplayValue()"
       (click)="togglePicker()"
-      readonly />
-    <ng-container *ngIf="showPicker()">
-      <div class="grid gap-4 et-card">
-        <div class="flex items-center justify-between">
-          <span class="flex-grow font-bold cursor-default">{{ view() | date: 'MMMM YYYY' }}</span>
-          <div class="flex items-center gap-1">
-            <button class="w-8 et-button" (click)="changeMonth(-1)" [expensesTrackerTooltip]="previousMonthTooltip">
-              <span class="material-icons">chevron_left</span>
-            </button>
-            <button class="w-8 et-button" (click)="resetDate()" [expensesTrackerTooltip]="resetTooltip">
-              <span class="material-icons">radio_button_checked</span>
-            </button>
-            <button class="w-8 et-button" (click)="changeMonth(1)" [expensesTrackerTooltip]="nextMonthTooltip">
-              <span class="material-icons">chevron_right</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="flex items-center justify-center gap-1">
-          <ng-container *ngFor="let day of daysOfWeek">
-            <button class="w-8 pointer-events-none et-button">
-              <span class="font-bold text-center">
-                {{ day }}
-              </span>
-            </button>
-          </ng-container>
-        </div>
-
-        <div class="grid gap-1 place-content-center">
-          <ng-container *ngFor="let week of calendarDays(); trackBy: weekTracker">
-            <div class="flex items-center justify-center gap-1">
-              <ng-container *ngFor="let day of week; trackBy: dayTracker">
-                <button
-                  class="w-8 et-button bg-color-transparent"
-                  [ngClass]="{
-                    'bg-color-accent-fg text-color-fg-on-emphasis': compareWithSelectedDate(day)
-                  }"
-                  (click)="selectDate(day)">
-                  <span
-                    class="text-center"
-                    [ngClass]="{
-                      'text-color-fg-muted': day.getMonth() !== view().getMonth()
-                    }">
-                    {{ day.getDate() }}
-                  </span>
-                </button>
-              </ng-container>
-            </div>
-          </ng-container>
-        </div>
-      </div>
-    </ng-container>
+      readonly
+      cdkOverlayOrigin
+      #trigger="cdkOverlayOrigin" />
   </div>
 </div>
 
-<expenses-tracker-tooltip #previousMonthTooltip>
-  <span>Go to the previous month</span>
-</expenses-tracker-tooltip>
-<expenses-tracker-tooltip #resetTooltip>
-  <span>Go to today</span>
-</expenses-tracker-tooltip>
-<expenses-tracker-tooltip #nextMonthTooltip>
-  <span>Go to the next month</span>
-</expenses-tracker-tooltip>
+<ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="showPicker()">
+  <expenses-tracker-calendar
+    [selectedDateInput]="selectedDate()"
+    (dateSelected$)="selectDate($event)"></expenses-tracker-calendar>
+</ng-template>
