@@ -10,14 +10,19 @@
       readonly />
     <ng-container *ngIf="showPicker()">
       <div class="grid gap-4 et-card">
-        <div class="flex items-center justify-center gap-2">
-          <button class="w-8 et-button" (click)="changeMonth(-1)">
-            <span class="material-icons">chevron_left</span>
-          </button>
-          <span class="flex-grow font-bold text-center cursor-default">{{ view() | date: 'MMMM YYYY' }}</span>
-          <button class="w-8 et-button" (click)="changeMonth(1)">
-            <span class="material-icons">chevron_right</span>
-          </button>
+        <div class="flex items-center justify-between">
+          <span class="flex-grow font-bold cursor-default">{{ view() | date: 'MMMM YYYY' }}</span>
+          <div class="flex items-center gap-1">
+            <button class="w-8 et-button" (click)="changeMonth(-1)">
+              <span class="material-icons">chevron_left</span>
+            </button>
+            <button class="w-8 et-button" (click)="resetDate()">
+              <span class="material-icons">radio_button_checked</span>
+            </button>
+            <button class="w-8 et-button" (click)="changeMonth(1)">
+              <span class="material-icons">chevron_right</span>
+            </button>
+          </div>
         </div>
 
         <div class="flex items-center justify-center gap-1">

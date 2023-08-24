@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Input, computed, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 
 // TODO: @usamazansari: Implement overlay for the datepicker
@@ -11,7 +11,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   templateUrl: './datepicker.component.html',
   styles: []
 })
-export class DatePickerComponent implements OnInit {
+export class DatePickerComponent {
   #epoch = new Date();
   label = signal<string>('Select Date');
   formControlName = signal<string>('');
@@ -27,48 +27,33 @@ export class DatePickerComponent implements OnInit {
   }
   readonly daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
   view = signal<Date>(this.#epoch);
-  // TODO: @usamazansari: convert this to computed signal wrt this.view()
-  calendarDays = signal<Date[][]>([[]]);
+  calendarDays = computed(() => {
+    const currentMonthFirstDay = new Date(this.view().getFullYear(), this.view().getMonth(), 1).getDay() - 1;
+    const firstDay = new Date(this.view().getFullYear(), this.view().getMonth(), currentMonthFirstDay * -1);
+    const currentMonthLastDay = new Date(this.view().getFullYear(), this.view().getMonth() + 1, 0).getDay();
+    const lastDay = new Date(this.view().getFullYear(), this.view().getMonth() + 1, 6 - currentMonthLastDay);
+    const daysDifference = Math.round(Math.abs(lastDay.valueOf() - firstDay.valueOf()) / (1000 * 60 * 60 * 24)) + 1;
+    const weeks = [];
+    const days = [];
+    for (let i = 0; i < daysDifference + 1; i++) {
+      days.push(new Date(firstDay.getFullYear(), firstDay.getMonth(), firstDay.getDate() + i));
+    }
+    for (let i = 0; i < daysDifference; i += 7) {
+      weeks.push(days.slice(i, i + 7));
+    }
+    return weeks;
+  });
   inputDisplayValue = computed(() => this.selectedDate().toLocaleDateString('en-IN', { dateStyle: 'long' }));
   showPicker = signal(true);
 
-  ngOnInit() {
-    this.generateCalendar();
-  }
-
   changeMonth(delta: number) {
     this.view.update(today => new Date(today.setMonth(today.getMonth() + delta)));
-    this.generateCalendar();
   }
 
-  calculateLastSundayOfPreviousMonth(date: Date): Date {
-    const currentMonthFirstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay() - 1;
-    return new Date(date.getFullYear(), date.getMonth(), currentMonthFirstDay * -1);
-  }
-
-  calculateFirstSaturdayOfNextMonth(date: Date): Date {
-    // This will return the first sunday of the next month
-    const currentMonthLastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDay();
-    return new Date(date.getFullYear(), date.getMonth() + 1, 6 - currentMonthLastDay);
-  }
-
-  // TODO: @usamazansari: Mark this as deprecated
-  generateCalendar(): void {
-    // generate array of dates for the current month being viewed
-    const firstDay = this.calculateLastSundayOfPreviousMonth(this.view());
-    const lastDay = this.calculateFirstSaturdayOfNextMonth(this.view());
-    const daysDifference = Math.round(Math.abs(lastDay.valueOf() - firstDay.valueOf()) / (1000 * 60 * 60 * 24)) + 1;
-    this.calendarDays.update(() => {
-      const weeks = [];
-      const days = [];
-      for (let i = 0; i < daysDifference + 1; i++) {
-        days.push(new Date(firstDay.getFullYear(), firstDay.getMonth(), firstDay.getDate() + i));
-      }
-      for (let i = 0; i < daysDifference; i += 7) {
-        weeks.push(days.slice(i, i + 7));
-      }
-      return weeks;
-    });
+  resetDate() {
+    this.#epoch = new Date();
+    this.view.set(this.#epoch);
+    this.selectedDate.set(this.#epoch);
   }
 
   weekTracker(index: number, date: Date[]) {
