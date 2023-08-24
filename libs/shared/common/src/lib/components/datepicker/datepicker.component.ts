@@ -2,6 +2,8 @@ import { Component, Input, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 
+// TODO: @usamazansari: Implement overlay for the datepicker
+
 @Component({
   selector: 'expenses-tracker-datepicker',
   standalone: true,
@@ -25,6 +27,7 @@ export class DatePickerComponent implements OnInit {
   }
   readonly daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
   view = signal<Date>(this.#epoch);
+  // TODO: @usamazansari: convert this to computed signal wrt this.view()
   calendarDays = signal<Date[][]>([[]]);
   inputDisplayValue = computed(() => this.selectedDate().toLocaleDateString('en-IN', { dateStyle: 'long' }));
   showPicker = signal(true);
@@ -49,6 +52,7 @@ export class DatePickerComponent implements OnInit {
     return new Date(date.getFullYear(), date.getMonth() + 1, 6 - currentMonthLastDay);
   }
 
+  // TODO: @usamazansari: Mark this as deprecated
   generateCalendar(): void {
     // generate array of dates for the current month being viewed
     const firstDay = this.calculateLastSundayOfPreviousMonth(this.view());
