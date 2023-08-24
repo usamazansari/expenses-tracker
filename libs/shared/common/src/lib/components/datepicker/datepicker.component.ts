@@ -47,11 +47,13 @@ export class DatePickerComponent {
   showPicker = signal(true);
 
   changeMonth(delta: number) {
-    this.view.update(today => new Date(today.setMonth(today.getMonth() + delta)));
+    const next = new Date(this.view().getFullYear(), this.view().getMonth() + delta, 1);
+    this.view.set(next);
   }
 
   resetDate() {
     this.#epoch = new Date();
+    this.#epoch.setHours(0, 0, 0);
     this.view.set(this.#epoch);
     this.selectedDate.set(this.#epoch);
   }
@@ -62,6 +64,10 @@ export class DatePickerComponent {
 
   dayTracker(index: number, date: Date) {
     return date.toLocaleDateString();
+  }
+
+  compareWithSelectedDate(day: Date) {
+    return day.toLocaleDateString() === this.selectedDate().toLocaleDateString();
   }
 
   selectDate(day: Date) {
