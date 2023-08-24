@@ -1,13 +1,15 @@
 <div class="et-form-field-input-wrapper">
   <div class="grid gap-2">
-    <input class="et-input" type="hidden" [value]="selectedDate()" (focus)="showPicker.set(true)" />
+    <input
+      type="hidden"
+      [attr.formControl]="formControl() ? formControl() : null"
+      [id]="id()"
+      [value]="selectedDate()" />
     <input
       class="cursor-pointer et-input"
       type="text"
       [value]="inputDisplayValue()"
       (click)="togglePicker()"
-      [attr.formControlName]="formControlName() ? formControlName() : null"
-      [id]="id()"
       readonly
       cdkOverlayOrigin
       #trigger="cdkOverlayOrigin" />

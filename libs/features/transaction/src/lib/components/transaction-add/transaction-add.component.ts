@@ -4,7 +4,7 @@ import { Component, Inject, OnDestroy, OnInit, inject, signal } from '@angular/c
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
-import { controlStateValidator } from '@expenses-tracker/shared/common';
+import { controlStateValidator, DatePickerComponent } from '@expenses-tracker/shared/common';
 import {
   FormControlExtras,
   FormGroupTypeGenerator,
@@ -20,7 +20,7 @@ import { TransactionAddService } from './transaction-add.service';
 @Component({
   selector: 'expenses-tracker-transaction-add',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, DatePickerComponent],
   templateUrl: './transaction-add.component.html',
   styles: []
 })
@@ -82,7 +82,8 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
 
   addTransaction() {
     if (!this.formGroup.invalid) {
-      const { amount, category, direction, message } = this.formGroup.value;
+      const { amount, category, direction, message, timestamp } = this.formGroup.value;
+      console.log({ amount, category, direction, message, timestamp });
       // this.#addTransaction$ = this.#service
       //   .addTransaction$({
       //     amount,
@@ -99,6 +100,10 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
       //     }
       //   });
     }
+  }
+
+  patchTimestamp(timestamp: Date) {
+    this.formGroup.patchValue({ timestamp });
   }
 
   checkControl(formControl: FormControlExtras<TransactionForm, keyof TransactionForm>) {

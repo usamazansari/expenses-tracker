@@ -1,11 +1,9 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Input, ViewChild, computed, signal } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { Component, EventEmitter, Input, Output, computed, signal } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { CalendarComponent } from './calendar.component';
-
-// TODO: @usamazansari: Implement overlay for the datepicker
 
 @Component({
   selector: 'expenses-tracker-datepicker',
@@ -17,23 +15,23 @@ import { CalendarComponent } from './calendar.component';
 export class DatePickerComponent {
   #epoch = new Date();
   selectedDate = signal<Date>(this.#epoch);
+  inputDisplayValue = computed(() => this.selectedDate().toLocaleDateString('en-IN', { dateStyle: 'long' }));
+  showPicker = signal(false);
 
   id = signal<string>('timestamp-input');
-  formControlName = signal<string>('');
+  formControl = signal<FormControl<unknown>>(new FormControl());
   @Input() set idInput(value: string) {
     this.id.set(value);
   }
-  @Input() set formControlNameInput(value: string) {
-    this.formControlName.set(value);
+  @Input() set formControlInput(value: FormControl<unknown>) {
+    this.formControl.set(value);
   }
 
   @Input() set selectedDateInput(value: Date) {
     this.selectedDate.set(value);
   }
 
-  @ViewChild('input') input!: ElementRef;
-  inputDisplayValue = computed(() => this.selectedDate().toLocaleDateString('en-IN', { dateStyle: 'long' }));
-  showPicker = signal(false);
+  @Output() dateSelected$ = new EventEmitter<Date>();
 
   togglePicker() {
     this.showPicker.update(v => !v);
@@ -42,5 +40,6 @@ export class DatePickerComponent {
   selectDate(day: Date) {
     this.selectedDate.set(day);
     this.showPicker.set(false);
+    this.dateSelected$.emit(day);
   }
 }

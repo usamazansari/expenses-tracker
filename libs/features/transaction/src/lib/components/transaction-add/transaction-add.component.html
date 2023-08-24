@@ -1,13 +1,13 @@
-<div class="grid w-96 et-card bg-color-codemirror-gutters-bg">
+<div class="grid et-card bg-color-codemirror-gutters-bg">
   <div class="grid py-12 place-content-center">
     <span class="text-3xl text-color-accent-emphasis">Add Transaction</span>
   </div>
   <div class="grid">
     <form [formGroup]="formGroup" (ngSubmit)="addTransaction()">
       <div class="grid grid-rows-[1fr_auto] gap-2">
-        <div class="grid gap-2">
+        <div class="grid grid-cols-2 gap-2">
           <div class="et-form-field-wrapper">
-            <label for="old-password-input" class="font-bold">Direction</label>
+            <label for="direction-input" class="font-bold">Direction</label>
             <div class="et-form-field-input-wrapper">
               <input class="w-full et-input" formControlName="direction" id="direction-input" type="text" />
               <ng-container *ngIf="direction().error.flag">
@@ -16,7 +16,7 @@
             </div>
           </div>
           <div class="et-form-field-wrapper">
-            <label for="old-password-input" class="font-bold">Amount</label>
+            <label for="amount-input" class="font-bold">Amount</label>
             <div class="et-form-field-input-wrapper">
               <input
                 class="w-full et-input"
@@ -32,7 +32,7 @@
             </div>
           </div>
           <div class="et-form-field-wrapper">
-            <label for="old-password-input" class="font-bold">Category</label>
+            <label for="category-input" class="font-bold">Category</label>
             <div class="et-form-field-input-wrapper">
               <input class="w-full et-input" formControlName="category" id="category-input" type="text" />
               <ng-container *ngIf="category().error.flag">
@@ -41,25 +41,23 @@
             </div>
           </div>
           <div class="et-form-field-wrapper">
-            <label for="old-password-input" class="font-bold">Payment Mode</label>
+            <label for="payment-mode-input" class="font-bold">Payment Mode</label>
             <div class="et-form-field-input-wrapper">
-              <input class="w-full et-input" formControlName="paymentMode" id="paymentMode-input" type="text" />
+              <input class="w-full et-input" formControlName="paymentMode" id="payment-mode-input" type="text" />
               <ng-container *ngIf="paymentMode().error.flag">
                 <span class="et-form-field-input-error-message">{{ paymentMode().error.message }}</span>
               </ng-container>
             </div>
           </div>
           <div class="et-form-field-wrapper">
-            <label for="old-password-input" class="font-bold">Timestamp</label>
-            <div class="et-form-field-input-wrapper">
-              <input class="w-full et-input" formControlName="timestamp" id="timestamp-input" type="text" />
-              <ng-container *ngIf="timestamp().error.flag">
-                <span class="et-form-field-input-error-message">{{ timestamp().error.message }}</span>
-              </ng-container>
-            </div>
+            <label for="timestamp-input" class="font-bold">Timestamp</label>
+            <expenses-tracker-datepicker
+              [formControlInput]="formGroup.controls.timestamp"
+              [idInput]="timestamp().name + '-input'"
+              (dateSelected$)="patchTimestamp($event)"></expenses-tracker-datepicker>
           </div>
           <div class="et-form-field-wrapper">
-            <label for="old-password-input" class="font-bold">Message</label>
+            <label for="message-input" class="font-bold">Message</label>
             <div class="et-form-field-input-wrapper">
               <input class="w-full et-input" formControlName="message" id="message-input" type="text" />
               <ng-container *ngIf="message().error.flag">
