@@ -1,23 +1,13 @@
-<label for="timestamp-input" class="font-bold">{{ label() }}</label>
 <div class="et-form-field-input-wrapper">
   <div class="grid gap-2">
     <input class="et-input" type="hidden" [value]="selectedDate()" (focus)="showPicker.set(true)" />
-    <ng-container *ngIf="formControlName()">
-      <input
-        class="cursor-pointer et-input"
-        type="text"
-        [value]="inputDisplayValue()"
-        (click)="togglePicker()"
-        [formControlName]="formControlName()"
-        readonly
-        cdkOverlayOrigin
-        #trigger="cdkOverlayOrigin" />
-    </ng-container>
     <input
       class="cursor-pointer et-input"
       type="text"
       [value]="inputDisplayValue()"
       (click)="togglePicker()"
+      [attr.formControlName]="formControlName() ? formControlName() : null"
+      [id]="id()"
       readonly
       cdkOverlayOrigin
       #trigger="cdkOverlayOrigin" />

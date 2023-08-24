@@ -18,10 +18,10 @@ export class DatePickerComponent {
   #epoch = new Date();
   selectedDate = signal<Date>(this.#epoch);
 
-  label = signal<string>('Select Date');
+  id = signal<string>('timestamp-input');
   formControlName = signal<string>('');
-  @Input() set labelInput(value: string) {
-    this.label.set(value);
+  @Input() set idInput(value: string) {
+    this.id.set(value);
   }
   @Input() set formControlNameInput(value: string) {
     this.formControlName.set(value);
