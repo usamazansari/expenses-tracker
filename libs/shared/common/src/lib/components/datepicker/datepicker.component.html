@@ -2,7 +2,12 @@
 <div class="et-form-field-input-wrapper">
   <div class="grid gap-2">
     <input class="et-input" type="hidden" [value]="selectedDate()" (focus)="showPicker.set(true)" />
-    <input class="et-input" type="text" [value]="inputDisplayValue()" (focus)="showPicker.set(true)" />
+    <input
+      class="cursor-pointer et-input"
+      type="text"
+      [value]="inputDisplayValue()"
+      (click)="togglePicker()"
+      readonly />
     <ng-container *ngIf="showPicker()">
       <div class="grid gap-4 et-card">
         <div class="flex items-center justify-center gap-2">

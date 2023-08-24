@@ -84,4 +84,8 @@ export class DatePickerComponent implements OnInit {
     this.selectedDate.set(day);
     this.showPicker.set(false);
   }
+
+  togglePicker() {
+    this.showPicker.update(v => !v);
+  }
 }
