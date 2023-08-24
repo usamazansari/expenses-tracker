@@ -2,12 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, computed, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 
+import { TooltipModule } from '../tooltip';
+
 // TODO: @usamazansari: Implement overlay for the datepicker
 
 @Component({
   selector: 'expenses-tracker-datepicker',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TooltipModule],
   templateUrl: './datepicker.component.html',
   styles: []
 })
