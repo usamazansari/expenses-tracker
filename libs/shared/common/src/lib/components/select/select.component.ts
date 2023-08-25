@@ -28,8 +28,11 @@ export class SelectComponent<T extends string | number | boolean> {
   }
 
   selected = signal<SelectWrapper<T>>({ label: '', value: '' as T });
-  inputDisplayValue = computed(() => `${this.selected()?.label}`);
+  @Input() set selectedInput(value: T) {
+    this.selected.set({ label: this.data().find(item => item.value === value)?.label ?? '', value });
+  }
 
+  inputDisplayValue = computed(() => `${this.selected()?.label}`);
   showDropdown = signal(true);
 
   @Output() selectionChange$ = new EventEmitter<T>();

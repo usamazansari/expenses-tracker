@@ -52,6 +52,7 @@
                 [formControlInput]="formGroup.controls.paymentMode"
                 [idInput]="paymentMode().name + '-input'"
                 [dataInput]="paymentModeOptions"
+                [selectedInput]="paymentMode().value"
                 (selectionChange$)="patchPaymentMode($event)"></expenses-tracker-select>
             </div>
           </div>
