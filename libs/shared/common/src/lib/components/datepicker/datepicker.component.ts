@@ -9,8 +9,7 @@ import { CalendarComponent } from './calendar.component';
   selector: 'expenses-tracker-datepicker',
   standalone: true,
   imports: [CalendarComponent, CommonModule, OverlayModule, ReactiveFormsModule],
-  templateUrl: './datepicker.component.html',
-  styles: []
+  templateUrl: './datepicker.component.html'
 })
 export class DatePickerComponent {
   #epoch = new Date();
