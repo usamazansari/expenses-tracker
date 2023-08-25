@@ -48,10 +48,11 @@
           <div class="et-form-field-wrapper">
             <label for="payment-mode-input" class="font-bold">Payment Mode</label>
             <div class="et-form-field-input-wrapper">
-              <input class="w-full et-input" formControlName="paymentMode" id="payment-mode-input" type="text" />
-              <ng-container *ngIf="paymentMode().error.flag">
-                <span class="et-form-field-input-error-message">{{ paymentMode().error.message }}</span>
-              </ng-container>
+              <expenses-tracker-select
+                [formControlInput]="formGroup.controls.paymentMode"
+                [idInput]="paymentMode().name + '-input'"
+                [dataInput]="paymentModeOptions"
+                (selectionChange$)="patchPaymentMode($event)"></expenses-tracker-select>
             </div>
           </div>
           <div class="et-form-field-wrapper">

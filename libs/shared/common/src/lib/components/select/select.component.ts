@@ -32,12 +32,12 @@ export class SelectComponent<T extends string | number | boolean> {
 
   showDropdown = signal(true);
 
-  @Output() selectionChange$ = new EventEmitter<{ value: T }>();
+  @Output() selectionChange$ = new EventEmitter<T>();
 
   selectionChange($: SelectWrapper<T>) {
     this.selected.set($);
     this.showDropdown.set(false);
-    this.selectionChange$.emit({ value: $.value });
+    this.selectionChange$.emit($.value);
   }
 
   dataTracker(index: number, item: SelectWrapper<T>) {

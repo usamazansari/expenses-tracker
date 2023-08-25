@@ -4,7 +4,12 @@ import { Component, Inject, OnDestroy, OnInit, inject, signal } from '@angular/c
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
-import { controlStateValidator, DatePickerComponent } from '@expenses-tracker/shared/common';
+import {
+  controlStateValidator,
+  DatePickerComponent,
+  SelectComponent,
+  SelectWrapper
+} from '@expenses-tracker/shared/common';
 import {
   FormControlExtras,
   FormGroupTypeGenerator,
@@ -20,7 +25,7 @@ import { TransactionAddService } from './transaction-add.service';
 @Component({
   selector: 'expenses-tracker-transaction-add',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DatePickerComponent],
+  imports: [CommonModule, ReactiveFormsModule, DatePickerComponent, SelectComponent],
   templateUrl: './transaction-add.component.html',
   styles: []
 })
@@ -59,6 +64,12 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
     value: '',
     error: { flag: false, message: '' }
   });
+
+  paymentModeOptions: SelectWrapper<PaymentMode>[] = [
+    { label: 'Card', value: 'card' },
+    { label: 'Cash', value: 'cash' }
+  ];
+
   #addTransaction$!: Subscription;
 
   constructor(@Inject(DIALOG_DATA) public pocketbook: IPocketbook) {}
@@ -77,6 +88,10 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
       paymentMode: this.#formBuilder.control<PaymentMode>('card', Validators.required) as FormControl<PaymentMode>,
       timestamp: this.#formBuilder.control<Date>(new Date(Date.now()), Validators.required) as FormControl<Date>,
       message: this.#formBuilder.control<string>('') as FormControl<string>
+    });
+
+    this.formGroup.valueChanges.subscribe(value => {
+      console.log({ value });
     });
   }
 
@@ -104,6 +119,10 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
 
   patchTimestamp(timestamp: Date) {
     this.formGroup.patchValue({ timestamp });
+  }
+
+  patchPaymentMode(paymentMode: PaymentMode) {
+    this.formGroup.patchValue({ paymentMode });
   }
 
   checkControl(formControl: FormControlExtras<TransactionForm, keyof TransactionForm>) {
