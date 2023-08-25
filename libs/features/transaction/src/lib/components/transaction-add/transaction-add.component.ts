@@ -121,11 +121,8 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
     this.#dialogRef.close();
   }
 
-  getError(formControlName = '') {
-    if (this.formGroup.get(formControlName)?.hasError('required')) {
-      return `${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)} is required`;
-    }
-    return '';
+  closeDialog() {
+    this.#dialogRef.close();
   }
 
   ngOnDestroy() {

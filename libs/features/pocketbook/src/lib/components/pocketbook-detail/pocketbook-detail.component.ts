@@ -51,7 +51,8 @@ export class PocketbookDetailComponent implements OnDestroy {
   addTransaction() {
     const dialogRef = this.#dialog.open(TransactionAddComponent, {
       data: this.pocketbook(),
-      disableClose: true
+      disableClose: true,
+      backdropClass: ['bg-color-primer-canvas-backdrop', 'backdrop-blur-[2px]']
     });
     this.#transactionAddDialogSubscription$ = dialogRef.closed.subscribe();
   }

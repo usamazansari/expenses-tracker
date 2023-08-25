@@ -1,8 +1,13 @@
-<div class="grid et-card bg-color-codemirror-gutters-bg">
-  <div class="grid py-12 place-content-center">
-    <span class="text-3xl text-color-accent-emphasis">Add Transaction</span>
+<div class="grid gap-4 p-0 et-card bg-color-codemirror-gutters-bg">
+  <div class="flex items-center justify-between p-4 bg-color-canvas-subtle">
+    <span class="text-xl font-bold cursor-default text-color-accent-fg">Add Transaction</span>
+    <span
+      class="transition-colors duration-200 cursor-pointer material-icons text-color-fg-muted hover:text-color-accent-fg"
+      (click)="closeDialog()">
+      clear
+    </span>
   </div>
-  <div class="grid">
+  <div class="grid p-4">
     <form [formGroup]="formGroup" (ngSubmit)="addTransaction()">
       <div class="grid grid-rows-[1fr_auto] gap-2">
         <div class="grid grid-cols-2 gap-2">
