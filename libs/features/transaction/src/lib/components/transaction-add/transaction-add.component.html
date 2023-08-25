@@ -39,10 +39,12 @@
           <div class="et-form-field-wrapper">
             <label for="category-input" class="font-bold">Category</label>
             <div class="et-form-field-input-wrapper">
-              <input class="w-full et-input" formControlName="category" id="category-input" type="text" />
-              <ng-container *ngIf="category().error.flag">
-                <span class="et-form-field-input-error-message">{{ category().error.message }}</span>
-              </ng-container>
+              <expenses-tracker-select
+                [formControlInput]="formGroup.controls.category"
+                [idInput]="category().name + '-input'"
+                [dataInput]="categoryOptions"
+                [selectedInput]="category().value"
+                (selectionChange$)="patchCategory($event)"></expenses-tracker-select>
             </div>
           </div>
           <div class="et-form-field-wrapper">

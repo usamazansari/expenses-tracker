@@ -6,7 +6,7 @@ type TransactionCategory =
   | 'academics'
   | 'atm-withdrawal'
   | 'bills'
-  | 'carry forward'
+  | 'carry-forward'
   | 'charity'
   | 'groceries'
   | 'health'

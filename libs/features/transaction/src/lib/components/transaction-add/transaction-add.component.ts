@@ -70,6 +70,27 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
     { label: 'Cash', value: 'cash' }
   ];
 
+  categoryOptions: SelectWrapper<TransactionCategory>[] = [
+    { label: 'Academics', value: 'academics' },
+    { label: 'ATM Withdrawal', value: 'atm-withdrawal' },
+    { label: 'Bills', value: 'bills' },
+    { label: 'Carry Forward', value: 'carry-forward' },
+    { label: 'Charity', value: 'charity' },
+    { label: 'Groceries', value: 'groceries' },
+    { label: 'Health', value: 'health' },
+    { label: 'Hobby', value: 'hobby' },
+    { label: 'Insurance', value: 'insurance' },
+    { label: 'Investment', value: 'investment' },
+    { label: 'Laundry', value: 'laundry' },
+    { label: 'Leisure', value: 'leisure' },
+    { label: 'Other', value: 'other' },
+    { label: 'Rent', value: 'rent' },
+    { label: 'Salary', value: 'salary' },
+    { label: 'Shopping', value: 'shopping' },
+    { label: 'Transportation', value: 'transportation' },
+    { label: 'Trips', value: 'trips' }
+  ];
+
   #addTransaction$!: Subscription;
 
   constructor(@Inject(DIALOG_DATA) public pocketbook: IPocketbook) {}
@@ -123,6 +144,10 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
 
   patchPaymentMode(paymentMode: PaymentMode) {
     this.formGroup.patchValue({ paymentMode });
+  }
+
+  patchCategory(category: TransactionCategory) {
+    this.formGroup.patchValue({ category });
   }
 
   checkControl(formControl: FormControlExtras<TransactionForm, keyof TransactionForm>) {
