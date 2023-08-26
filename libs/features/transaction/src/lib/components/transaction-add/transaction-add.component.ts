@@ -27,35 +27,7 @@ import { TransactionAddService } from './transaction-add.service';
   selector: 'expenses-tracker-transaction-add',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, DatePickerComponent, SelectComponent, SwitchComponent],
-  templateUrl: './transaction-add.component.html',
-  styles: [
-    `
-      /* .transaction-form {
-        grid-template-areas: 'amount amount
-          direction payment-mode
-          category timestamp
-          message message';
-      }
-      .transaction-direction {
-        grid-area: direction;
-      }
-      .transaction-amount {
-        grid-area: amount;
-      }
-      .transaction-category {
-        grid-area: category;
-      }
-      .transaction-payment-mode {
-        grid-area: payment-mode;
-      }
-      .transaction-timestamp {
-        grid-area: timestamp;
-      }
-      .transaction-message {
-        grid-area: message;
-      } */
-    `
-  ]
+  templateUrl: './transaction-add.component.html'
 })
 export class TransactionAddComponent implements OnInit, OnDestroy {
   formGroup!: FormGroup<FormGroupTypeGenerator<TransactionForm>>;
