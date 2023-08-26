@@ -97,17 +97,11 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.formGroup = this.#formBuilder.group<FormGroupTypeGenerator<TransactionForm>>({
-      direction: this.#formBuilder.control<TransactionDirection>(
-        'expense',
-        Validators.required
-      ) as FormControl<TransactionDirection>,
-      amount: this.#formBuilder.control<number | null>(null, Validators.required) as FormControl<number>,
-      category: this.#formBuilder.control<TransactionCategory>(
-        'other',
-        Validators.required
-      ) as FormControl<TransactionCategory>,
-      paymentMode: this.#formBuilder.control<PaymentMode>('card', Validators.required) as FormControl<PaymentMode>,
-      timestamp: this.#formBuilder.control<Date>(new Date(Date.now()), Validators.required) as FormControl<Date>,
+      direction: this.#formBuilder.control<TransactionDirection>('expense') as FormControl<TransactionDirection>,
+      amount: this.#formBuilder.control<number>(0, Validators.required) as FormControl<number>,
+      category: this.#formBuilder.control<TransactionCategory>('other') as FormControl<TransactionCategory>,
+      paymentMode: this.#formBuilder.control<PaymentMode>('card') as FormControl<PaymentMode>,
+      timestamp: this.#formBuilder.control<Date>(new Date(Date.now())) as FormControl<Date>,
       message: this.#formBuilder.control<string>('') as FormControl<string>
     });
 
@@ -139,15 +133,23 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
   }
 
   patchTimestamp(timestamp: Date) {
+    this.timestamp.update(value => ({ ...value, value: timestamp }));
     this.formGroup.patchValue({ timestamp });
   }
 
   patchPaymentMode(paymentMode: PaymentMode) {
+    this.paymentMode.update(value => ({ ...value, value: paymentMode }));
     this.formGroup.patchValue({ paymentMode });
   }
 
   patchCategory(category: TransactionCategory) {
+    this.category.update(value => ({ ...value, value: category }));
     this.formGroup.patchValue({ category });
+  }
+
+  patchDirection(direction: TransactionDirection) {
+    this.direction.update(value => ({ ...value, value: direction }));
+    this.formGroup.patchValue({ direction });
   }
 
   checkControl(formControl: FormControlExtras<TransactionForm, keyof TransactionForm>) {
