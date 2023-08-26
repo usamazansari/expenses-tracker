@@ -14,17 +14,17 @@
           <div class="et-form-field-wrapper">
             <label for="direction-input" class="font-bold">Direction</label>
             <div class="et-form-field-input-wrapper">
-              <input class="w-full et-input" formControlName="direction" id="direction-input" type="hidden" />
+              <input formControlName="direction" id="direction-input" type="hidden" />
               <div class="flex items-center">
                 <button
-                  class="et-button rounded-tr-none rounded-br-none"
+                  class="rounded-tr-none rounded-br-none et-button"
                   [ngClass]="{ 'bg-color-accent-fg text-color-fg-on-emphasis': direction().value === 'expense' }"
                   type="button"
                   (click)="patchDirection('expense')">
                   Expense
                 </button>
                 <button
-                  class="et-button rounded-tl-none rounded-bl-none"
+                  class="rounded-tl-none rounded-bl-none et-button"
                   [ngClass]="{ 'bg-color-accent-fg text-color-fg-on-emphasis': direction().value === 'income' }"
                   type="button"
                   (click)="patchDirection('income')">
@@ -63,12 +63,12 @@
           <div class="et-form-field-wrapper">
             <label for="payment-mode-input" class="font-bold">Payment Mode</label>
             <div class="et-form-field-input-wrapper">
-              <expenses-tracker-select
+              <expenses-tracker-switch
                 [formControlInput]="formGroup.controls.paymentMode"
                 [idInput]="paymentMode().name + '-input'"
                 [dataInput]="paymentModeOptions"
                 [selectedInput]="paymentMode().value"
-                (selectionChange$)="patchPaymentMode($event)"></expenses-tracker-select>
+                (selectionChange$)="patchPaymentMode($event)"></expenses-tracker-switch>
             </div>
           </div>
           <div class="et-form-field-wrapper">

@@ -1,0 +1,18 @@
+<div class="grid">
+  <input type="hidden" [attr.formControl]="formControl() ? formControl() : null" [id]="id()" [value]="selected()" />
+  <div class="flex items-center">
+    <ng-container *ngFor="let item of data(); trackBy: dataTracker; first as isFirst; last as isLast">
+      <button
+        class="et-button"
+        [ngClass]="{
+          'rounded-tl-none rounded-bl-none': !isFirst,
+          'rounded-tr-none rounded-br-none': !isLast,
+          'bg-color-accent-fg text-color-fg-on-emphasis': item.value === selected().value
+        }"
+        type="button"
+        (click)="selectionChange(item)">
+        {{ item.label }}
+      </button>
+    </ng-container>
+  </div>
+</div>

@@ -8,7 +8,8 @@ import {
   controlStateValidator,
   DatePickerComponent,
   SelectComponent,
-  SelectWrapper
+  SelectWrapper,
+  SwitchComponent
 } from '@expenses-tracker/shared/common';
 import {
   FormControlExtras,
@@ -25,7 +26,7 @@ import { TransactionAddService } from './transaction-add.service';
 @Component({
   selector: 'expenses-tracker-transaction-add',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DatePickerComponent, SelectComponent],
+  imports: [CommonModule, ReactiveFormsModule, DatePickerComponent, SelectComponent, SwitchComponent],
   templateUrl: './transaction-add.component.html',
   styles: []
 })
@@ -64,6 +65,11 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
     value: '',
     error: { flag: false, message: '' }
   });
+
+  directionOptions: SelectWrapper<TransactionDirection>[] = [
+    { label: 'Income', value: 'income' },
+    { label: 'Expense', value: 'expense' }
+  ];
 
   paymentModeOptions: SelectWrapper<PaymentMode>[] = [
     { label: 'Card', value: 'card' },
