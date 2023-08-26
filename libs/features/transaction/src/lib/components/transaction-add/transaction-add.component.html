@@ -10,8 +10,8 @@
   <div class="grid p-4">
     <form [formGroup]="formGroup" (ngSubmit)="addTransaction()">
       <div class="grid grid-rows-[1fr_auto] gap-2">
-        <div class="grid gap-2 lg:grid-cols-2 lg:gap-4">
-          <div class="et-form-field-wrapper">
+        <div class="grid gap-2 lg:transaction-add-form lg:gap-4">
+          <div class="et-form-field-wrapper lg:transaction-direction">
             <label for="direction-input" class="font-bold">Direction</label>
             <div class="et-form-field-input-wrapper">
               <expenses-tracker-switch
@@ -22,23 +22,28 @@
                 (selectionChange$)="patchDirection($event)"></expenses-tracker-switch>
             </div>
           </div>
-          <div class="et-form-field-wrapper">
+          <div class="et-form-field-wrapper lg:transaction-amount">
             <label for="amount-input" class="font-bold">Amount</label>
             <div class="et-form-field-input-wrapper">
-              <input
-                class="w-full et-input"
-                formControlName="amount"
-                id="amount-input"
-                type="number"
-                min="0"
-                autofocus="true"
-                (blur)="checkControl(amount())" />
+              <div class="flex items-stretch">
+                <button class="h-full p-2 rounded-tr-none rounded-br-none pointer-events-none et-button">
+                  <span class="material-icons">euro</span>
+                </button>
+                <input
+                  class="w-full font-mono text-2xl rounded-tl-none rounded-bl-none et-input"
+                  formControlName="amount"
+                  id="amount-input"
+                  type="number"
+                  min="0"
+                  autofocus="true"
+                  (blur)="checkControl(amount())" />
+              </div>
               <ng-container *ngIf="amount().error.flag">
                 <span class="et-form-field-input-error-message">{{ amount().error.message }}</span>
               </ng-container>
             </div>
           </div>
-          <div class="et-form-field-wrapper">
+          <div class="et-form-field-wrapper lg:transaction-category">
             <label for="category-input" class="font-bold">Category</label>
             <div class="et-form-field-input-wrapper">
               <expenses-tracker-select
@@ -49,7 +54,7 @@
                 (selectionChange$)="patchCategory($event)"></expenses-tracker-select>
             </div>
           </div>
-          <div class="et-form-field-wrapper">
+          <div class="et-form-field-wrapper lg:transaction-payment-mode">
             <label for="payment-mode-input" class="font-bold">Payment Mode</label>
             <div class="et-form-field-input-wrapper">
               <expenses-tracker-switch
@@ -60,14 +65,14 @@
                 (selectionChange$)="patchPaymentMode($event)"></expenses-tracker-switch>
             </div>
           </div>
-          <div class="et-form-field-wrapper">
+          <div class="et-form-field-wrapper lg:transaction-timestamp">
             <label for="timestamp-input" class="font-bold">Timestamp</label>
             <expenses-tracker-datepicker
               [formControlInput]="formGroup.controls.timestamp"
               [idInput]="timestamp().name + '-input'"
               (dateSelected$)="patchTimestamp($event)"></expenses-tracker-datepicker>
           </div>
-          <div class="et-form-field-wrapper">
+          <div class="et-form-field-wrapper lg:transaction-message">
             <label for="message-input" class="font-bold">Message</label>
             <div class="et-form-field-input-wrapper">
               <input class="w-full et-input" formControlName="message" id="message-input" type="text" />
