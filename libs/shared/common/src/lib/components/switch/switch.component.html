@@ -3,7 +3,7 @@
   <div class="flex items-center">
     <ng-container *ngFor="let item of data(); trackBy: dataTracker; first as isFirst; last as isLast">
       <button
-        class="et-button"
+        class="w-full et-button"
         [ngClass]="{
           'rounded-tl-none rounded-bl-none': !isFirst,
           'rounded-tr-none rounded-br-none': !isLast,
