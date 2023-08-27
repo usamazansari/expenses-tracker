@@ -29,9 +29,11 @@
       <div class="flex items-center justify-center gap-1">
         <ng-container *ngFor="let day of week; trackBy: dayTracker">
           <button
-            class="w-8 et-button bg-color-transparent"
+            class="w-8 et-button"
             [ngClass]="{
-              'bg-color-accent-fg text-color-fg-on-emphasis': compareWithSelectedDate(day)
+              'bg-color-accent-fg text-color-fg-on-emphasis': isSelectedDate(day),
+              'bg-color-transparent': !isSelectedDate(day),
+              'bg-color-accent-muted': day.getMonth() !== view().getMonth() && isSelectedDate(day)
             }"
             (click)="selectDate(day)">
             <span

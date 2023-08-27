@@ -56,7 +56,7 @@ export class CalendarComponent {
     return date.toLocaleDateString();
   }
 
-  compareWithSelectedDate(day: Date) {
+  isSelectedDate(day: Date) {
     return day.toLocaleDateString() === this.selectedDate().toLocaleDateString();
   }
 
