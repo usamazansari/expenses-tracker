@@ -9,7 +9,7 @@ import {
   DatePickerComponent,
   SelectComponent,
   SelectWrapper,
-  SwitchComponent
+  SegmentedControlComponent
 } from '@expenses-tracker/shared/common';
 import {
   FormControlExtras,
@@ -27,7 +27,7 @@ import { TransactionAddService } from './transaction-add.service';
 @Component({
   selector: 'expenses-tracker-transaction-add',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DatePickerComponent, SelectComponent, SwitchComponent],
+  imports: [CommonModule, ReactiveFormsModule, DatePickerComponent, SelectComponent, SegmentedControlComponent],
   templateUrl: './transaction-add.component.html'
 })
 export class TransactionAddComponent implements OnInit, OnDestroy {

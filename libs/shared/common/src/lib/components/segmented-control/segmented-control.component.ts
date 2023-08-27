@@ -5,12 +5,12 @@ import { SelectWrapper } from '../select/select.types';
 import { FormControl } from '@angular/forms';
 
 @Component({
-  selector: 'expenses-tracker-switch',
+  selector: 'expenses-tracker-segmented-control',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './switch.component.html'
+  templateUrl: './segmented-control.component.html'
 })
-export class SwitchComponent<T = unknown> {
+export class SegmentedControlComponent<T = unknown> {
   data = signal<SelectWrapper<T>[]>([]);
   @Input() set dataInput(value: SelectWrapper<T>[]) {
     this.data.set(value);

@@ -23,12 +23,12 @@
             <div class="et-form-field-wrapper lg:transaction-type">
               <label for="transactionType-input" class="font-bold">Transaction Type</label>
               <div class="et-form-field-input-wrapper">
-                <expenses-tracker-switch
+                <expenses-tracker-segmented-control
                   [formControlInput]="formGroup.controls.transactionType"
                   [idInput]="transactionType().name + '-input'"
                   [dataInput]="transactionTypeOptions"
                   [selectedInput]="transactionType().value"
-                  (selectionChange$)="patchTransactionType($event)"></expenses-tracker-switch>
+                  (selectionChange$)="patchTransactionType($event)"></expenses-tracker-segmented-control>
               </div>
             </div>
 
@@ -72,12 +72,12 @@
             <div class="et-form-field-wrapper lg:transaction-payment-mode">
               <label for="payment-mode-input" class="font-bold">Payment Mode</label>
               <div class="et-form-field-input-wrapper">
-                <expenses-tracker-switch
+                <expenses-tracker-segmented-control
                   [formControlInput]="formGroup.controls.paymentMode"
                   [idInput]="paymentMode().name + '-input'"
                   [dataInput]="paymentModeOptions"
                   [selectedInput]="paymentMode().value"
-                  (selectionChange$)="patchPaymentMode($event)"></expenses-tracker-switch>
+                  (selectionChange$)="patchPaymentMode($event)"></expenses-tracker-segmented-control>
               </div>
             </div>
 
