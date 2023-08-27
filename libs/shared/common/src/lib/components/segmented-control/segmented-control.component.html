@@ -2,17 +2,48 @@
   <input type="hidden" [attr.formControl]="formControl() ? formControl() : null" [id]="id()" [value]="selected()" />
   <div class="flex items-center">
     <ng-container *ngFor="let item of data(); trackBy: dataTracker; first as isFirst; last as isLast">
-      <button
-        class="w-full et-button"
-        [ngClass]="{
-          'rounded-tl-none rounded-bl-none': !isFirst,
-          'rounded-tr-none rounded-br-none': !isLast,
-          'bg-color-accent-fg text-color-fg-on-emphasis': item.value === selected().value
-        }"
-        type="button"
-        (click)="selectionChange(item)">
-        {{ item.label }}
-      </button>
+      <ng-container *ngIf="item.tooltip; else buttonWithoutTooltip">
+        <button
+          class="p-2 et-button"
+          [ngClass]="{
+            'rounded-tl-none rounded-bl-none': !isFirst,
+            'rounded-tr-none rounded-br-none': !isLast,
+            'bg-color-accent-fg text-color-fg-on-emphasis': item.value === selected().value,
+            'w-full': isFullWidth()
+          }"
+          type="button"
+          (click)="selectionChange(item)"
+          [expensesTrackerTooltip]="controlTooltip">
+          <ng-container *ngIf="item.icon">
+            <span class="material-icons">{{ item.icon }}</span>
+          </ng-container>
+          <ng-container *ngIf="item.label">
+            <span>{{ item.label }}</span>
+          </ng-container>
+        </button>
+        <expenses-tracker-tooltip #controlTooltip>
+          <span>{{ item.tooltip }}</span>
+        </expenses-tracker-tooltip>
+      </ng-container>
+      <ng-template #buttonWithoutTooltip>
+        <button
+          class="p-2 et-button"
+          [ngClass]="{
+            'rounded-tl-none rounded-bl-none': !isFirst,
+            'rounded-tr-none rounded-br-none': !isLast,
+            'bg-color-accent-fg text-color-fg-on-emphasis': item.value === selected().value,
+            'w-full': isFullWidth()
+          }"
+          type="button"
+          (click)="selectionChange(item)">
+          <ng-container *ngIf="item.icon">
+            <span class="material-icons">{{ item.icon }}</span>
+          </ng-container>
+          <ng-container *ngIf="item.label">
+            <span>{{ item.label }}</span>
+          </ng-container>
+        </button>
+      </ng-template>
     </ng-container>
   </div>
 </div>

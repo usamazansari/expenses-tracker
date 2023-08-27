@@ -1,17 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, computed, inject } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { Subscription, switchMap } from 'rxjs';
 
+import { SegmentedControlComponent, SegmentedControlWrapper } from '@expenses-tracker/shared/common';
 import { ITransaction } from '@expenses-tracker/shared/interfaces';
 
-import { toObservable } from '@angular/core/rxjs-interop';
 import { TransactionListItemComponent } from '../transaction-list/transaction-list-item/transaction-list-item.component';
-import { TransactionListService } from './transaction-list.service';
+import { TransactionListService, TransactionListViewTypes } from './transaction-list.service';
 
 @Component({
   selector: 'expenses-tracker-transaction-list',
   standalone: true,
-  imports: [CommonModule, TransactionListItemComponent],
+  imports: [CommonModule, SegmentedControlComponent, TransactionListItemComponent],
   templateUrl: './transaction-list.component.html'
 })
 export class TransactionListComponent implements OnDestroy {
@@ -19,6 +20,10 @@ export class TransactionListComponent implements OnDestroy {
   transactionList = computed(() => this.#service.transactionList());
   pocketbook = computed(() => this.#service.pocketbook());
   flags = computed(() => this.#service.flags().transactionList);
+  viewOptions: SegmentedControlWrapper<TransactionListViewTypes>[] = [
+    { icon: 'reorder', tooltip: 'List view', value: 'list' },
+    { icon: 'calendar_month', tooltip: 'Monthly view', value: 'monthly' }
+  ];
   #transactionList$!: Subscription;
 
   constructor() {

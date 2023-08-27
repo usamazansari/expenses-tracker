@@ -28,6 +28,7 @@
                   [idInput]="transactionType().name + '-input'"
                   [dataInput]="transactionTypeOptions"
                   [selectedInput]="transactionType().value"
+                  [isFullWidthInput]="true"
                   (selectionChange$)="patchTransactionType($event)"></expenses-tracker-segmented-control>
               </div>
             </div>
@@ -77,6 +78,7 @@
                   [idInput]="paymentMode().name + '-input'"
                   [dataInput]="paymentModeOptions"
                   [selectedInput]="paymentMode().value"
+                  [isFullWidthInput]="true"
                   (selectionChange$)="patchPaymentMode($event)"></expenses-tracker-segmented-control>
               </div>
             </div>

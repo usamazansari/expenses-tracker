@@ -1,13 +1,14 @@
-import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { SegmentedControlWrapper } from './segmented-control.types';
+import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
 import { FormControl } from '@angular/forms';
+
+import { TooltipModule } from '../tooltip';
+import { SegmentedControlWrapper } from './segmented-control.types';
 
 @Component({
   selector: 'expenses-tracker-segmented-control',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TooltipModule],
   templateUrl: './segmented-control.component.html'
 })
 export class SegmentedControlComponent<T = unknown> {
@@ -15,9 +16,13 @@ export class SegmentedControlComponent<T = unknown> {
   @Input() set dataInput(value: SegmentedControlWrapper<T>[]) {
     this.data.set(value);
   }
-  id = signal<string>('timestamp-input');
+  id = signal<string>('segmented-control-input');
   @Input() set idInput(value: string) {
     this.id.set(value);
+  }
+  isFullWidth = signal<boolean>(false);
+  @Input() set isFullWidthInput(value: boolean) {
+    this.isFullWidth.set(value);
   }
 
   formControl = signal<FormControl<unknown>>(new FormControl());

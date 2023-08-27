@@ -1,5 +1,6 @@
 export type SegmentedControlWrapper<T> = {
-  label: string;
+  icon?: string;
+  label?: string;
   value: T;
   tooltip?: string;
 };
