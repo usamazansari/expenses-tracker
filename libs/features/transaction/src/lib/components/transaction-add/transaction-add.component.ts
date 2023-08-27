@@ -9,7 +9,8 @@ import {
   DatePickerComponent,
   SelectComponent,
   SelectWrapper,
-  SegmentedControlComponent
+  SegmentedControlComponent,
+  SegmentedControlWrapper
 } from '@expenses-tracker/shared/common';
 import {
   FormControlExtras,
@@ -67,12 +68,12 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
     error: { flag: false, message: '' }
   });
 
-  transactionTypeOptions: SelectWrapper<TransactionType>[] = [
+  transactionTypeOptions: SegmentedControlWrapper<TransactionType>[] = [
     { label: 'Income', value: 'income' },
     { label: 'Expense', value: 'expense' }
   ];
 
-  paymentModeOptions: SelectWrapper<PaymentMode>[] = [
+  paymentModeOptions: SegmentedControlWrapper<PaymentMode>[] = [
     { label: 'Card', value: 'card' },
     { label: 'Cash', value: 'cash' }
   ];

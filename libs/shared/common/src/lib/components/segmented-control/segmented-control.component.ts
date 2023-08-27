@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { SelectWrapper } from '../select/select.types';
+import { SegmentedControlWrapper } from './segmented-control.types';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -11,8 +11,8 @@ import { FormControl } from '@angular/forms';
   templateUrl: './segmented-control.component.html'
 })
 export class SegmentedControlComponent<T = unknown> {
-  data = signal<SelectWrapper<T>[]>([]);
-  @Input() set dataInput(value: SelectWrapper<T>[]) {
+  data = signal<SegmentedControlWrapper<T>[]>([]);
+  @Input() set dataInput(value: SegmentedControlWrapper<T>[]) {
     this.data.set(value);
   }
   id = signal<string>('timestamp-input');
@@ -25,18 +25,18 @@ export class SegmentedControlComponent<T = unknown> {
     this.formControl.set(value);
   }
 
-  selected = signal<SelectWrapper<T>>({ label: '', value: '' as T });
+  selected = signal<SegmentedControlWrapper<T>>({ label: '', value: '' as T });
   @Input() set selectedInput(value: T) {
     this.selected.set({ label: this.data().find(item => item.value === value)?.label ?? '', value });
   }
 
   @Output() selectionChange$ = new EventEmitter<T>();
 
-  dataTracker(index: number, item: SelectWrapper<T>) {
+  dataTracker(index: number, item: SegmentedControlWrapper<T>) {
     return item.value;
   }
 
-  selectionChange($: SelectWrapper<T>) {
+  selectionChange($: SegmentedControlWrapper<T>) {
     this.selected.set($);
     this.selectionChange$.emit($.value);
   }
