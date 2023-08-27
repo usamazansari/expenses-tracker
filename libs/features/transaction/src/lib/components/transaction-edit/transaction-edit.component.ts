@@ -7,7 +7,7 @@ import {
   FormGroupTypeGenerator,
   PaymentMode,
   TransactionCategory,
-  TransactionDirection
+  TransactionType
 } from '@expenses-tracker/shared/interfaces';
 
 import { TransactionForm } from '../../types';
@@ -36,10 +36,10 @@ export class TransactionEditComponent implements OnInit, OnDestroy {
         'other',
         Validators.required
       ) as FormControl<TransactionCategory>,
-      direction: this.#formBuilder.control<TransactionDirection>(
+      transactionType: this.#formBuilder.control<TransactionType>(
         'expense',
         Validators.required
-      ) as FormControl<TransactionDirection>,
+      ) as FormControl<TransactionType>,
       message: this.#formBuilder.control<string>('') as FormControl<string>,
       paymentMode: this.#formBuilder.control<PaymentMode>('card', Validators.required) as FormControl<PaymentMode>,
       timestamp: this.#formBuilder.control<Date>(new Date(Date.now()), Validators.required) as FormControl<Date>
@@ -52,7 +52,7 @@ export class TransactionEditComponent implements OnInit, OnDestroy {
 
   editTransaction() {
     if (!this.formGroup.invalid) {
-      const { amount, category, direction, message } = this.formGroup.value;
+      const { amount, category, transactionType: direction, message } = this.formGroup.value;
       // this.#editTransaction$ = this.#service
       //   .editTransaction$({
       //     amount,

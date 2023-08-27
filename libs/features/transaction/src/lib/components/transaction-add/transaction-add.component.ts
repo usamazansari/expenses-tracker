@@ -17,7 +17,7 @@ import {
   IPocketbook,
   PaymentMode,
   TransactionCategory,
-  TransactionDirection
+  TransactionType
 } from '@expenses-tracker/shared/interfaces';
 
 import { TransactionForm } from '../../types';
@@ -34,8 +34,8 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
   #formBuilder = inject(FormBuilder);
   #dialogRef = inject(DialogRef);
   #service = inject(TransactionAddService);
-  direction = signal<FormControlExtras<TransactionForm, 'direction'>>({
-    name: 'direction',
+  transactionType = signal<FormControlExtras<TransactionForm, 'transactionType'>>({
+    name: 'transactionType',
     value: 'expense',
     error: { flag: false, message: '' }
   });
@@ -65,7 +65,7 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
     error: { flag: false, message: '' }
   });
 
-  directionOptions: SelectWrapper<TransactionDirection>[] = [
+  transactionTypeOptions: SelectWrapper<TransactionType>[] = [
     { label: 'Income', value: 'income' },
     { label: 'Expense', value: 'expense' }
   ];
@@ -102,7 +102,7 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.formGroup = this.#formBuilder.group<FormGroupTypeGenerator<TransactionForm>>({
-      direction: this.#formBuilder.control<TransactionDirection>('expense') as FormControl<TransactionDirection>,
+      transactionType: this.#formBuilder.control<TransactionType>('expense') as FormControl<TransactionType>,
       amount: this.#formBuilder.control<number>(0, Validators.required) as FormControl<number>,
       category: this.#formBuilder.control<TransactionCategory>('other') as FormControl<TransactionCategory>,
       paymentMode: this.#formBuilder.control<PaymentMode>('card') as FormControl<PaymentMode>,
@@ -117,7 +117,7 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
 
   addTransaction() {
     if (!this.formGroup.invalid) {
-      const { amount, category, direction, message, timestamp } = this.formGroup.value;
+      const { amount, category, transactionType: direction, message, timestamp } = this.formGroup.value;
       console.log({ amount, category, direction, message, timestamp });
       // this.#addTransaction$ = this.#service
       //   .addTransaction$({
@@ -152,9 +152,9 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
     this.formGroup.patchValue({ category });
   }
 
-  patchDirection(direction: TransactionDirection) {
-    this.direction.update(value => ({ ...value, value: direction }));
-    this.formGroup.patchValue({ direction });
+  patchTransactionType(transactionType: TransactionType) {
+    this.transactionType.update(value => ({ ...value, value: transactionType }));
+    this.formGroup.patchValue({ transactionType });
   }
 
   checkControl(formControl: FormControlExtras<TransactionForm, keyof TransactionForm>) {

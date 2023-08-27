@@ -22,7 +22,7 @@ type TransactionCategory =
   | 'transportation'
   | 'trips';
 
-type TransactionDirection = 'income' | 'expense';
+type TransactionType = 'income' | 'expense';
 
 interface ITransaction<T extends DateOrTimestamp = Date> {
   id: string;
@@ -30,9 +30,9 @@ interface ITransaction<T extends DateOrTimestamp = Date> {
   timestamp: T;
   category: TransactionCategory;
   amount: number;
-  direction: TransactionDirection;
+  direction: TransactionType;
   message: string;
   paymentMode: PaymentMode;
 }
 
-export { ITransaction, TransactionDirection, TransactionCategory, PaymentMode };
+export { ITransaction, TransactionType, TransactionCategory, PaymentMode };

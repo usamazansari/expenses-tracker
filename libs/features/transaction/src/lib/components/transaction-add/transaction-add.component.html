@@ -16,15 +16,15 @@
       <div class="grid grid-rows-[1fr_auto] gap-2">
         <div class="grid gap-2 lg:transaction-add-form lg:gap-4">
           <!-- transaction type -->
-          <div class="et-form-field-wrapper lg:transaction-direction">
-            <label for="direction-input" class="font-bold">Direction</label>
+          <div class="et-form-field-wrapper lg:transaction-transaction-type">
+            <label for="transaction-type-input" class="font-bold">TransactionType</label>
             <div class="et-form-field-input-wrapper">
               <expenses-tracker-switch
-                [formControlInput]="formGroup.controls.direction"
-                [idInput]="direction().name + '-input'"
-                [dataInput]="directionOptions"
-                [selectedInput]="direction().value"
-                (selectionChange$)="patchDirection($event)"></expenses-tracker-switch>
+                [formControlInput]="formGroup.controls.transactionType"
+                [idInput]="transactionType().name + '-input'"
+                [dataInput]="transactionTypeOptions"
+                [selectedInput]="transactionType().value"
+                (selectionChange$)="patchTransactionType($event)"></expenses-tracker-switch>
             </div>
           </div>
 
