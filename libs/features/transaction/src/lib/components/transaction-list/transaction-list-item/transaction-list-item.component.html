@@ -5,13 +5,19 @@
       [ngClass]="{
         'text-color-danger-fg border-color-danger-fg': transaction()?.transactionType === 'expense',
         'text-color-success-fg border-color-success-fg': transaction()?.transactionType === 'income'
-      }">
+      }"
+      [expensesTrackerTooltip]="categoryTooltip">
       <ng-container *ngIf="!transaction()?.category; else showCategory">
         <span class="material-icons">question</span>
       </ng-container>
       <ng-template #showCategory>
         <span class="font-bold">{{ transaction()?.category?.at(0)?.toUpperCase() }}</span>
       </ng-template>
+      <expenses-tracker-tooltip #categoryTooltip>
+        <div class="grid min-w-[8rem] place-content-center">
+          <span>{{ transaction()?.category ?? 'Unknown' | categoryFormatterPipe }}</span>
+        </div>
+      </expenses-tracker-tooltip>
     </div>
     <div class="grid gap-2">
       <ng-container *ngIf="!transaction()?.description; else displayDescription">
@@ -20,16 +26,18 @@
         </span>
       </ng-container>
       <ng-template #displayDescription>
-        <span class="font-bold">{{ transaction()?.description }}</span>
+        <span class="font-semibold transition-colors duration-200 cursor-pointer hover:text-color-accent-fg">
+          {{ transaction()?.description }}
+        </span>
       </ng-template>
-      <span class="text-sm italic font-semibold text-color-fg-muted">
+      <span class="text-sm italic font-semibold cursor-default text-color-fg-muted">
         {{ transaction()?.transactionDate | date: 'longDate' }}
       </span>
     </div>
   </div>
   <div class="flex items-center gap-4">
     <span
-      class="text-xl font-bold"
+      class="text-xl font-bold cursor-default"
       [ngClass]="{
         'text-color-danger-fg': transaction()?.transactionType === 'expense',
         'text-color-success-fg': transaction()?.transactionType === 'income'
