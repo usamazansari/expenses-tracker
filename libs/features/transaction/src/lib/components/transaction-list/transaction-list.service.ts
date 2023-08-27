@@ -20,6 +20,7 @@ export class TransactionListService {
 
   user = computed(() => this.#context.user());
   pocketbook = computed(() => this.#context.pocketbook());
+  transactionList = signal<ITransaction<Date>[]>([]);
 
   flags = signal<ComponentFlags>({
     transactionList: { ...INITIAL_FLAGS }
@@ -31,7 +32,8 @@ export class TransactionListService {
       transactionList: { ...value.transactionList, loading: true }
     }));
     return this.#firestore.watchTransactionList$().pipe(
-      tap(() => {
+      tap(transactionList => {
+        this.transactionList.set(transactionList);
         this.flags.update(value => ({
           ...value,
           transactionList: { ...value.transactionList, loading: false, success: true, fail: false }

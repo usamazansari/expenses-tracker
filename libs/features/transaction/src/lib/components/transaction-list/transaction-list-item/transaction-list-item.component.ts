@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, inject, signal } from '@angular/core';
-import { BehaviorSubject, EMPTY } from 'rxjs';
+import { EMPTY } from 'rxjs';
 
 import { ITransaction } from '@expenses-tracker/shared/interfaces';
 

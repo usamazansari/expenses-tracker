@@ -4,7 +4,7 @@
   </ng-container>
   <div class="flex items-center justify-center gap-2 py-12 cursor-default">
     <span class="text-3xl material-icons text-color-accent-emphasis">login</span>
-    <span class="text-3xl text-color-accent-emphasis">Login</span>
+    <span class="text-3xl font-bold text-color-accent-emphasis">Login</span>
   </div>
   <ng-container *ngIf="flags().login.visible">
     <form [formGroup]="formGroup" (ngSubmit)="login()">

@@ -26,6 +26,55 @@
           "libs/shared/common/**/*.html"
         ]
       }
+    },
+    "storybook": {
+      "executor": "@storybook/angular:start-storybook",
+      "options": {
+        "port": 4400,
+        "configDir": "libs/shared/common/.storybook",
+        "browserTarget": "common:build-storybook",
+        "compodoc": false
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "build-storybook": {
+      "executor": "@storybook/angular:build-storybook",
+      "outputs": [
+        "{options.outputDir}"
+      ],
+      "options": {
+        "outputDir": "dist/storybook/common",
+        "configDir": "libs/shared/common/.storybook",
+        "browserTarget": "common:build-storybook",
+        "compodoc": false
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "test-storybook": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "test-storybook -c libs/shared/common/.storybook --url=http://localhost:4400"
+      }
+    },
+    "static-storybook": {
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "common:build-storybook",
+        "staticFilePath": "dist/storybook/common"
+      },
+      "configurations": {
+        "ci": {
+          "buildTarget": "common:build-storybook:ci"
+        }
+      }
     }
   },
   "tags": []

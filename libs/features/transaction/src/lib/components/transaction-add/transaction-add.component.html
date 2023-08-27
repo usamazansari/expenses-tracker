@@ -1,62 +1,122 @@
-<div
-  class="grid grid-cols-1 grid-rows-1 gap-2 p-4 border rounded-lg justify-items-center text-et-color-fg-default bg-et-layer-alternate border-et-color-border-default">
-  <div class="flex items-center justify-center gap-2 py-12">
-    <!-- <expenses-tracker-add-transaction-graphic
-      class="w-20 fill-et-color-accent-emphasis"></expenses-tracker-add-transaction-graphic> -->
-    <span class="text-3xl text-et-color-accent-emphasis">Add Transaction</span>
+<div class="grid gap-4 p-0 et-card bg-color-codemirror-gutters-bg">
+  <!-- dialog header -->
+  <div class="flex items-center justify-between p-4 bg-color-canvas-subtle">
+    <span class="text-xl font-bold cursor-default text-color-accent-fg">Add Transaction</span>
+    <span
+      class="transition-colors duration-200 cursor-pointer material-icons text-color-fg-muted hover:text-color-accent-fg"
+      (click)="closeDialog()">
+      clear
+    </span>
   </div>
-  <div class="grid min-w-[24rem]">
-    <form [formGroup]="formGroup" (ngSubmit)="addTransaction()" class="max-w-[24rem]">
-      <div class="grid grid-rows-[1fr_auto] gap-2">
-        <div class="grid gap-2">
-          <div class="flex items-center gap-2">
-            <span class="material-icons min-w-[24px]">payments</span>
 
-            <label>Amount</label>
-            <span class="mr-1">€</span>
-            <input formControlName="amount" type="number" placeholder="100" required />
+  <!-- form container -->
+  <div class="relative grid p-4">
+    <!-- form -->
+    <ng-container *ngIf="flags().addTransaction.loading">
+      <div class="et-loading-overlay"></div>
+    </ng-container>
+    <ng-container *ngIf="flags().addTransaction.visible">
+      <form [formGroup]="formGroup" (ngSubmit)="addTransaction()">
+        <div class="grid grid-rows-[1fr_auto] gap-2">
+          <div class="grid gap-2 lg:transaction-add-form lg:gap-4">
+            <!-- transaction type -->
+            <div class="et-form-field-wrapper lg:transaction-type">
+              <label for="transactionType-input" class="font-bold">Transaction Type</label>
+              <div class="et-form-field-input-wrapper">
+                <expenses-tracker-segmented-control
+                  [formControlInput]="formGroup.controls.transactionType"
+                  [idInput]="transactionType().name + '-input'"
+                  [dataInput]="transactionTypeOptions"
+                  [selectedInput]="transactionType().value"
+                  (selectionChange$)="patchTransactionType($event)"></expenses-tracker-segmented-control>
+              </div>
+            </div>
+
+            <!-- amount -->
+            <div class="et-form-field-wrapper lg:transaction-amount">
+              <label for="amount-input" class="font-bold">Amount</label>
+              <div class="et-form-field-input-wrapper">
+                <div class="flex items-stretch">
+                  <button class="h-full p-2 rounded-tr-none rounded-br-none pointer-events-none et-button">
+                    <span class="text-2xl material-icons">euro</span>
+                  </button>
+                  <input
+                    class="w-full font-mono text-2xl rounded-tl-none rounded-bl-none et-input"
+                    formControlName="amount"
+                    id="amount-input"
+                    type="number"
+                    min="0"
+                    autofocus="true"
+                    (blur)="checkControl(amount())" />
+                </div>
+                <ng-container *ngIf="amount().error.flag">
+                  <span class="et-form-field-input-error-message">{{ amount().error.message }}</span>
+                </ng-container>
+              </div>
+            </div>
+
+            <!-- category -->
+            <div class="et-form-field-wrapper lg:transaction-category">
+              <label for="category-input" class="font-bold">Category</label>
+              <div class="et-form-field-input-wrapper">
+                <expenses-tracker-select
+                  [formControlInput]="formGroup.controls.category"
+                  [idInput]="category().name + '-input'"
+                  [dataInput]="categoryOptions"
+                  [selectedInput]="category().value"
+                  (selectionChange$)="patchCategory($event)"></expenses-tracker-select>
+              </div>
+            </div>
+
+            <!-- payment mode -->
+            <div class="et-form-field-wrapper lg:transaction-payment-mode">
+              <label for="payment-mode-input" class="font-bold">Payment Mode</label>
+              <div class="et-form-field-input-wrapper">
+                <expenses-tracker-segmented-control
+                  [formControlInput]="formGroup.controls.paymentMode"
+                  [idInput]="paymentMode().name + '-input'"
+                  [dataInput]="paymentModeOptions"
+                  [selectedInput]="paymentMode().value"
+                  (selectionChange$)="patchPaymentMode($event)"></expenses-tracker-segmented-control>
+              </div>
+            </div>
+
+            <!-- transaction date -->
+            <div class="et-form-field-wrapper lg:transaction-date">
+              <label for="transactionDate-input" class="font-bold">Transaction Date</label>
+              <expenses-tracker-datepicker
+                [formControlInput]="formGroup.controls.transactionDate"
+                [idInput]="transactionDate().name + '-input'"
+                (dateSelected$)="patchTransactionDate($event)"></expenses-tracker-datepicker>
+            </div>
+
+            <!-- description -->
+            <div class="et-form-field-wrapper lg:transaction-description">
+              <label for="description-input" class="font-bold">Description</label>
+              <div class="et-form-field-input-wrapper">
+                <textarea
+                  class="w-full et-input"
+                  formControlName="description"
+                  id="description-input"
+                  placeholder="Describe this transaction"
+                  type="text"></textarea>
+              </div>
+            </div>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="material-icons min-w-[24px]">category</span>
 
-            <label>Category</label>
-            <input formControlName="category" type="text" placeholder="Grocery" required />
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="material-icons min-w-[24px]">swap_horiz</span>
-
-            <label>Direction</label>
-            <select formControlName="direction">
-              <option value="income">Income</option>
-              <option value="expense">Expense</option>
-            </select>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="material-icons min-w-[24px]">comment</span>
-
-            <label>Message</label>
-            <input
-              formControlName="message"
-              type="text"
-              placeholder="Groceries for this month" />
+          <!-- form controls -->
+          <div class="grid gap-2 lg:grid-cols-2 lg:gap-4">
+            <button type="submit" class="w-full et-button et-button-danger" (click)="cancelAddTransaction()">
+              <span class="material-icons min-w-[24px]">clear</span>
+              <span>Cancel</span>
+            </button>
+            <button type="submit" class="w-full et-button et-button-primary">
+              <span class="material-icons min-w-[24px]">save</span>
+              <span>Save</span>
+            </button>
           </div>
         </div>
-        <div class="grid grid-cols-2 gap-2">
-          <button
-            type="submit"
-            class="flex items-center justify-center w-full gap-2 py-3 rounded-lg text-et-color-button-primary bg-et-color-button-primary-bg">
-            <span class="material-icons min-w-[24px]">save</span>
-            <span>SAVE</span>
-          </button>
-          <button
-            type="button"
-            (click)="cancelAddTransaction()"
-            class="flex items-center justify-center w-full gap-2 px-6 py-3 text-center rounded-lg cursor-pointer text-et-color-button-danger bg-et-color-button-danger-bg">
-            <span class="material-icons min-w-[24px]">clear</span>
-            <span>CANCEL</span>
-          </button>
-        </div>
-      </div>
-    </form>
+      </form>
+    </ng-container>
   </div>
 </div>

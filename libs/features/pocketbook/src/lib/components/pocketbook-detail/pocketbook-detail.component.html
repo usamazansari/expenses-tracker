@@ -1,6 +1,7 @@
 <div class="grid gap-4">
-  <div class="grid py-12 place-content-center">
-    <span class="text-3xl cursor-default text-color-accent-emphasis">{{ pocketbook()?.name }}</span>
+  <div class="flex items-center justify-center gap-2 py-12 cursor-default">
+    <span class="text-3xl material-icons text-color-accent-emphasis">account_balance_wallet</span>
+    <span class="text-3xl font-bold cursor-default text-color-accent-emphasis">{{ pocketbook()?.name }}</span>
   </div>
   <div class="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_2fr]">
     <div class="grid place-content-center">
@@ -41,9 +42,9 @@
         <span
           class="text-3xl font-bold"
           [ngClass]="{
-              'text-color-danger-fg': (pocketbook()?.balance || 0) <= 0,
-              'text-color-success-fg': (pocketbook()?.balance || 0) > 0,
-            }">
+            'text-color-danger-fg': (pocketbook()?.balance || 0) <= 0,
+            'text-color-success-fg': (pocketbook()?.balance || 0) > 0
+          }">
           {{ pocketbook()?.balance | currency: 'EUR' }}
         </span>
       </div>

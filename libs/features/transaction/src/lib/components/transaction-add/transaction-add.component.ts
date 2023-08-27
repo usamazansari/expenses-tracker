@@ -1,73 +1,181 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
-import { ITransaction, TransactionDirection } from '@expenses-tracker/shared/interfaces';
+import {
+  controlStateValidator,
+  DatePickerComponent,
+  SelectComponent,
+  SelectWrapper,
+  SegmentedControlComponent
+} from '@expenses-tracker/shared/common';
+import {
+  FormControlExtras,
+  FormGroupTypeGenerator,
+  IPocketbook,
+  ITransaction,
+  PaymentMode,
+  TransactionCategory,
+  TransactionType
+} from '@expenses-tracker/shared/interfaces';
 
+import { TransactionForm } from '../../types';
 import { TransactionAddService } from './transaction-add.service';
-
-type TransactionAddForm = {
-  category: FormControl<string | null>;
-  amount: FormControl<number | null>;
-  direction: FormControl<TransactionDirection | null>;
-  message: FormControl<string | null>;
-};
 
 @Component({
   selector: 'expenses-tracker-transaction-add',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './transaction-add.component.html',
-  styles: []
+  imports: [CommonModule, ReactiveFormsModule, DatePickerComponent, SelectComponent, SegmentedControlComponent],
+  templateUrl: './transaction-add.component.html'
 })
 export class TransactionAddComponent implements OnInit, OnDestroy {
+  formGroup!: FormGroup<FormGroupTypeGenerator<TransactionForm>>;
+  #formBuilder = inject(FormBuilder);
+  #dialogRef = inject(DialogRef);
+  #service = inject(TransactionAddService);
+  flags = computed(() => this.#service.flags());
+  transactionType = signal<FormControlExtras<TransactionForm, 'transactionType'>>({
+    name: 'transactionType',
+    value: 'expense',
+    error: { flag: false, message: '' }
+  });
+  amount = signal<FormControlExtras<TransactionForm, 'amount'>>({
+    name: 'amount',
+    value: 0,
+    error: { flag: false, message: '' }
+  });
+  category = signal<FormControlExtras<TransactionForm, 'category'>>({
+    name: 'category',
+    value: 'other',
+    error: { flag: false, message: '' }
+  });
+  paymentMode = signal<FormControlExtras<TransactionForm, 'paymentMode'>>({
+    name: 'paymentMode',
+    value: 'card',
+    error: { flag: false, message: '' }
+  });
+  transactionDate = signal<FormControlExtras<TransactionForm, 'transactionDate'>>({
+    name: 'transactionDate',
+    value: new Date(),
+    error: { flag: false, message: '' }
+  });
+  description = signal<FormControlExtras<TransactionForm, 'description'>>({
+    name: 'description',
+    value: '',
+    error: { flag: false, message: '' }
+  });
+
+  transactionTypeOptions: SelectWrapper<TransactionType>[] = [
+    { label: 'Income', value: 'income' },
+    { label: 'Expense', value: 'expense' }
+  ];
+
+  paymentModeOptions: SelectWrapper<PaymentMode>[] = [
+    { label: 'Card', value: 'card' },
+    { label: 'Cash', value: 'cash' }
+  ];
+
+  categoryOptions: SelectWrapper<TransactionCategory>[] = [
+    { label: 'Academics', value: 'academics' },
+    { label: 'ATM Withdrawal', value: 'atm-withdrawal' },
+    { label: 'Bills', value: 'bills' },
+    { label: 'Carry Forward', value: 'carry-forward' },
+    { label: 'Charity', value: 'charity' },
+    { label: 'Groceries', value: 'groceries' },
+    { label: 'Health', value: 'health' },
+    { label: 'Hobby', value: 'hobby' },
+    { label: 'Insurance', value: 'insurance' },
+    { label: 'Investment', value: 'investment' },
+    { label: 'Laundry', value: 'laundry' },
+    { label: 'Leisure', value: 'leisure' },
+    { label: 'Other', value: 'other' },
+    { label: 'Rent', value: 'rent' },
+    { label: 'Salary', value: 'salary' },
+    { label: 'Shopping', value: 'shopping' },
+    { label: 'Transportation', value: 'transportation' },
+    { label: 'Trips', value: 'trips' }
+  ];
+
   #addTransaction$!: Subscription;
 
-  #formBuilder = inject(FormBuilder);
-  #service = inject(TransactionAddService);
-
-  formGroup!: FormGroup<TransactionAddForm>;
+  constructor(@Inject(DIALOG_DATA) public pocketbook: IPocketbook) {}
 
   ngOnInit() {
-    this.formGroup = this.#formBuilder.group<TransactionAddForm>({
-      amount: this.#formBuilder.control(null, Validators.required),
-      category: this.#formBuilder.control(null, Validators.required),
-      direction: this.#formBuilder.control('expense', Validators.required),
-      message: this.#formBuilder.control(null)
+    this.formGroup = this.#formBuilder.group<FormGroupTypeGenerator<TransactionForm>>({
+      transactionType: this.#formBuilder.control<TransactionType>('expense') as FormControl<TransactionType>,
+      amount: this.#formBuilder.control<number>(0, Validators.required) as FormControl<number>,
+      category: this.#formBuilder.control<TransactionCategory>('other') as FormControl<TransactionCategory>,
+      paymentMode: this.#formBuilder.control<PaymentMode>('card') as FormControl<PaymentMode>,
+      transactionDate: this.#formBuilder.control<Date>(new Date(Date.now())) as FormControl<Date>,
+      description: this.#formBuilder.control<string>('') as FormControl<string>
     });
   }
 
   addTransaction() {
     if (!this.formGroup.invalid) {
-      const { amount, category, direction, message } = this.formGroup.value;
-      // this.#addTransaction$ = this.#service
-      //   .addTransaction$({
-      //     amount,
-      //     category,
-      //     direction,
-      //     message
-      //   } as ITransaction)
-      //   .subscribe({
-      //     next: () => {
-      //       this.formGroup.reset();
-      //     },
-      //     error: error => {
-      //       console.error({ error });
-      //     }
-      //   });
+      const { amount, category, description, paymentMode, transactionDate, transactionType } = this.formGroup
+        .value as TransactionForm;
+      this.#addTransaction$ = this.#service
+        .addTransaction$({
+          amount,
+          category,
+          description,
+          paymentMode,
+          transactionDate,
+          transactionType
+        } as ITransaction)
+        .subscribe({
+          next: () => {
+            this.formGroup.reset();
+            this.closeDialog();
+          },
+          error: error => {
+            console.error({ error });
+          }
+        });
+    }
+  }
+
+  patchTransactionDate(transactionDate: Date) {
+    this.transactionDate.update(value => ({ ...value, value: transactionDate }));
+    this.formGroup.patchValue({ transactionDate });
+  }
+
+  patchPaymentMode(paymentMode: PaymentMode) {
+    this.paymentMode.update(value => ({ ...value, value: paymentMode }));
+    this.formGroup.patchValue({ paymentMode });
+  }
+
+  patchCategory(category: TransactionCategory) {
+    this.category.update(value => ({ ...value, value: category }));
+    this.formGroup.patchValue({ category });
+  }
+
+  patchTransactionType(transactionType: TransactionType) {
+    this.transactionType.update(value => ({ ...value, value: transactionType }));
+    this.formGroup.patchValue({ transactionType });
+  }
+
+  checkControl(formControl: FormControlExtras<TransactionForm, keyof TransactionForm>) {
+    const { flag, message } = controlStateValidator(this.formGroup, formControl);
+    switch (formControl.name) {
+      case 'amount':
+        this.amount.update(props => ({ ...props, error: { flag, message } }));
+        break;
+      default:
+        break;
     }
   }
 
   cancelAddTransaction() {
     this.#service.cancelAddTransaction();
+    this.#dialogRef.close();
   }
 
-  getError(formControlName = '') {
-    if (this.formGroup.get(formControlName)?.hasError('required')) {
-      return `${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)} is required`;
-    }
-    return '';
+  closeDialog() {
+    this.#dialogRef.close();
   }
 
   ngOnDestroy() {

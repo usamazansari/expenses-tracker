@@ -10,13 +10,21 @@
     </ng-container>
     <ng-container *ngIf="flags().success">
       <div class="grid gap-1 p-0 et-card">
-        <ng-container *ngFor="let transaction of transactionList(); trackBy: transactionListTrack; last as isLast">
-          <expenses-tracker-transaction-list-item [transactionInput]="transaction">
-          </expenses-tracker-transaction-list-item>
-          <ng-container *ngIf="!isLast">
-            <div class="border-b border-color-border-default"></div>
-          </ng-container>
+        <ng-container *ngIf="!transactionList().length; else showTransactionList">
+          <div class="flex items-center justify-center gap-2 py-12 cursor-default">
+            <span class="material-icons text-color-danger-fg">error</span>
+            <span class="text-color-danger-fg">No transactions available</span>
+          </div>
         </ng-container>
+        <ng-template #showTransactionList>
+          <ng-container *ngFor="let transaction of transactionList(); trackBy: transactionListTrack; last as isLast">
+            <expenses-tracker-transaction-list-item [transactionInput]="transaction">
+            </expenses-tracker-transaction-list-item>
+            <ng-container *ngIf="!isLast">
+              <div class="border-b border-color-border-default"></div>
+            </ng-container>
+          </ng-container>
+        </ng-template>
       </div>
     </ng-container>
     <ng-container *ngIf="flags().fail">

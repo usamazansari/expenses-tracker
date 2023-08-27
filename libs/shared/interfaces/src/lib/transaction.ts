@@ -1,15 +1,38 @@
 import { DateOrTimestamp } from './common';
 
-type TransactionDirection = 'income' | 'expense';
+type PaymentMode = 'card' | 'cash';
+
+type TransactionCategory =
+  | 'academics'
+  | 'atm-withdrawal'
+  | 'bills'
+  | 'carry-forward'
+  | 'charity'
+  | 'groceries'
+  | 'health'
+  | 'hobby'
+  | 'insurance'
+  | 'investment'
+  | 'laundry'
+  | 'leisure'
+  | 'other'
+  | 'rent'
+  | 'salary'
+  | 'shopping'
+  | 'transportation'
+  | 'trips';
+
+type TransactionType = 'income' | 'expense';
 
 interface ITransaction<T extends DateOrTimestamp = Date> {
   id: string;
-  pocketbookId: string;
-  timestamp: T;
-  category: string;
   amount: number;
-  direction: TransactionDirection;
-  message: string;
+  category: TransactionCategory;
+  description: string;
+  paymentMode: PaymentMode;
+  transactionDate: T;
+  transactionType: TransactionType;
+  pocketbookId: string;
 }
 
-export { ITransaction, TransactionDirection };
+export { ITransaction, TransactionType, TransactionCategory, PaymentMode };

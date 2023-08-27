@@ -2,7 +2,7 @@ import { Injectable, computed, inject } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Timestamp } from '@angular/fire/firestore';
-import { catchError, from, map, of, switchMap, throwError } from 'rxjs';
+import { catchError, from, map, of, throwError } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
 import { ITransaction } from '@expenses-tracker/shared/interfaces';
@@ -26,7 +26,7 @@ export class FirestoreTransactionService {
       ? of([])
       : this.#firestore
           .collection<Partial<ITransaction<Timestamp>>>(Collections.Transaction, ref =>
-            ref.where('pocketbookId', '==', this.pocketbook()?.id ?? '').orderBy('timestamp', 'desc')
+            ref.where('pocketbookId', '==', this.pocketbook()?.id ?? '').orderBy('transactionDate', 'desc')
           )
           .valueChanges()
           .pipe(
@@ -45,22 +45,23 @@ export class FirestoreTransactionService {
       );
   }
 
-  createTransaction$({ amount, category, direction, message }: Partial<ITransaction>) {
+  createTransaction$({ amount, category, transactionType, description, paymentMode, transactionDate }: ITransaction) {
     const docId = this.#firestore.createId();
-    const timestamp = new Date();
+
     return !this.pocketbook()
       ? throwError(() => new Error('No pocketbook set in context'))
       : from(
           this.#firestore
-            .collection<Partial<ITransaction>>(Collections.Transaction)
+            .collection<ITransaction>(Collections.Transaction)
             .doc(docId)
             .set({
               id: docId,
-              timestamp,
-              amount: amount ?? 0,
-              category: category ?? '',
-              direction: direction ?? 'expense',
-              message: message ?? '',
+              transactionDate,
+              amount,
+              category,
+              transactionType,
+              description,
+              paymentMode,
               pocketbookId: this.pocketbook()?.id ?? ''
             })
         ).pipe(
@@ -69,12 +70,12 @@ export class FirestoreTransactionService {
               ({
                 amount,
                 category,
-                direction,
+                transactionType,
                 id: docId,
-                message,
-                timestamp,
+                description,
+                transactionDate,
                 pocketbookId: this.pocketbook()?.id
-              } as ITransaction)
+              }) as ITransaction
           )
         );
   }
