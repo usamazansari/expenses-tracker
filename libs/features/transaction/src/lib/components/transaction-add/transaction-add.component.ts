@@ -69,13 +69,13 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
   });
 
   transactionTypeOptions: SegmentedControlWrapper<TransactionType>[] = [
-    { label: 'Income', value: 'income' },
-    { label: 'Expense', value: 'expense' }
+    { label: 'Income', value: 'income', icon: 'add_circle_outline' },
+    { label: 'Expense', value: 'expense', icon: 'remove_circle_outline' }
   ];
 
   paymentModeOptions: SegmentedControlWrapper<PaymentMode>[] = [
-    { label: 'Card', value: 'card' },
-    { label: 'Cash', value: 'cash' }
+    { label: 'Card', value: 'card', icon: 'credit_card' },
+    { label: 'Cash', value: 'cash', icon: 'payments' }
   ];
 
   categoryOptions: SelectWrapper<TransactionCategory>[] = [
