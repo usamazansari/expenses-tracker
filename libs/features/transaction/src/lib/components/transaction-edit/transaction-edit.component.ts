@@ -40,9 +40,9 @@ export class TransactionEditComponent implements OnInit, OnDestroy {
         'expense',
         Validators.required
       ) as FormControl<TransactionType>,
-      message: this.#formBuilder.control<string>('') as FormControl<string>,
+      description: this.#formBuilder.control<string>('') as FormControl<string>,
       paymentMode: this.#formBuilder.control<PaymentMode>('card', Validators.required) as FormControl<PaymentMode>,
-      timestamp: this.#formBuilder.control<Date>(new Date(Date.now()), Validators.required) as FormControl<Date>
+      transactionDate: this.#formBuilder.control<Date>(new Date(Date.now()), Validators.required) as FormControl<Date>
     });
 
     this.#patchValues$ = this.#service.patchValues$().subscribe(patchValues => {
@@ -52,7 +52,7 @@ export class TransactionEditComponent implements OnInit, OnDestroy {
 
   editTransaction() {
     if (!this.formGroup.invalid) {
-      const { amount, category, transactionType: direction, message } = this.formGroup.value;
+      const { amount, category, transactionType: direction, description: message } = this.formGroup.value;
       // this.#editTransaction$ = this.#service
       //   .editTransaction$({
       //     amount,

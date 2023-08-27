@@ -13,12 +13,12 @@ html {
   .transaction-add-form {
     grid-template-areas:
       'amount amount'
-      'direction payment-mode'
-      'category timestamp'
-      'message message';
+      'transaction-type payment-mode'
+      'category transaction-date'
+      'description description';
   }
-  .transaction-direction {
-    grid-area: direction;
+  .transaction-type {
+    grid-area: transaction-type;
   }
   .transaction-amount {
     grid-area: amount;
@@ -29,11 +29,11 @@ html {
   .transaction-payment-mode {
     grid-area: payment-mode;
   }
-  .transaction-timestamp {
-    grid-area: timestamp;
+  .transaction-date {
+    grid-area: transaction-date;
   }
-  .transaction-message {
-    grid-area: message;
+  .transaction-description {
+    grid-area: description;
   }
 }
 

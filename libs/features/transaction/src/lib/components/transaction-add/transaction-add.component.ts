@@ -54,13 +54,13 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
     value: 'card',
     error: { flag: false, message: '' }
   });
-  timestamp = signal<FormControlExtras<TransactionForm, 'timestamp'>>({
-    name: 'timestamp',
+  transactionDate = signal<FormControlExtras<TransactionForm, 'transactionDate'>>({
+    name: 'transactionDate',
     value: new Date(),
     error: { flag: false, message: '' }
   });
-  message = signal<FormControlExtras<TransactionForm, 'message'>>({
-    name: 'message',
+  description = signal<FormControlExtras<TransactionForm, 'description'>>({
+    name: 'description',
     value: '',
     error: { flag: false, message: '' }
   });
@@ -106,8 +106,8 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
       amount: this.#formBuilder.control<number>(0, Validators.required) as FormControl<number>,
       category: this.#formBuilder.control<TransactionCategory>('other') as FormControl<TransactionCategory>,
       paymentMode: this.#formBuilder.control<PaymentMode>('card') as FormControl<PaymentMode>,
-      timestamp: this.#formBuilder.control<Date>(new Date(Date.now())) as FormControl<Date>,
-      message: this.#formBuilder.control<string>('') as FormControl<string>
+      transactionDate: this.#formBuilder.control<Date>(new Date(Date.now())) as FormControl<Date>,
+      description: this.#formBuilder.control<string>('') as FormControl<string>
     });
 
     this.formGroup.valueChanges.subscribe(value => {
@@ -117,8 +117,8 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
 
   addTransaction() {
     if (!this.formGroup.invalid) {
-      const { amount, category, transactionType: direction, message, timestamp } = this.formGroup.value;
-      console.log({ amount, category, direction, message, timestamp });
+      const { amount, category, transactionType, description, transactionDate } = this.formGroup.value;
+      console.log({ amount, category, transactionType, description, transactionDate });
       // this.#addTransaction$ = this.#service
       //   .addTransaction$({
       //     amount,
@@ -137,9 +137,9 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
     }
   }
 
-  patchTimestamp(timestamp: Date) {
-    this.timestamp.update(value => ({ ...value, value: timestamp }));
-    this.formGroup.patchValue({ timestamp });
+  patchTransactionDate(transactionDate: Date) {
+    this.transactionDate.update(value => ({ ...value, value: transactionDate }));
+    this.formGroup.patchValue({ transactionDate });
   }
 
   patchPaymentMode(paymentMode: PaymentMode) {

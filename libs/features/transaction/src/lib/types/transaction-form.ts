@@ -4,9 +4,7 @@ export type TransactionForm = {
   amount: number;
   category: TransactionCategory;
   transactionType: TransactionType;
-  // TODO: @usamazansari: change to description
-  message: string;
+  description: string;
   paymentMode: PaymentMode;
-  // TODO: @usamazansari: change to transactionDate
-  timestamp: Date;
+  transactionDate: Date;
 };

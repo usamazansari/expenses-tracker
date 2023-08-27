@@ -16,8 +16,8 @@
       <div class="grid grid-rows-[1fr_auto] gap-2">
         <div class="grid gap-2 lg:transaction-add-form lg:gap-4">
           <!-- transaction type -->
-          <div class="et-form-field-wrapper lg:transaction-transaction-type">
-            <label for="transaction-type-input" class="font-bold">TransactionType</label>
+          <div class="et-form-field-wrapper lg:transaction-type">
+            <label for="transactionType-input" class="font-bold">Transaction Type</label>
             <div class="et-form-field-input-wrapper">
               <expenses-tracker-switch
                 [formControlInput]="formGroup.controls.transactionType"
@@ -78,22 +78,24 @@
           </div>
 
           <!-- transaction date -->
-          <div class="et-form-field-wrapper lg:transaction-timestamp">
-            <label for="timestamp-input" class="font-bold">Timestamp</label>
+          <div class="et-form-field-wrapper lg:transaction-date">
+            <label for="transactionDate-input" class="font-bold">Transaction Date</label>
             <expenses-tracker-datepicker
-              [formControlInput]="formGroup.controls.timestamp"
-              [idInput]="timestamp().name + '-input'"
-              (dateSelected$)="patchTimestamp($event)"></expenses-tracker-datepicker>
+              [formControlInput]="formGroup.controls.transactionDate"
+              [idInput]="transactionDate().name + '-input'"
+              (dateSelected$)="patchTransactionDate($event)"></expenses-tracker-datepicker>
           </div>
 
           <!-- description -->
-          <div class="et-form-field-wrapper lg:transaction-message">
-            <label for="message-input" class="font-bold">Message</label>
+          <div class="et-form-field-wrapper lg:transaction-description">
+            <label for="description-input" class="font-bold">Description</label>
             <div class="et-form-field-input-wrapper">
-              <input class="w-full et-input" formControlName="message" id="message-input" type="text" />
-              <ng-container *ngIf="message().error.flag">
-                <span class="et-form-field-input-error-message">{{ message().error.message }}</span>
-              </ng-container>
+              <textarea
+                class="w-full et-input"
+                formControlName="description"
+                id="description-input"
+                placeholder="Describe this transaction"
+                type="text"></textarea>
             </div>
           </div>
         </div>
