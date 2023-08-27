@@ -26,13 +26,13 @@ type TransactionType = 'income' | 'expense';
 
 interface ITransaction<T extends DateOrTimestamp = Date> {
   id: string;
-  pocketbookId: string;
-  timestamp: T;
-  category: TransactionCategory;
   amount: number;
-  direction: TransactionType;
-  message: string;
+  category: TransactionCategory;
+  description: string;
   paymentMode: PaymentMode;
+  transactionDate: T;
+  transactionType: TransactionType;
+  pocketbookId: string;
 }
 
 export { ITransaction, TransactionType, TransactionCategory, PaymentMode };

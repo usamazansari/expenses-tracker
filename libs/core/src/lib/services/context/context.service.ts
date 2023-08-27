@@ -95,7 +95,7 @@ export class ContextService {
                       ? null
                       : ({
                           ...transaction,
-                          timestamp: (transaction?.timestamp as Timestamp)?.toDate()
+                          transactionDate: (transaction?.transactionDate as Timestamp)?.toDate()
                         } as ITransaction)
                   )
                 )
@@ -108,8 +108,8 @@ export class ContextService {
   }
 
   updateTransactionCalculateBalance({
-    old: { amount: oldAmount, direction: oldDirection },
-    new: { amount: newAmount, direction: newDirection }
+    old: { amount: oldAmount, transactionType: oldDirection },
+    new: { amount: newAmount, transactionType: newDirection }
   }: {
     old: ITransaction;
     new: ITransaction;
@@ -122,13 +122,13 @@ export class ContextService {
       : balance - oldAmount - newAmount;
   }
 
-  addTransactionCalculateBalance({ amount, direction }: ITransaction) {
+  addTransactionCalculateBalance({ amount, transactionType }: ITransaction) {
     const balance = this.pocketbook()?.balance ?? 0;
-    return direction === 'expense' ? balance - amount : balance + amount;
+    return transactionType === 'expense' ? balance - amount : balance + amount;
   }
 
-  deleteTransactionCalculateBalance({ amount, direction }: ITransaction) {
+  deleteTransactionCalculateBalance({ amount, transactionType }: ITransaction) {
     const balance = this.pocketbook()?.balance ?? 0;
-    return direction === 'expense' ? balance + amount : balance - amount;
+    return transactionType === 'expense' ? balance + amount : balance - amount;
   }
 }

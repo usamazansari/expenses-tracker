@@ -1,6 +1,6 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
@@ -15,6 +15,7 @@ import {
   FormControlExtras,
   FormGroupTypeGenerator,
   IPocketbook,
+  ITransaction,
   PaymentMode,
   TransactionCategory,
   TransactionType
@@ -34,6 +35,7 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
   #formBuilder = inject(FormBuilder);
   #dialogRef = inject(DialogRef);
   #service = inject(TransactionAddService);
+  flags = computed(() => this.#service.flags());
   transactionType = signal<FormControlExtras<TransactionForm, 'transactionType'>>({
     name: 'transactionType',
     value: 'expense',
@@ -109,31 +111,31 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
       transactionDate: this.#formBuilder.control<Date>(new Date(Date.now())) as FormControl<Date>,
       description: this.#formBuilder.control<string>('') as FormControl<string>
     });
-
-    this.formGroup.valueChanges.subscribe(value => {
-      console.log({ value });
-    });
   }
 
   addTransaction() {
     if (!this.formGroup.invalid) {
-      const { amount, category, transactionType, description, transactionDate } = this.formGroup.value;
-      console.log({ amount, category, transactionType, description, transactionDate });
-      // this.#addTransaction$ = this.#service
-      //   .addTransaction$({
-      //     amount,
-      //     category,
-      //     direction,
-      //     message
-      //   } as ITransaction)
-      //   .subscribe({
-      //     next: () => {
-      //       this.formGroup.reset();
-      //     },
-      //     error: error => {
-      //       console.error({ error });
-      //     }
-      //   });
+      const { amount, category, description, paymentMode, transactionDate, transactionType } = this.formGroup
+        .value as TransactionForm;
+      console.log({ amount, category, description, paymentMode, transactionDate, transactionType });
+      this.#addTransaction$ = this.#service
+        .addTransaction$({
+          amount,
+          category,
+          description,
+          paymentMode,
+          transactionDate,
+          transactionType
+        } as ITransaction)
+        .subscribe({
+          next: pb => {
+            this.formGroup.reset();
+            console.log({ pb });
+          },
+          error: error => {
+            console.error({ error });
+          }
+        });
     }
   }
 
@@ -169,6 +171,7 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
   }
 
   cancelAddTransaction() {
+    this.#service.cancelAddTransaction();
     this.#dialogRef.close();
   }
 

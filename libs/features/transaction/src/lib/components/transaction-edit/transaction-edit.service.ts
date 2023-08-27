@@ -52,9 +52,9 @@ export class TransactionEditService {
       map(txn => ({
         category: txn?.category ?? null,
         amount: txn?.amount ?? null,
-        direction: txn?.direction ?? null,
-        message: txn?.message ?? null,
-        timestamp: txn?.timestamp ?? null,
+        direction: txn?.transactionType ?? null,
+        message: txn?.description ?? null,
+        timestamp: txn?.transactionDate ?? null,
         paymentMode: txn?.paymentMode ?? null
       }))
     );

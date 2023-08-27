@@ -8,7 +8,7 @@ const PocketbookMapper = (pocketbook: IPocketbook<Timestamp>): IPocketbook => ({
 
 const TransactionMapper = (transaction: ITransaction<Timestamp>): ITransaction => ({
   ...transaction,
-  timestamp: transaction.timestamp.toDate()
+  transactionDate: transaction.transactionDate.toDate()
 });
 
 export { PocketbookMapper, TransactionMapper };
