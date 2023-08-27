@@ -117,7 +117,6 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
     if (!this.formGroup.invalid) {
       const { amount, category, description, paymentMode, transactionDate, transactionType } = this.formGroup
         .value as TransactionForm;
-      console.log({ amount, category, description, paymentMode, transactionDate, transactionType });
       this.#addTransaction$ = this.#service
         .addTransaction$({
           amount,
@@ -128,9 +127,9 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
           transactionType
         } as ITransaction)
         .subscribe({
-          next: pb => {
+          next: () => {
             this.formGroup.reset();
-            console.log({ pb });
+            this.closeDialog();
           },
           error: error => {
             console.error({ error });

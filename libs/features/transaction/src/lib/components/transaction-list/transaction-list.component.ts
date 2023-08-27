@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, computed, inject, signal } from '@angular/core';
+import { Component, OnDestroy, computed, inject } from '@angular/core';
 import { Subscription, switchMap } from 'rxjs';
 
 import { ITransaction } from '@expenses-tracker/shared/interfaces';
@@ -16,21 +16,16 @@ import { TransactionListService } from './transaction-list.service';
 })
 export class TransactionListComponent implements OnDestroy {
   #service = inject(TransactionListService);
-  transactionList = signal<ITransaction[]>([]);
-  pocketbook = computed(() => this.#service.user());
-  user = computed(() => this.#service.user());
+  transactionList = computed(() => this.#service.transactionList());
+  pocketbook = computed(() => this.#service.pocketbook());
   flags = computed(() => this.#service.flags().transactionList);
   #transactionList$!: Subscription;
 
   constructor() {
     // NOTE: @usamazansari: be very careful while using toObservable as it may cause memory leak
-    const user$ = toObservable(this.user);
-    const pocketbook$ = toObservable(this.pocketbook);
-    this.#transactionList$ = user$
-      .pipe(switchMap(() => pocketbook$.pipe(switchMap(() => this.#service.fetchTransactionList$()))))
-      .subscribe((transactionList: ITransaction[]) => {
-        this.transactionList.set(transactionList);
-      });
+    this.#transactionList$ = toObservable(this.pocketbook)
+      .pipe(switchMap(() => this.#service.fetchTransactionList$()))
+      .subscribe();
   }
 
   addTransaction() {
