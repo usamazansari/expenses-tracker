@@ -1,4 +1,5 @@
 <div class="grid gap-4 p-0 et-card bg-color-codemirror-gutters-bg">
+  <!-- dialog header -->
   <div class="flex items-center justify-between p-4 bg-color-canvas-subtle">
     <span class="text-xl font-bold cursor-default text-color-accent-fg">Add Transaction</span>
     <span
@@ -7,10 +8,14 @@
       clear
     </span>
   </div>
+
+  <!-- form container -->
   <div class="grid p-4">
+    <!-- form -->
     <form [formGroup]="formGroup" (ngSubmit)="addTransaction()">
       <div class="grid grid-rows-[1fr_auto] gap-2">
         <div class="grid gap-2 lg:transaction-add-form lg:gap-4">
+          <!-- transaction type -->
           <div class="et-form-field-wrapper lg:transaction-direction">
             <label for="direction-input" class="font-bold">Direction</label>
             <div class="et-form-field-input-wrapper">
@@ -22,6 +27,8 @@
                 (selectionChange$)="patchDirection($event)"></expenses-tracker-switch>
             </div>
           </div>
+
+          <!-- amount -->
           <div class="et-form-field-wrapper lg:transaction-amount">
             <label for="amount-input" class="font-bold">Amount</label>
             <div class="et-form-field-input-wrapper">
@@ -43,6 +50,8 @@
               </ng-container>
             </div>
           </div>
+
+          <!-- category -->
           <div class="et-form-field-wrapper lg:transaction-category">
             <label for="category-input" class="font-bold">Category</label>
             <div class="et-form-field-input-wrapper">
@@ -54,6 +63,8 @@
                 (selectionChange$)="patchCategory($event)"></expenses-tracker-select>
             </div>
           </div>
+
+          <!-- payment mode -->
           <div class="et-form-field-wrapper lg:transaction-payment-mode">
             <label for="payment-mode-input" class="font-bold">Payment Mode</label>
             <div class="et-form-field-input-wrapper">
@@ -65,6 +76,8 @@
                 (selectionChange$)="patchPaymentMode($event)"></expenses-tracker-switch>
             </div>
           </div>
+
+          <!-- transaction date -->
           <div class="et-form-field-wrapper lg:transaction-timestamp">
             <label for="timestamp-input" class="font-bold">Timestamp</label>
             <expenses-tracker-datepicker
@@ -72,6 +85,8 @@
               [idInput]="timestamp().name + '-input'"
               (dateSelected$)="patchTimestamp($event)"></expenses-tracker-datepicker>
           </div>
+
+          <!-- description -->
           <div class="et-form-field-wrapper lg:transaction-message">
             <label for="message-input" class="font-bold">Message</label>
             <div class="et-form-field-input-wrapper">
@@ -82,6 +97,8 @@
             </div>
           </div>
         </div>
+
+        <!-- form controls -->
         <div class="grid gap-2 lg:grid-cols-2 lg:gap-4">
           <button type="submit" class="w-full et-button et-button-danger" (click)="cancelAddTransaction()">
             <span class="material-icons min-w-[24px]">clear</span>
