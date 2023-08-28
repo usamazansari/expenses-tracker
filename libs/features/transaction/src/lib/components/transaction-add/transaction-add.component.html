@@ -25,9 +25,9 @@
               <div class="et-form-field-input-wrapper">
                 <expenses-tracker-segmented-control
                   [formControlInput]="formGroup.controls.transactionType"
-                  [idInput]="transactionType().name + '-input'"
+                  idInput="transactionType-input"
                   [dataInput]="transactionTypeOptions"
-                  [selectedInput]="transactionType().value"
+                  [selectedInput]="formGroup.controls.transactionType.value"
                   [isFullWidthInput]="true"
                   (selectionChange$)="patchTransactionType($event)"></expenses-tracker-segmented-control>
               </div>
@@ -43,15 +43,14 @@
                   </button>
                   <input
                     class="w-full font-mono text-2xl rounded-tl-none rounded-bl-none et-input"
-                    formControlName="amount"
+                    [formControl]="formGroup.controls.amount"
                     id="amount-input"
                     type="number"
                     min="0"
-                    autofocus="true"
-                    (blur)="checkControl(amount())" />
+                    autofocus="true" />
                 </div>
-                <ng-container *ngIf="amount().error.flag">
-                  <span class="et-form-field-input-error-message">{{ amount().error.message }}</span>
+                <ng-container *ngIf="formGroup.controls.amount.hasError('required')">
+                  <span class="et-form-field-input-error-message">Amount is required</span>
                 </ng-container>
               </div>
             </div>
@@ -62,9 +61,9 @@
               <div class="et-form-field-input-wrapper">
                 <expenses-tracker-select
                   [formControlInput]="formGroup.controls.category"
-                  [idInput]="category().name + '-input'"
+                  idInput="category-input"
                   [dataInput]="categoryOptions"
-                  [selectedInput]="category().value"
+                  [selectedInput]="formGroup.controls.category.value"
                   (selectionChange$)="patchCategory($event)"></expenses-tracker-select>
               </div>
             </div>
@@ -75,9 +74,9 @@
               <div class="et-form-field-input-wrapper">
                 <expenses-tracker-segmented-control
                   [formControlInput]="formGroup.controls.paymentMode"
-                  [idInput]="paymentMode().name + '-input'"
+                  idInput="paymentMode-input"
                   [dataInput]="paymentModeOptions"
-                  [selectedInput]="paymentMode().value"
+                  [selectedInput]="formGroup.controls.paymentMode.value"
                   [isFullWidthInput]="true"
                   (selectionChange$)="patchPaymentMode($event)"></expenses-tracker-segmented-control>
               </div>
@@ -88,7 +87,8 @@
               <label for="transactionDate-input" class="font-bold">Transaction Date</label>
               <expenses-tracker-datepicker
                 [formControlInput]="formGroup.controls.transactionDate"
-                [idInput]="transactionDate().name + '-input'"
+                idInput="transactionDate-input"
+                [selectedDateInput]="formGroup.controls.transactionDate.value"
                 (dateSelected$)="patchTransactionDate($event)"></expenses-tracker-datepicker>
             </div>
 
@@ -98,7 +98,7 @@
               <div class="et-form-field-input-wrapper">
                 <textarea
                   class="w-full et-input"
-                  formControlName="description"
+                  [formControl]="formGroup.controls.description"
                   id="description-input"
                   placeholder="Describe this transaction"
                   type="text"></textarea>
