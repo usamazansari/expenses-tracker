@@ -15,7 +15,7 @@
   <div class="grid w-64 p-0 overflow-auto et-card max-h-96" cdkMenu>
     <ng-container *ngFor="let item of data(); trackBy: dataTracker; last as isLast; first as isFirst">
       <button
-        class="justify-start p-3 border-0 et-button hover:border-0 hover:bg-color-accent-fg hover:text-color-fg-on-emphasis"
+        class="justify-start p-3 border-0 et-button hover:border-0 hover:bg-color-accent-fg hover:text-color-fg-on-emphasis focus-visible:outline-none focus-visible:bg-color-accent-fg"
         [ngClass]="{
           'rounded-tl-none rounded-tr-none': !isFirst,
           'rounded-bl-none rounded-br-none': !isLast,
