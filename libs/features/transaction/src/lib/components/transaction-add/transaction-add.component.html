@@ -62,6 +62,7 @@
                 <expenses-tracker-select
                   [formControlInput]="formGroup.controls.category"
                   idInput="category-input"
+                  iconInput="category"
                   [dataInput]="categoryOptions"
                   [selectedInput]="formGroup.controls.category.value"
                   (selectionChange$)="patchCategory($event)"></expenses-tracker-select>
@@ -85,11 +86,14 @@
             <!-- transaction date -->
             <div class="et-form-field-wrapper lg:transaction-date">
               <label for="transactionDate-input" class="font-bold">Transaction Date</label>
-              <expenses-tracker-datepicker
-                [formControlInput]="formGroup.controls.transactionDate"
-                idInput="transactionDate-input"
-                [selectedDateInput]="formGroup.controls.transactionDate.value"
-                (dateSelected$)="patchTransactionDate($event)"></expenses-tracker-datepicker>
+              <div class="et-form-field-input-wrapper">
+                <expenses-tracker-datepicker
+                  [formControlInput]="formGroup.controls.transactionDate"
+                  iconInput="today"
+                  idInput="transactionDate-input"
+                  [selectedDateInput]="formGroup.controls.transactionDate.value"
+                  (dateSelected$)="patchTransactionDate($event)"></expenses-tracker-datepicker>
+              </div>
             </div>
 
             <!-- description -->

@@ -8,7 +8,7 @@
           [ngClass]="{
             'rounded-tl-none rounded-bl-none': !isFirst,
             'rounded-tr-none rounded-br-none': !isLast,
-            'bg-color-accent-fg text-color-fg-on-emphasis': item.value === selected().value,
+            'bg-color-accent-fg text-color-fg-on-emphasis hover:bg-color-accent-fg': item.value === selected().value,
             'w-full': isFullWidth()
           }"
           type="button"
@@ -31,7 +31,7 @@
           [ngClass]="{
             'rounded-tl-none rounded-bl-none': !isFirst,
             'rounded-tr-none rounded-br-none': !isLast,
-            'bg-color-accent-fg text-color-fg-on-emphasis': item.value === selected().value,
+            'bg-color-accent-fg text-color-fg-on-emphasis hover:bg-color-accent-fg': item.value === selected().value,
             'w-full': isFullWidth()
           }"
           type="button"

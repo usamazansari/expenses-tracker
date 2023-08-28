@@ -32,6 +32,11 @@ export class SelectComponent<T> {
     this.selected.set({ label: this.data().find(item => item.value === value)?.label ?? '', value });
   }
 
+  icon = signal<string>('');
+  @Input() set iconInput(value: string) {
+    this.icon.set(value);
+  }
+
   inputDisplayValue = computed(() => `${this.selected()?.label}`);
   showDropdown = signal(true);
 

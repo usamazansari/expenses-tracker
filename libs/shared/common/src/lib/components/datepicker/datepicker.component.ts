@@ -13,21 +13,24 @@ import { CalendarComponent } from './calendar.component';
 })
 export class DatePickerComponent {
   #epoch = new Date();
-  selectedDate = signal<Date>(this.#epoch);
   inputDisplayValue = computed(() => this.selectedDate().toLocaleDateString('en-IN', { dateStyle: 'long' }));
   showPicker = signal(false);
 
   id = signal<string>('timestamp-input');
-  formControl = signal<FormControl<unknown>>(new FormControl());
   @Input() set idInput(value: string) {
     this.id.set(value);
   }
+  formControl = signal<FormControl<unknown>>(new FormControl());
   @Input() set formControlInput(value: FormControl<unknown>) {
     this.formControl.set(value);
   }
-
+  selectedDate = signal<Date>(this.#epoch);
   @Input() set selectedDateInput(value: Date) {
     this.selectedDate.set(value);
+  }
+  icon = signal<string>('');
+  @Input() set iconInput(value: string) {
+    this.icon.set(value);
   }
 
   @Output() dateSelected$ = new EventEmitter<Date>();
