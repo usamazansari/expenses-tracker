@@ -14,7 +14,7 @@
         <span class="font-bold">{{ transaction()?.category?.at(0)?.toUpperCase() }}</span>
       </ng-template>
       <expenses-tracker-tooltip #categoryTooltip>
-        <div class="grid min-w-[8rem] place-content-center">
+        <div class="grid px-2 place-content-center">
           <span>{{ transaction()?.category ?? 'Unknown' | categoryFormatterPipe }}</span>
         </div>
       </expenses-tracker-tooltip>
