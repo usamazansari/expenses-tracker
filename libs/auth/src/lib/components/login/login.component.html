@@ -21,11 +21,21 @@
                 id="email-input"
                 type="email"
                 placeholder="foo@bar.com"
-                (blur)="checkControl(email())"
-                [ngClass]="{ 'et-input-error-state': email().error.flag }"
+                [ngClass]="{ 'et-input-error-state': formGroup.controls.email.errors }"
                 required />
-              <ng-container *ngIf="email().error.flag">
-                <span class="et-form-field-input-error-message">{{ email().error.message }}</span>
+              <ng-container
+                *ngIf="
+                  (formGroup.controls.email.touched || formGroup.controls.email.dirty) &&
+                  formGroup.controls.email.hasError('required')
+                ">
+                <span class="et-form-field-input-error-message">Email is required</span>
+              </ng-container>
+              <ng-container
+                *ngIf="
+                  (formGroup.controls.email.touched || formGroup.controls.email.dirty) &&
+                  formGroup.controls.email.hasError('email')
+                ">
+                <span class="et-form-field-input-error-message">Invalid email address</span>
               </ng-container>
             </div>
           </div>
@@ -39,11 +49,14 @@
                 type="password"
                 id="password-input"
                 placeholder="Password"
-                (blur)="checkControl(password())"
-                [ngClass]="{ 'et-input-error-state': password().error.flag }"
+                [ngClass]="{ 'et-input-error-state': formGroup.controls.password.errors }"
                 required />
-              <ng-container *ngIf="password().error.flag">
-                <span class="et-form-field-input-error-message">{{ password().error.message }}</span>
+              <ng-container
+                *ngIf="
+                  (formGroup.controls.password.touched || formGroup.controls.password.dirty) &&
+                  formGroup.controls.password.hasError('required')
+                ">
+                <span class="et-form-field-input-error-message">Password is required</span>
               </ng-container>
             </div>
           </div>

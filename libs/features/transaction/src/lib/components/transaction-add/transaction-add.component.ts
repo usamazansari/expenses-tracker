@@ -75,7 +75,7 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
       {
         transactionType: this.#formBuilder.control<TransactionType>('expense') as FormControl<TransactionType>,
         amount: this.#formBuilder.control<number>(0, {
-          validators: Validators.required,
+          validators: [Validators.required],
           updateOn: 'change'
         }) as FormControl<number>,
         category: this.#formBuilder.control<TransactionCategory>('other') as FormControl<TransactionCategory>,
