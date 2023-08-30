@@ -35,6 +35,11 @@ export class SegmentedControlComponent<T = unknown> {
     this.selected.set({ label: this.data().find(item => item.value === value)?.label ?? '', value });
   }
 
+  disabled = signal<boolean>(false);
+  @Input() set disabledInput(value: boolean) {
+    this.disabled.set(value);
+  }
+
   @Output() selectionChange$ = new EventEmitter<T>();
 
   dataTracker(index: number, item: SegmentedControlWrapper<T>) {

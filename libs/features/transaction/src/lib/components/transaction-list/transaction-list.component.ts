@@ -22,8 +22,9 @@ export class TransactionListComponent implements OnInit, OnDestroy {
   pocketbook = computed(() => this.#service.pocketbook());
   flags = computed(() => this.#service.flags().transactionList);
   viewOptions: SegmentedControlWrapper<TransactionListViewTypes>[] = [
-    { icon: 'calendar_month', tooltip: 'Monthly view', value: 'monthly' },
-    { icon: 'calendar_month', tooltip: 'Daily view', value: 'daily' }
+    { icon: 'calendar_view_month', tooltip: 'Monthly view', value: 'monthly' },
+    { icon: 'calendar_view_week', tooltip: 'Weekly view', value: 'weekly', disabled: true },
+    { icon: 'calendar_view_day', tooltip: 'Daily view', value: 'daily', disabled: true }
   ];
   viewMode = signal<TransactionListViewTypes>('monthly');
   #transactionList$!: Subscription;

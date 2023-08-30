@@ -12,8 +12,9 @@
             'w-full': isFullWidth()
           }"
           type="button"
+          [disabled]="item.disabled"
           (click)="selectionChange(item)"
-          [expensesTrackerTooltip]="controlTooltip">
+          [expensesTrackerTooltip]="!item.disabled ? controlTooltip : null">
           <ng-container *ngIf="item.icon">
             <span class="material-icons">{{ item.icon }}</span>
           </ng-container>
