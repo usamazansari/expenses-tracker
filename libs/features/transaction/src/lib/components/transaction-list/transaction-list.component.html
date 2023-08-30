@@ -1,72 +1,37 @@
 <div class="grid gap-2">
   <ng-container *ngIf="flags().visible">
-    <ng-container *ngIf="flags().loading">
-      <div class="grid h-60 place-content-center">
-        <div class="flex items-center gap-2 cursor-default">
-          <span class="material-icons animate-spin">autorenew</span>
-          <span class="font-bold">Loading</span>
-        </div>
-      </div>
-    </ng-container>
-    <ng-container *ngIf="flags().success">
-      <div class="grid gap-2 et-card">
-        <div class="flex items-center gap-2">
-          <div class="flex-grow p-0 et-form-field-wrapper">
-            <div class="et-form-field-input-wrapper">
-              <input
-                class="w-full et-input"
-                formControlName="displayName"
-                type="text"
-                placeholder="Search for Pocketbooks"
-                (keyup)="debounceSearch($event)" />
-            </div>
+    <div class="grid gap-6 et-card">
+      <div class="flex items-center gap-2">
+        <div class="flex-grow p-0 et-form-field-wrapper">
+          <div class="et-form-field-input-wrapper">
+            <input
+              class="w-full et-input"
+              formControlName="displayName"
+              type="text"
+              placeholder="Search for Pocketbooks"
+              (keyup)="debounceSearch($event)" />
           </div>
-          <expenses-tracker-segmented-control
-            [dataInput]="viewOptions"
-            [selectedInput]="viewMode()"
-            (selectionChange$)="changeViewMode($event)"></expenses-tracker-segmented-control>
         </div>
-        <ng-container *ngIf="!transactionList().length; else showTransactionList">
-          <div class="flex items-center justify-center gap-2 py-12 cursor-default">
-            <span class="material-icons text-color-danger-fg">error</span>
-            <span class="text-color-danger-fg">No transactions available</span>
-          </div>
-        </ng-container>
-        <ng-template #showTransactionList>
-          <ng-container *ngIf="viewMode() === 'daily'">
-            <div class="grid gap-1 p-0 et-card">
-              <ng-container
-                *ngFor="let transaction of transactionList(); trackBy: transactionListTrack; last as isLast">
-                <expenses-tracker-transaction-list-item [transactionInput]="transaction">
-                </expenses-tracker-transaction-list-item>
-                <ng-container *ngIf="!isLast">
-                  <div class="border-b border-color-border-default"></div>
-                </ng-container>
-              </ng-container>
-            </div>
-          </ng-container>
-          <ng-container *ngIf="viewMode() === 'monthly'">
-            <div class="grid gap-1 p-0 et-card">
-              <ng-container
-                *ngFor="let transaction of transactionList(); trackBy: transactionListTrack; last as isLast">
-                <expenses-tracker-transaction-list-item [transactionInput]="transaction">
-                </expenses-tracker-transaction-list-item>
-                <ng-container *ngIf="!isLast">
-                  <div class="border-b border-color-border-default"></div>
-                </ng-container>
-              </ng-container>
-            </div>
-          </ng-container>
-        </ng-template>
+        <expenses-tracker-segmented-control
+          [dataInput]="viewOptions"
+          [selectedInput]="viewMode()"
+          (selectionChange$)="changeViewMode($event)"></expenses-tracker-segmented-control>
       </div>
-    </ng-container>
-    <ng-container *ngIf="flags().fail">
-      <div class="grid h-60 place-content-center">
-        <div class="flex items-center gap-2 cursor-default">
-          <span class="material-icons text-color-danger-fg">error</span>
-          <span class="font-bold text-color-danger-fg">Failed to load the transaction list</span>
+
+      <ng-container *ngIf="viewMode() === 'daily'">
+        <div class="grid gap-1 p-0 et-card">
+          <ng-container *ngFor="let transaction of transactionList(); trackBy: transactionListTrack; last as isLast">
+            <expenses-tracker-transaction-list-item [transactionInput]="transaction">
+            </expenses-tracker-transaction-list-item>
+            <ng-container *ngIf="!isLast">
+              <div class="border-b border-color-border-default"></div>
+            </ng-container>
+          </ng-container>
         </div>
-      </div>
-    </ng-container>
+      </ng-container>
+      <ng-container *ngIf="viewMode() === 'monthly'">
+        <expenses-tracker-transaction-monthly-view></expenses-tracker-transaction-monthly-view>
+      </ng-container>
+    </div>
   </ng-container>
 </div>

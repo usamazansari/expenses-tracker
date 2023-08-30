@@ -75,8 +75,15 @@ export class FirestoreService {
     return this.#user.watchPocketbookContributors$({ owner, collaboratorList } as IPocketbook);
   }
 
+  /**
+   * @deprecated Use monthly fetch API instead
+   */
   watchTransactionList$() {
     return this.#transaction.watchTransactionList$();
+  }
+
+  watchTransactionListForMonth$(date: Date) {
+    return this.#transaction.watchTransactionListForMonth$(date);
   }
 
   watchTransaction$(transactionId: string) {

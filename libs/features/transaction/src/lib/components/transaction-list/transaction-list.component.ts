@@ -8,11 +8,12 @@ import { ITransaction } from '@expenses-tracker/shared/interfaces';
 
 import { TransactionListItemComponent } from '../transaction-list/transaction-list-item/transaction-list-item.component';
 import { TransactionListService, TransactionListViewTypes } from './transaction-list.service';
+import { TransactionMonthlyViewComponent } from './transaction-monthly-view/transaction-monthly-view.component';
 
 @Component({
   selector: 'expenses-tracker-transaction-list',
   standalone: true,
-  imports: [CommonModule, SegmentedControlComponent, TransactionListItemComponent],
+  imports: [CommonModule, SegmentedControlComponent, TransactionListItemComponent, TransactionMonthlyViewComponent],
   templateUrl: './transaction-list.component.html'
 })
 export class TransactionListComponent implements OnInit, OnDestroy {
@@ -31,9 +32,9 @@ export class TransactionListComponent implements OnInit, OnDestroy {
 
   constructor() {
     // NOTE: @usamazansari: be very careful while using toObservable as it may cause memory leak
-    this.#transactionList$ = toObservable(this.pocketbook)
-      .pipe(switchMap(() => this.#service.fetchTransactionList$()))
-      .subscribe();
+    // this.#transactionList$ = toObservable(this.pocketbook)
+    //   .pipe(switchMap(() => this.#service.fetchTransactionList$()))
+    //   .subscribe();
   }
 
   ngOnInit() {

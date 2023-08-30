@@ -21,12 +21,35 @@ export class FirestoreTransactionService {
   user = computed(() => this.#context.user());
   pocketbook = computed(() => this.#context.pocketbook());
 
+  /**
+   * @deprecated Use monthly fetch API instead
+   */
   watchTransactionList$() {
     return !this.pocketbook()
       ? of([])
       : this.#firestore
           .collection<Partial<ITransaction<Timestamp>>>(Collections.Transaction, ref =>
             ref.where('pocketbookId', '==', this.pocketbook()?.id ?? '').orderBy('transactionDate', 'desc')
+          )
+          .valueChanges()
+          .pipe(
+            map(transactionList => transactionList.map(txn => TransactionMapper(txn as ITransaction<Timestamp>))),
+            catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
+          );
+  }
+
+  watchTransactionListForMonth$(date: Date = new Date()) {
+    const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+    return !this.pocketbook()
+      ? of([])
+      : this.#firestore
+          .collection<Partial<ITransaction<Timestamp>>>(Collections.Transaction, ref =>
+            ref
+              .where('pocketbookId', '==', this.pocketbook()?.id ?? '')
+              .where('transactionDate', '>=', startOfMonth)
+              .where('transactionDate', '<', endOfMonth)
+              .orderBy('transactionDate', 'desc')
           )
           .valueChanges()
           .pipe(

@@ -28,12 +28,39 @@ export class TransactionListService {
     transactionList: { ...INITIAL_FLAGS }
   });
 
+  /**
+   * @deprecated Use monthly fetch API instead
+   */
   fetchTransactionList$() {
     this.flags.update(value => ({
       ...value,
       transactionList: { ...value.transactionList, loading: true }
     }));
     return this.#firestore.watchTransactionList$().pipe(
+      tap(transactionList => {
+        this.transactionList.set(transactionList);
+        this.flags.update(value => ({
+          ...value,
+          transactionList: { ...value.transactionList, loading: false, success: true, fail: false }
+        }));
+      }),
+      catchError(error => {
+        console.log({ error });
+        this.flags.update(value => ({
+          ...value,
+          transactionList: { ...value.transactionList, loading: false, success: false, fail: true }
+        }));
+        return of([] as ITransaction<Date>[]);
+      })
+    );
+  }
+
+  fetchTransactionListForMonth$(date: Date) {
+    this.flags.update(value => ({
+      ...value,
+      transactionList: { ...value.transactionList, loading: true }
+    }));
+    return this.#firestore.watchTransactionListForMonth$(date).pipe(
       tap(transactionList => {
         this.transactionList.set(transactionList);
         this.flags.update(value => ({
