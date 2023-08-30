@@ -22,10 +22,10 @@ export class TransactionListComponent implements OnInit, OnDestroy {
   pocketbook = computed(() => this.#service.pocketbook());
   flags = computed(() => this.#service.flags().transactionList);
   viewOptions: SegmentedControlWrapper<TransactionListViewTypes>[] = [
-    { icon: 'reorder', tooltip: 'List view', value: 'list' },
-    { icon: 'calendar_month', tooltip: 'Monthly view', value: 'monthly' }
+    { icon: 'calendar_month', tooltip: 'Monthly view', value: 'monthly' },
+    { icon: 'calendar_month', tooltip: 'Daily view', value: 'daily' }
   ];
-  viewMode = signal<TransactionListViewTypes>('list');
+  viewMode = signal<TransactionListViewTypes>('monthly');
   #transactionList$!: Subscription;
 
   constructor() {
@@ -51,6 +51,10 @@ export class TransactionListComponent implements OnInit, OnDestroy {
 
   debounceSearch($: KeyboardEvent) {
     this.#searchText$.next(($.target as HTMLInputElement).value);
+  }
+
+  changeViewMode(value: TransactionListViewTypes) {
+    this.viewMode.set(value);
   }
 
   ngOnDestroy(): void {

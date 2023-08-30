@@ -23,7 +23,8 @@
           </div>
           <expenses-tracker-segmented-control
             [dataInput]="viewOptions"
-            [selectedInput]="viewMode()"></expenses-tracker-segmented-control>
+            [selectedInput]="viewMode()"
+            (selectionChange$)="changeViewMode($event)"></expenses-tracker-segmented-control>
         </div>
         <ng-container *ngIf="!transactionList().length; else showTransactionList">
           <div class="flex items-center justify-center gap-2 py-12 cursor-default">
@@ -32,15 +33,30 @@
           </div>
         </ng-container>
         <ng-template #showTransactionList>
-          <div class="grid gap-1 p-0 et-card">
-            <ng-container *ngFor="let transaction of transactionList(); trackBy: transactionListTrack; last as isLast">
-              <expenses-tracker-transaction-list-item [transactionInput]="transaction">
-              </expenses-tracker-transaction-list-item>
-              <ng-container *ngIf="!isLast">
-                <div class="border-b border-color-border-default"></div>
+          <ng-container *ngIf="viewMode() === 'daily'">
+            <div class="grid gap-1 p-0 et-card">
+              <ng-container
+                *ngFor="let transaction of transactionList(); trackBy: transactionListTrack; last as isLast">
+                <expenses-tracker-transaction-list-item [transactionInput]="transaction">
+                </expenses-tracker-transaction-list-item>
+                <ng-container *ngIf="!isLast">
+                  <div class="border-b border-color-border-default"></div>
+                </ng-container>
               </ng-container>
-            </ng-container>
-          </div>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="viewMode() === 'monthly'">
+            <div class="grid gap-1 p-0 et-card">
+              <ng-container
+                *ngFor="let transaction of transactionList(); trackBy: transactionListTrack; last as isLast">
+                <expenses-tracker-transaction-list-item [transactionInput]="transaction">
+                </expenses-tracker-transaction-list-item>
+                <ng-container *ngIf="!isLast">
+                  <div class="border-b border-color-border-default"></div>
+                </ng-container>
+              </ng-container>
+            </div>
+          </ng-container>
         </ng-template>
       </div>
     </ng-container>

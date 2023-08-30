@@ -6,7 +6,7 @@ import { RoutePaths } from '@expenses-tracker/shared/common';
 import { IFlag, INITIAL_FLAGS, ITransaction } from '@expenses-tracker/shared/interfaces';
 import { catchError, of, tap } from 'rxjs';
 
-export type TransactionListViewTypes = 'monthly' | 'list';
+export type TransactionListViewTypes = 'monthly' | 'daily';
 
 export type ComponentFlags = {
   transactionList: IFlag;
