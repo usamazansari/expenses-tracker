@@ -55,6 +55,54 @@ export class TransactionListService {
     );
   }
 
+  fetchTransactionListForDay$(date: Date) {
+    this.flags.update(value => ({
+      ...value,
+      transactionList: { ...value.transactionList, loading: true }
+    }));
+    return this.#firestore.watchTransactionListForDay$(date).pipe(
+      tap(transactionList => {
+        this.transactionList.set(transactionList);
+        this.flags.update(value => ({
+          ...value,
+          transactionList: { ...value.transactionList, loading: false, success: true, fail: false }
+        }));
+      }),
+      catchError(error => {
+        console.log({ error });
+        this.flags.update(value => ({
+          ...value,
+          transactionList: { ...value.transactionList, loading: false, success: false, fail: true }
+        }));
+        return of([] as ITransaction<Date>[]);
+      })
+    );
+  }
+
+  fetchTransactionListForWeek$(date: Date) {
+    this.flags.update(value => ({
+      ...value,
+      transactionList: { ...value.transactionList, loading: true }
+    }));
+    return this.#firestore.watchTransactionListForWeek$(date).pipe(
+      tap(transactionList => {
+        this.transactionList.set(transactionList);
+        this.flags.update(value => ({
+          ...value,
+          transactionList: { ...value.transactionList, loading: false, success: true, fail: false }
+        }));
+      }),
+      catchError(error => {
+        console.log({ error });
+        this.flags.update(value => ({
+          ...value,
+          transactionList: { ...value.transactionList, loading: false, success: false, fail: true }
+        }));
+        return of([] as ITransaction<Date>[]);
+      })
+    );
+  }
+
   fetchTransactionListForMonth$(date: Date) {
     this.flags.update(value => ({
       ...value,

@@ -82,6 +82,14 @@ export class FirestoreService {
     return this.#transaction.watchTransactionList$();
   }
 
+  watchTransactionListForDay$(date: Date) {
+    return this.#transaction.watchTransactionListForDay$(date);
+  }
+
+  watchTransactionListForWeek$(date: Date) {
+    return this.#transaction.watchTransactionListForWeek$(date);
+  }
+
   watchTransactionListForMonth$(date: Date) {
     return this.#transaction.watchTransactionListForMonth$(date);
   }

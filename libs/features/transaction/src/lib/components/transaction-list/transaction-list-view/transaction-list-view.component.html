@@ -1,14 +1,24 @@
 <div class="grid gap-4">
   <div class="flex items-center justify-between">
-    <span class="flex-grow font-bold cursor-default">{{ view() | date: 'MMMM YYYY' }}</span>
+    <div class="flex gap-2">
+      <ng-container *ngIf="viewMode() === 'weekly'; else showDailyOrMonthly">
+        <span class="font-bold cursor-default"> Week {{ view() | date: datePipeArgs() }} </span
+        ><span> {{ weekSunday() | date: 'longDate' }} to {{ weekSaturday() | date: 'longDate' }} </span>
+      </ng-container>
+      <ng-template #showDailyOrMonthly>
+        <span class="font-bold cursor-default">
+          {{ view() | date: datePipeArgs() }}
+        </span>
+      </ng-template>
+    </div>
     <div class="flex items-center gap-1">
-      <button class="w-8 et-button" (click)="changeMonth(-1)" [expensesTrackerTooltip]="previousMonthTooltip">
+      <button class="w-8 et-button" (click)="changeView(-1)" [expensesTrackerTooltip]="previousMonthTooltip">
         <span class="material-icons">chevron_left</span>
       </button>
-      <button class="w-8 et-button" (click)="resetDate()" [expensesTrackerTooltip]="resetTooltip">
+      <button class="w-8 et-button" (click)="resetView()" [expensesTrackerTooltip]="resetTooltip">
         <span class="material-icons">radio_button_checked</span>
       </button>
-      <button class="w-8 et-button" (click)="changeMonth(1)" [expensesTrackerTooltip]="nextMonthTooltip">
+      <button class="w-8 et-button" (click)="changeView(1)" [expensesTrackerTooltip]="nextMonthTooltip">
         <span class="material-icons">chevron_right</span>
       </button>
     </div>
@@ -25,9 +35,14 @@
   <ng-container *ngIf="flags().success">
     <div class="grid gap-1 p-0 et-card">
       <ng-container *ngIf="!transactionList().length; else showTransactionList">
-        <div class="flex items-center justify-center gap-2 py-12 cursor-default">
-          <span class="material-icons text-color-danger-fg">error</span>
-          <span class="text-color-danger-fg">No transactions available for {{ view() | date: 'MMMM YYYY' }}</span>
+        <div class="grid h-60 place-content-center">
+          <div class="flex items-center gap-2 cursor-default">
+            <span class="material-icons text-color-danger-fg">error</span>
+            <span class="text-color-danger-fg">
+              No transactions available for {{ viewMode() === 'weekly' ? 'Week ' : '' }}
+              {{ view() | date: datePipeArgs() }}
+            </span>
+          </div>
         </div>
       </ng-container>
       <ng-template #showTransactionList>
@@ -52,11 +67,13 @@
 </div>
 
 <expenses-tracker-tooltip #previousMonthTooltip>
-  <span>Go to the previous month</span>
+  <span>Go to the previous {{ viewMode() === 'daily' ? 'day' : viewMode() === 'weekly' ? 'week' : 'month' }}</span>
 </expenses-tracker-tooltip>
 <expenses-tracker-tooltip #resetTooltip>
-  <span>Go to the current month</span>
+  <span>
+    Go to {{ viewMode() === 'daily' ? 'today' : viewMode() === 'weekly' ? 'the current week' : 'the current month' }}
+  </span>
 </expenses-tracker-tooltip>
 <expenses-tracker-tooltip #nextMonthTooltip>
-  <span>Go to the next month</span>
+  <span>Go to the next {{ viewMode() === 'daily' ? 'day' : viewMode() === 'weekly' ? 'week' : 'month' }}</span>
 </expenses-tracker-tooltip>

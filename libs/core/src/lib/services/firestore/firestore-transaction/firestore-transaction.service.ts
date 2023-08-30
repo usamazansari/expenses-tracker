@@ -38,6 +38,43 @@ export class FirestoreTransactionService {
           );
   }
 
+  watchTransactionListForDay$(date: Date = new Date()) {
+    return !this.pocketbook()
+      ? of([])
+      : this.#firestore
+          .collection<Partial<ITransaction<Timestamp>>>(Collections.Transaction, ref =>
+            ref
+              .where('pocketbookId', '==', this.pocketbook()?.id ?? '')
+              .where('transactionDate', '==', date)
+              .orderBy('transactionDate', 'desc')
+          )
+          .valueChanges()
+          .pipe(
+            map(transactionList => transactionList.map(txn => TransactionMapper(txn as ITransaction<Timestamp>))),
+            catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
+          );
+  }
+
+  watchTransactionListForWeek$(date: Date = new Date()) {
+    const sunday = new Date(date.getFullYear(), date.getMonth(), date.getDate() + date.getDay() * -1);
+    const saturday = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 6 - date.getDay());
+    return !this.pocketbook()
+      ? of([])
+      : this.#firestore
+          .collection<Partial<ITransaction<Timestamp>>>(Collections.Transaction, ref =>
+            ref
+              .where('pocketbookId', '==', this.pocketbook()?.id ?? '')
+              .where('transactionDate', '>=', sunday)
+              .where('transactionDate', '<', saturday)
+              .orderBy('transactionDate', 'desc')
+          )
+          .valueChanges()
+          .pipe(
+            map(transactionList => transactionList.map(txn => TransactionMapper(txn as ITransaction<Timestamp>))),
+            catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
+          );
+  }
+
   watchTransactionListForMonth$(date: Date = new Date()) {
     const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
     const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);

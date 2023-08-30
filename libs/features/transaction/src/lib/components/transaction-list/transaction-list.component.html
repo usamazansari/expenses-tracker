@@ -18,20 +18,7 @@
           (selectionChange$)="changeViewMode($event)"></expenses-tracker-segmented-control>
       </div>
 
-      <ng-container *ngIf="viewMode() === 'daily'">
-        <div class="grid gap-1 p-0 et-card">
-          <ng-container *ngFor="let transaction of transactionList(); trackBy: transactionListTrack; last as isLast">
-            <expenses-tracker-transaction-list-item [transactionInput]="transaction">
-            </expenses-tracker-transaction-list-item>
-            <ng-container *ngIf="!isLast">
-              <div class="border-b border-color-border-default"></div>
-            </ng-container>
-          </ng-container>
-        </div>
-      </ng-container>
-      <ng-container *ngIf="viewMode() === 'monthly'">
-        <expenses-tracker-transaction-monthly-view></expenses-tracker-transaction-monthly-view>
-      </ng-container>
+      <expenses-tracker-transaction-list-view [viewModeInput]="viewMode()"></expenses-tracker-transaction-list-view>
     </div>
   </ng-container>
 </div>

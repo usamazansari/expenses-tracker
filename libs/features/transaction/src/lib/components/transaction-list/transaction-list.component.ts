@@ -1,19 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
-import { Subject, Subscription, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+import { Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 
 import { SegmentedControlComponent, SegmentedControlWrapper } from '@expenses-tracker/shared/common';
 import { ITransaction } from '@expenses-tracker/shared/interfaces';
 
 import { TransactionListItemComponent } from '../transaction-list/transaction-list-item/transaction-list-item.component';
+import { TransactionListViewComponent } from './transaction-list-view/transaction-list-view.component';
 import { TransactionListService, TransactionListViewTypes } from './transaction-list.service';
-import { TransactionMonthlyViewComponent } from './transaction-monthly-view/transaction-monthly-view.component';
 
 @Component({
   selector: 'expenses-tracker-transaction-list',
   standalone: true,
-  imports: [CommonModule, SegmentedControlComponent, TransactionListItemComponent, TransactionMonthlyViewComponent],
+  imports: [CommonModule, SegmentedControlComponent, TransactionListItemComponent, TransactionListViewComponent],
   templateUrl: './transaction-list.component.html'
 })
 export class TransactionListComponent implements OnInit, OnDestroy {
@@ -24,8 +23,8 @@ export class TransactionListComponent implements OnInit, OnDestroy {
   flags = computed(() => this.#service.flags().transactionList);
   viewOptions: SegmentedControlWrapper<TransactionListViewTypes>[] = [
     { icon: 'calendar_view_month', tooltip: 'Monthly view', value: 'monthly' },
-    { icon: 'calendar_view_week', tooltip: 'Weekly view', value: 'weekly', disabled: true },
-    { icon: 'calendar_view_day', tooltip: 'Daily view', value: 'daily', disabled: true }
+    { icon: 'calendar_view_week', tooltip: 'Weekly view', value: 'weekly' },
+    { icon: 'calendar_view_day', tooltip: 'Daily view', value: 'daily' }
   ];
   viewMode = signal<TransactionListViewTypes>('monthly');
   #transactionList$!: Subscription;
