@@ -38,7 +38,7 @@
         <div class="grid h-60 place-content-center">
           <div class="flex items-center gap-2 cursor-default">
             <span class="material-icons text-color-danger-fg">error</span>
-            <span class="text-color-danger-fg">
+            <span class="font-bold text-color-danger-fg">
               No transactions available for {{ viewMode() === 'weekly' ? 'Week ' : '' }}
               {{ view() | date: datePipeArgs() }}
             </span>
