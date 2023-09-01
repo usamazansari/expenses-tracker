@@ -34,7 +34,7 @@ export class TransactionListService {
   fetchTransactionList$() {
     this.flags.update(value => ({
       ...value,
-      transactionList: { ...value.transactionList, loading: true }
+      transactionList: { ...value.transactionList, loading: true, success: false, fail: false }
     }));
     return this.#firestore.watchTransactionList$().pipe(
       tap(transactionList => {
@@ -58,7 +58,7 @@ export class TransactionListService {
   fetchTransactionListForDay$(date: Date) {
     this.flags.update(value => ({
       ...value,
-      transactionList: { ...value.transactionList, loading: true }
+      transactionList: { ...value.transactionList, loading: true, success: false, fail: false }
     }));
     return this.#firestore.watchTransactionListForDay$(date).pipe(
       tap(transactionList => {
@@ -82,7 +82,7 @@ export class TransactionListService {
   fetchTransactionListForWeek$(date: Date) {
     this.flags.update(value => ({
       ...value,
-      transactionList: { ...value.transactionList, loading: true }
+      transactionList: { ...value.transactionList, loading: true, success: false, fail: false }
     }));
     return this.#firestore.watchTransactionListForWeek$(date).pipe(
       tap(transactionList => {
@@ -106,7 +106,7 @@ export class TransactionListService {
   fetchTransactionListForMonth$(date: Date) {
     this.flags.update(value => ({
       ...value,
-      transactionList: { ...value.transactionList, loading: true }
+      transactionList: { ...value.transactionList, loading: true, success: false, fail: false }
     }));
     return this.#firestore.watchTransactionListForMonth$(date).pipe(
       tap(transactionList => {
