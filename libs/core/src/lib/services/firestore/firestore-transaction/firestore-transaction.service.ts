@@ -34,7 +34,10 @@ export class FirestoreTransactionService {
           .valueChanges()
           .pipe(
             map(transactionList => transactionList.map(txn => TransactionMapper(txn as ITransaction<Timestamp>))),
-            catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
+            catchError(error => {
+              console.error({ error });
+              return throwError(() => new Error('Error fetching transaction list'));
+            })
           );
   }
 
@@ -51,7 +54,10 @@ export class FirestoreTransactionService {
           .valueChanges()
           .pipe(
             map(transactionList => transactionList.map(txn => TransactionMapper(txn as ITransaction<Timestamp>))),
-            catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
+            catchError(error => {
+              console.error({ error });
+              return throwError(() => new Error('Error fetching transaction for day'));
+            })
           );
   }
 
@@ -71,7 +77,10 @@ export class FirestoreTransactionService {
           .valueChanges()
           .pipe(
             map(transactionList => transactionList.map(txn => TransactionMapper(txn as ITransaction<Timestamp>))),
-            catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
+            catchError(error => {
+              console.error({ error });
+              return throwError(() => new Error('Error fetching transaction for week'));
+            })
           );
   }
 
@@ -91,7 +100,10 @@ export class FirestoreTransactionService {
           .valueChanges()
           .pipe(
             map(transactionList => transactionList.map(txn => TransactionMapper(txn as ITransaction<Timestamp>))),
-            catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
+            catchError(error => {
+              console.error({ error });
+              return throwError(() => new Error('Error fetching transaction for month'));
+            })
           );
   }
 
@@ -135,7 +147,7 @@ export class FirestoreTransactionService {
                 description,
                 transactionDate,
                 pocketbookId: this.pocketbook()?.id
-              }) as ITransaction
+              } as ITransaction)
           )
         );
   }
