@@ -2,8 +2,15 @@
   <div class="flex items-center justify-between">
     <div class="flex gap-2">
       <ng-container *ngIf="viewMode() === 'weekly'; else showDailyOrMonthly">
-        <span class="font-bold cursor-default"> Week {{ view() | date: datePipeArgs() }} </span
-        ><span> {{ weekSunday() | date: 'longDate' }} to {{ weekSaturday() | date: 'longDate' }} </span>
+        <div class="flex items-center gap-2">
+          <span class="font-bold cursor-default"> Week {{ view() | date: datePipeArgs() }} </span>
+          <span class="hidden cursor-default md:flex">
+            {{ weekSunday() | date: 'MMMM dd' }} to {{ weekSaturday() | date: 'MMMM dd' }}
+          </span>
+          <span class="flex cursor-default material-icons md:hidden" [expensesTrackerTooltip]="weekInformationTooltip">
+            info
+          </span>
+        </div>
       </ng-container>
       <ng-template #showDailyOrMonthly>
         <span class="font-bold cursor-default">
@@ -46,6 +53,8 @@
         </div>
       </ng-container>
       <ng-template #showTransactionList>
+        <!-- TODO: @usamazansari: Add day separator -->
+        <!-- <ng-container *ngIf="viewMode() === 'daily'; else showDaysSeparatedView"> -->
         <ng-container *ngFor="let transaction of transactionList(); trackBy: transactionListTrack; last as isLast">
           <expenses-tracker-transaction-list-item [transactionInput]="transaction">
           </expenses-tracker-transaction-list-item>
@@ -53,6 +62,16 @@
             <div class="border-b border-color-border-default"></div>
           </ng-container>
         </ng-container>
+        <!-- </ng-container>
+        <ng-template #showDaysSeparatedView>
+          <ng-container *ngFor="let transaction of transactionList(); trackBy: transactionListTrack; last as isLast">
+            <expenses-tracker-transaction-list-item [transactionInput]="transaction">
+            </expenses-tracker-transaction-list-item>
+            <ng-container *ngIf="!isLast">
+              <div class="border-b border-color-border-default"></div>
+            </ng-container>
+          </ng-container>
+        </ng-template> -->
       </ng-template>
     </div>
   </ng-container>
@@ -66,6 +85,9 @@
   </ng-container>
 </div>
 
+<expenses-tracker-tooltip #weekInformationTooltip>
+  <span>{{ weekSunday() | date: 'MMMM dd' }} to {{ weekSaturday() | date: 'MMMM dd' }}</span>
+</expenses-tracker-tooltip>
 <expenses-tracker-tooltip #previousMonthTooltip>
   <span>Go to the previous {{ viewMode() === 'daily' ? 'day' : viewMode() === 'weekly' ? 'week' : 'month' }}</span>
 </expenses-tracker-tooltip>
