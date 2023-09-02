@@ -27,14 +27,6 @@ export class PocketbookListItemService {
     deletePocketbook: INITIAL_FLAGS
   });
 
-  #watchPocketbookOwner$(owner: string) {
-    return this.#firestore.watchPocketbookOwner$(owner);
-  }
-
-  #watchPocketbookCollaboratorList$(collaboratorList: string[]) {
-    return this.#firestore.watchPocketbookCollaboratorList$(collaboratorList);
-  }
-
   resetPocketbookContributors() {
     this.owner.set(null);
     this.collaboratorList.set([]);

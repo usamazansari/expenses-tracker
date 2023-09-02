@@ -23,7 +23,7 @@ export class TooltipDirective implements AfterViewInit {
   #portal = signal<TemplatePortal<unknown> | null>(null);
   #id = `expensesTrackerTooltip-${id++}`;
 
-  @Input('expensesTrackerTooltip') tooltip!: TooltipComponent;
+  @Input('expensesTrackerTooltip') tooltip!: TooltipComponent | null;
 
   #overlay = inject(Overlay);
   #elementRef = inject(ElementRef);
@@ -40,10 +40,12 @@ export class TooltipDirective implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.tooltip.id = this.#id;
-    this.tooltip.tooltipClose$.subscribe(() => {
-      this.#closeTooltip();
-    });
+    if (this.tooltip) {
+      this.tooltip.id = this.#id;
+      this.tooltip.tooltipClose$.subscribe(() => {
+        this.#closeTooltip();
+      });
+    }
   }
 
   #openTooltip(): void {
@@ -60,7 +62,7 @@ export class TooltipDirective implements AfterViewInit {
   }
 
   #computePosition(): ConnectedPosition {
-    switch (this.tooltip.tooltipPosition) {
+    switch (this.tooltip?.tooltipPosition) {
       case 'above':
       default:
         return {
@@ -96,8 +98,8 @@ export class TooltipDirective implements AfterViewInit {
   }
 
   #createOverlay() {
-    if (!this.#overlayRef()) {
-      this.#portal.set(new TemplatePortal(this.tooltip.tooltipTemplate, this.#viewContainerRef));
+    if (!this.#overlayRef() && this.tooltip) {
+      this.#portal.set(new TemplatePortal(this.tooltip?.tooltipTemplate, this.#viewContainerRef));
       const overlayState = new OverlayConfig({
         positionStrategy: this.#overlay
           .position()

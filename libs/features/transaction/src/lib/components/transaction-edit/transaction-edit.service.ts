@@ -1,18 +1,11 @@
 import { Location } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, map, of, switchMap } from 'rxjs';
+import { BehaviorSubject, map, of, switchMap } from 'rxjs';
 
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
 import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
-import { IFlag, INITIAL_FLAGS, ITransaction, TransactionDirection } from '@expenses-tracker/shared/interfaces';
-
-export interface ITransactionEditForm {
-  category: string | null;
-  amount: number | null;
-  direction: TransactionDirection | null;
-  message: string | null;
-}
+import { IFlag, INITIAL_FLAGS, ITransaction } from '@expenses-tracker/shared/interfaces';
 
 export type ComponentFlags = {
   editTransaction: IFlag;
@@ -54,13 +47,15 @@ export class TransactionEditService {
       .pipe(switchMap(txn => (!txn ? this.#firestore.watchTransaction$(transactionId ?? '') : of(txn))));
   }
 
-  patchValues$(): Observable<ITransactionEditForm> {
+  patchValues$() {
     return this.watchTransaction$().pipe(
       map(txn => ({
         category: txn?.category ?? null,
         amount: txn?.amount ?? null,
-        direction: txn?.direction ?? null,
-        message: txn?.message ?? null
+        direction: txn?.transactionType ?? null,
+        message: txn?.description ?? null,
+        timestamp: txn?.transactionDate ?? null,
+        paymentMode: txn?.paymentMode ?? null
       }))
     );
   }

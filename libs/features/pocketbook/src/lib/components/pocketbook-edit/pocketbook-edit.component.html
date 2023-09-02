@@ -1,7 +1,8 @@
 <div
   class="grid grid-cols-1 grid-rows-1 gap-2 p-4 border rounded-lg justify-items-center text-et-color-fg-default bg-et-layer-alternate border-et-color-border-default">
   <div class="flex items-center justify-center gap-2 py-12">
-    <span class="text-3xl text-et-color-accent-emphasis">Edit Pocketbook</span>
+    <span class="text-3xl material-icons text-color-accent-emphasis">account_balance_wallet</span>
+    <span class="text-3xl font-bold text-et-color-accent-emphasis">Edit Pocketbook</span>
   </div>
   <div class="grid min-w-[24rem]">
     <form [formGroup]="formGroup" (ngSubmit)="editPocketbook()" class="max-w-[24rem]">
@@ -11,11 +12,7 @@
             <span class="material-icons min-w-[24px]">book</span>
 
             <label>Name</label>
-            <input
-              formControlName="name"
-              type="text"
-              placeholder="Household Pocketbook"
-              required />
+            <input formControlName="name" type="text" placeholder="Household Pocketbook" required />
           </div>
 
           <ng-container *ngIf="userList$ | async as userList">

@@ -2,7 +2,7 @@ import { Injectable, computed, inject } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Timestamp } from '@angular/fire/firestore';
-import { catchError, from, map, of, switchMap, throwError } from 'rxjs';
+import { catchError, from, map, of, throwError } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
 import { ITransaction } from '@expenses-tracker/shared/interfaces';
@@ -21,17 +21,89 @@ export class FirestoreTransactionService {
   user = computed(() => this.#context.user());
   pocketbook = computed(() => this.#context.pocketbook());
 
+  /**
+   * @deprecated Use monthly fetch API instead
+   */
   watchTransactionList$() {
     return !this.pocketbook()
       ? of([])
       : this.#firestore
           .collection<Partial<ITransaction<Timestamp>>>(Collections.Transaction, ref =>
-            ref.where('pocketbookId', '==', this.pocketbook()?.id ?? '').orderBy('timestamp', 'desc')
+            ref.where('pocketbookId', '==', this.pocketbook()?.id ?? '').orderBy('transactionDate', 'desc')
           )
           .valueChanges()
           .pipe(
             map(transactionList => transactionList.map(txn => TransactionMapper(txn as ITransaction<Timestamp>))),
-            catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
+            catchError(error => {
+              console.error({ error });
+              return throwError(() => new Error('Error fetching transaction list'));
+            })
+          );
+  }
+
+  watchTransactionListForDay$(date: Date = new Date()) {
+    return !this.pocketbook()
+      ? of([])
+      : this.#firestore
+          .collection<Partial<ITransaction<Timestamp>>>(Collections.Transaction, ref =>
+            ref
+              .where('pocketbookId', '==', this.pocketbook()?.id ?? '')
+              .where('transactionDate', '==', date)
+              .orderBy('transactionDate', 'desc')
+          )
+          .valueChanges()
+          .pipe(
+            map(transactionList => transactionList.map(txn => TransactionMapper(txn as ITransaction<Timestamp>))),
+            catchError(error => {
+              console.error({ error });
+              return throwError(() => new Error('Error fetching transaction for day'));
+            })
+          );
+  }
+
+  watchTransactionListForWeek$(date: Date = new Date()) {
+    const sunday = new Date(date.getFullYear(), date.getMonth(), date.getDate() + date.getDay() * -1);
+    const saturday = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 6 - date.getDay());
+    return !this.pocketbook()
+      ? of([])
+      : this.#firestore
+          .collection<Partial<ITransaction<Timestamp>>>(Collections.Transaction, ref =>
+            ref
+              .where('pocketbookId', '==', this.pocketbook()?.id ?? '')
+              .where('transactionDate', '>=', sunday)
+              .where('transactionDate', '<=', saturday)
+              .orderBy('transactionDate', 'desc')
+          )
+          .valueChanges()
+          .pipe(
+            map(transactionList => transactionList.map(txn => TransactionMapper(txn as ITransaction<Timestamp>))),
+            catchError(error => {
+              console.error({ error });
+              return throwError(() => new Error('Error fetching transaction for week'));
+            })
+          );
+  }
+
+  watchTransactionListForMonth$(date: Date = new Date()) {
+    const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+    return !this.pocketbook()
+      ? of([])
+      : this.#firestore
+          .collection<Partial<ITransaction<Timestamp>>>(Collections.Transaction, ref =>
+            ref
+              .where('pocketbookId', '==', this.pocketbook()?.id ?? '')
+              .where('transactionDate', '>=', startOfMonth)
+              .where('transactionDate', '<', endOfMonth)
+              .orderBy('transactionDate', 'desc')
+          )
+          .valueChanges()
+          .pipe(
+            map(transactionList => transactionList.map(txn => TransactionMapper(txn as ITransaction<Timestamp>))),
+            catchError(error => {
+              console.error({ error });
+              return throwError(() => new Error('Error fetching transaction for month'));
+            })
           );
   }
 
@@ -45,22 +117,23 @@ export class FirestoreTransactionService {
       );
   }
 
-  createTransaction$({ amount, category, direction, message }: Partial<ITransaction>) {
+  createTransaction$({ amount, category, transactionType, description, paymentMode, transactionDate }: ITransaction) {
     const docId = this.#firestore.createId();
-    const timestamp = new Date();
+
     return !this.pocketbook()
       ? throwError(() => new Error('No pocketbook set in context'))
       : from(
           this.#firestore
-            .collection<Partial<ITransaction>>(Collections.Transaction)
+            .collection<ITransaction>(Collections.Transaction)
             .doc(docId)
             .set({
               id: docId,
-              timestamp,
-              amount: amount ?? 0,
-              category: category ?? '',
-              direction: direction ?? 'expense',
-              message: message ?? '',
+              transactionDate,
+              amount,
+              category,
+              transactionType,
+              description,
+              paymentMode,
               pocketbookId: this.pocketbook()?.id ?? ''
             })
         ).pipe(
@@ -69,12 +142,12 @@ export class FirestoreTransactionService {
               ({
                 amount,
                 category,
-                direction,
+                transactionType,
                 id: docId,
-                message,
-                timestamp,
+                description,
+                transactionDate,
                 pocketbookId: this.pocketbook()?.id
-              } as ITransaction)
+              }) as ITransaction
           )
         );
   }

@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
-import { FormControlExtras, FormGroupTypeGenerator } from '@expenses-tracker/shared/interfaces';
+import { FormGroupTypeGenerator } from '@expenses-tracker/shared/interfaces';
 
 import { Subscription } from 'rxjs';
 import { DisplayNameEditForm, ProfileEditService } from '../profile-edit.service';
@@ -17,11 +17,6 @@ export class ProfileEditDisplayNameComponent implements OnInit, OnDestroy {
   formGroup!: FormGroup<FormGroupTypeGenerator<DisplayNameEditForm>>;
   #fb = inject(FormBuilder);
   #service = inject(ProfileEditService);
-  displayName = signal<FormControlExtras<DisplayNameEditForm, 'displayName'>>({
-    name: 'displayName',
-    value: '',
-    error: { flag: false, message: '' }
-  });
   #editDisplayName$!: Subscription;
   user = computed(() => this.#service.user());
   flags = computed(() => this.#service.flags().edit.displayName);

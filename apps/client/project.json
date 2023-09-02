@@ -57,8 +57,7 @@
       },
       "defaultConfiguration": "development",
       "options": {
-        "port": 8080,
-        "hmr": true
+        "port": 8080
       }
     },
     "extract-i18n": {

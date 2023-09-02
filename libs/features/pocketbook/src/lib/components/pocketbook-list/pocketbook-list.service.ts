@@ -36,7 +36,7 @@ export class PocketbookListService {
         }));
       }),
       catchError(error => {
-        console.log({ error });
+        console.error({ error });
         this.flags.update(value => ({
           ...value,
           pocketbookList: { ...value.pocketbookList, loading: false, success: false, fail: true }

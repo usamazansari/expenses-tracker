@@ -124,7 +124,7 @@ export class FirestorePocketbookService {
                 transactionList,
                 createdAt,
                 balance: 0
-              } as IPocketbook)
+              }) as IPocketbook
           ),
           catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
         );
@@ -137,6 +137,10 @@ export class FirestorePocketbookService {
         .doc(pocketbook?.id ?? '')
         .update({ ...pocketbook })
     ).pipe(
+      map(() => {
+        this.#context.setPocketbook({ ...(this.#context.pocketbook() as IPocketbook), ...pocketbook });
+        return this.#context.pocketbook();
+      }),
       catchError(({ code }: FirebaseError) => {
         console.error({ code });
         return throwError(() => new Error(this.#error.getError(code)));
