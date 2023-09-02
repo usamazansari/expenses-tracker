@@ -76,9 +76,7 @@ export class FirestoreTransactionService {
           )
           .valueChanges()
           .pipe(
-            map(transactionList => {
-              return transactionList.map(txn => TransactionMapper(txn as ITransaction<Timestamp>));
-            }),
+            map(transactionList => transactionList.map(txn => TransactionMapper(txn as ITransaction<Timestamp>))),
             catchError(error => {
               console.error({ error });
               return throwError(() => new Error('Error fetching transaction for week'));
