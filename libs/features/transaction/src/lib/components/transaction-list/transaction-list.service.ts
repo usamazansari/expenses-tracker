@@ -45,7 +45,7 @@ export class TransactionListService {
         }));
       }),
       catchError(error => {
-        console.log({ error });
+        console.error({ error });
         this.flags.update(value => ({
           ...value,
           transactionList: { ...value.transactionList, loading: false, success: false, fail: true }
@@ -69,7 +69,7 @@ export class TransactionListService {
         }));
       }),
       catchError(error => {
-        console.log({ error });
+        console.error({ error });
         this.flags.update(value => ({
           ...value,
           transactionList: { ...value.transactionList, loading: false, success: false, fail: true }
@@ -93,7 +93,7 @@ export class TransactionListService {
         }));
       }),
       catchError(error => {
-        console.log({ error });
+        console.error({ error });
         this.flags.update(value => ({
           ...value,
           transactionList: { ...value.transactionList, loading: false, success: false, fail: true }
@@ -117,7 +117,7 @@ export class TransactionListService {
         }));
       }),
       catchError(error => {
-        console.log({ error });
+        console.error({ error });
         this.flags.update(value => ({
           ...value,
           transactionList: { ...value.transactionList, loading: false, success: false, fail: true }
