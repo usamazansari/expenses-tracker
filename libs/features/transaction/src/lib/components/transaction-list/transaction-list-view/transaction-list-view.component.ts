@@ -44,21 +44,30 @@ export class TransactionListViewComponent implements OnDestroy {
 
   constructor() {
     this.#transactionList$ = toObservable(this.view).subscribe(() => {
-      if (this.viewMode() === 'weekly') {
-        this.#computeWeek();
-      }
-      this.viewMode() === 'daily'
-        ? this.#fetchTransactionListForDay$()
-        : this.viewMode() === 'weekly'
-        ? this.#fetchTransactionListForWeek$()
-        : this.#fetchTransactionListForMonth$();
+      this.#fetchTransactionList();
     });
-    this.#viewMode$ = toObservable(this.viewMode).subscribe(viewMode => {
-      if (this.viewMode() === 'weekly') {
-        this.#computeWeek();
-      }
-      this.datePipeArgs.set(this.#datePipeArgsMap.get(viewMode) ?? 'MMMM YYYY');
+    this.#viewMode$ = toObservable(this.viewMode).subscribe(() => {
+      this.#updateViewMode();
     });
+  }
+
+  #updateViewMode() {
+    if (this.viewMode() === 'weekly') {
+      this.#computeWeek();
+    }
+    this.datePipeArgs.set(this.#datePipeArgsMap.get(this.viewMode()) ?? 'MMMM YYYY');
+    this.#fetchTransactionList();
+  }
+
+  #fetchTransactionList() {
+    if (this.viewMode() === 'weekly') {
+      this.#computeWeek();
+    }
+    this.viewMode() === 'daily'
+      ? this.#fetchTransactionListForDay$()
+      : this.viewMode() === 'weekly'
+      ? this.#fetchTransactionListForWeek$()
+      : this.#fetchTransactionListForMonth$();
   }
 
   #fetchTransactionListForDay$() {
