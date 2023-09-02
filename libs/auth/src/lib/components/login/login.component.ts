@@ -3,10 +3,9 @@ import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
-import { FormGroupTypeGenerator, FormControlExtras, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
+import { FormGroupTypeGenerator, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
 import { ComponentFlags, ComponentForm, LoginService } from './login.service';
-import { controlStateValidator } from '@expenses-tracker/shared/common';
 
 @Component({
   selector: 'expenses-tracker-login',
@@ -21,49 +20,18 @@ export class LoginComponent implements OnInit, OnDestroy {
   #fb = inject(FormBuilder);
   #service = inject(LoginService);
 
-  email = signal<FormControlExtras<ComponentForm, 'email'>>({
-    name: 'email',
-    value: '',
-    error: {
-      flag: false,
-      message: ''
-    }
-  });
-
-  password = signal<FormControlExtras<ComponentForm, 'password'>>({
-    name: 'password',
-    value: '',
-    error: {
-      flag: false,
-      message: ''
-    }
-  });
-
   flags = signal<ComponentFlags>({ login: INITIAL_FLAGS });
 
   ngOnInit() {
     this.formGroup = this.#fb.group<FormGroupTypeGenerator<ComponentForm>>({
       email: this.#fb.control<string>('', {
-        validators: [Validators.required, Validators.email]
+        validators: [Validators.required, Validators.email],
+        updateOn: 'change'
       }) as FormControl<string>,
       password: this.#fb.control<string>('', {
-        validators: [Validators.required]
+        validators: [Validators.required],
+        updateOn: 'change'
       }) as FormControl<string>
-    });
-
-    this.formGroup.valueChanges.subscribe(() => {
-      const { flag: emailFlag, message: emailMessage } = controlStateValidator(this.formGroup, this.email());
-      const { flag: passwordFlag, message: passwordMessage } = controlStateValidator(this.formGroup, this.password());
-      this.email.update(props => ({
-        ...props,
-        value: this.formGroup.controls.email.value,
-        error: { flag: emailFlag, message: emailMessage }
-      }));
-      this.password.update(props => ({
-        ...props,
-        value: this.formGroup.controls.password.value,
-        error: { flag: passwordFlag, message: passwordMessage }
-      }));
     });
   }
 
@@ -86,21 +54,6 @@ export class LoginComponent implements OnInit, OnDestroy {
           }));
         }
       });
-    }
-  }
-
-  checkControl(formControl: FormControlExtras<ComponentForm, keyof ComponentForm>) {
-    const { flag, message } = controlStateValidator(this.formGroup, formControl);
-    switch (formControl.name) {
-      case 'email':
-        this.email.update(props => ({ ...props, error: { flag, message } }));
-        break;
-      case 'password':
-        this.password.update(props => ({ ...props, error: { flag, message } }));
-        break;
-
-      default:
-        break;
     }
   }
 

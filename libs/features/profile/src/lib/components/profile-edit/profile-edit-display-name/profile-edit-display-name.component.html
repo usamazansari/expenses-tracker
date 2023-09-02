@@ -15,9 +15,6 @@
               type="text"
               placeholder="John Doe"
               [value]="user()?.displayName" />
-            <ng-container *ngIf="displayName().error.flag">
-              <span class="et-form-field-input-error-message">{{ displayName().error.message }}</span>
-            </ng-container>
           </div>
         </div>
 

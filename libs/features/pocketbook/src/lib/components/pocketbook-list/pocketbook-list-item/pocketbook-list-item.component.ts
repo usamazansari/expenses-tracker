@@ -45,7 +45,8 @@ export class PocketbookListItemComponent implements OnDestroy {
   showContributors() {
     const dialogRef = this.#dialog.open(PocketbookContributorsDialogComponent, {
       data: this.pocketbook(),
-      disableClose: true
+      disableClose: true,
+      backdropClass: ['bg-color-primer-canvas-backdrop', 'backdrop-blur-[2px]']
     });
     this.#contributorsDialogSubscription$ = dialogRef.closed.subscribe();
   }

@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnDestroy, OnInit, computed, inject } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
-import { FormControlExtras, FormGroupTypeGenerator } from '@expenses-tracker/shared/interfaces';
+import { FormGroupTypeGenerator } from '@expenses-tracker/shared/interfaces';
 
 import { PasswordEditForm, ProfileEditService } from '../profile-edit.service';
 
@@ -17,30 +17,27 @@ export class ProfileEditPasswordComponent implements OnInit, OnDestroy {
   formGroup!: FormGroup<FormGroupTypeGenerator<PasswordEditForm>>;
   #fb = inject(FormBuilder);
   #service = inject(ProfileEditService);
-  oldPassword = signal<FormControlExtras<PasswordEditForm, 'oldPassword'>>({
-    name: 'oldPassword',
-    value: '',
-    error: { flag: false, message: '' }
-  });
-  newPassword = signal<FormControlExtras<PasswordEditForm, 'newPassword'>>({
-    name: 'newPassword',
-    value: '',
-    error: { flag: false, message: '' }
-  });
-  confirmNewPassword = signal<FormControlExtras<PasswordEditForm, 'confirmNewPassword'>>({
-    name: 'confirmNewPassword',
-    value: '',
-    error: { flag: false, message: '' }
-  });
   #editPassword$!: Subscription;
   flags = computed(() => this.#service.flags().edit.password);
 
   ngOnInit() {
     this.formGroup = this.#fb.group<FormGroupTypeGenerator<PasswordEditForm>>({
-      oldPassword: this.#fb.control<string>('') as FormControl<string>,
-      newPassword: this.#fb.control<string>('') as FormControl<string>,
-      confirmNewPassword: this.#fb.control<string>('') as FormControl<string>
+      oldPassword: this.#fb.control<string>('', {
+        // TODO: @usamazansari: add a validator to check if the old password is correct
+        validators: [Validators.required],
+        updateOn: 'change'
+      }) as FormControl<string>,
+      newPassword: this.#fb.control<string>('', {
+        validators: [Validators.required],
+        updateOn: 'change'
+      }) as FormControl<string>,
+      confirmNewPassword: this.#fb.control<string>('', {
+        validators: [Validators.required],
+        updateOn: 'change'
+      }) as FormControl<string>
     });
+
+    // TODO: @usamazansari: Validate newPassword with confirmNewPassword
   }
 
   editPassword() {
