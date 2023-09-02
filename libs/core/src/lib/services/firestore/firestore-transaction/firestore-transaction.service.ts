@@ -71,12 +71,14 @@ export class FirestoreTransactionService {
             ref
               .where('pocketbookId', '==', this.pocketbook()?.id ?? '')
               .where('transactionDate', '>=', sunday)
-              .where('transactionDate', '<', saturday)
+              .where('transactionDate', '<=', saturday)
               .orderBy('transactionDate', 'desc')
           )
           .valueChanges()
           .pipe(
-            map(transactionList => transactionList.map(txn => TransactionMapper(txn as ITransaction<Timestamp>))),
+            map(transactionList => {
+              return transactionList.map(txn => TransactionMapper(txn as ITransaction<Timestamp>));
+            }),
             catchError(error => {
               console.error({ error });
               return throwError(() => new Error('Error fetching transaction for week'));
@@ -147,7 +149,7 @@ export class FirestoreTransactionService {
                 description,
                 transactionDate,
                 pocketbookId: this.pocketbook()?.id
-              } as ITransaction)
+              }) as ITransaction
           )
         );
   }
