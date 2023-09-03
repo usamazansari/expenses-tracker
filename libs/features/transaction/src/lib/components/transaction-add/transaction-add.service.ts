@@ -1,8 +1,9 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { catchError, map, switchMap, tap, throwError } from 'rxjs';
 
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
-import { NotificationService } from '@expenses-tracker/shared/common';
+import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
 import { IFlag, INITIAL_FLAGS, ITransaction } from '@expenses-tracker/shared/interfaces';
 
 export type ComponentFlags = {
@@ -16,6 +17,7 @@ export class TransactionAddService {
   #context = inject(ContextService);
   #firestore = inject(FirestoreService);
   #notification = inject(NotificationService);
+  #router = inject(Router);
   pocketbook = computed(() => this.#context.pocketbook());
   flags = signal<ComponentFlags>({ addTransaction: INITIAL_FLAGS });
 
@@ -60,7 +62,12 @@ export class TransactionAddService {
     );
   }
 
-  cancelAddTransaction() {
-    this.resetFlags();
+  gotoTransactionList() {
+    this.#router.navigate([
+      RoutePaths.Pocketbook,
+      this.pocketbook()?.id,
+      RoutePaths.Transaction,
+      RoutePaths.EntityList
+    ]);
   }
 }
