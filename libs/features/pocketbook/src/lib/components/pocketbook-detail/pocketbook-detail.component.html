@@ -3,7 +3,7 @@
     <span class="text-3xl material-icons text-color-accent-emphasis">account_balance_wallet</span>
     <span class="text-3xl font-bold cursor-default text-color-accent-emphasis">{{ pocketbook()?.name }}</span>
   </div>
-  <div class="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_2fr]">
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
     <div class="grid place-content-center">
       <div class="grid grid-cols-2 gap-4 place-content-center">
         <ng-container *ngIf="flags().contributorsFetch.loading">
@@ -37,25 +37,20 @@
         </ng-container>
       </div>
     </div>
-    <div class="grid grid-cols-2">
-      <div class="flex items-center justify-center">
-        <span
-          class="text-3xl font-bold"
-          [ngClass]="{
-            'text-color-danger-fg': (pocketbook()?.balance || 0) <= 0,
-            'text-color-success-fg': (pocketbook()?.balance || 0) > 0
-          }">
-          {{ pocketbook()?.balance | currency: 'EUR' }}
-        </span>
-      </div>
-      <ng-container *ngIf="true">
-        <div class="flex justify-end">
-          <button type="button" class="et-button et-button-primary" (click)="addTransaction()">
-            <span class="material-icons">add</span>
-            <span class="">Add Transaction</span>
-          </button>
-        </div>
-      </ng-container>
+
+    <div class="flex items-center justify-center">
+      <span
+        class="text-3xl font-bold"
+        [ngClass]="{
+          'text-color-danger-fg': (pocketbook()?.balance || 0) <= 0,
+          'text-color-success-fg': (pocketbook()?.balance || 0) > 0
+        }">
+        {{ pocketbook()?.balance | currency: 'EUR' }}
+      </span>
+    </div>
+
+    <div>
+      <!-- TODO: @usamazansari: Add income and expense from epoch or any other shortcut or useful feature here -->
     </div>
   </div>
   <div class="grid grid-cols-1 md:grid-cols-[1fr_0fr_5fr] p-4">

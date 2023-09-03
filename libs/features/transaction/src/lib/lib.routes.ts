@@ -1,10 +1,6 @@
 import { Route } from '@angular/router';
 
-import {
-  TransactionListComponent,
-  TransactionAddComponent,
-  TransactionEditComponent
-} from './components';
+import { TransactionListComponent, TransactionAddComponent, TransactionEditComponent } from './components';
 
 export const transactionRoutes: Route[] = [
   { path: 'list', component: TransactionListComponent },

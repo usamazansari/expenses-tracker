@@ -1,4 +1,4 @@
-import { Dialog, DialogModule } from '@angular/cdk/dialog';
+import { DialogModule } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, computed, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
@@ -7,8 +7,6 @@ import { User } from 'firebase/auth';
 import { Subscription, switchMap } from 'rxjs';
 
 import { AvatarComponent, ExtractInitialsPipe } from '@expenses-tracker/shared/common';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { TransactionAddComponent } from '@expenses-tracker/features/transaction';
 
 import { PocketbookDetailService } from './pocketbook-detail.service';
 
@@ -20,7 +18,6 @@ import { PocketbookDetailService } from './pocketbook-detail.service';
 })
 export class PocketbookDetailComponent implements OnDestroy {
   #service = inject(PocketbookDetailService);
-  #dialog = inject(Dialog);
   pocketbook = computed(() => this.#service.pocketbook());
   collaboratorList = computed(() => this.#service.collaboratorList());
   owner = computed(() => this.#service.owner());
@@ -46,15 +43,6 @@ export class PocketbookDetailComponent implements OnDestroy {
 
   gotoSettings() {
     this.#service.gotoSettings();
-  }
-
-  addTransaction() {
-    const dialogRef = this.#dialog.open(TransactionAddComponent, {
-      data: this.pocketbook(),
-      disableClose: true,
-      backdropClass: ['bg-color-primer-canvas-backdrop', 'backdrop-blur-[2px]']
-    });
-    this.#transactionAddDialogSubscription$ = dialogRef.closed.subscribe();
   }
 
   ngOnDestroy() {

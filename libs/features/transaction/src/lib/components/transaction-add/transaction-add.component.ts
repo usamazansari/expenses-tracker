@@ -1,6 +1,6 @@
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { Dialog } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit, computed, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
@@ -13,7 +13,6 @@ import {
 } from '@expenses-tracker/shared/common';
 import {
   FormGroupTypeGenerator,
-  IPocketbook,
   ITransaction,
   PaymentMode,
   TransactionCategory,
@@ -22,6 +21,7 @@ import {
 
 import { TransactionForm } from '../../types';
 import { TransactionAddService } from './transaction-add.service';
+import { TransactionAddDialogComponent } from './transaction-add-dialog.component';
 
 @Component({
   selector: 'expenses-tracker-transaction-add',
@@ -32,8 +32,9 @@ import { TransactionAddService } from './transaction-add.service';
 export class TransactionAddComponent implements OnInit, OnDestroy {
   formGroup!: FormGroup<FormGroupTypeGenerator<TransactionForm>>;
   #formBuilder = inject(FormBuilder);
-  #dialogRef = inject(DialogRef);
   #service = inject(TransactionAddService);
+  #dialog = inject(Dialog);
+  pocketbook = computed(() => this.#service.pocketbook());
   flags = computed(() => this.#service.flags());
   transactionTypeOptions: SegmentedControlWrapper<TransactionType>[] = [
     { label: 'Income', value: 'income', icon: 'add_circle_outline' },
@@ -67,8 +68,7 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
   ];
 
   #addTransaction$!: Subscription;
-
-  constructor(@Inject(DIALOG_DATA) public pocketbook: IPocketbook) {}
+  #transactionAddDialogSubscription$!: Subscription;
 
   ngOnInit() {
     this.formGroup = this.#formBuilder.group<FormGroupTypeGenerator<TransactionForm>>(
@@ -105,7 +105,6 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
         .subscribe({
           next: () => {
             this.formGroup.reset();
-            this.closeDialog();
           },
           error: error => {
             console.error({ error });
@@ -131,15 +130,24 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
   }
 
   cancelAddTransaction() {
-    this.#service.cancelAddTransaction();
-    this.#dialogRef.close();
-  }
-
-  closeDialog() {
-    this.#dialogRef.close();
+    if (!this.formGroup.invalid) {
+      const dialogRef = this.#dialog.open(TransactionAddDialogComponent, {
+        data: this.pocketbook(),
+        disableClose: true,
+        backdropClass: ['bg-color-primer-canvas-backdrop', 'backdrop-blur-[2px]']
+      });
+      this.#transactionAddDialogSubscription$ = dialogRef.closed.subscribe(value => {
+        if (value) {
+          this.#service.gotoTransactionList();
+        }
+      });
+    } else {
+      this.#service.gotoTransactionList();
+    }
   }
 
   ngOnDestroy() {
     this.#addTransaction$?.unsubscribe();
+    this.#transactionAddDialogSubscription$?.unsubscribe();
   }
 }
