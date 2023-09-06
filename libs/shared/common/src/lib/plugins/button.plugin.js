@@ -8,6 +8,8 @@ module.exports = function ({ addComponents }) {
       duration-200 \
       flex\
       gap-2\
+      active:bg-color-btn-active-bg\
+      active:border-color-btn-active-border\
       disabled:bg-color-btn-outline-disabled-bg\
       disabled:text-color-primer-fg-disabled\
       disabled:hover:border-color-btn-border\

@@ -1,5 +1,5 @@
 <div class="flex items-center justify-between p-4 rounded-lg bg-et-layer text-et-color-fg-default">
-  <div class="flex items-center gap-4">
+  <div class="grid items-center grid-cols-[4rem_1fr] gap-4">
     <div
       class="grid w-16 h-16 text-2xl border rounded-full cursor-default place-content-center"
       [ngClass]="{
@@ -14,7 +14,7 @@
         <span class="font-bold">{{ transaction()?.category?.at(0)?.toUpperCase() }}</span>
       </ng-template>
       <expenses-tracker-tooltip #categoryTooltip>
-        <div class="grid px-2 place-content-center">
+        <div class="px-2">
           <span>{{ transaction()?.category ?? 'Unknown' | categoryFormatterPipe }}</span>
         </div>
       </expenses-tracker-tooltip>

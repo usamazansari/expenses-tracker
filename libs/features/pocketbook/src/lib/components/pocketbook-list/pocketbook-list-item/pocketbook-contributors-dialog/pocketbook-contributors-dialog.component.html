@@ -1,5 +1,5 @@
 <ng-container *ngIf="pocketbook">
-  <div class="grid gap-2 et-card p-0 min-w-[360px] bg-color-codemirror-gutters-bg">
+  <div class="grid gap-2 et-card p-0 min-w-[360px] bg-color-canvas-default">
     <div class="flex items-center justify-between gap-4 p-4 bg-color-canvas-subtle">
       <p class="text-xl font-bold">
         <span class="cursor-pointer text-color-accent-fg hover:underline" (click)="gotoPocketbook()">{{
@@ -26,7 +26,7 @@
         <div class="grid items-center grid-cols-2 gap-2">
           <span class="font-bold text-right">Owned by</span>
           <div class="flex items-center">
-            <expenses-tracker-avatar [userInput]="owner()"></expenses-tracker-avatar>
+            <expenses-tracker-avatar [userListInput]="[owner()]"></expenses-tracker-avatar>
           </div>
         </div>
         <ng-container *ngIf="collaboratorList().length === 0; else showCollaborators">
@@ -38,11 +38,7 @@
         <ng-template #showCollaborators>
           <div class="grid items-center grid-cols-2 gap-2">
             <span class="font-bold text-right">Collaborators</span>
-            <div class="flex items-center gap-1">
-              <ng-container *ngFor="let collaborator of collaboratorList(); trackBy: collaboratorListTrack">
-                <expenses-tracker-avatar [userInput]="collaborator"></expenses-tracker-avatar>
-              </ng-container>
-            </div>
+            <expenses-tracker-avatar [userListInput]="collaboratorList()"></expenses-tracker-avatar>
           </div>
         </ng-template>
       </ng-container>

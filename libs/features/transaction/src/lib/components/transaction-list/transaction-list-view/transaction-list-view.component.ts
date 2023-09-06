@@ -39,6 +39,18 @@ export class TransactionListViewComponent implements OnDestroy {
     new Date(this.#epoch.getFullYear(), this.#epoch.getMonth(), (this.#epoch.getDay() - 1) * -1)
   );
   weekSaturday = signal<Date>(new Date(this.#epoch.getFullYear(), this.#epoch.getMonth(), 6 - this.#epoch.getDay()));
+
+  aggregatedIncome = computed(() =>
+    this.transactionList()
+      .filter(transaction => transaction?.transactionType === 'income')
+      .reduce((acc, transaction) => acc + transaction.amount, 0)
+  );
+
+  aggregatedExpense = computed(() =>
+    this.transactionList()
+      .filter(transaction => transaction?.transactionType === 'expense')
+      .reduce((acc, transaction) => acc + transaction.amount, 0)
+  );
   #transactionList$!: Subscription;
   #viewMode$!: Subscription;
 

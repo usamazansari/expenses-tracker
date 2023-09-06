@@ -1,17 +1,9 @@
-<div class="grid gap-4 p-0 et-card bg-color-codemirror-gutters-bg">
-  <!-- dialog header -->
-  <div class="flex items-center justify-between p-4 bg-color-canvas-subtle">
+<div class="grid gap-4 et-card">
+  <div class="flex items-center justify-between">
     <span class="text-xl font-bold cursor-default text-color-accent-fg">Add Transaction</span>
-    <span
-      class="transition-colors duration-200 cursor-pointer material-icons text-color-fg-muted hover:text-color-accent-fg"
-      (click)="closeDialog()">
-      clear
-    </span>
   </div>
 
-  <!-- form container -->
-  <div class="relative grid p-4">
-    <!-- form -->
+  <div class="relative grid">
     <ng-container *ngIf="flags().addTransaction.loading">
       <div class="et-loading-overlay"></div>
     </ng-container>
@@ -111,15 +103,19 @@
           </div>
 
           <!-- form controls -->
-          <div class="grid grid-cols-2 gap-2 lg:gap-4">
-            <button type="submit" class="w-full et-button et-button-danger" (click)="cancelAddTransaction()">
-              <span class="material-icons min-w-[24px]">clear</span>
-              <span>Cancel</span>
-            </button>
-            <button type="submit" class="w-full et-button et-button-primary">
-              <span class="material-icons min-w-[24px]">save</span>
-              <span>Save</span>
-            </button>
+          <div class="grid lg:grid-cols-3">
+            <div></div>
+            <div class="grid grid-cols-2 gap-2 lg:gap-4">
+              <button type="button" class="w-full et-button et-button-danger" (click)="cancelAddTransaction()">
+                <span class="material-icons min-w-[24px]">clear</span>
+                <span>Cancel</span>
+              </button>
+              <button type="submit" class="w-full et-button et-button-primary">
+                <span class="material-icons min-w-[24px]">save</span>
+                <span>Save</span>
+              </button>
+            </div>
+            <div></div>
           </div>
         </div>
       </form>

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 
-import { SegmentedControlComponent, SegmentedControlWrapper } from '@expenses-tracker/shared/common';
+import { SegmentedControlComponent, SegmentedControlWrapper, TooltipModule } from '@expenses-tracker/shared/common';
 import { ITransaction } from '@expenses-tracker/shared/interfaces';
 
 import { TransactionListItemComponent } from '../transaction-list/transaction-list-item/transaction-list-item.component';
@@ -12,7 +12,13 @@ import { TransactionListService, TransactionListViewTypes } from './transaction-
 @Component({
   selector: 'expenses-tracker-transaction-list',
   standalone: true,
-  imports: [CommonModule, SegmentedControlComponent, TransactionListItemComponent, TransactionListViewComponent],
+  imports: [
+    CommonModule,
+    SegmentedControlComponent,
+    TransactionListItemComponent,
+    TransactionListViewComponent,
+    TooltipModule
+  ],
   templateUrl: './transaction-list.component.html'
 })
 export class TransactionListComponent implements OnInit, OnDestroy {
