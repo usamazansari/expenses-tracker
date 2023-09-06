@@ -1,15 +1,16 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from 'firebase/auth';
+import { catchError, map, of, switchMap, tap, throwError } from 'rxjs';
 
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
 import { RoutePaths } from '@expenses-tracker/shared/common';
 import { IFlag, INITIAL_FLAGS, IPocketbook } from '@expenses-tracker/shared/interfaces';
-import { catchError, map, of, tap, throwError } from 'rxjs';
 
 export type ComponentFlags = {
   contributorsFetch: IFlag;
   pocketbookFetch: IFlag;
+  recalculateBalance: IFlag;
 };
 
 export type ViewMode = RoutePaths.Transaction | RoutePaths.EntitySettings;
@@ -27,7 +28,8 @@ export class PocketbookDetailService {
   viewMode = signal<ViewMode>(RoutePaths.Transaction);
   flags = signal<ComponentFlags>({
     contributorsFetch: INITIAL_FLAGS,
-    pocketbookFetch: INITIAL_FLAGS
+    pocketbookFetch: INITIAL_FLAGS,
+    recalculateBalance: { ...INITIAL_FLAGS, success: true }
   });
 
   gotoTransactionList() {
@@ -52,8 +54,46 @@ export class PocketbookDetailService {
   resetFlags() {
     this.flags.set({
       contributorsFetch: INITIAL_FLAGS,
-      pocketbookFetch: INITIAL_FLAGS
+      pocketbookFetch: INITIAL_FLAGS,
+      recalculateBalance: { ...INITIAL_FLAGS, success: true }
     });
+  }
+
+  recalculateBalance() {
+    if (!this.pocketbook()) return of(0);
+    this.resetFlags();
+    this.flags.update(value => ({
+      ...value,
+      recalculateBalance: { ...value.recalculateBalance, loading: true, success: false, fail: false }
+    }));
+    return this.#firestore.watchTransactionList$().pipe(
+      map(transactionList =>
+        transactionList.reduce(
+          (acc, transaction) =>
+            transaction.transactionType === 'expense' ? acc - transaction.amount : acc + transaction.amount,
+          0
+        )
+      ),
+      switchMap(balance =>
+        this.#firestore.updatePocketbook$({ balance }).pipe(
+          map(pocketbook => (pocketbook as IPocketbook).balance),
+          tap(() => {
+            this.flags.update(value => ({
+              ...value,
+              recalculateBalance: { ...value.recalculateBalance, loading: false, success: true, fail: false }
+            }));
+          }),
+          catchError(error => {
+            console.error({ error });
+            this.flags.update(value => ({
+              ...value,
+              recalculateBalance: { ...value.recalculateBalance, loading: false, success: false, fail: true }
+            }));
+            return throwError(() => new Error(error));
+          })
+        )
+      )
+    );
   }
 
   watchPocketbookContributors$() {

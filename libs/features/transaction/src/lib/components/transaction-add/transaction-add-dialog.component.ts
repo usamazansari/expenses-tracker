@@ -6,7 +6,7 @@ import { Component, inject } from '@angular/core';
   selector: 'expenses-tracker-transaction-add-dialog',
   standalone: true,
   imports: [CommonModule],
-  template: `<div class="grid gap-4 p-0 et-card bg-color-codemirror-gutters-bg">
+  template: `<div class="grid gap-4 p-0 et-card bg-color-canvas-default">
     <div class="flex items-center justify-between p-4 bg-color-canvas-subtle">
       <span class="text-xl font-bold cursor-default text-color-accent-fg">Add Transaction</span>
       <span
