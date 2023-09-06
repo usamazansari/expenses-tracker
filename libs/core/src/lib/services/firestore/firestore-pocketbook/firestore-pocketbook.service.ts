@@ -134,7 +134,7 @@ export class FirestorePocketbookService {
     return from(
       this.#firestore
         .collection<IPocketbook>(Collections.Pocketbook)
-        .doc(pocketbook?.id ?? '')
+        .doc((this.#context.pocketbook() as IPocketbook).id ?? '')
         .update({ ...pocketbook })
     ).pipe(
       map(() => {
