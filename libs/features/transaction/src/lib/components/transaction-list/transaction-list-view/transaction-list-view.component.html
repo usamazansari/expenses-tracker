@@ -36,13 +36,13 @@
 
     <div class="grid grid-cols-[1fr_auto] items-center gap-1 grid-rows-2 cursor-default">
       <span class="text-sm text-left lg:text-right">
-        Income {{ viewMode() === 'daily' ? 'on ' : viewMode() === 'weekly' ? 'in Week ' : 'in ' }}
+        Total income {{ viewMode() === 'daily' ? 'on ' : viewMode() === 'weekly' ? 'in Week ' : 'in ' }}
         {{ view() | date: datePipeArgs() }}
       </span>
       <span class="font-bold text-color-success-fg">{{ aggregatedIncome() | currency: 'EUR' }}</span>
 
       <span class="text-sm text-left lg:text-right">
-        Expense {{ viewMode() === 'daily' ? 'on ' : viewMode() === 'weekly' ? 'in Week ' : 'in ' }}
+        Total expense {{ viewMode() === 'daily' ? 'on ' : viewMode() === 'weekly' ? 'in Week ' : 'in ' }}
         {{ view() | date: datePipeArgs() }}
       </span>
       <span class="font-bold text-color-danger-fg">{{ aggregatedExpense() | currency: 'EUR' }}</span>
