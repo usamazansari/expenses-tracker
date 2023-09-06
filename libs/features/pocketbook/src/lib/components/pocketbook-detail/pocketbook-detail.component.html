@@ -38,15 +38,51 @@
       </div>
     </div>
 
-    <div class="flex items-center justify-center">
-      <span
-        class="text-3xl font-bold"
-        [ngClass]="{
-          'text-color-danger-fg': (pocketbook()?.balance || 0) <= 0,
-          'text-color-success-fg': (pocketbook()?.balance || 0) > 0
-        }">
-        {{ pocketbook()?.balance | currency: 'EUR' }}
-      </span>
+    <div class="flex items-center justify-center gap-2">
+      <ng-container *ngIf="flags().recalculateBalance.loading">
+        <div class="flex items-center gap-2 cursor-default">
+          <span class="material-icons animate-spin">autorenew</span>
+          <span class="font-bold">Loading</span>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="flags().recalculateBalance.success">
+        <span
+          class="text-3xl font-bold"
+          [ngClass]="{
+            'text-color-danger-fg': (pocketbook()?.balance || 0) <= 0,
+            'text-color-success-fg': (pocketbook()?.balance || 0) > 0
+          }">
+          {{ pocketbook()?.balance | currency: 'EUR' }}
+        </span>
+        <button
+          class="p-2 et-button"
+          (click)="recalculateBalance()"
+          [expensesTrackerTooltip]="recalculateBalanceTooltip">
+          <span class="material-icons">autorenew</span>
+        </button>
+        <expenses-tracker-tooltip #recalculateBalanceTooltip>
+          <div class="px-2">
+            <span>Recalculate Balance</span>
+          </div>
+        </expenses-tracker-tooltip>
+      </ng-container>
+      <ng-container *ngIf="flags().recalculateBalance.fail">
+        <div class="flex items-center gap-2 cursor-default">
+          <span class="material-icons text-color-danger-fg">error</span>
+          <span class="font-bold text-color-danger-fg">Unable to recalculate balance</span>
+        </div>
+        <button
+          class="p-2 et-button"
+          (click)="recalculateBalance()"
+          [expensesTrackerTooltip]="recalculateBalanceTooltip">
+          <span class="material-icons">autorenew</span>
+        </button>
+        <expenses-tracker-tooltip #recalculateBalanceTooltip>
+          <div class="px-2">
+            <span>Recalculate Balance</span>
+          </div>
+        </expenses-tracker-tooltip>
+      </ng-container>
     </div>
 
     <div>

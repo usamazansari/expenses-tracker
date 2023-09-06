@@ -6,14 +6,14 @@ import { RouterModule } from '@angular/router';
 import { User } from 'firebase/auth';
 import { Subscription, switchMap } from 'rxjs';
 
-import { AvatarComponent, ExtractInitialsPipe } from '@expenses-tracker/shared/common';
+import { AvatarComponent, ExtractInitialsPipe, TooltipModule } from '@expenses-tracker/shared/common';
 
 import { PocketbookDetailService } from './pocketbook-detail.service';
 
 @Component({
   selector: 'expenses-tracker-pocketbook-detail',
   standalone: true,
-  imports: [AvatarComponent, CommonModule, DialogModule, RouterModule, ExtractInitialsPipe],
+  imports: [AvatarComponent, CommonModule, DialogModule, ExtractInitialsPipe, RouterModule, TooltipModule],
   templateUrl: './pocketbook-detail.component.html'
 })
 export class PocketbookDetailComponent implements OnDestroy {
@@ -25,6 +25,7 @@ export class PocketbookDetailComponent implements OnDestroy {
   flags = computed(() => this.#service.flags());
   #pocketbookContributors$!: Subscription;
   #transactionAddDialogSubscription$!: Subscription;
+  #recalculateBalanceSubscription$!: Subscription;
 
   constructor() {
     // NOTE: @usamazansari: be very careful while using toObservable as it may cause memory leak
@@ -35,6 +36,10 @@ export class PocketbookDetailComponent implements OnDestroy {
 
   collaboratorListTrack(index: number, user: User) {
     return user.uid;
+  }
+
+  recalculateBalance() {
+    this.#recalculateBalanceSubscription$ = this.#service.recalculateBalance().subscribe();
   }
 
   gotoTransactionList() {
@@ -48,5 +53,6 @@ export class PocketbookDetailComponent implements OnDestroy {
   ngOnDestroy() {
     this.#pocketbookContributors$?.unsubscribe();
     this.#transactionAddDialogSubscription$?.unsubscribe();
+    this.#recalculateBalanceSubscription$?.unsubscribe();
   }
 }
