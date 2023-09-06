@@ -1,6 +1,6 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit, computed, inject } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, Signal, computed, inject } from '@angular/core';
 import { User } from 'firebase/auth';
 import { Subscription } from 'rxjs';
 
@@ -19,7 +19,7 @@ import { PocketbookListItemService } from '../pocketbook-list-item.service';
 export class PocketbookContributorsDialogComponent implements OnInit, OnDestroy {
   #service = inject(PocketbookListItemService);
   #dialogRef = inject(DialogRef);
-  owner = computed(() => this.#service.owner());
+  owner = computed(() => this.#service.owner()) as Signal<User>;
   collaboratorList = computed(() => this.#service.collaboratorList());
   flags = computed(() => this.#service.flags());
   #pocketbookContributors$!: Subscription;

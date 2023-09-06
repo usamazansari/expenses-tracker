@@ -1,6 +1,6 @@
 import { DialogModule } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, computed, inject } from '@angular/core';
+import { Component, OnDestroy, Signal, computed, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { RouterModule } from '@angular/router';
 import { User } from 'firebase/auth';
@@ -20,7 +20,7 @@ export class PocketbookDetailComponent implements OnDestroy {
   #service = inject(PocketbookDetailService);
   pocketbook = computed(() => this.#service.pocketbook());
   collaboratorList = computed(() => this.#service.collaboratorList());
-  owner = computed(() => this.#service.owner());
+  owner = computed(() => this.#service.owner()) as Signal<User>;
   viewMode = computed(() => this.#service.viewMode());
   flags = computed(() => this.#service.flags());
   #pocketbookContributors$!: Subscription;
