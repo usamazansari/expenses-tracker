@@ -1,33 +1,51 @@
 <div class="grid gap-4">
-  <div class="flex items-center justify-between">
-    <div class="flex gap-2">
-      <ng-container *ngIf="viewMode() === 'weekly'; else showDailyOrMonthly">
-        <div class="flex items-center gap-2">
-          <span class="font-bold cursor-default"> Week {{ view() | date: datePipeArgs() }} </span>
-          <span class="hidden cursor-default md:flex">
-            {{ weekSunday() | date: 'MMMM dd' }} to {{ weekSaturday() | date: 'MMMM dd' }}
+  <div class="flex flex-col gap-4 lg:items-center lg:justify-between lg:flex-row">
+    <div class="flex items-center justify-between gap-2 lg:justify-normal">
+      <div class="flex gap-2">
+        <ng-container *ngIf="viewMode() === 'weekly'; else showDailyOrMonthly">
+          <div class="flex items-center gap-2">
+            <span class="font-bold cursor-default"> Week {{ view() | date: datePipeArgs() }} </span>
+            <span class="hidden cursor-default md:flex">
+              {{ weekSunday() | date: 'MMMM dd' }} to {{ weekSaturday() | date: 'MMMM dd' }}
+            </span>
+            <span
+              class="flex cursor-default material-icons md:hidden"
+              [expensesTrackerTooltip]="weekInformationTooltip">
+              info
+            </span>
+          </div>
+        </ng-container>
+        <ng-template #showDailyOrMonthly>
+          <span class="font-bold cursor-default">
+            {{ view() | date: datePipeArgs() }}
           </span>
-          <span class="flex cursor-default material-icons md:hidden" [expensesTrackerTooltip]="weekInformationTooltip">
-            info
-          </span>
-        </div>
-      </ng-container>
-      <ng-template #showDailyOrMonthly>
-        <span class="font-bold cursor-default">
-          {{ view() | date: datePipeArgs() }}
-        </span>
-      </ng-template>
+        </ng-template>
+      </div>
+      <div class="flex items-center gap-1">
+        <button class="w-8 et-button" (click)="changeView(-1)" [expensesTrackerTooltip]="previousMonthTooltip">
+          <span class="material-icons">chevron_left</span>
+        </button>
+        <button class="w-8 et-button" (click)="resetView()" [expensesTrackerTooltip]="resetTooltip">
+          <span class="material-icons">radio_button_checked</span>
+        </button>
+        <button class="w-8 et-button" (click)="changeView(1)" [expensesTrackerTooltip]="nextMonthTooltip">
+          <span class="material-icons">chevron_right</span>
+        </button>
+      </div>
     </div>
-    <div class="flex items-center gap-1">
-      <button class="w-8 et-button" (click)="changeView(-1)" [expensesTrackerTooltip]="previousMonthTooltip">
-        <span class="material-icons">chevron_left</span>
-      </button>
-      <button class="w-8 et-button" (click)="resetView()" [expensesTrackerTooltip]="resetTooltip">
-        <span class="material-icons">radio_button_checked</span>
-      </button>
-      <button class="w-8 et-button" (click)="changeView(1)" [expensesTrackerTooltip]="nextMonthTooltip">
-        <span class="material-icons">chevron_right</span>
-      </button>
+
+    <div class="grid grid-cols-[1fr_auto] items-center gap-1 grid-rows-2 cursor-default">
+      <span class="text-sm text-left lg:text-right">
+        Income {{ viewMode() === 'daily' ? 'on ' : viewMode() === 'weekly' ? 'in Week ' : 'in ' }}
+        {{ view() | date: datePipeArgs() }}
+      </span>
+      <span class="font-bold text-color-success-fg">{{ aggregatedIncome() | currency: 'EUR' }}</span>
+
+      <span class="text-sm text-left lg:text-right">
+        Expense {{ viewMode() === 'daily' ? 'on ' : viewMode() === 'weekly' ? 'in Week ' : 'in ' }}
+        {{ view() | date: datePipeArgs() }}
+      </span>
+      <span class="font-bold text-color-danger-fg">{{ aggregatedExpense() | currency: 'EUR' }}</span>
     </div>
   </div>
 
