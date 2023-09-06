@@ -153,6 +153,7 @@ module.exports = {
   'color-btn-bg': '#21262d',
   'color-btn-hover-bg': '#30363d',
   'color-btn-hover-border': '#8b949e',
+  'color-btn-active-bg': '#282e33',
   'color-btn-active-border': '#6e7681',
   'color-btn-selected-bg': '#161b22',
   'color-btn-counter-bg': '#30363d',
