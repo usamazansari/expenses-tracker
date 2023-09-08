@@ -20,8 +20,8 @@ import {
 } from '@expenses-tracker/shared/interfaces';
 
 import { TransactionForm } from '../../types';
-import { TransactionAddService } from './transaction-add.service';
 import { TransactionAddDialogComponent } from './transaction-add-dialog.component';
+import { TransactionAddService } from './transaction-add.service';
 
 @Component({
   selector: 'expenses-tracker-transaction-add',
@@ -105,12 +105,17 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
         .subscribe({
           next: () => {
             this.formGroup.reset();
+            this.#service.gotoTransactionList();
           },
           error: error => {
             console.error({ error });
           }
         });
     }
+  }
+
+  formatAmount(amount: number) {
+    this.formGroup.controls.amount.setValue(+amount);
   }
 
   patchTransactionDate(transactionDate: Date) {
