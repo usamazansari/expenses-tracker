@@ -37,3 +37,4 @@ jobs:
 
       - name: Build the application
         run: pnpm build
+

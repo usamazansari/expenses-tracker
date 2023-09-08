@@ -3,7 +3,6 @@ on:
   pull_request:
     branches:
       - develop
-      - release
 
 jobs:
   build_and_preview:
