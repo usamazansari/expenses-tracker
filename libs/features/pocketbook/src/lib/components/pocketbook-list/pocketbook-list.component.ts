@@ -1,49 +1,60 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { RouterModule } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { Subject, Subscription, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 
-import {
-  EmptyPocketbookListGraphicComponent,
-  PocketbookGraphicComponent
-} from '@expenses-tracker/shared/assets';
+import { IPocketbook } from '@expenses-tracker/shared/interfaces';
 
-import { PocketbookListService, PocketbookViewMode } from './pocketbook-list.service';
+import { PocketbookListItemComponent } from './pocketbook-list-item/pocketbook-list-item.component';
+import { PocketbookListService } from './pocketbook-list.service';
 
 @Component({
   selector: 'expenses-tracker-pocketbook-list',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatIconModule,
-
-    EmptyPocketbookListGraphicComponent,
-    PocketbookGraphicComponent
-  ],
+  imports: [CommonModule, PocketbookListItemComponent],
   templateUrl: './pocketbook-list.component.html',
   styles: []
 })
-export class PocketbookListComponent implements OnInit {
-  viewMode$!: Observable<PocketbookViewMode>;
+export class PocketbookListComponent implements OnInit, OnDestroy {
+  #searchText$ = new Subject<string>();
+  pocketbookList = signal<IPocketbook[]>([]);
+  #service = inject(PocketbookListService);
+  flags = computed(() => this.#service.flags().pocketbookList);
+  user = computed(() => this.#service.user());
+  #pocketbookList$!: Subscription;
 
-  constructor(private _service: PocketbookListService) {}
+  constructor() {
+    // NOTE: @usamazansari: be very careful while using toObservable as it may cause memory leak
+    this.#pocketbookList$ = toObservable(this.user)
+      .pipe(switchMap(() => this.#service.fetchPocketbookList()))
+      .subscribe((pocketbookList: IPocketbook[]) => {
+        this.pocketbookList.set(pocketbookList);
+      });
+  }
 
   ngOnInit() {
-    this._service.fetchViewMode();
-    this.viewMode$ = this._service.watchViewMode$();
+    this.#searchText$.pipe(debounceTime(250), distinctUntilChanged()).subscribe(searchText => {
+      console.log({ searchText });
+    });
+  }
+
+  pocketbookListTrack(index: number, pocketbook: IPocketbook) {
+    return pocketbook.id;
+  }
+
+  isPocketbookOwner(pocketbook: IPocketbook) {
+    return pocketbook.owner === this.user()?.uid;
+  }
+
+  debounceSearch($: KeyboardEvent) {
+    this.#searchText$.next(($.target as HTMLInputElement).value);
   }
 
   addPocketbook() {
-    this._service.gotoAddPocketbook();
+    this.#service.gotoAddPocketbook();
   }
 
-  gotoOwnerPocketbookList() {
-    this._service.gotoOwnerPocketbookList();
-  }
-
-  gotoCollaboratorPocketbookList() {
-    this._service.gotoCollaboratorPocketbookList();
+  ngOnDestroy() {
+    this.#pocketbookList$?.unsubscribe();
   }
 }

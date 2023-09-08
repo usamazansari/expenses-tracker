@@ -1,0 +1,34 @@
+<div class="relative grid w-96 et-card">
+  <ng-container *ngIf="flags().loading">
+    <div class="et-loading-overlay"></div>
+  </ng-container>
+  <ng-container *ngIf="flags().visible">
+    <form [formGroup]="formGroup" (ngSubmit)="editDisplayName()">
+      <div class="grid gap-2">
+        <div class="et-form-field-wrapper">
+          <label for="display-name-input" class="font-bold">Display Name</label>
+          <div class="et-form-field-input-wrapper">
+            <input
+              class="w-full et-input"
+              formControlName="displayName"
+              id="display-name-input"
+              type="text"
+              placeholder="John Doe"
+              [value]="user()?.displayName" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <button type="submit" class="w-full et-button et-button-danger" (click)="cancelEdit()">
+            <span class="material-icons min-w-[24px]">clear</span>
+            <span>Cancel</span>
+          </button>
+          <button type="submit" class="w-full et-button et-button-primary">
+            <span class="material-icons min-w-[24px]">save</span>
+            <span>Update</span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </ng-container>
+</div>

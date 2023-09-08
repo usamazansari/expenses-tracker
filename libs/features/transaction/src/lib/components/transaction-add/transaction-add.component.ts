@@ -1,73 +1,111 @@
+import { Dialog } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { Component, OnDestroy, OnInit, computed, inject } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
-import { ITransaction, TransactionDirection } from '@expenses-tracker/shared/interfaces';
+import {
+  DatePickerComponent,
+  SegmentedControlComponent,
+  SegmentedControlWrapper,
+  SelectComponent,
+  SelectWrapper
+} from '@expenses-tracker/shared/common';
+import {
+  FormGroupTypeGenerator,
+  ITransaction,
+  PaymentMode,
+  TransactionCategory,
+  TransactionType
+} from '@expenses-tracker/shared/interfaces';
 
+import { TransactionForm } from '../../types';
+import { TransactionAddDialogComponent } from './transaction-add-dialog.component';
 import { TransactionAddService } from './transaction-add.service';
-
-type TransactionAddForm = {
-  category: FormControl<string | null>;
-  amount: FormControl<number | null>;
-  direction: FormControl<TransactionDirection | null>;
-  message: FormControl<string | null>;
-};
 
 @Component({
   selector: 'expenses-tracker-transaction-add',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatSelectModule,
-    ReactiveFormsModule
-  ],
-  templateUrl: './transaction-add.component.html',
-  styles: []
+  imports: [CommonModule, ReactiveFormsModule, DatePickerComponent, SelectComponent, SegmentedControlComponent],
+  templateUrl: './transaction-add.component.html'
 })
 export class TransactionAddComponent implements OnInit, OnDestroy {
-  #addTransaction$!: Subscription;
-
+  formGroup!: FormGroup<FormGroupTypeGenerator<TransactionForm>>;
   #formBuilder = inject(FormBuilder);
   #service = inject(TransactionAddService);
+  #dialog = inject(Dialog);
+  pocketbook = computed(() => this.#service.pocketbook());
+  flags = computed(() => this.#service.flags());
+  transactionTypeOptions: SegmentedControlWrapper<TransactionType>[] = [
+    { label: 'Income', value: 'income', icon: 'add_circle_outline' },
+    { label: 'Expense', value: 'expense', icon: 'remove_circle_outline' }
+  ];
 
-  formGroup!: FormGroup<TransactionAddForm>;
+  paymentModeOptions: SegmentedControlWrapper<PaymentMode>[] = [
+    { label: 'Card', value: 'card', icon: 'credit_card' },
+    { label: 'Cash', value: 'cash', icon: 'payments' }
+  ];
+
+  categoryOptions: SelectWrapper<TransactionCategory>[] = [
+    { label: 'Academics', value: 'academics' },
+    { label: 'ATM Withdrawal', value: 'atm-withdrawal' },
+    { label: 'Bills', value: 'bills' },
+    { label: 'Carry Forward', value: 'carry-forward' },
+    { label: 'Charity', value: 'charity' },
+    { label: 'Groceries', value: 'groceries' },
+    { label: 'Health', value: 'health' },
+    { label: 'Hobby', value: 'hobby' },
+    { label: 'Insurance', value: 'insurance' },
+    { label: 'Investment', value: 'investment' },
+    { label: 'Laundry', value: 'laundry' },
+    { label: 'Leisure', value: 'leisure' },
+    { label: 'Other', value: 'other' },
+    { label: 'Rent', value: 'rent' },
+    { label: 'Salary', value: 'salary' },
+    { label: 'Shopping', value: 'shopping' },
+    { label: 'Transportation', value: 'transportation' },
+    { label: 'Trips', value: 'trips' }
+  ];
+
+  #addTransaction$!: Subscription;
+  #transactionAddDialogSubscription$!: Subscription;
 
   ngOnInit() {
-    this.formGroup = this.#formBuilder.group<TransactionAddForm>({
-      amount: this.#formBuilder.control(null, Validators.required),
-      category: this.#formBuilder.control(null, Validators.required),
-      direction: this.#formBuilder.control('expense', Validators.required),
-      message: this.#formBuilder.control(null)
-    });
+    this.formGroup = this.#formBuilder.group<FormGroupTypeGenerator<TransactionForm>>(
+      {
+        transactionType: this.#formBuilder.control<TransactionType>('expense') as FormControl<TransactionType>,
+        amount: this.#formBuilder.control<number>(0, {
+          validators: [Validators.required],
+          updateOn: 'change'
+        }) as FormControl<number>,
+        category: this.#formBuilder.control<TransactionCategory>('other') as FormControl<TransactionCategory>,
+        paymentMode: this.#formBuilder.control<PaymentMode>('card') as FormControl<PaymentMode>,
+        transactionDate: this.#formBuilder.control<Date>(new Date(Date.now())) as FormControl<Date>,
+        description: this.#formBuilder.control<string>('') as FormControl<string>
+      },
+      {
+        updateOn: 'submit'
+      }
+    );
   }
 
   addTransaction() {
     if (!this.formGroup.invalid) {
-      const { amount, category, direction, message } = this.formGroup.value;
+      const { amount, category, description, paymentMode, transactionDate, transactionType } = this.formGroup
+        .value as TransactionForm;
       this.#addTransaction$ = this.#service
         .addTransaction$({
           amount,
           category,
-          direction,
-          message
+          description,
+          paymentMode,
+          transactionDate,
+          transactionType
         } as ITransaction)
         .subscribe({
           next: () => {
             this.formGroup.reset();
+            this.#service.gotoTransactionList();
           },
           error: error => {
             console.error({ error });
@@ -76,20 +114,45 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
     }
   }
 
-  cancelAddTransaction() {
-    this.#service.cancelAddTransaction();
+  formatAmount(amount: number) {
+    this.formGroup.controls.amount.setValue(+amount);
   }
 
-  getError(formControlName = '') {
-    if (this.formGroup.get(formControlName)?.hasError('required')) {
-      return `${
-        formControlName.charAt(0).toUpperCase() + formControlName.slice(1)
-      } is required`;
+  patchTransactionDate(transactionDate: Date) {
+    this.formGroup.patchValue({ transactionDate });
+  }
+
+  patchPaymentMode(paymentMode: PaymentMode) {
+    this.formGroup.patchValue({ paymentMode });
+  }
+
+  patchCategory(category: TransactionCategory) {
+    this.formGroup.patchValue({ category });
+  }
+
+  patchTransactionType(transactionType: TransactionType) {
+    this.formGroup.patchValue({ transactionType });
+  }
+
+  cancelAddTransaction() {
+    if (!this.formGroup.invalid) {
+      const dialogRef = this.#dialog.open(TransactionAddDialogComponent, {
+        data: this.pocketbook(),
+        disableClose: true,
+        backdropClass: ['bg-color-primer-canvas-backdrop', 'backdrop-blur-[2px]']
+      });
+      this.#transactionAddDialogSubscription$ = dialogRef.closed.subscribe(value => {
+        if (value) {
+          this.#service.gotoTransactionList();
+        }
+      });
+    } else {
+      this.#service.gotoTransactionList();
     }
-    return '';
   }
 
   ngOnDestroy() {
     this.#addTransaction$?.unsubscribe();
+    this.#transactionAddDialogSubscription$?.unsubscribe();
   }
 }

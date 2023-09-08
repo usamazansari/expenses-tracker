@@ -1,5 +1,10 @@
 {
   "editor.tabCompletion": "on",
   "diffEditor.codeLens": true,
-  "cSpell.words": ["usamazansari"]
+  "cSpell.words": ["buildable", "usamazansari"],
+  "[shellscript]": {
+    "files.eol": "auto"
+  },
+  "files.eol": "\r\n"
 }
+

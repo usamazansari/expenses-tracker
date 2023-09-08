@@ -1,8 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { MatRippleModule } from '@angular/material/core';
-import { User } from 'firebase/auth';
-import { Observable } from 'rxjs';
+import { Component, EventEmitter, Output, computed, inject } from '@angular/core';
 
 import {
   AccountGraphicComponent,
@@ -19,8 +16,6 @@ import { NavbarService } from './navbar.service';
   standalone: true,
   imports: [
     CommonModule,
-    MatRippleModule,
-
     AccountGraphicComponent,
     AuthGraphicComponent,
     DashboardGraphicComponent,
@@ -29,37 +24,31 @@ import { NavbarService } from './navbar.service';
   ],
   templateUrl: './navbar.component.html'
 })
-export class NavbarComponent implements OnInit {
-  user$!: Observable<User | null>;
-
+export class NavbarComponent {
+  #service = inject(NavbarService);
+  user = computed(() => this.#service.user());
   @Output() gotoHome$ = new EventEmitter<void>();
   @Output() gotoAuth$ = new EventEmitter<void>();
   @Output() gotoDashboard$ = new EventEmitter<void>();
   @Output() gotoPocketbook$ = new EventEmitter<void>();
 
-  constructor(private _service: NavbarService) {}
-
-  ngOnInit() {
-    this.user$ = this._service.getUser$();
-  }
-
   gotoHome() {
-    this._service.gotoHome();
+    this.#service.gotoHome();
   }
 
   gotoAuth() {
-    this._service.gotoAuth();
+    this.#service.gotoAuth();
   }
 
   gotoDashboard() {
-    this._service.gotoDashboard();
+    this.#service.gotoDashboard();
   }
 
   gotoPocketbook() {
-    this._service.gotoPocketbook();
+    this.#service.gotoPocketbook();
   }
 
   gotoProfile() {
-    this._service.gotoProfile();
+    this.#service.gotoProfile();
   }
 }

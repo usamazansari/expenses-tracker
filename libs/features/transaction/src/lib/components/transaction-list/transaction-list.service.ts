@@ -1,46 +1,133 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
 
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
-import { ITransaction } from '@expenses-tracker/shared/interfaces';
 import { RoutePaths } from '@expenses-tracker/shared/common';
+import { IFlag, INITIAL_FLAGS, ITransaction } from '@expenses-tracker/shared/interfaces';
+import { catchError, of, tap } from 'rxjs';
+
+export type TransactionListViewTypes = 'monthly' | 'daily' | 'weekly';
+
+export type ComponentFlags = {
+  transactionList: IFlag;
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class TransactionListService {
-  #transactionList$ = new BehaviorSubject<ITransaction[]>([]);
-  #transactionList: ITransaction[] = [];
   #firestore = inject(FirestoreService);
   #router = inject(Router);
   #context = inject(ContextService);
 
+  user = computed(() => this.#context.user());
+  pocketbook = computed(() => this.#context.pocketbook());
+  transactionList = signal<ITransaction<Date>[]>([]);
+
+  flags = signal<ComponentFlags>({
+    transactionList: { ...INITIAL_FLAGS }
+  });
+
+  /**
+   * @deprecated Use monthly fetch API instead
+   */
   fetchTransactionList$() {
-    this.#firestore.watchTransactionList$().subscribe(transactionList => {
-      this.setTransactionList(transactionList);
-    });
+    this.flags.update(value => ({
+      ...value,
+      transactionList: { ...value.transactionList, loading: true, success: false, fail: false }
+    }));
+    return this.#firestore.watchTransactionList$().pipe(
+      tap(transactionList => {
+        this.transactionList.set(transactionList);
+        this.flags.update(value => ({
+          ...value,
+          transactionList: { ...value.transactionList, loading: false, success: true, fail: false }
+        }));
+      }),
+      catchError(error => {
+        console.error({ error });
+        this.flags.update(value => ({
+          ...value,
+          transactionList: { ...value.transactionList, loading: false, success: false, fail: true }
+        }));
+        return of([] as ITransaction<Date>[]);
+      })
+    );
   }
 
-  setTransactionList(transactionList: ITransaction[]) {
-    this.#transactionList = transactionList ?? [];
-    this.#transactionList$.next(this.#transactionList);
+  fetchTransactionListForDay$(date: Date) {
+    this.flags.update(value => ({
+      ...value,
+      transactionList: { ...value.transactionList, loading: true, success: false, fail: false }
+    }));
+    return this.#firestore.watchTransactionListForDay$(date).pipe(
+      tap(transactionList => {
+        this.transactionList.set(transactionList);
+        this.flags.update(value => ({
+          ...value,
+          transactionList: { ...value.transactionList, loading: false, success: true, fail: false }
+        }));
+      }),
+      catchError(error => {
+        console.error({ error });
+        this.flags.update(value => ({
+          ...value,
+          transactionList: { ...value.transactionList, loading: false, success: false, fail: true }
+        }));
+        return of([] as ITransaction<Date>[]);
+      })
+    );
   }
 
-  resetTransactionList() {
-    this.#transactionList$.next([]);
+  fetchTransactionListForWeek$(date: Date) {
+    this.flags.update(value => ({
+      ...value,
+      transactionList: { ...value.transactionList, loading: true, success: false, fail: false }
+    }));
+    return this.#firestore.watchTransactionListForWeek$(date).pipe(
+      tap(transactionList => {
+        this.transactionList.set(transactionList);
+        this.flags.update(value => ({
+          ...value,
+          transactionList: { ...value.transactionList, loading: false, success: true, fail: false }
+        }));
+      }),
+      catchError(error => {
+        console.error({ error });
+        this.flags.update(value => ({
+          ...value,
+          transactionList: { ...value.transactionList, loading: false, success: false, fail: true }
+        }));
+        return of([] as ITransaction<Date>[]);
+      })
+    );
   }
 
-  watchTransactionList$() {
-    return this.#firestore.watchTransactionList$();
+  fetchTransactionListForMonth$(date: Date) {
+    this.flags.update(value => ({
+      ...value,
+      transactionList: { ...value.transactionList, loading: true, success: false, fail: false }
+    }));
+    return this.#firestore.watchTransactionListForMonth$(date).pipe(
+      tap(transactionList => {
+        this.transactionList.set(transactionList);
+        this.flags.update(value => ({
+          ...value,
+          transactionList: { ...value.transactionList, loading: false, success: true, fail: false }
+        }));
+      }),
+      catchError(error => {
+        console.error({ error });
+        this.flags.update(value => ({
+          ...value,
+          transactionList: { ...value.transactionList, loading: false, success: false, fail: true }
+        }));
+        return of([] as ITransaction<Date>[]);
+      })
+    );
   }
 
   gotoAddTransaction() {
-    this.#router.navigate([
-      RoutePaths.Pocketbook,
-      this.#context.getPocketbook()?.id,
-      RoutePaths.Transaction,
-      RoutePaths.EntityAdd
-    ]);
+    this.#router.navigate([RoutePaths.Pocketbook, this.pocketbook()?.id, RoutePaths.Transaction, RoutePaths.EntityAdd]);
   }
 }

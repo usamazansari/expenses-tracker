@@ -1,40 +1,22 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
-import { ITransaction } from '@expenses-tracker/shared/interfaces';
+import {
+  FormGroupTypeGenerator,
+  PaymentMode,
+  TransactionCategory,
+  TransactionType
+} from '@expenses-tracker/shared/interfaces';
 
-import { TransactionEditService, ITransactionEditForm } from './transaction-edit.service';
-
-type TransactionEditForm<T extends ITransactionEditForm = ITransactionEditForm> = {
-  amount: FormControl<T['amount']>;
-  category: FormControl<T['category']>;
-  direction: FormControl<T['direction']>;
-  message: FormControl<T['message']>;
-};
+import { TransactionForm } from '../../types';
+import { TransactionEditService } from './transaction-edit.service';
 
 @Component({
   selector: 'expenses-tracker-transaction-edit',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatSelectModule,
-    ReactiveFormsModule
-  ],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './transaction-edit.component.html',
   styles: []
 })
@@ -45,14 +27,22 @@ export class TransactionEditComponent implements OnInit, OnDestroy {
   #formBuilder = inject(FormBuilder);
   #service = inject(TransactionEditService);
 
-  formGroup!: FormGroup<TransactionEditForm>;
+  formGroup!: FormGroup<FormGroupTypeGenerator<TransactionForm>>;
 
   ngOnInit() {
-    this.formGroup = this.#formBuilder.group<TransactionEditForm>({
-      amount: this.#formBuilder.control(null, Validators.required),
-      category: this.#formBuilder.control(null, Validators.required),
-      direction: this.#formBuilder.control('expense', Validators.required),
-      message: this.#formBuilder.control(null)
+    this.formGroup = this.#formBuilder.group<FormGroupTypeGenerator<TransactionForm>>({
+      amount: this.#formBuilder.control<number | null>(null, Validators.required) as FormControl<number>,
+      category: this.#formBuilder.control<TransactionCategory>(
+        'other',
+        Validators.required
+      ) as FormControl<TransactionCategory>,
+      transactionType: this.#formBuilder.control<TransactionType>(
+        'expense',
+        Validators.required
+      ) as FormControl<TransactionType>,
+      description: this.#formBuilder.control<string>('') as FormControl<string>,
+      paymentMode: this.#formBuilder.control<PaymentMode>('card', Validators.required) as FormControl<PaymentMode>,
+      transactionDate: this.#formBuilder.control<Date>(new Date(Date.now()), Validators.required) as FormControl<Date>
     });
 
     this.#patchValues$ = this.#service.patchValues$().subscribe(patchValues => {
@@ -62,22 +52,22 @@ export class TransactionEditComponent implements OnInit, OnDestroy {
 
   editTransaction() {
     if (!this.formGroup.invalid) {
-      const { amount, category, direction, message } = this.formGroup.value;
-      this.#editTransaction$ = this.#service
-        .editTransaction$({
-          amount,
-          category,
-          direction,
-          message
-        } as ITransaction)
-        .subscribe({
-          next: () => {
-            this.formGroup.reset();
-          },
-          error: error => {
-            console.error({ error });
-          }
-        });
+      const { amount, category, transactionType: direction, description: message } = this.formGroup.value;
+      // this.#editTransaction$ = this.#service
+      //   .editTransaction$({
+      //     amount,
+      //     category,
+      //     direction,
+      //     message
+      //   } as ITransaction)
+      //   .subscribe({
+      //     next: () => {
+      //       this.formGroup.reset();
+      //     },
+      //     error: error => {
+      //       console.error({ error });
+      //     }
+      //   });
     }
   }
 
@@ -87,9 +77,7 @@ export class TransactionEditComponent implements OnInit, OnDestroy {
 
   getError(formControlName = '') {
     if (this.formGroup.get(formControlName)?.hasError('required')) {
-      return `${
-        formControlName.charAt(0).toUpperCase() + formControlName.slice(1)
-      } is required`;
+      return `${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)} is required`;
     }
     return '';
   }

@@ -1,92 +1,63 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
-import { MatRippleModule } from '@angular/material/core';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { Observable, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
-import { RegisterGraphicComponent } from '@expenses-tracker/shared/assets';
+import { FormGroupTypeGenerator, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
-import { ComponentFlags, SignupService } from './signup.service';
-
-type SignupForm = {
-  email: FormControl<string | null>;
-  password: FormControl<string | null>;
-};
+import { ComponentFlags, ComponentForm, SignupService } from './signup.service';
 
 @Component({
   selector: 'expenses-tracker-signup',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatRippleModule,
-    ReactiveFormsModule,
-    RegisterGraphicComponent
-  ],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './signup.component.html'
 })
 export class SignupComponent implements OnInit, OnDestroy {
-  formGroup!: FormGroup<SignupForm>;
-  flags$!: Observable<ComponentFlags>;
+  formGroup!: FormGroup<FormGroupTypeGenerator<ComponentForm>>;
   #signup$!: Subscription;
-  #saveUser$!: Subscription;
 
-  constructor(private _fb: FormBuilder, private _service: SignupService) {}
+  #fb = inject(FormBuilder);
+  #service = inject(SignupService);
+
+  flags = signal<ComponentFlags>({ signup: INITIAL_FLAGS });
 
   ngOnInit() {
-    this.formGroup = this._fb.group<SignupForm>({
-      email: this._fb.control<string>('', {
-        validators: [Validators.required, Validators.email]
-      }),
-      password: this._fb.control<string>('', {
-        validators: [Validators.required]
-      })
+    this.formGroup = this.#fb.group<FormGroupTypeGenerator<ComponentForm>>({
+      email: this.#fb.control<string>('', {
+        validators: [Validators.required, Validators.email],
+        updateOn: 'change'
+      }) as FormControl<string>,
+      password: this.#fb.control<string>('', {
+        validators: [Validators.required],
+        updateOn: 'change'
+      }) as FormControl<string>
     });
-    this.flags$ = this._service.watchFlags$();
   }
 
   signup() {
     if (this.formGroup.valid) {
       const { email, password } = this.formGroup.value;
-      this.#signup$ = this._service.signup$({ email, password }).subscribe({
+      this.flags.update(value => ({ ...value, signup: { ...value.signup, loading: true } }));
+      this.#signup$ = this.#service.signup$({ email, password } as ComponentForm).subscribe({
         next: () => {
+          this.flags.update(value => ({
+            ...value,
+            signup: { ...value.signup, loading: false, success: true, fail: false }
+          }));
           this.formGroup.reset();
+        },
+        error: () => {
+          this.flags.update(value => ({
+            ...value,
+            signup: { ...value.signup, loading: false, success: false, fail: true }
+          }));
         }
       });
     }
   }
 
-  getError(formControlName = '') {
-    if (this.formGroup.get(formControlName)?.hasError('required')) {
-      return `${
-        formControlName.charAt(0).toUpperCase() + formControlName.slice(1)
-      } is required`;
-    }
-
-    if (this.formGroup.get(formControlName)?.hasError('email')) {
-      return 'Invalid Email';
-    }
-
-    return '';
-  }
-
-  dismissError() {
-    this._service.dismissError();
-  }
-
   ngOnDestroy() {
     this.#signup$?.unsubscribe();
-    this.#saveUser$?.unsubscribe();
   }
 }

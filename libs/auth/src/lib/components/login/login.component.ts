@@ -1,90 +1,60 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
-import { MatRippleModule } from '@angular/material/core';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
-import { LoginGraphicComponent } from '@expenses-tracker/shared/assets';
+import { FormGroupTypeGenerator, INITIAL_FLAGS } from '@expenses-tracker/shared/interfaces';
 
-import { ComponentFlags, LoginService } from './login.service';
-
-type LoginForm = {
-  email: FormControl<string | null>;
-  password: FormControl<string | null>;
-};
+import { ComponentFlags, ComponentForm, LoginService } from './login.service';
 
 @Component({
   selector: 'expenses-tracker-login',
   standalone: true,
-  imports: [
-    CommonModule,
-    LoginGraphicComponent,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatRippleModule,
-    ReactiveFormsModule
-  ],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  formGroup!: FormGroup<LoginForm>;
-  error$ = new BehaviorSubject<string>('');
-  flags$!: Observable<ComponentFlags>;
+  formGroup!: FormGroup<FormGroupTypeGenerator<ComponentForm>>;
   #login$!: Subscription;
 
-  constructor(private _fb: FormBuilder, private _service: LoginService) {}
+  #fb = inject(FormBuilder);
+  #service = inject(LoginService);
+
+  flags = signal<ComponentFlags>({ login: INITIAL_FLAGS });
 
   ngOnInit() {
-    this.formGroup = this._fb.group<LoginForm>({
-      email: this._fb.control<string>('', {
-        validators: [Validators.required, Validators.email]
-      }),
-      password: this._fb.control<string>('', {
-        validators: [Validators.required]
-      })
+    this.formGroup = this.#fb.group<FormGroupTypeGenerator<ComponentForm>>({
+      email: this.#fb.control<string>('', {
+        validators: [Validators.required, Validators.email],
+        updateOn: 'change'
+      }) as FormControl<string>,
+      password: this.#fb.control<string>('', {
+        validators: [Validators.required],
+        updateOn: 'change'
+      }) as FormControl<string>
     });
-
-    this._service.dismissError();
-    this.flags$ = this._service.watchFlags$();
   }
 
   login() {
     if (!this.formGroup.invalid) {
       const { email, password } = this.formGroup.value;
-      this.#login$ = this._service.login$({ email, password }).subscribe({
+      this.flags.update(value => ({ ...value, login: { ...value.login, loading: true } }));
+      this.#login$ = this.#service.login$({ email, password } as ComponentForm).subscribe({
         next: () => {
+          this.flags.update(value => ({
+            ...value,
+            login: { ...value.login, loading: false, success: true, fail: false }
+          }));
           this.formGroup.reset();
+        },
+        error: () => {
+          this.flags.update(value => ({
+            ...value,
+            login: { ...value.login, loading: false, success: false, fail: true }
+          }));
         }
       });
     }
-  }
-
-  dismissError() {
-    this._service.dismissError();
-  }
-
-  getError(formControlName = '') {
-    if (this.formGroup.get(formControlName)?.hasError('required')) {
-      return `${
-        formControlName.charAt(0).toUpperCase() + formControlName.slice(1)
-      } is required`;
-    }
-
-    if (this.formGroup.get(formControlName)?.hasError('email')) {
-      return 'Invalid Email';
-    }
-
-    return '';
   }
 
   ngOnDestroy() {

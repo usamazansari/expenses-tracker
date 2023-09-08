@@ -6,11 +6,16 @@ enum RoutePaths {
   EntityList = 'list',
   EntityAdd = 'add',
   EntityEdit = 'edit',
+  EntityDynamicId = ':id',
+  EntitySettings = 'settings',
   Home = '',
+  Empty = '',
   Pocketbook = 'pocketbook',
   PocketbookCollaborator = 'collaborator',
   PocketbookOwner = 'owner',
   Profile = 'profile',
+  ProfileDisplayName = 'displayName',
+  ProfilePassword = 'password',
   Transaction = 'transaction'
 }
 

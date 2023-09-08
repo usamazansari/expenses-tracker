@@ -19,8 +19,20 @@ export class FirestoreService {
     return this.#pocketbook.watchOwnedPocketbookList$();
   }
 
+  watchOwnedPocketbookListCount$() {
+    return this.#pocketbook.watchOwnedPocketbookListCount$();
+  }
+
   watchCollaboratedPocketbookList$() {
     return this.#pocketbook.watchCollaboratedPocketbookList$();
+  }
+
+  watchCollaboratedPocketbookListCount$() {
+    return this.#pocketbook.watchCollaboratedPocketbookListCount$();
+  }
+
+  watchPocketbookList$() {
+    return this.#pocketbook.watchPocketbookList$();
   }
 
   watchPocketbook$(pocketbookId: string) {
@@ -59,15 +71,34 @@ export class FirestoreService {
     return this.#user.watchPocketbookCollaboratorList$(pocketbookCollaboratorList);
   }
 
+  watchPocketbookContributors$({ owner, collaboratorList }: IPocketbook) {
+    return this.#user.watchPocketbookContributors$({ owner, collaboratorList } as IPocketbook);
+  }
+
+  /**
+   * @deprecated Use monthly fetch API instead
+   */
   watchTransactionList$() {
     return this.#transaction.watchTransactionList$();
+  }
+
+  watchTransactionListForDay$(date: Date) {
+    return this.#transaction.watchTransactionListForDay$(date);
+  }
+
+  watchTransactionListForWeek$(date: Date) {
+    return this.#transaction.watchTransactionListForWeek$(date);
+  }
+
+  watchTransactionListForMonth$(date: Date) {
+    return this.#transaction.watchTransactionListForMonth$(date);
   }
 
   watchTransaction$(transactionId: string) {
     return this.#transaction.watchTransaction$(transactionId);
   }
 
-  createTransaction$(transaction: Partial<ITransaction>) {
+  createTransaction$(transaction: ITransaction) {
     return this.#transaction.createTransaction$(transaction);
   }
 

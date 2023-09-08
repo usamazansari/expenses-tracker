@@ -1,34 +1,42 @@
-<div class="grid">
-  <ng-container *ngIf="transactionList$ | async as transactionList">
-    <ng-container *ngIf="!transactionList; else showTransactionList">
-      <div class="grid gap-2">Error in fetching transaction list</div>
-    </ng-container>
-    <ng-template #showTransactionList>
-      <ng-container *ngIf="transactionList.length > 0; else noTransaction">
-        <div class="grid gap-2">
-          <ng-container *ngFor="let transaction of transactionList">
-            <expenses-tracker-transaction-list-item
-              [transaction]="transaction"></expenses-tracker-transaction-list-item>
-          </ng-container>
-        </div>
-      </ng-container>
-      <ng-template #noTransaction>
-        <div class="grid place-content-center">
-          <div class="flex items-center justify-center h-48 gap-2">
-            <!-- <expenses-tracker-empty-pocketbook-list-graphic
-                class="w-16 fill-et-color-fg-danger"></expenses-tracker-empty-pocketbook-list-graphic> -->
-            <p class="cursor-default text-et-color-fg-danger">No transactions found.</p>
-          </div>
-        </div>
-      </ng-template>
-      <div class="fixed z-10 p-4 right-12 bottom-12">
+<div class="grid gap-2">
+  <ng-container *ngIf="flags().visible">
+    <div class="grid gap-6 et-card">
+      <div class="flex items-center justify-between">
+        <span class="text-xl font-bold cursor-default text-color-accent-fg">Transaction List</span>
         <button
-          class="flex p-4 rounded-full bg-et-color-button-primary-bg text-et-color-button-primary"
           type="button"
-          (click)="addTransaction()">
-          <mat-icon>add</mat-icon>
+          class="flex et-button et-button-primary md:hidden"
+          (click)="addTransaction()"
+          [expensesTrackerTooltip]="addTransactionTooltip">
+          <span class="material-icons">add</span>
+        </button>
+        <button type="button" class="hidden et-button et-button-primary md:flex" (click)="addTransaction()">
+          <span class="material-icons">add</span>
+          <span class="">Add Transaction</span>
         </button>
       </div>
-    </ng-template>
+      <div class="flex items-center gap-2">
+        <div class="flex-grow p-0 et-form-field-wrapper">
+          <div class="et-form-field-input-wrapper">
+            <input
+              class="w-full et-input"
+              formControlName="displayName"
+              type="text"
+              placeholder="Search for Transactions"
+              (keyup)="debounceSearch($event)" />
+          </div>
+        </div>
+        <expenses-tracker-segmented-control
+          [dataInput]="viewOptions"
+          [selectedInput]="viewMode()"
+          (selectionChange$)="changeViewMode($event)"></expenses-tracker-segmented-control>
+      </div>
+
+      <expenses-tracker-transaction-list-view [viewModeInput]="viewMode()"></expenses-tracker-transaction-list-view>
+    </div>
   </ng-container>
 </div>
+
+<expenses-tracker-tooltip #addTransactionTooltip>
+  <span>Add Transaction</span>
+</expenses-tracker-tooltip>

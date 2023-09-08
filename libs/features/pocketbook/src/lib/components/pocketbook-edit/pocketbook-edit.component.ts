@@ -1,29 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { Component, OnDestroy, OnInit, computed, inject } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { User } from 'firebase/auth';
-import { filter, map, Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, filter, map } from 'rxjs';
 
 import { ContextService } from '@expenses-tracker/core';
-import { AddPocketbookGraphicComponent } from '@expenses-tracker/shared/assets';
 
 import { IPocketbook } from '@expenses-tracker/shared/interfaces';
-import {
-  ComponentFlags,
-  IPocketbookEditForm,
-  PocketbookEditService
-} from './pocketbook-edit.service';
+import { ComponentFlags, IPocketbookEditForm, PocketbookEditService } from './pocketbook-edit.service';
 
 type PocketbookEditForm<T extends IPocketbookEditForm = IPocketbookEditForm> = {
   name: FormControl<T['name']>;
@@ -33,17 +17,7 @@ type PocketbookEditForm<T extends IPocketbookEditForm = IPocketbookEditForm> = {
 @Component({
   selector: 'expenses-tracker-pocketbook-edit',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatIconModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatChipsModule,
-    ReactiveFormsModule,
-
-    AddPocketbookGraphicComponent
-  ],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './pocketbook-edit.component.html'
 })
 export class PocketbookEditComponent implements OnInit, OnDestroy {
@@ -57,11 +31,12 @@ export class PocketbookEditComponent implements OnInit, OnDestroy {
   #fb = inject(FormBuilder);
   #context = inject(ContextService);
   #service = inject(PocketbookEditService);
+  user = computed(() => this.#context.user());
 
   ngOnInit() {
     this.#service.fetchUserList$();
     this.userList$ = this.#service.watchUserList$().pipe(
-      map(users => users.filter(({ uid }) => uid !== this.#context.getUser()?.uid)),
+      map(users => users.filter(({ uid }) => uid !== this.user()?.uid)),
       filter(Boolean)
     );
 
@@ -70,9 +45,9 @@ export class PocketbookEditComponent implements OnInit, OnDestroy {
       collaboratorList: this.#fb.control<User[]>([])
     });
 
-    this.#patchValues$ = this.#service.patchValues$().subscribe(patchValues => {
-      this.formGroup.patchValue(patchValues);
-    });
+    // this.#patchValues$ = this.#service.patchValues$().subscribe(patchValues => {
+    //   this.formGroup.patchValue(patchValues);
+    // });
 
     this.flags$ = this.#service.watchFlags$();
   }
@@ -89,20 +64,20 @@ export class PocketbookEditComponent implements OnInit, OnDestroy {
   editPocketbook() {
     if (!this.formGroup.invalid) {
       const { name, collaboratorList } = this.formGroup.value;
-      this.#editPocketbook$ = this.#service
-        .editPocketbook$({
-          name: name ?? '',
-          collaboratorList: collaboratorList?.map(({ uid }) => uid)
-        })
-        .subscribe({
-          next: () => {
-            this.formGroup.reset();
-            this.#context.resetPocketbook();
-          },
-          error: error => {
-            console.error({ error });
-          }
-        });
+      // this.#editPocketbook$ = this.#service
+      //   .editPocketbook$({
+      //     name: name ?? '',
+      //     collaboratorList: collaboratorList?.map(({ uid }) => uid)
+      //   })
+      //   .subscribe({
+      //     next: () => {
+      //       this.formGroup.reset();
+      //       this.#context.resetPocketbook();
+      //     },
+      //     error: error => {
+      //       console.error({ error });
+      //     }
+      //   });
     }
   }
 
@@ -113,9 +88,7 @@ export class PocketbookEditComponent implements OnInit, OnDestroy {
 
   getError(formControlName = '') {
     if (this.formGroup.get(formControlName)?.hasError('required')) {
-      return `${
-        formControlName.charAt(0).toUpperCase() + formControlName.slice(1)
-      } is required`;
+      return `${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)} is required`;
     }
     return '';
   }
