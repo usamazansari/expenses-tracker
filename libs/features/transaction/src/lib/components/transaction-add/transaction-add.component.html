@@ -39,6 +39,7 @@
                     id="amount-input"
                     type="number"
                     min="0"
+                    (blur)="formatAmount(formGroup.controls.amount.value)"
                     autofocus="true" />
                 </div>
                 <ng-container *ngIf="formGroup.controls.amount.hasError('required')">
