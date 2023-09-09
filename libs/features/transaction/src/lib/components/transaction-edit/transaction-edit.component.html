@@ -1,12 +1,24 @@
 <div class="grid gap-4 et-card">
-  <div class="flex items-center justify-between">
+  <div class="flex items-center gap-4">
     <span class="text-xl font-bold cursor-default text-color-accent-fg">Edit Transaction</span>
+    <ng-container *ngIf="flags().editTransaction">
+      <span class="material-icons text-color-danger-fg" [expensesTrackerTooltip]="transactionEditFailTooltip">
+        error
+      </span>
+      <expenses-tracker-tooltip #transactionEditFailTooltip>
+        <span>Unable to edit transaction</span>
+      </expenses-tracker-tooltip>
+    </ng-container>
   </div>
 
   <div class="relative grid">
-    <expenses-tracker-transaction-form
-      [transactionInput]="this.transaction()"
-      (gotoTransactionList$)="gotoTransactionList()"
-      (transactionOperation$)="editTransaction($event)"></expenses-tracker-transaction-form>
+    <ng-container *ngIf="flags().editTransaction.loading">
+      <div class="et-loading-overlay"></div>
+    </ng-container>
+    <ng-container *ngIf="flags().editTransaction.visible">
+      <expenses-tracker-transaction-form
+        (gotoTransactionList$)="gotoTransactionList()"
+        (transactionOperation$)="editTransaction($event)"></expenses-tracker-transaction-form>
+    </ng-container>
   </div>
 </div>
