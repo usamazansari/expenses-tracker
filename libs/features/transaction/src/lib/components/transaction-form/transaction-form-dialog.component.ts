@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 
 @Component({
-  selector: 'expenses-tracker-transaction-add-dialog',
+  selector: 'expenses-tracker-transaction-form-dialog',
   standalone: true,
   imports: [CommonModule],
   template: `<div class="grid gap-4 p-0 et-card bg-color-canvas-default">
@@ -31,7 +31,7 @@ import { Component, inject } from '@angular/core';
     </div>
   </div>`
 })
-export class TransactionAddDialogComponent {
+export class TransactionFormDialogComponent {
   #dialogRef = inject(DialogRef);
 
   cancelAddTransaction() {

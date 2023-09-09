@@ -19,9 +19,9 @@ export class TransactionListItemService {
     this.#context.setTransaction(transaction);
     this.#router.navigate([
       RoutePaths.Pocketbook,
-      // this.#context.getPocketbook()?.id,
+      this.#context.pocketbook()?.id,
       RoutePaths.Transaction,
-      this.#context.getTransaction()?.id,
+      this.#context.transaction()?.id,
       RoutePaths.EntityEdit
     ]);
   }
