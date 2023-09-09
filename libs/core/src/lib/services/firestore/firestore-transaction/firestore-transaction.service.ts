@@ -5,7 +5,7 @@ import { Timestamp } from '@angular/fire/firestore';
 import { catchError, from, map, of, throwError } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
-import { ITransaction } from '@expenses-tracker/shared/interfaces';
+import { ITransaction, TransactionDAO } from '@expenses-tracker/shared/interfaces';
 
 import { ContextService } from '../../context/context.service';
 import { ErrorService } from '../../error/error.service';
@@ -117,7 +117,7 @@ export class FirestoreTransactionService {
       );
   }
 
-  createTransaction$({ amount, category, transactionType, description, paymentMode, transactionDate }: ITransaction) {
+  createTransaction$({ amount, category, transactionType, description, paymentMode, transactionDate }: TransactionDAO) {
     const docId = this.#firestore.createId();
 
     return !this.pocketbook()

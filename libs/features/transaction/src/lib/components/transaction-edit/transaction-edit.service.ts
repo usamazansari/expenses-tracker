@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, map, of, switchMap } from 'rxjs';
 
@@ -15,8 +15,7 @@ export type ComponentFlags = {
   providedIn: 'root'
 })
 export class TransactionEditService {
-  #flags$ = new BehaviorSubject<ComponentFlags>({ editTransaction: INITIAL_FLAGS });
-  #flags: ComponentFlags = { editTransaction: INITIAL_FLAGS };
+  flags = signal<ComponentFlags>({ editTransaction: INITIAL_FLAGS });
 
   #context = inject(ContextService);
   #firestore = inject(FirestoreService);
@@ -24,53 +23,30 @@ export class TransactionEditService {
   #router = inject(Router);
   #location = inject(Location);
 
-  #setFlags(flags: ComponentFlags) {
-    this.#flags = flags;
-    this.#flags$.next(this.#flags);
-  }
-
-  resetFlags() {
-    this.#setFlags({ editTransaction: INITIAL_FLAGS });
-  }
-
-  watchFlags$() {
-    return this.#flags$.asObservable();
-  }
-
-  watchTransaction$() {
-    const transactionId = this.#location
-      .path()
-      .match(/pocketbook\/(\w+)\//)
-      ?.at(1);
-    return this.#context
-      .watchTransaction$()
-      .pipe(switchMap(txn => (!txn ? this.#firestore.watchTransaction$(transactionId ?? '') : of(txn))));
-  }
-
-  patchValues$() {
-    return this.watchTransaction$().pipe(
-      map(txn => ({
-        category: txn?.category ?? null,
-        amount: txn?.amount ?? null,
-        direction: txn?.transactionType ?? null,
-        message: txn?.description ?? null,
-        timestamp: txn?.transactionDate ?? null,
-        paymentMode: txn?.paymentMode ?? null
-      }))
-    );
-  }
+  // patchValues$() {
+  //   return this.watchTransaction$().pipe(
+  //     map(txn => ({
+  //       category: txn?.category ?? null,
+  //       amount: txn?.amount ?? null,
+  //       direction: txn?.transactionType ?? null,
+  //       message: txn?.description ?? null,
+  //       timestamp: txn?.transactionDate ?? null,
+  //       paymentMode: txn?.paymentMode ?? null
+  //     }))
+  //   );
+  // }
 
   editTransaction$(transaction: ITransaction) {
-    this.resetFlags();
-    this.#setFlags({
-      ...this.#flags,
+    this.flags.set({ editTransaction: INITIAL_FLAGS });
+    this.flags.update(value => ({
+      ...value,
       editTransaction: {
-        ...this.#flags.editTransaction,
+        ...value.editTransaction,
         loading: true
       }
-    });
+    }));
 
-    const t = this.#context.getTransaction();
+    // const t = this.#context.getTransaction();
     // return this.#firestore.updateTransaction$({ ...t, ...transaction }).pipe(
     //   switchMap(() =>
     //     this.#context.watchPocketbook$().pipe(
@@ -105,9 +81,9 @@ export class TransactionEditService {
     //       title: 'Error adding transaction'
     //     });
     //     this.#setFlags({
-    //       ...this.#flags,
+    //       ...this.flags(),
     //       editTransaction: {
-    //         ...this.#flags.editTransaction,
+    //         ...this.flags().editTransaction,
     //         loading: false,
     //         fail: true,
     //         visible: true

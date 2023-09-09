@@ -45,9 +45,9 @@ export class TransactionEditComponent implements OnInit, OnDestroy {
       transactionDate: this.#formBuilder.control<Date>(new Date(Date.now()), Validators.required) as FormControl<Date>
     });
 
-    this.#patchValues$ = this.#service.patchValues$().subscribe(patchValues => {
-      this.formGroup.patchValue(patchValues);
-    });
+    // this.#patchValues$ = this.#service.patchValues$().subscribe(patchValues => {
+    //   this.formGroup.patchValue(patchValues);
+    // });
   }
 
   editTransaction() {
@@ -73,13 +73,6 @@ export class TransactionEditComponent implements OnInit, OnDestroy {
 
   cancelEditTransaction() {
     this.#service.cancelEditTransaction();
-  }
-
-  getError(formControlName = '') {
-    if (this.formGroup.get(formControlName)?.hasError('required')) {
-      return `${formControlName.charAt(0).toUpperCase() + formControlName.slice(1)} is required`;
-    }
-    return '';
   }
 
   ngOnDestroy() {

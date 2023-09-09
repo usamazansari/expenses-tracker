@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, inject, signal } from '@angular/core';
 import { EMPTY } from 'rxjs';
+import { CdkMenu, CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
 
 import { ITransaction } from '@expenses-tracker/shared/interfaces';
 import { TooltipModule } from '@expenses-tracker/shared/common';
@@ -11,7 +12,7 @@ import { CategoryFormatterPipePipe } from '../../../pipes';
 @Component({
   selector: 'expenses-tracker-transaction-list-item',
   standalone: true,
-  imports: [CategoryFormatterPipePipe, CommonModule, TooltipModule],
+  imports: [CategoryFormatterPipePipe, CommonModule, CdkMenuTrigger, CdkMenu, CdkMenuItem, TooltipModule],
   templateUrl: './transaction-list-item.component.html',
   styles: []
 })

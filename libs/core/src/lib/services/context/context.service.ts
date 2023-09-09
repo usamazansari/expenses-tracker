@@ -3,12 +3,12 @@ import { Injectable, inject, signal } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Timestamp } from '@angular/fire/firestore';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { User } from 'firebase/auth';
-import { BehaviorSubject, filter, map, of, switchMap } from 'rxjs';
+import { map } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
-import { IPocketbook, ITransaction } from '@expenses-tracker/shared/interfaces';
+import { IPocketbook, ITransaction, TransactionDAO } from '@expenses-tracker/shared/interfaces';
 
 import { ErrorService } from '../error/error.service';
 import { PocketbookMapper } from '../firestore/firestore.utils';
@@ -19,8 +19,7 @@ import { PocketbookMapper } from '../firestore/firestore.utils';
 export class ContextService {
   user = signal<User | null>(null);
   pocketbook = signal<IPocketbook | null>(null);
-  #transaction$ = new BehaviorSubject<ITransaction | null>(null);
-  #transaction: ITransaction | null = null;
+  transaction = signal<ITransaction | null>(null);
 
   #auth = inject(AngularFireAuth);
   #router = inject(Router);
@@ -39,20 +38,7 @@ export class ContextService {
   }
 
   setTransaction(transaction: ITransaction | null) {
-    this.#transaction = transaction ?? null;
-    this.#transaction$.next(this.#transaction);
-  }
-
-  resetTransaction() {
-    this.setTransaction(null);
-  }
-
-  getTransaction() {
-    return this.#transaction;
-  }
-
-  watchTransaction$() {
-    return this.#transaction$.asObservable();
+    this.transaction.set(transaction);
   }
 
   #fetchUser$() {
@@ -78,28 +64,23 @@ export class ContextService {
   }
 
   #fetchTransaction$() {
-    this.#router.events
+    const txnId =
+      this.#location
+        .path()
+        .match(/transaction\/(\w+)\//)
+        ?.at(1) ?? '';
+
+    this.#firestore
+      .collection<ITransaction<Timestamp>>(Collections.Transaction, ref => ref.where('id', '==', txnId))
+      .valueChanges()
       .pipe(
-        filter(e => e instanceof NavigationEnd),
-        map(e => (e as NavigationEnd).urlAfterRedirects),
-        switchMap(url =>
-          url.includes('transaction')
-            ? this.#firestore
-                .collection<ITransaction<Timestamp>>(Collections.Transaction, ref =>
-                  ref.where('id', '==', url.match(/transaction\/(\w+)\//)?.at(1) ?? '')
-                )
-                .valueChanges()
-                .pipe(
-                  map(([transaction]) =>
-                    !transaction
-                      ? null
-                      : ({
-                          ...transaction,
-                          transactionDate: (transaction?.transactionDate as Timestamp)?.toDate()
-                        } as ITransaction)
-                  )
-                )
-            : of(null)
+        map(([transaction]) =>
+          !transaction
+            ? null
+            : ({
+                ...transaction,
+                transactionDate: (transaction?.transactionDate as Timestamp)?.toDate()
+              } as ITransaction)
         )
       )
       .subscribe(transaction => {
@@ -107,7 +88,7 @@ export class ContextService {
       });
   }
 
-  updateTransactionCalculateBalance({
+  calculateBalanceOnUpdate({
     old: { amount: oldAmount, transactionType: oldDirection },
     new: { amount: newAmount, transactionType: newDirection }
   }: {
@@ -122,12 +103,12 @@ export class ContextService {
       : balance - oldAmount - newAmount;
   }
 
-  addTransactionCalculateBalance({ amount, transactionType }: ITransaction) {
+  calculateBalanceOnAdd({ amount, transactionType }: TransactionDAO) {
     const balance = this.pocketbook()?.balance ?? 0;
     return transactionType === 'expense' ? balance - amount : balance + amount;
   }
 
-  deleteTransactionCalculateBalance({ amount, transactionType }: ITransaction) {
+  calculateBalanceOnDelete({ amount, transactionType }: TransactionDAO) {
     const balance = this.pocketbook()?.balance ?? 0;
     return transactionType === 'expense' ? balance + amount : balance - amount;
   }
