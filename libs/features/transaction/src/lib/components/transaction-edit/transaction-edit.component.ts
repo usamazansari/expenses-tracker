@@ -1,82 +1,28 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Component, computed, inject } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 
-import {
-  FormGroupTypeGenerator,
-  PaymentMode,
-  TransactionCategory,
-  TransactionType
-} from '@expenses-tracker/shared/interfaces';
+import { TransactionDAO } from '@expenses-tracker/shared/interfaces';
 
-import { TransactionForm } from '../../types';
+import { TransactionFormComponent } from '../transaction-form/transaction-form.component';
 import { TransactionEditService } from './transaction-edit.service';
 
 @Component({
   selector: 'expenses-tracker-transaction-edit',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './transaction-edit.component.html',
-  styles: []
+  imports: [CommonModule, ReactiveFormsModule, TransactionFormComponent],
+  templateUrl: './transaction-edit.component.html'
 })
-export class TransactionEditComponent implements OnInit, OnDestroy {
-  #editTransaction$!: Subscription;
-  #patchValues$!: Subscription;
-
-  #formBuilder = inject(FormBuilder);
+export class TransactionEditComponent {
   #service = inject(TransactionEditService);
 
-  formGroup!: FormGroup<FormGroupTypeGenerator<TransactionForm>>;
+  transaction = computed(() => this.#service.transaction() as TransactionDAO);
 
-  ngOnInit() {
-    this.formGroup = this.#formBuilder.group<FormGroupTypeGenerator<TransactionForm>>({
-      amount: this.#formBuilder.control<number | null>(null, Validators.required) as FormControl<number>,
-      category: this.#formBuilder.control<TransactionCategory>(
-        'other',
-        Validators.required
-      ) as FormControl<TransactionCategory>,
-      transactionType: this.#formBuilder.control<TransactionType>(
-        'expense',
-        Validators.required
-      ) as FormControl<TransactionType>,
-      description: this.#formBuilder.control<string>('') as FormControl<string>,
-      paymentMode: this.#formBuilder.control<PaymentMode>('card', Validators.required) as FormControl<PaymentMode>,
-      transactionDate: this.#formBuilder.control<Date>(new Date(Date.now()), Validators.required) as FormControl<Date>
-    });
-
-    // this.#patchValues$ = this.#service.patchValues$().subscribe(patchValues => {
-    //   this.formGroup.patchValue(patchValues);
-    // });
+  gotoTransactionList() {
+    this.#service.gotoTransactionList();
   }
 
-  editTransaction() {
-    if (!this.formGroup.invalid) {
-      const { amount, category, transactionType: direction, description: message } = this.formGroup.value;
-      // this.#editTransaction$ = this.#service
-      //   .editTransaction$({
-      //     amount,
-      //     category,
-      //     direction,
-      //     message
-      //   } as ITransaction)
-      //   .subscribe({
-      //     next: () => {
-      //       this.formGroup.reset();
-      //     },
-      //     error: error => {
-      //       console.error({ error });
-      //     }
-      //   });
-    }
-  }
-
-  cancelEditTransaction() {
-    this.#service.cancelEditTransaction();
-  }
-
-  ngOnDestroy() {
-    this.#editTransaction$?.unsubscribe();
-    this.#patchValues$?.unsubscribe();
+  editTransaction(transaction: Partial<TransactionDAO>) {
+    this.#service.editTransaction$(transaction);
   }
 }

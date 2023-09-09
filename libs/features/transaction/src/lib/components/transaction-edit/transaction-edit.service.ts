@@ -1,11 +1,10 @@
-import { Location } from '@angular/common';
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, map, of, switchMap } from 'rxjs';
+import { catchError, of, switchMap } from 'rxjs';
 
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
 import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
-import { IFlag, INITIAL_FLAGS, ITransaction } from '@expenses-tracker/shared/interfaces';
+import { IFlag, INITIAL_FLAGS, TransactionDAO } from '@expenses-tracker/shared/interfaces';
 
 export type ComponentFlags = {
   editTransaction: IFlag;
@@ -21,22 +20,11 @@ export class TransactionEditService {
   #firestore = inject(FirestoreService);
   #notification = inject(NotificationService);
   #router = inject(Router);
-  #location = inject(Location);
 
-  // patchValues$() {
-  //   return this.watchTransaction$().pipe(
-  //     map(txn => ({
-  //       category: txn?.category ?? null,
-  //       amount: txn?.amount ?? null,
-  //       direction: txn?.transactionType ?? null,
-  //       message: txn?.description ?? null,
-  //       timestamp: txn?.transactionDate ?? null,
-  //       paymentMode: txn?.paymentMode ?? null
-  //     }))
-  //   );
-  // }
+  pocketbook = computed(() => this.#context.pocketbook());
+  transaction = computed(() => this.#context.transaction());
 
-  editTransaction$(transaction: ITransaction) {
+  editTransaction$(transaction: Partial<TransactionDAO>) {
     this.flags.set({ editTransaction: INITIAL_FLAGS });
     this.flags.update(value => ({
       ...value,
@@ -46,58 +34,50 @@ export class TransactionEditService {
       }
     }));
 
-    // const t = this.#context.getTransaction();
-    // return this.#firestore.updateTransaction$({ ...t, ...transaction }).pipe(
-    //   switchMap(() =>
-    //     this.#context.watchPocketbook$().pipe(
-    //       distinctUntilChanged(previous => !(previous?.transactionList ?? []).includes(transaction.id)),
-    //       switchMap(pocketbook =>
-    //         this.#firestore.updatePocketbook$({
-    //           ...pocketbook,
-    //           balance: this.#context.updateTransactionCalculateBalance({
-    //             old: t as ITransaction,
-    //             new: transaction
-    //           })
-    //         })
-    //       )
-    //     )
-    //   ),
-    //   tap(() => {
-    //     this.#notification.success({
-    //       title: 'Transaction edited',
-    //       description: 'The transaction has been updated successfully'
-    //     });
-    //     this.resetFlags();
-    //     this.#router.navigate([
-    //       RoutePaths.Pocketbook,
-    //       this.#context.getPocketbook()?.id ?? 'null',
-    //       RoutePaths.Transaction,
-    //       RoutePaths.EntityList
-    //     ]);
-    //   }),
-    //   catchError(error => {
-    //     this.#notification.error({
-    //       description: `${error}.`,
-    //       title: 'Error adding transaction'
-    //     });
-    //     this.#setFlags({
-    //       ...this.flags(),
-    //       editTransaction: {
-    //         ...this.flags().editTransaction,
-    //         loading: false,
-    //         fail: true,
-    //         visible: true
-    //       }
-    //     });
-    //     return of(error);
-    //   })
-    // );
+    const t = this.transaction();
+    this.#firestore
+      .updateTransaction$({ ...t, ...transaction })
+      .pipe(
+        switchMap(() =>
+          this.#firestore.updatePocketbook$({
+            ...this.pocketbook(),
+            balance: this.#context.calculateBalanceOnUpdate({
+              old: t as TransactionDAO,
+              new: transaction as TransactionDAO
+            })
+          })
+        ),
+        catchError(error => of(error))
+      )
+      .subscribe({
+        next: () => {
+          this.#notification.success({
+            title: 'Transaction edited',
+            description: 'The transaction has been updated successfully'
+          });
+          this.flags.update(value => ({
+            ...value,
+            editTransaction: { ...value.editTransaction, loading: false, success: true, fail: false }
+          }));
+          this.gotoTransactionList();
+        },
+        error: error => {
+          this.#notification.error({
+            description: `${error}.`,
+            title: 'Error adding transaction'
+          });
+          this.flags.update(value => ({
+            ...value,
+            editTransaction: { ...value.editTransaction, loading: false, success: false, fail: true }
+          }));
+        }
+      });
   }
 
-  cancelEditTransaction() {
+  gotoTransactionList() {
     this.#router.navigate([
       RoutePaths.Pocketbook,
-      // this.#context.getPocketbook()?.id,
+      this.pocketbook()?.id,
       RoutePaths.Transaction,
       RoutePaths.EntityList
     ]);

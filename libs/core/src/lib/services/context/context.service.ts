@@ -92,8 +92,8 @@ export class ContextService {
     old: { amount: oldAmount, transactionType: oldDirection },
     new: { amount: newAmount, transactionType: newDirection }
   }: {
-    old: ITransaction;
-    new: ITransaction;
+    old: TransactionDAO;
+    new: TransactionDAO;
   }) {
     const balance = this.pocketbook()?.balance ?? 0;
     return oldDirection === newDirection

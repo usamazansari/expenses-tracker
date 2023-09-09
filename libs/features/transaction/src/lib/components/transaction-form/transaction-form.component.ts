@@ -1,7 +1,7 @@
 import { Dialog } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnDestroy, OnInit, Output, inject } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, EventEmitter, Input, OnDestroy, Output, inject } from '@angular/core';
+import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import {
@@ -27,10 +27,25 @@ import { TransactionFormDialogComponent } from './transaction-form-dialog.compon
   imports: [CommonModule, ReactiveFormsModule, DatePickerComponent, SelectComponent, SegmentedControlComponent],
   templateUrl: './transaction-form.component.html'
 })
-export class TransactionFormComponent implements OnInit, OnDestroy {
-  formGroup!: FormGroup<FormGroupTypeGenerator<TransactionDAO>>;
+export class TransactionFormComponent implements OnDestroy {
   #formBuilder = inject(FormBuilder);
   #dialog = inject(Dialog);
+  formGroup = this.#formBuilder.group<FormGroupTypeGenerator<TransactionDAO>>(
+    {
+      transactionType: this.#formBuilder.control<TransactionType>('expense') as FormControl<TransactionType>,
+      amount: this.#formBuilder.control<number>(0, {
+        validators: [Validators.required],
+        updateOn: 'change'
+      }) as FormControl<number>,
+      category: this.#formBuilder.control<TransactionCategory>('other') as FormControl<TransactionCategory>,
+      paymentMode: this.#formBuilder.control<PaymentMode>('card') as FormControl<PaymentMode>,
+      transactionDate: this.#formBuilder.control<Date>(new Date(Date.now())) as FormControl<Date>,
+      description: this.#formBuilder.control<string>('') as FormControl<string>
+    },
+    {
+      updateOn: 'submit'
+    }
+  );
 
   transactionTypeOptions: SegmentedControlWrapper<TransactionType>[] = [
     { label: 'Income', value: 'income', icon: 'add_circle_outline' },
@@ -63,29 +78,14 @@ export class TransactionFormComponent implements OnInit, OnDestroy {
     { label: 'Trips', value: 'trips' }
   ];
 
+  @Input() set transactionInput(transaction: TransactionDAO) {
+    this.formGroup.patchValue(transaction);
+  }
+
   @Output() gotoTransactionList$ = new EventEmitter<void>();
   @Output() transactionOperation$ = new EventEmitter<TransactionDAO>();
 
   #transactionFormDialogSubscription$!: Subscription;
-
-  ngOnInit(): void {
-    this.formGroup = this.#formBuilder.group<FormGroupTypeGenerator<TransactionDAO>>(
-      {
-        transactionType: this.#formBuilder.control<TransactionType>('expense') as FormControl<TransactionType>,
-        amount: this.#formBuilder.control<number>(0, {
-          validators: [Validators.required],
-          updateOn: 'change'
-        }) as FormControl<number>,
-        category: this.#formBuilder.control<TransactionCategory>('other') as FormControl<TransactionCategory>,
-        paymentMode: this.#formBuilder.control<PaymentMode>('card') as FormControl<PaymentMode>,
-        transactionDate: this.#formBuilder.control<Date>(new Date(Date.now())) as FormControl<Date>,
-        description: this.#formBuilder.control<string>('') as FormControl<string>
-      },
-      {
-        updateOn: 'submit'
-      }
-    );
-  }
 
   formatAmount(amount: number) {
     this.formGroup.controls.amount.setValue(+amount);
