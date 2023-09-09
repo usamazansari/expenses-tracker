@@ -23,7 +23,7 @@ import { Component, inject } from '@angular/core';
           <span class="material-icons min-w-[24px]">clear</span>
           <span>No</span>
         </button>
-        <button type="submit" class="w-full et-button et-button-danger" (click)="cancelAddTransaction()">
+        <button type="submit" class="w-full et-button et-button-danger" (click)="cancelOperation()">
           <span class="material-icons min-w-[24px]">done</span>
           <span>Yes</span>
         </button>
@@ -34,7 +34,7 @@ import { Component, inject } from '@angular/core';
 export class TransactionFormDialogComponent {
   #dialogRef = inject(DialogRef);
 
-  cancelAddTransaction() {
+  cancelOperation() {
     this.#dialogRef.close(true);
   }
 
