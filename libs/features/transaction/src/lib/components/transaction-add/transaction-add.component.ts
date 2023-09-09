@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, computed, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
@@ -15,7 +15,7 @@ import { TransactionAddService } from './transaction-add.service';
   imports: [CommonModule, ReactiveFormsModule, TransactionFormComponent, TooltipModule],
   templateUrl: './transaction-add.component.html'
 })
-export class TransactionAddComponent implements OnInit, OnDestroy {
+export class TransactionAddComponent {
   #service = inject(TransactionAddService);
 
   pocketbook = computed(() => this.#service.pocketbook());
@@ -24,20 +24,11 @@ export class TransactionAddComponent implements OnInit, OnDestroy {
   #addTransaction$!: Subscription;
   #transactionAddDialogSubscription$!: Subscription;
 
-  ngOnInit() {
-    console.log({});
-  }
-
   addTransaction(transaction: TransactionDAO) {
     this.#service.addTransaction$(transaction);
   }
 
   gotoTransactionList() {
     this.#service.gotoTransactionList();
-  }
-
-  ngOnDestroy() {
-    this.#addTransaction$?.unsubscribe();
-    this.#transactionAddDialogSubscription$?.unsubscribe();
   }
 }
