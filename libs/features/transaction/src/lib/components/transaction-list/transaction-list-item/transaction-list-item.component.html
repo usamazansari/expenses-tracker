@@ -1,4 +1,4 @@
-<div class="flex items-center justify-between p-4 rounded-lg group">
+<div class="flex flex-col gap-4 p-4 lg:flex-row lg:justify-between group">
   <div class="grid items-center grid-cols-[4rem_1fr] gap-4">
     <div
       class="grid w-16 h-16 text-2xl border rounded-full cursor-default place-content-center"
@@ -37,7 +37,7 @@
   </div>
   <div class="flex items-center gap-4">
     <span
-      class="text-xl font-bold cursor-default"
+      class="flex-grow text-xl font-bold text-center cursor-default whitespace-nowrap"
       [ngClass]="{
         'text-color-danger-fg': transaction()?.transactionType === 'expense',
         'text-color-success-fg': transaction()?.transactionType === 'income'
