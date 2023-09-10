@@ -8,7 +8,7 @@ import { Component, inject } from '@angular/core';
   imports: [CommonModule],
   template: `<div class="grid gap-4 p-0 et-card bg-color-canvas-default">
     <div class="flex items-center justify-between p-4 bg-color-canvas-subtle">
-      <span class="text-xl font-bold cursor-default text-color-accent-fg">Cancel Operation</span>
+      <span class="text-xl font-bold cursor-default text-color-accent-fg">Delete Transaction</span>
       <span
         class="transition-colors duration-200 cursor-pointer material-icons text-color-fg-muted hover:text-color-accent-fg"
         (click)="dismissDialog()">
@@ -16,7 +16,7 @@ import { Component, inject } from '@angular/core';
       </span>
     </div>
     <div class="grid p-4 gap-4">
-      <p class="">Are you sure you want to cancel?</p>
+      <p class="">Are you sure you want to delete this transaction?</p>
 
       <div class="grid grid-cols-2 gap-2 lg:gap-4">
         <button type="submit" class="w-full et-button " (click)="dismissDialog()">
