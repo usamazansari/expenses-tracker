@@ -38,8 +38,7 @@ export class TransactionListItemComponent implements OnDestroy {
     });
     this.#transactionFormDialogSubscription$ = dialogRef.closed.subscribe(value => {
       if (value) {
-        this.#service.deleteTransaction$(this.transaction()?.id ?? '');
-        this.#service.gotoTransactionList();
+        this.#service.deleteTransaction$(this.transaction() as ITransaction);
       }
     });
   }
