@@ -15,7 +15,6 @@ export class TransactionListItemService {
   #firestore = inject(FirestoreService);
   #notification = inject(NotificationService);
   pocketbook = computed(() => this.#context.pocketbook());
-  transaction = computed(() => this.#context.transaction());
 
   gotoTransactionList() {
     this.#router.navigate([
@@ -37,15 +36,16 @@ export class TransactionListItemService {
     ]);
   }
 
-  deleteTransaction$(id: string) {
+  deleteTransaction$(transaction: ITransaction) {
+    const pb = this.pocketbook();
     this.#firestore
-      .deleteTransaction$(id)
+      .deleteTransaction$(transaction?.id)
       .pipe(
         switchMap(() =>
           this.#firestore.updatePocketbook$({
-            ...this.pocketbook(),
-            transactionList: this.pocketbook()?.transactionList.filter(t => t !== this.transaction()?.id),
-            balance: this.#context.calculateBalanceOnDelete(this.transaction() as TransactionDAO)
+            ...pb,
+            transactionList: (pb?.transactionList ?? []).filter(t => t !== transaction?.id),
+            balance: this.#context.calculateBalanceOnDelete(transaction as TransactionDAO)
           })
         ),
         catchError(error => throwError(() => new Error(error)))
@@ -56,7 +56,6 @@ export class TransactionListItemService {
             title: 'Deleted Successfully',
             description: 'Transaction successfully deleted'
           });
-          this.#context.setTransaction(null);
           this.gotoTransactionList();
         },
         error: () => {
