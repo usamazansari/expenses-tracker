@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { FirebaseError } from 'firebase/app';
 
+/**
+ * @deprecated Use strings for errors
+ */
 @Injectable({
   providedIn: 'root'
 })
