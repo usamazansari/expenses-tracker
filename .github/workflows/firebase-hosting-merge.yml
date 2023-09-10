@@ -1,8 +1,8 @@
 name: Deploy to Firebase Hosting on merge
 on:
   push:
-    branches:
-      - main
+    tags:
+      - '*'
 
 jobs:
   build_deploy:
@@ -44,3 +44,4 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_UA_EXPENSES_TRACKER }}'
           channelId: live
           projectId: ua-expenses-tracker
+

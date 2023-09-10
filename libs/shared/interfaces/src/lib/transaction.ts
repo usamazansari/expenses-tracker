@@ -35,4 +35,6 @@ interface ITransaction<T extends DateOrTimestamp = Date> {
   pocketbookId: string;
 }
 
-export { ITransaction, TransactionType, TransactionCategory, PaymentMode };
+type TransactionDAO = Omit<ITransaction, 'id' | 'pocketbookId'>;
+
+export { ITransaction, TransactionType, TransactionCategory, PaymentMode, TransactionDAO };

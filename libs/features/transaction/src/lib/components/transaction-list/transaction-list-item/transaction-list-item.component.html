@@ -1,4 +1,4 @@
-<div class="flex items-center justify-between p-4 rounded-lg bg-et-layer text-et-color-fg-default">
+<div class="flex flex-col gap-4 p-4 lg:flex-row lg:justify-between group">
   <div class="grid items-center grid-cols-[4rem_1fr] gap-4">
     <div
       class="grid w-16 h-16 text-2xl border rounded-full cursor-default place-content-center"
@@ -37,7 +37,7 @@
   </div>
   <div class="flex items-center gap-4">
     <span
-      class="text-xl font-bold cursor-default"
+      class="flex-grow text-xl font-bold text-center cursor-default whitespace-nowrap"
       [ngClass]="{
         'text-color-danger-fg': transaction()?.transactionType === 'expense',
         'text-color-success-fg': transaction()?.transactionType === 'income'
@@ -46,5 +46,26 @@
       <ng-container *ngIf="transaction()?.transactionType === 'income'"> + </ng-container>
       {{ transaction()?.amount | currency: 'EUR' }}
     </span>
+    <button class="transition-all duration-200 lg:opacity-0 lg:group-hover:opacity-100" [cdkMenuTriggerFor]="menu">
+      <span class="material-icons">more_vert</span>
+    </button>
+    <ng-template #menu>
+      <div class="grid p-0 overflow-auto et-card" cdkMenu>
+        <button
+          class="flex items-center justify-start gap-4 px-2 rounded-bl-none rounded-br-none et-button hover:bg-color-accent-emphasis hover:text-color-fg-on-emphasis"
+          cdkMenuItem
+          (cdkMenuItemTriggered)="gotoEditTransaction()">
+          <span class="w-4 material-icons">edit</span>
+          <span>Edit Transaction</span>
+        </button>
+        <button
+          class="flex items-center justify-start gap-4 px-2 rounded-tl-none rounded-tr-none et-button et-button-danger"
+          cdkMenuItem
+          (cdkMenuItemTriggered)="deleteTransaction()">
+          <span class="w-4 material-icons">delete</span>
+          <span>Delete Transaction</span>
+        </button>
+      </div>
+    </ng-template>
   </div>
 </div>
