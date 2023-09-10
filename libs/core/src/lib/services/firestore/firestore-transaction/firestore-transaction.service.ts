@@ -148,7 +148,8 @@ export class FirestoreTransactionService {
                 transactionDate,
                 pocketbookId: this.pocketbook()?.id
               }) as ITransaction
-          )
+          ),
+          catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
         );
   }
 
@@ -160,21 +161,13 @@ export class FirestoreTransactionService {
         .update({ ...transaction })
     ).pipe(
       map(() => transaction),
-      catchError(({ code }: FirebaseError) => {
-        console.error({ code });
-        return throwError(() => new Error(this.#error.getError(code)));
-      })
+      catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code))))
     );
   }
 
   deleteTransaction$(transactionId: string) {
     return from(
       this.#firestore.collection<Partial<ITransaction>>(Collections.Transaction).doc(transactionId).delete()
-    ).pipe(
-      catchError(({ code }: FirebaseError) => {
-        console.error({ code });
-        return throwError(() => new Error(this.#error.getError(code)));
-      })
-    );
+    ).pipe(catchError(({ code }: FirebaseError) => throwError(() => new Error(this.#error.getError(code)))));
   }
 }
