@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
-import { Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 import { SegmentedControlComponent, SegmentedControlWrapper, TooltipModule } from '@expenses-tracker/shared/common';
 import { ITransaction } from '@expenses-tracker/shared/interfaces';
@@ -21,7 +21,7 @@ import { TransactionListService, TransactionListViewTypes } from './transaction-
   ],
   templateUrl: './transaction-list.component.html'
 })
-export class TransactionListComponent implements OnInit, OnDestroy {
+export class TransactionListComponent implements OnInit {
   #searchText$ = new Subject<string>();
   #service = inject(TransactionListService);
   transactionList = computed(() => this.#service.transactionList());
@@ -33,14 +33,6 @@ export class TransactionListComponent implements OnInit, OnDestroy {
     { icon: 'calendar_view_day', tooltip: 'Daily view', value: 'daily' }
   ];
   viewMode = signal<TransactionListViewTypes>('monthly');
-  #transactionList$!: Subscription;
-
-  constructor() {
-    // NOTE: @usamazansari: be very careful while using toObservable as it may cause memory leak
-    // this.#transactionList$ = toObservable(this.pocketbook)
-    //   .pipe(switchMap(() => this.#service.fetchTransactionList$()))
-    //   .subscribe();
-  }
 
   ngOnInit() {
     this.#searchText$.pipe(debounceTime(250), distinctUntilChanged()).subscribe(searchText => {
@@ -62,9 +54,5 @@ export class TransactionListComponent implements OnInit, OnDestroy {
 
   changeViewMode(value: TransactionListViewTypes) {
     this.viewMode.set(value);
-  }
-
-  ngOnDestroy(): void {
-    this.#transactionList$?.unsubscribe();
   }
 }

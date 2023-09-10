@@ -8,7 +8,7 @@ import { Component, inject } from '@angular/core';
   imports: [CommonModule],
   template: `<div class="grid gap-4 p-0 et-card bg-color-canvas-default">
     <div class="flex items-center justify-between p-4 bg-color-canvas-subtle">
-      <span class="text-xl font-bold cursor-default text-color-accent-fg">Add Transaction</span>
+      <span class="text-xl font-bold cursor-default text-color-accent-fg">Cancel Operation</span>
       <span
         class="transition-colors duration-200 cursor-pointer material-icons text-color-fg-muted hover:text-color-accent-fg"
         (click)="dismissDialog()">
@@ -23,7 +23,7 @@ import { Component, inject } from '@angular/core';
           <span class="material-icons min-w-[24px]">clear</span>
           <span>No</span>
         </button>
-        <button type="submit" class="w-full et-button et-button-danger" (click)="cancelAddTransaction()">
+        <button type="submit" class="w-full et-button et-button-danger" (click)="cancelOperation()">
           <span class="material-icons min-w-[24px]">done</span>
           <span>Yes</span>
         </button>
@@ -34,7 +34,7 @@ import { Component, inject } from '@angular/core';
 export class TransactionFormDialogComponent {
   #dialogRef = inject(DialogRef);
 
-  cancelAddTransaction() {
+  cancelOperation() {
     this.#dialogRef.close(true);
   }
 
