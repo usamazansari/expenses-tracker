@@ -36,17 +36,23 @@
     </div>
   </div>
   <div class="flex items-center gap-4">
-    <span
-      class="flex-grow text-xl font-bold text-center cursor-default whitespace-nowrap"
-      [ngClass]="{
-        'text-color-danger-fg': transaction()?.transactionType === 'expense',
-        'text-color-success-fg': transaction()?.transactionType === 'income'
-      }">
-      <ng-container *ngIf="transaction()?.transactionType === 'expense'"> - </ng-container>
-      <ng-container *ngIf="transaction()?.transactionType === 'income'"> + </ng-container>
-      {{ transaction()?.amount | currency: 'EUR' }}
-    </span>
-    <button class="transition-all duration-200 lg:opacity-0 lg:group-hover:opacity-100" [cdkMenuTriggerFor]="menu">
+    <div class="flex items-center flex-grow gap-4">
+      <span class="order-1 cursor-default material-icons md:order-2" [expensesTrackerTooltip]="paymentModeTooltip">
+        {{ paymentMode().icon }}
+      </span>
+      <expenses-tracker-tooltip #paymentModeTooltip>
+        <span>{{ paymentMode().tooltip }}</span>
+      </expenses-tracker-tooltip>
+      <span
+        class="flex-grow order-2 text-xl font-bold text-center cursor-default whitespace-nowrap md:order-1"
+        [ngClass]="{
+          'text-color-danger-fg': transaction()?.transactionType === 'expense',
+          'text-color-success-fg': transaction()?.transactionType === 'income'
+        }">
+        {{ transactionTypeIcon() }} {{ transaction()?.amount | currency: 'EUR' }}
+      </span>
+    </div>
+    <button class="flex transition-all duration-200 lg:opacity-0 lg:group-hover:opacity-100" [cdkMenuTriggerFor]="menu">
       <span class="material-icons">more_vert</span>
     </button>
     <ng-template #menu>
