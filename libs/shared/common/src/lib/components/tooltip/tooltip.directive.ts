@@ -37,7 +37,6 @@ export class TooltipDirective implements OnInit, AfterViewInit {
     event.preventDefault();
     event.stopPropagation();
     this.#tooltipOpenFlag.next(true);
-    // this.#openTooltip();
   }
 
   @HostListener('mouseleave', ['$event'])
@@ -45,7 +44,6 @@ export class TooltipDirective implements OnInit, AfterViewInit {
     event.preventDefault();
     event.stopPropagation();
     this.#tooltipOpenFlag.next(false);
-    // this.#closeTooltip();
   }
 
   ngOnInit() {
