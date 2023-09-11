@@ -8,6 +8,17 @@ import { catchError, of, tap } from 'rxjs';
 
 export type TransactionListViewTypes = 'monthly' | 'daily' | 'weekly';
 
+export type DatePipeArgs = 'MMMM YYYY' | 'ww' | 'longDate';
+
+export type TransactionListSummary = {
+  income: number;
+  expense: number;
+  cashIncome: number;
+  cashExpense: number;
+  cardIncome: number;
+  cardExpense: number;
+};
+
 export type ComponentFlags = {
   transactionList: IFlag;
 };
