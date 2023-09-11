@@ -1,3 +1,4 @@
+import { Dialog } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnDestroy, computed, inject, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
@@ -7,9 +8,13 @@ import { TooltipModule } from '@expenses-tracker/shared/common';
 import { ITransaction } from '@expenses-tracker/shared/interfaces';
 
 import { TransactionListItemComponent } from '../transaction-list-item/transaction-list-item.component';
-import { TransactionListService, TransactionListViewTypes } from '../transaction-list.service';
-
-type DatePipeArgs = 'MMMM YYYY' | 'ww' | 'longDate';
+import {
+  DatePipeArgs,
+  TransactionListService,
+  TransactionListSummary,
+  TransactionListViewTypes
+} from '../transaction-list.service';
+import { TransactionViewSummaryDialogComponent } from './transaction-view-summary-dialog.component';
 
 @Component({
   selector: 'expenses-tracker-transaction-list-view',
@@ -19,6 +24,7 @@ type DatePipeArgs = 'MMMM YYYY' | 'ww' | 'longDate';
 })
 export class TransactionListViewComponent implements OnDestroy {
   #service = inject(TransactionListService);
+  #dialog = inject(Dialog);
   #epoch = new Date();
   view = signal<Date>(this.#epoch);
   transactionList = signal<ITransaction[]>([]);
@@ -40,19 +46,33 @@ export class TransactionListViewComponent implements OnDestroy {
   );
   weekSaturday = signal<Date>(new Date(this.#epoch.getFullYear(), this.#epoch.getMonth(), 6 - this.#epoch.getDay()));
 
-  aggregatedIncome = computed(() =>
-    this.transactionList()
-      .filter(transaction => transaction?.transactionType === 'income')
-      .reduce((acc, transaction) => acc + transaction.amount, 0)
+  summary = computed(
+    () =>
+      this.transactionList().reduce(
+        (acc, transaction) => {
+          const { transactionType, paymentMode, amount } = transaction;
+          acc.income += transactionType === 'income' ? amount : 0;
+          acc.expense += transactionType === 'expense' ? amount : 0;
+          acc.cashIncome += transactionType === 'income' && paymentMode === 'cash' ? amount : 0;
+          acc.cashExpense += transactionType === 'expense' && paymentMode === 'cash' ? amount : 0;
+          acc.cardIncome += transactionType === 'income' && paymentMode === 'card' ? amount : 0;
+          acc.cardExpense += transactionType === 'expense' && paymentMode === 'card' ? amount : 0;
+          return acc;
+        },
+        {
+          income: 0,
+          expense: 0,
+          cashIncome: 0,
+          cashExpense: 0,
+          cardIncome: 0,
+          cardExpense: 0
+        }
+      ) as TransactionListSummary
   );
 
-  aggregatedExpense = computed(() =>
-    this.transactionList()
-      .filter(transaction => transaction?.transactionType === 'expense')
-      .reduce((acc, transaction) => acc + transaction.amount, 0)
-  );
   #transactionList$!: Subscription;
   #viewMode$!: Subscription;
+  #summaryDialog$!: Subscription;
 
   constructor() {
     this.#transactionList$ = toObservable(this.view).subscribe(() => {
@@ -141,6 +161,19 @@ export class TransactionListViewComponent implements OnDestroy {
     this.view.set(this.#epoch);
   }
 
+  showSummary() {
+    const dialogRef = this.#dialog.open(TransactionViewSummaryDialogComponent, {
+      data: {
+        view: this.view(),
+        viewMode: this.viewMode(),
+        summary: this.summary()
+      },
+      disableClose: true,
+      backdropClass: ['bg-color-primer-canvas-backdrop', 'backdrop-blur-[2px]']
+    });
+    this.#summaryDialog$ = dialogRef.closed.subscribe();
+  }
+
   transactionListTrack(index: number, transaction: ITransaction) {
     return transaction.id;
   }
@@ -148,5 +181,6 @@ export class TransactionListViewComponent implements OnDestroy {
   ngOnDestroy() {
     this.#transactionList$?.unsubscribe();
     this.#viewMode$?.unsubscribe();
+    this.#summaryDialog$?.unsubscribe();
   }
 }
