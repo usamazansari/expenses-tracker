@@ -1,7 +1,7 @@
 import { Dialog } from '@angular/cdk/dialog';
 import { CdkMenu, CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnDestroy, inject, signal } from '@angular/core';
+import { Component, Input, OnDestroy, computed, inject, signal } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { TooltipModule } from '@expenses-tracker/shared/common';
@@ -25,6 +25,21 @@ export class TransactionListItemComponent implements OnDestroy {
   @Input() set transactionInput(value: ITransaction | null) {
     this.transaction.set(value);
   }
+  paymentMode = computed(() =>
+    this.transaction()?.paymentMode === 'card'
+      ? { icon: 'credit_card', tooltip: 'Paid by card' }
+      : this.transaction()?.paymentMode === 'cash'
+      ? { icon: 'payments', tooltip: 'Paid with cash' }
+      : { icon: 'error', tooltip: 'Unknown Payment Mode' }
+  );
+
+  transactionTypeIcon = computed(() =>
+    this.transaction()?.transactionType === 'income'
+      ? '+'
+      : this.transaction()?.transactionType === 'expense'
+      ? '-'
+      : '?'
+  );
   #transactionFormDialogSubscription$!: Subscription;
 
   gotoEditTransaction() {
