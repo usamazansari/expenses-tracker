@@ -11,12 +11,13 @@ import { TooltipModule } from '../tooltip';
 })
 export class CalendarComponent {
   #epoch = new Date();
+  view = signal<Date>(this.#epoch);
   selectedDate = signal<Date>(this.#epoch);
   @Input() set selectedDateInput(value: Date) {
     this.selectedDate.set(value);
+    this.view.set(value);
   }
   readonly daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-  view = signal<Date>(this.#epoch);
   calendarDays = computed(() => {
     const currentMonthFirstDay = new Date(this.view().getFullYear(), this.view().getMonth(), 1).getDay() - 1;
     const firstDay = new Date(this.view().getFullYear(), this.view().getMonth(), currentMonthFirstDay * -1);
