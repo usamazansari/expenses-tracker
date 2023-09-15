@@ -5,15 +5,15 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { Subscription } from 'rxjs';
 
 import { TooltipModule } from '@expenses-tracker/shared/common';
-import { ITransaction } from '@expenses-tracker/shared/interfaces';
+import {
+  ITransaction,
+  ITransactionListSummary,
+  TransactionListDatePipeArgs,
+  TransactionListViewTypes
+} from '@expenses-tracker/shared/interfaces';
 
 import { TransactionListItemComponent } from '../transaction-list-item/transaction-list-item.component';
-import {
-  DatePipeArgs,
-  TransactionListService,
-  TransactionListSummary,
-  TransactionListViewTypes
-} from '../transaction-list.service';
+import { TransactionListService } from '../transaction-list.service';
 import { TransactionViewSummaryDialogComponent } from './transaction-view-summary-dialog.component';
 
 @Component({
@@ -26,17 +26,17 @@ export class TransactionListViewComponent implements OnDestroy {
   #service = inject(TransactionListService);
   #dialog = inject(Dialog);
   #epoch = new Date();
-  view = signal<Date>(this.#epoch);
-  transactionList = signal<ITransaction[]>([]);
+  viewMode = computed(() => this.#service.transactionListViewMode());
+  view = computed(() => this.#service.transactionListView());
   flags = computed(() => this.#service.flags().transactionList);
+  transactionList = signal<ITransaction[]>([]);
 
-  viewMode = signal<TransactionListViewTypes>('monthly');
   @Input() set viewModeInput(value: TransactionListViewTypes) {
-    this.viewMode.set(value);
+    this.#service.gotoViewMode(value);
   }
 
-  datePipeArgs = signal<DatePipeArgs>('MMMM YYYY');
-  #datePipeArgsMap = new Map<TransactionListViewTypes, DatePipeArgs>([
+  datePipeArgs = signal<TransactionListDatePipeArgs>('MMMM YYYY');
+  #datePipeArgsMap = new Map<TransactionListViewTypes, TransactionListDatePipeArgs>([
     ['monthly', 'MMMM YYYY'],
     ['weekly', 'ww'],
     ['daily', 'longDate']
@@ -67,7 +67,7 @@ export class TransactionListViewComponent implements OnDestroy {
           cardIncome: 0,
           cardExpense: 0
         }
-      ) as TransactionListSummary
+      ) as ITransactionListSummary
   );
 
   #transactionList$!: Subscription;
@@ -87,7 +87,11 @@ export class TransactionListViewComponent implements OnDestroy {
     if (this.viewMode() === 'weekly') {
       this.#computeWeek();
     }
-    this.datePipeArgs.set(this.#datePipeArgsMap.get(this.viewMode()) ?? 'MMMM YYYY');
+    this.datePipeArgs.set(
+      !this.viewMode()
+        ? 'MMMM YYYY'
+        : (this.#datePipeArgsMap.get(this.viewMode() as TransactionListViewTypes) as TransactionListDatePipeArgs)
+    );
     this.#fetchTransactionList();
   }
 
@@ -103,62 +107,70 @@ export class TransactionListViewComponent implements OnDestroy {
   }
 
   #fetchTransactionListForDay$() {
-    this.#service.fetchTransactionListForDay$(this.view()).subscribe({
-      next: res => {
-        this.transactionList.set(res);
-      },
-      error: error => {
-        console.error({ error });
-        this.transactionList.set([]);
-      }
-    });
+    if (!!this.view()) {
+      this.#service.fetchTransactionListForDay$(this.view() as Date).subscribe({
+        next: res => {
+          this.transactionList.set(res);
+        },
+        error: error => {
+          console.error({ error });
+          this.transactionList.set([]);
+        }
+      });
+    }
   }
   #fetchTransactionListForWeek$() {
-    this.#service.fetchTransactionListForWeek$(this.view()).subscribe({
-      next: res => {
-        this.transactionList.set(res);
-      },
-      error: error => {
-        console.error({ error });
-        this.transactionList.set([]);
-      }
-    });
+    if (!!this.view()) {
+      this.#service.fetchTransactionListForWeek$(this.view() as Date).subscribe({
+        next: res => {
+          this.transactionList.set(res);
+        },
+        error: error => {
+          console.error({ error });
+          this.transactionList.set([]);
+        }
+      });
+    }
   }
   #fetchTransactionListForMonth$() {
-    this.#service.fetchTransactionListForMonth$(this.view()).subscribe({
-      next: res => {
-        this.transactionList.set(res);
-      },
-      error: error => {
-        console.error({ error });
-        this.transactionList.set([]);
-      }
-    });
+    if (!!this.view()) {
+      this.#service.fetchTransactionListForMonth$(this.view() as Date).subscribe({
+        next: res => {
+          this.transactionList.set(res);
+        },
+        error: error => {
+          console.error({ error });
+          this.transactionList.set([]);
+        }
+      });
+    }
   }
 
   #computeWeek() {
-    this.weekSunday.set(
-      new Date(this.view().getFullYear(), this.view().getMonth(), this.view().getDate() + this.view().getDay() * -1)
-    );
-    this.weekSaturday.set(
-      new Date(this.view().getFullYear(), this.view().getMonth(), this.view().getDate() + 6 - this.view().getDay())
-    );
+    if (!!this.view()) {
+      const view = this.view() as Date;
+      this.weekSunday.set(new Date(view.getFullYear(), view.getMonth(), view.getDate() + view.getDay() * -1));
+      this.weekSaturday.set(new Date(view.getFullYear(), view.getMonth(), view.getDate() + 6 - view.getDay()));
+    }
   }
 
   changeView(delta: number) {
-    const next =
-      this.viewMode() === 'daily'
-        ? new Date(this.view().getFullYear(), this.view().getMonth(), this.view().getDate() + delta)
-        : this.viewMode() === 'weekly'
-        ? new Date(this.view().getFullYear(), this.view().getMonth(), this.view().getDate() + delta * 7)
-        : new Date(this.view().getFullYear(), this.view().getMonth() + delta);
-    this.view.set(next);
+    if (!!this.view()) {
+      const view = this.view() as Date;
+      const next =
+        this.viewMode() === 'daily'
+          ? new Date(view.getFullYear(), view.getMonth(), view.getDate() + delta)
+          : this.viewMode() === 'weekly'
+          ? new Date(view.getFullYear(), view.getMonth(), view.getDate() + delta * 7)
+          : new Date(view.getFullYear(), view.getMonth() + delta);
+      this.#service.gotoView(next);
+    }
   }
 
   resetView() {
     this.#epoch = new Date();
     this.#epoch.setHours(0, 0, 0);
-    this.view.set(this.#epoch);
+    this.#service.gotoView(this.#epoch);
   }
 
   showSummary() {
