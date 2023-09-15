@@ -72,7 +72,7 @@ export class ContextService {
         .valueChanges()
         .pipe(map(([pb]) => (!pb ? null : PocketbookMapper(pb))));
     }
-    return throwError(() => new Error('Pocketbook is not set.'));
+    return throwError(() => new Error('Pocketbook is not set in the URL.'));
   }
 
   #fetchPocketbook$() {
@@ -81,14 +81,14 @@ export class ContextService {
     });
   }
 
-  #fetchTransaction$() {
+  fetchTransaction$() {
     const txnId = this.#location
       .path()
       .match(/transaction\/(\w+)/)
       ?.at(1);
 
     if (txnId) {
-      this.#firestore
+      return this.#firestore
         .collection<ITransaction<Timestamp>>(Collections.Transaction, ref => ref.where('id', '==', txnId))
         .valueChanges()
         .pipe(
@@ -100,11 +100,15 @@ export class ContextService {
                   transactionDate: (transaction?.transactionDate as Timestamp)?.toDate()
                 } as ITransaction)
           )
-        )
-        .subscribe(transaction => {
-          this.setTransaction(transaction);
-        });
+        );
     }
+    return throwError(() => new Error('Transaction is not set in the URL.'));
+  }
+
+  #fetchTransaction$() {
+    this.fetchTransaction$().subscribe(transaction => {
+      this.setTransaction(transaction);
+    });
   }
 
   #fetchTransactionListView$() {
