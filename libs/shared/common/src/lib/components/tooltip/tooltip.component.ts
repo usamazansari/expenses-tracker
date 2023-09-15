@@ -17,7 +17,7 @@ export type TooltipPosition = 'above' | 'below' | 'left' | 'right';
   selector: 'expenses-tracker-tooltip',
   template: `
     <ng-template>
-      <div class="flex items-center max-w-xs" [ngClass]="containerClassList()">
+      <div class="hidden md:flex items-center max-w-xs" [ngClass]="containerClassList()">
         <div
           class="p-2 border rounded-md bg-color-canvas-overlay border-color-border-default"
           [ngClass]="contentClassList()"
