@@ -1,19 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 import { SegmentedControlComponent, SegmentedControlWrapper, TooltipModule } from '@expenses-tracker/shared/common';
-import { ITransaction } from '@expenses-tracker/shared/interfaces';
+import { ITransaction, TransactionListViewTypes } from '@expenses-tracker/shared/interfaces';
 
 import { TransactionListItemComponent } from '../transaction-list/transaction-list-item/transaction-list-item.component';
 import { TransactionListViewComponent } from './transaction-list-view/transaction-list-view.component';
-import { TransactionListService, TransactionListViewTypes } from './transaction-list.service';
+import { TransactionListService } from './transaction-list.service';
 
 @Component({
   selector: 'expenses-tracker-transaction-list',
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     SegmentedControlComponent,
     TransactionListItemComponent,
     TransactionListViewComponent,
