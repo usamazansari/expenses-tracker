@@ -1,19 +1,33 @@
-<div class="grid gap-4 et-card bg-color-canvas-default">
+<div class="grid gap-4">
   <div class="flex items-center justify-between">
-    <span class="flex-grow font-bold cursor-default">{{ view() | date: 'MMMM YYYY' }}</span>
+    <button class="et-button">{{ view() | date: 'MMMM YYYY' }}</button>
     <div class="flex items-center gap-1">
-      <button class="w-8 et-button" (click)="changeMonth(-1)" [expensesTrackerTooltip]="previousMonthTooltip">
-        <span class="material-icons">chevron_left</span>
-      </button>
-      <button class="w-8 et-button" (click)="resetDate()" [expensesTrackerTooltip]="resetTooltip">
-        <span class="material-icons">radio_button_checked</span>
-      </button>
-      <button class="w-8 et-button" (click)="changeMonth(1)" [expensesTrackerTooltip]="nextMonthTooltip">
-        <span class="material-icons">chevron_right</span>
-      </button>
+      <div class="flex items-center">
+        <button class="w-8 et-button" (click)="changeMonth(-1)" [expensesTrackerTooltip]="previousMonthTooltip">
+          <span class="material-icons">chevron_left</span>
+        </button>
+        <expenses-tracker-tooltip #previousMonthTooltip>
+          <span>Go to the previous month</span>
+        </expenses-tracker-tooltip>
+      </div>
+      <div class="flex items-center">
+        <button class="w-8 et-button" (click)="resetDate()" [expensesTrackerTooltip]="resetTooltip">
+          <span class="material-icons">radio_button_checked</span>
+        </button>
+        <expenses-tracker-tooltip #resetTooltip>
+          <span>Go to today</span>
+        </expenses-tracker-tooltip>
+      </div>
+      <div class="flex items-center">
+        <button class="w-8 et-button" (click)="changeMonth(1)" [expensesTrackerTooltip]="nextMonthTooltip">
+          <span class="material-icons">chevron_right</span>
+        </button>
+        <expenses-tracker-tooltip #nextMonthTooltip>
+          <span>Go to the next month</span>
+        </expenses-tracker-tooltip>
+      </div>
     </div>
   </div>
-
   <div class="flex items-center justify-center gap-1">
     <ng-container *ngIf="showWeekNumbers()">
       <button class="invisible w-8 et-button"></button>
@@ -59,13 +73,3 @@
     </ng-container>
   </div>
 </div>
-
-<expenses-tracker-tooltip #previousMonthTooltip>
-  <span>Go to the previous month</span>
-</expenses-tracker-tooltip>
-<expenses-tracker-tooltip #resetTooltip>
-  <span>Go to today</span>
-</expenses-tracker-tooltip>
-<expenses-tracker-tooltip #nextMonthTooltip>
-  <span>Go to the next month</span>
-</expenses-tracker-tooltip>

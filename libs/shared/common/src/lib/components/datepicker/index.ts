@@ -1,2 +1,2 @@
-export * from './calendar.component';
+export * from './calendar';
 export * from './datepicker.component';

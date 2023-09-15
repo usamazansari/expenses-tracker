@@ -1,29 +1,32 @@
 import { Component, EventEmitter, Input, Output, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { TooltipModule } from '../tooltip';
-import { WeekNumberPipe } from './week-number.pipe';
+import { WeekNumberPipe } from '../week-number.pipe';
+import { TooltipModule } from '../../../tooltip';
 
 @Component({
-  selector: 'expenses-tracker-calendar',
+  selector: 'expenses-tracker-calendar-month-view',
   standalone: true,
   imports: [CommonModule, TooltipModule, WeekNumberPipe],
-  templateUrl: './calendar.component.html'
+  templateUrl: './calendar-month-view.component.html'
 })
-export class CalendarComponent {
+export class CalendarMonthViewComponent {
   #epoch = new Date();
+  readonly daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
   view = signal<Date>(this.#epoch);
-  selectedDate = signal<Date>(this.#epoch);
-  @Input() set selectedDateInput(value: Date) {
-    this.selectedDate.set(value);
+  @Input() set viewInput(value: Date) {
     this.view.set(value);
   }
   showWeekNumbers = signal(false);
   @Input() set showWeekNumbersInput(value: boolean) {
     this.showWeekNumbers.set(value);
   }
+  selectedDate = signal<Date>(this.#epoch);
+  @Input() set selectedDateInput(value: Date) {
+    this.selectedDate.set(value);
+    this.view.set(value);
+  }
 
-  readonly daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
   calendarDays = computed(() => {
     const currentMonthFirstDay = new Date(this.view().getFullYear(), this.view().getMonth(), 1).getDay() - 1;
     const firstDay = new Date(this.view().getFullYear(), this.view().getMonth(), currentMonthFirstDay * -1);
@@ -63,12 +66,11 @@ export class CalendarComponent {
     return date.toLocaleDateString();
   }
 
-  isSelectedDate(day: Date) {
-    return day.toLocaleDateString() === this.selectedDate().toLocaleDateString();
+  selectDate(day: Date) {
+    this.dateSelected$.emit(day);
   }
 
-  selectDate(day: Date) {
-    this.selectedDate.set(day);
-    this.dateSelected$.emit(day);
+  isSelectedDate(day: Date) {
+    return day.toLocaleDateString() === this.selectedDate().toLocaleDateString();
   }
 }
