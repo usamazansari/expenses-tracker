@@ -19,7 +19,11 @@
     #trigger="cdkOverlayOrigin" />
 </div>
 
-<ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="showPicker()">
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="trigger"
+  [cdkConnectedOverlayOpen]="showPicker()"
+  (overlayOutsideClick)="showPicker.set(false)">
   <expenses-tracker-calendar
     [selectedDateInput]="selectedDate()"
     [showWeekNumbersInput]="showWeekNumbers()"
