@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, Output, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { WeekNumberPipe } from '../week-number.pipe';
+import { Component, EventEmitter, Input, Output, computed, signal } from '@angular/core';
+
 import { TooltipModule } from '../../../tooltip';
+import { WeekNumberPipe } from './week-number.pipe';
 
 @Component({
   selector: 'expenses-tracker-calendar-month-view',
@@ -28,10 +29,11 @@ export class CalendarMonthViewComponent {
   }
 
   calendarDays = computed(() => {
-    const currentMonthFirstDay = new Date(this.view().getFullYear(), this.view().getMonth(), 1).getDay() - 1;
-    const firstDay = new Date(this.view().getFullYear(), this.view().getMonth(), currentMonthFirstDay * -1);
-    const currentMonthLastDay = new Date(this.view().getFullYear(), this.view().getMonth() + 1, 0).getDay();
-    const lastDay = new Date(this.view().getFullYear(), this.view().getMonth() + 1, 6 - currentMonthLastDay);
+    const date = this.view();
+    const currentMonthFirstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay() - 1;
+    const firstDay = new Date(date.getFullYear(), date.getMonth(), currentMonthFirstDay * -1);
+    const currentMonthLastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDay();
+    const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 6 - currentMonthLastDay);
     const daysDifference = Math.round(Math.abs(lastDay.valueOf() - firstDay.valueOf()) / (1000 * 60 * 60 * 24)) + 1;
     const weeks = [];
     const days = [];
@@ -45,9 +47,11 @@ export class CalendarMonthViewComponent {
   });
 
   @Output() dateSelected$ = new EventEmitter<Date>();
+  @Output() gotoMonthSelector$ = new EventEmitter<void>();
 
   changeMonth(delta: number) {
-    const next = new Date(this.view().getFullYear(), this.view().getMonth() + delta, 1);
+    const date = this.view();
+    const next = new Date(date.getFullYear(), date.getMonth() + delta * 1, date.getDate());
     this.view.set(next);
   }
 
@@ -55,6 +59,7 @@ export class CalendarMonthViewComponent {
     this.#epoch = new Date();
     this.#epoch.setHours(0, 0, 0);
     this.view.set(this.#epoch);
+
     this.selectedDate.set(this.#epoch);
   }
 
@@ -68,6 +73,10 @@ export class CalendarMonthViewComponent {
 
   selectDate(day: Date) {
     this.dateSelected$.emit(day);
+  }
+
+  gotoMonthSelector() {
+    this.gotoMonthSelector$.emit();
   }
 
   isSelectedDate(day: Date) {

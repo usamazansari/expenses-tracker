@@ -1,9 +1,16 @@
 <div class="et-card bg-color-canvas-default">
   <ng-container *ngIf="viewMode() === 'month'">
     <expenses-tracker-calendar-month-view
+      [viewInput]="view()"
       [selectedDateInput]="selectedDate()"
       [showWeekNumbersInput]="showWeekNumbers()"
-      (dateSelected$)="selectDate($event)"></expenses-tracker-calendar-month-view>
+      (dateSelected$)="selectDate($event)"
+      (gotoMonthSelector$)="gotoMonthSelector()"></expenses-tracker-calendar-month-view>
   </ng-container>
-  <!-- <ng-container *ngIf="viewMode() === 'year'"></ng-container> -->
+  <ng-container *ngIf="viewMode() === 'year'">
+    <expenses-tracker-calendar-year-view
+      [viewInput]="view()"
+      [selectedDateInput]="selectedDate()"
+      (monthSelected$)="selectMonth($event)"></expenses-tracker-calendar-year-view>
+  </ng-container>
 </div>

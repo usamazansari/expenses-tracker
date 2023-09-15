@@ -4,12 +4,13 @@ import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
 import { TooltipModule } from '../../tooltip';
 
 import { CalendarMonthViewComponent } from './calendar-month-view/calendar-month-view.component';
+import { CalendarYearViewComponent } from './calendar-year-view/calendar-year-view.component';
 import { CalendarViewMode } from './calendar.types';
 
 @Component({
   selector: 'expenses-tracker-calendar',
   standalone: true,
-  imports: [CalendarMonthViewComponent, CommonModule, TooltipModule],
+  imports: [CalendarMonthViewComponent, CalendarYearViewComponent, CommonModule, TooltipModule],
   templateUrl: './calendar.component.html'
 })
 export class CalendarComponent {
@@ -28,8 +29,17 @@ export class CalendarComponent {
 
   @Output() dateSelected$ = new EventEmitter<Date>();
 
+  gotoMonthSelector() {
+    // this.viewMode.set('year');
+  }
+
   selectDate(day: Date) {
     this.selectedDate.set(day);
     this.dateSelected$.emit(day);
+  }
+
+  selectMonth(month: Date) {
+    this.view.set(month);
+    this.viewMode.set('month');
   }
 }

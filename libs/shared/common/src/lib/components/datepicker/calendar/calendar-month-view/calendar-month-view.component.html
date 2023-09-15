@@ -7,7 +7,7 @@
   }">
   <div class="flex items-center justify-between">
     <div class="flex items-center justify-center">
-      <button class="p-2 et-button">
+      <button class="p-2 et-button" (click)="gotoMonthSelector()">
         <span>{{ view() | date: 'MMMM YYYY' }}</span>
       </button>
     </div>
