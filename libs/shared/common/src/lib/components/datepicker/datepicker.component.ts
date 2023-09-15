@@ -32,6 +32,10 @@ export class DatePickerComponent {
   @Input() set iconInput(value: string) {
     this.icon.set(value);
   }
+  showWeekNumbers = signal(false);
+  @Input() set showWeekNumbersInput(value: boolean) {
+    this.showWeekNumbers.set(value);
+  }
 
   @Output() dateSelected$ = new EventEmitter<Date>();
 

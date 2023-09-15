@@ -15,6 +15,9 @@
   </div>
 
   <div class="flex items-center justify-center gap-1">
+    <ng-container *ngIf="showWeekNumbers()">
+      <button class="invisible w-8 et-button"></button>
+    </ng-container>
     <ng-container *ngFor="let day of daysOfWeek">
       <button class="w-8 pointer-events-none et-button">
         <span class="font-bold text-center">
@@ -27,6 +30,13 @@
   <div class="grid gap-1 place-content-center">
     <ng-container *ngFor="let week of calendarDays(); trackBy: weekTracker">
       <div class="flex items-center justify-center gap-1">
+        <ng-container *ngIf="showWeekNumbers()">
+          <button class="w-8 cursor-default et-button hover:bg-color-btn-bg hover:border-color-btn-border">
+            <span class="text-center text-color-fg-muted">
+              {{ week[0] | weekNumber }}
+            </span>
+          </button>
+        </ng-container>
         <ng-container *ngFor="let day of week; trackBy: dayTracker">
           <button
             class="w-8 et-button"

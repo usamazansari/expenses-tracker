@@ -2,11 +2,12 @@ import { Component, EventEmitter, Input, Output, computed, signal } from '@angul
 import { CommonModule } from '@angular/common';
 
 import { TooltipModule } from '../tooltip';
+import { WeekNumberPipe } from './week-number.pipe';
 
 @Component({
   selector: 'expenses-tracker-calendar',
   standalone: true,
-  imports: [CommonModule, TooltipModule],
+  imports: [CommonModule, TooltipModule, WeekNumberPipe],
   templateUrl: './calendar.component.html'
 })
 export class CalendarComponent {
@@ -17,6 +18,11 @@ export class CalendarComponent {
     this.selectedDate.set(value);
     this.view.set(value);
   }
+  showWeekNumbers = signal(false);
+  @Input() set showWeekNumbersInput(value: boolean) {
+    this.showWeekNumbers.set(value);
+  }
+
   readonly daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
   calendarDays = computed(() => {
     const currentMonthFirstDay = new Date(this.view().getFullYear(), this.view().getMonth(), 1).getDay() - 1;
