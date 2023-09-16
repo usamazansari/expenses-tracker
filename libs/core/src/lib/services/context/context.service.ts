@@ -3,14 +3,17 @@ import { Injectable, inject, signal } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Timestamp } from '@angular/fire/firestore';
-import { Router } from '@angular/router';
 import { User } from 'firebase/auth';
-import { map } from 'rxjs';
+import { map, throwError } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
-import { IPocketbook, ITransaction, TransactionDAO } from '@expenses-tracker/shared/interfaces';
+import {
+  IPocketbook,
+  ITransaction,
+  TransactionDAO,
+  TransactionListViewTypes
+} from '@expenses-tracker/shared/interfaces';
 
-import { ErrorService } from '../error/error.service';
 import { PocketbookMapper } from '../firestore/firestore.utils';
 
 @Injectable({
@@ -20,17 +23,19 @@ export class ContextService {
   user = signal<User | null>(null);
   pocketbook = signal<IPocketbook | null>(null);
   transaction = signal<ITransaction | null>(null);
+  transactionListView = signal<Date | null>(new Date());
+  transactionListViewMode = signal<TransactionListViewTypes | null>('monthly');
 
   #auth = inject(AngularFireAuth);
-  #router = inject(Router);
   #location = inject(Location);
   #firestore = inject(AngularFirestore);
-  #error = inject(ErrorService);
 
   constructor() {
     this.#fetchUser$();
     this.#fetchPocketbook$();
     this.#fetchTransaction$();
+    this.#fetchTransactionListView$();
+    this.#fetchTransactionListViewMode$();
   }
 
   setPocketbook(pocketbook: IPocketbook | null) {
@@ -41,51 +46,88 @@ export class ContextService {
     this.transaction.set(transaction);
   }
 
+  setTransactionListView(transactionListView: Date | null) {
+    this.transactionListView.set(transactionListView);
+  }
+
+  setTransactionListViewMode(transactionListViewMode: TransactionListViewTypes | null) {
+    this.transactionListViewMode.set(transactionListViewMode);
+  }
+
   #fetchUser$() {
     this.#auth.user.subscribe(user => {
       this.user.set(user as User);
     });
   }
 
-  #fetchPocketbook$() {
-    const pbId =
-      this.#location
-        .path()
-        .match(/pocketbook\/(\w+)\//)
-        ?.at(1) ?? '';
+  fetchPocketbook$() {
+    const pbId = this.#location
+      .path()
+      .match(/pocketbook\/(\w+)\//)
+      ?.at(1);
 
-    this.#firestore
-      .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref => ref.where('id', '==', pbId))
-      .valueChanges()
-      .pipe(map(([pb]) => (!pb ? null : PocketbookMapper(pb))))
-      .subscribe(pb => {
-        this.setPocketbook(pb);
-      });
+    if (!!pbId) {
+      return this.#firestore
+        .collection<IPocketbook<Timestamp>>(Collections.Pocketbook, ref => ref.where('id', '==', pbId))
+        .valueChanges()
+        .pipe(map(([pb]) => (!pb ? null : PocketbookMapper(pb))));
+    }
+    return throwError(() => new Error('Pocketbook is not set in the URL.'));
+  }
+
+  #fetchPocketbook$() {
+    this.fetchPocketbook$().subscribe(pb => {
+      this.setPocketbook(pb);
+    });
+  }
+
+  fetchTransaction$() {
+    const txnId = this.#location
+      .path()
+      .match(/transaction\/(\w+)/)
+      ?.at(1);
+
+    if (txnId) {
+      return this.#firestore
+        .collection<ITransaction<Timestamp>>(Collections.Transaction, ref => ref.where('id', '==', txnId))
+        .valueChanges()
+        .pipe(
+          map(([transaction]) =>
+            !transaction
+              ? null
+              : ({
+                  ...transaction,
+                  transactionDate: (transaction?.transactionDate as Timestamp)?.toDate()
+                } as ITransaction)
+          )
+        );
+    }
+    return throwError(() => new Error('Transaction is not set in the URL.'));
   }
 
   #fetchTransaction$() {
-    const txnId =
-      this.#location
-        .path()
-        .match(/transaction\/(\w+)\//)
-        ?.at(1) ?? '';
+    this.fetchTransaction$().subscribe(transaction => {
+      this.setTransaction(transaction);
+    });
+  }
 
-    this.#firestore
-      .collection<ITransaction<Timestamp>>(Collections.Transaction, ref => ref.where('id', '==', txnId))
-      .valueChanges()
-      .pipe(
-        map(([transaction]) =>
-          !transaction
-            ? null
-            : ({
-                ...transaction,
-                transactionDate: (transaction?.transactionDate as Timestamp)?.toDate()
-              } as ITransaction)
-        )
-      )
-      .subscribe(transaction => {
-        this.setTransaction(transaction);
-      });
+  #fetchTransactionListView$() {
+    const dateString = this.#location
+      .path()
+      .match(/transaction\/list\/(\d{4}-\d{2}-\d{2})/)
+      ?.at(1);
+    if (dateString) {
+      const [year, month, date] = dateString.split('-');
+      this.setTransactionListView(new Date(+year, +month - 1, +date));
+    }
+  }
+
+  #fetchTransactionListViewMode$() {
+    const viewMode = this.#location
+      .path()
+      .match(/transaction\/list\/(\d{4}-\d{2}-\d{2})\?viewMode=(\w+)/)
+      ?.at(2);
+    this.setTransactionListViewMode((viewMode as TransactionListViewTypes) ?? null);
   }
 
   calculateBalanceOnUpdate({

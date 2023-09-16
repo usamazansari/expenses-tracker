@@ -1,5 +1,18 @@
 import { DateOrTimestamp } from './common';
 
+type TransactionListViewTypes = 'monthly' | 'daily' | 'weekly';
+
+type TransactionListDatePipeArgs = 'MMMM YYYY' | 'ww' | 'longDate';
+
+interface ITransactionListSummary {
+  income: number;
+  expense: number;
+  cashIncome: number;
+  cashExpense: number;
+  cardIncome: number;
+  cardExpense: number;
+}
+
 type PaymentMode = 'card' | 'cash';
 
 type TransactionCategory =
@@ -37,4 +50,13 @@ interface ITransaction<T extends DateOrTimestamp = Date> {
 
 type TransactionDAO = Omit<ITransaction, 'id' | 'pocketbookId'>;
 
-export { ITransaction, TransactionType, TransactionCategory, PaymentMode, TransactionDAO };
+export {
+  ITransaction,
+  ITransactionListSummary,
+  PaymentMode,
+  TransactionCategory,
+  TransactionDAO,
+  TransactionListDatePipeArgs,
+  TransactionListViewTypes,
+  TransactionType
+};
