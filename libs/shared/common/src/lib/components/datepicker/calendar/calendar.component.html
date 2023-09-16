@@ -1,0 +1,156 @@
+<div class="et-card bg-color-canvas-default">
+  <ng-container *ngIf="viewMode() === 'month'">
+    <div
+      class="grid gap-4"
+      [ngClass]="{
+        'grid-rows-[auto_1fr_4fr]': calendarDays().length === 4,
+        'grid-rows-[auto_1fr_5fr]': calendarDays().length === 5,
+        'grid-rows-[auto_1fr_6fr]': calendarDays().length === 6
+      }">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center justify-center">
+          <button class="min-w-[3rem] min-h-[3rem] p-2 et-button" (click)="gotoMonthSelector()">
+            <span>{{ view() | date: 'MMMM YYYY' }}</span>
+          </button>
+        </div>
+        <div class="flex items-center gap-1">
+          <div class="flex items-center">
+            <button
+              class="min-w-[3rem] min-h-[3rem] p-2 et-button"
+              (click)="changeMonth(-1)"
+              [expensesTrackerTooltip]="previousMonthTooltip">
+              <span class="material-icons">chevron_left</span>
+            </button>
+            <expenses-tracker-tooltip #previousMonthTooltip>
+              <span>Go to the previous month</span>
+            </expenses-tracker-tooltip>
+          </div>
+          <div class="flex items-center">
+            <button
+              class="min-w-[3rem] min-h-[3rem] p-2 et-button"
+              (click)="resetDate()"
+              [expensesTrackerTooltip]="resetTooltip">
+              <span class="material-icons">radio_button_checked</span>
+            </button>
+            <expenses-tracker-tooltip #resetTooltip>
+              <span>Go to today</span>
+            </expenses-tracker-tooltip>
+          </div>
+          <div class="flex items-center">
+            <button class="p-2 et-button" (click)="changeMonth(1)" [expensesTrackerTooltip]="nextMonthTooltip">
+              <span class="material-icons">chevron_right</span>
+            </button>
+            <expenses-tracker-tooltip #nextMonthTooltip>
+              <span>Go to the next month</span>
+            </expenses-tracker-tooltip>
+          </div>
+        </div>
+      </div>
+      <div
+        class="grid gap-1"
+        [ngClass]="{
+          'grid-cols-8': showWeekNumbers(),
+          'grid-cols-7': !showWeekNumbers()
+        }">
+        <ng-container *ngIf="showWeekNumbers()">
+          <button class="invisible et-button"></button>
+        </ng-container>
+        <ng-container *ngFor="let day of daysOfWeek">
+          <button class="min-w-[3rem] min-h-[3rem] h-full p-2 pointer-events-none et-button">
+            <span class="font-bold text-center">
+              {{ day }}
+            </span>
+          </button>
+        </ng-container>
+      </div>
+
+      <div class="grid gap-1">
+        <ng-container *ngFor="let week of calendarDays(); trackBy: weekTracker">
+          <div
+            class="grid gap-1"
+            [ngClass]="{
+              'grid-cols-8': showWeekNumbers(),
+              'grid-cols-7': !showWeekNumbers()
+            }">
+            <ng-container *ngIf="showWeekNumbers()">
+              <button
+                class="min-w-[3rem] min-h-[3rem] h-full p-2 cursor-default et-button hover:bg-color-btn-bg hover:border-color-btn-border">
+                <span class="text-center text-color-fg-muted">
+                  {{ week[0] | weekNumber }}
+                </span>
+              </button>
+            </ng-container>
+            <ng-container *ngFor="let day of week; trackBy: dayTracker">
+              <button
+                class="min-w-[3rem] min-h-[3rem] h-full p-2 et-button"
+                [ngClass]="{
+                  'bg-color-accent-fg text-color-fg-on-emphasis': isSelectedDate(day),
+                  'bg-color-transparent': !isSelectedDate(day),
+                  'bg-color-accent-muted': day.getMonth() !== view().getMonth() && isSelectedDate(day)
+                }"
+                (click)="selectDate(day)">
+                <span
+                  class="text-center"
+                  [ngClass]="{
+                    'text-color-fg-muted': day.getMonth() !== view().getMonth()
+                  }">
+                  {{ day.getDate() }}
+                </span>
+              </button>
+            </ng-container>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="viewMode() === 'year'">
+    <div class="grid gap-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center justify-center">
+          <span class="font-bold cursor-default">{{ view() | date: 'YYYY' }}</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <div class="flex items-center">
+            <button class="p-2 et-button" (click)="changeYear(-1)" [expensesTrackerTooltip]="previousYearTooltip">
+              <span class="material-icons">chevron_left</span>
+            </button>
+            <expenses-tracker-tooltip #previousYearTooltip>
+              <span>Go to the previous month</span>
+            </expenses-tracker-tooltip>
+          </div>
+          <div class="flex items-center">
+            <button class="p-2 et-button" (click)="resetDate()" [expensesTrackerTooltip]="resetTooltip">
+              <span class="material-icons">radio_button_checked</span>
+            </button>
+            <expenses-tracker-tooltip #resetTooltip>
+              <span>Go to today</span>
+            </expenses-tracker-tooltip>
+          </div>
+          <div class="flex items-center">
+            <button class="p-2 et-button" (click)="changeYear(1)" [expensesTrackerTooltip]="nextYearTooltip">
+              <span class="material-icons">chevron_right</span>
+            </button>
+            <expenses-tracker-tooltip #nextYearTooltip>
+              <span>Go to the next month</span>
+            </expenses-tracker-tooltip>
+          </div>
+        </div>
+      </div>
+      <div class="grid grid-cols-4 grid-rows-3 gap-1">
+        <ng-container *ngFor="let month of monthsOfYear">
+          <button
+            class="h-full p-2 et-button"
+            [ngClass]="{
+              'bg-color-accent-fg text-color-fg-on-emphasis': isSelectedMonth(month),
+              'bg-color-transparent': !isSelectedMonth(month)
+            }"
+            (click)="selectMonth(month)">
+            <span class="font-bold text-center">
+              {{ month | monthName }}
+            </span>
+          </button>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+</div>
