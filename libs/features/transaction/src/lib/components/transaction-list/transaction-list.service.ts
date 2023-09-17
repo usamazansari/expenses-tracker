@@ -142,6 +142,13 @@ export class TransactionListService {
   }
 
   gotoAddTransaction() {
-    this.#router.navigate([RoutePaths.Pocketbook, this.pocketbook()?.id, RoutePaths.Transaction, RoutePaths.EntityAdd]);
+    this.#router.navigate(
+      [RoutePaths.Pocketbook, this.pocketbook()?.id, RoutePaths.Transaction, RoutePaths.EntityAdd],
+      {
+        state: {
+          transactionDate: this.transactionListView()
+        }
+      }
+    );
   }
 }

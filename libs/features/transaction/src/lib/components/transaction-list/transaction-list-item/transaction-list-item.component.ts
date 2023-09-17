@@ -27,9 +27,25 @@ export class TransactionListItemComponent implements OnDestroy {
   }
   paymentMode = computed(() =>
     this.transaction()?.paymentMode === 'card'
-      ? { icon: 'credit_card', tooltip: 'Paid by card' }
+      ? {
+          icon: 'credit_card',
+          tooltip:
+            this.transaction()?.transactionType === 'expense'
+              ? 'Paid by card'
+              : this.transaction()?.transactionType === 'income'
+              ? 'Received in card'
+              : 'Card transaction'
+        }
       : this.transaction()?.paymentMode === 'cash'
-      ? { icon: 'payments', tooltip: 'Paid with cash' }
+      ? {
+          icon: 'payments',
+          tooltip:
+            this.transaction()?.transactionType === 'expense'
+              ? 'Paid with cash'
+              : this.transaction()?.transactionType === 'income'
+              ? 'Received in cash'
+              : 'Cash transaction'
+        }
       : { icon: 'error', tooltip: 'Unknown Payment Mode' }
   );
 
