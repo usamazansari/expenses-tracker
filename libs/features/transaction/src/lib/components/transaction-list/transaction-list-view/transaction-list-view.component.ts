@@ -1,10 +1,11 @@
 import { Dialog } from '@angular/cdk/dialog';
+import { OverlayModule } from '@angular/cdk/overlay';
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnDestroy, computed, inject, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { Subscription } from 'rxjs';
 
-import { TooltipModule } from '@expenses-tracker/shared/common';
+import { CalendarComponent, TooltipModule } from '@expenses-tracker/shared/common';
 import {
   ITransaction,
   ITransactionListSummary,
@@ -19,7 +20,7 @@ import { TransactionViewSummaryDialogComponent } from './transaction-view-summar
 @Component({
   selector: 'expenses-tracker-transaction-list-view',
   standalone: true,
-  imports: [CommonModule, TransactionListItemComponent, TooltipModule],
+  imports: [CommonModule, TransactionListItemComponent, TooltipModule, OverlayModule, CalendarComponent],
   templateUrl: './transaction-list-view.component.html'
 })
 export class TransactionListViewComponent implements OnDestroy {
@@ -27,9 +28,10 @@ export class TransactionListViewComponent implements OnDestroy {
   #dialog = inject(Dialog);
   #epoch = new Date();
   viewMode = computed(() => this.#service.transactionListViewMode());
-  view = computed(() => this.#service.transactionListView());
+  view = computed(() => this.#service.transactionListView() as Date);
   flags = computed(() => this.#service.flags().transactionList);
   transactionList = signal<ITransaction[]>([]);
+  showPicker = signal<boolean>(false);
 
   @Input() set viewModeInput(value: TransactionListViewTypes) {
     this.#service.gotoViewMode(value);
@@ -184,6 +186,19 @@ export class TransactionListViewComponent implements OnDestroy {
       backdropClass: ['bg-color-primer-canvas-backdrop', 'backdrop-blur-[2px]']
     });
     this.#summaryDialog$ = dialogRef.closed.subscribe();
+  }
+
+  togglePicker() {
+    this.showPicker.update(v => !v);
+  }
+
+  closePicker() {
+    this.showPicker.set(false);
+  }
+
+  selectDate(day: Date) {
+    this.#service.gotoView(day);
+    this.showPicker.set(false);
   }
 
   transactionListTrack(index: number, transaction: ITransaction) {

@@ -1,6 +1,6 @@
 <div class="grid gap-4">
   <div class="flex items-center justify-between gap-4">
-    <div class="flex items-center justify-between flex-grow gap-2 lg:flex-grow-0">
+    <div class="flex justify-between flex-grow gap-2 lg:flex-grow-0">
       <div class="flex items-center order-2 gap-1 lg:order-1">
         <button class="w-8 et-button" (click)="changeView(-1)" [expensesTrackerTooltip]="previousMonthTooltip">
           <span class="material-icons">chevron_left</span>
@@ -15,7 +15,24 @@
       <div class="flex order-1 gap-2 lg:order-2">
         <ng-container *ngIf="viewMode() === 'weekly'; else showDailyOrMonthly">
           <div class="flex items-center gap-2">
-            <span class="font-bold cursor-default"> Week {{ view() | date: datePipeArgs() }} </span>
+            <button
+              class="h-full et-button"
+              (click)="togglePicker()"
+              cdkOverlayOrigin
+              #weeklyTrigger="cdkOverlayOrigin">
+              <span class="material-icons">calendar_view_week</span>
+              Week {{ view() | date: datePipeArgs() }}
+            </button>
+            <ng-template
+              cdkConnectedOverlay
+              [cdkConnectedOverlayOrigin]="weeklyTrigger"
+              [cdkConnectedOverlayOpen]="showPicker()"
+              (overlayOutsideClick)="closePicker()">
+              <expenses-tracker-calendar
+                [selectedDateInput]="view()"
+                [showWeekNumbersInput]="true"
+                (dateSelected$)="selectDate($event)"></expenses-tracker-calendar>
+            </ng-template>
             <span class="hidden cursor-default md:flex">
               {{ weekSunday() | date: 'MMMM dd' }} to {{ weekSaturday() | date: 'MMMM dd' }}
             </span>
@@ -27,9 +44,25 @@
           </div>
         </ng-container>
         <ng-template #showDailyOrMonthly>
-          <span class="font-bold cursor-default">
+          <button
+            class="h-full et-button"
+            (click)="togglePicker()"
+            cdkOverlayOrigin
+            #dailyMonthlyTrigger="cdkOverlayOrigin">
+            <span class="material-icons">
+              {{ viewMode() === 'daily' ? 'calendar_view_day' : 'calendar_view_month' }}
+            </span>
             {{ view() | date: datePipeArgs() }}
-          </span>
+          </button>
+          <ng-template
+            cdkConnectedOverlay
+            [cdkConnectedOverlayOrigin]="dailyMonthlyTrigger"
+            [cdkConnectedOverlayOpen]="showPicker()"
+            (overlayOutsideClick)="closePicker()">
+            <expenses-tracker-calendar
+              [selectedDateInput]="view()"
+              (dateSelected$)="selectDate($event)"></expenses-tracker-calendar>
+          </ng-template>
         </ng-template>
       </div>
     </div>
