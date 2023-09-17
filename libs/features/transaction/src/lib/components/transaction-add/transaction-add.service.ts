@@ -21,6 +21,7 @@ export class TransactionAddService {
   #router = inject(Router);
   pocketbook = computed(() => this.#context.pocketbook());
   transactionListView = computed(() => this.#context.transactionListView());
+  transactionListViewMode = computed(() => this.#context.transactionListViewMode());
   flags = signal<ComponentFlags>({ addTransaction: INITIAL_FLAGS });
 
   resetFlags() {
@@ -69,12 +70,19 @@ export class TransactionAddService {
   }
 
   gotoTransactionList() {
-    this.#router.navigate([
-      RoutePaths.Pocketbook,
-      this.pocketbook()?.id,
-      RoutePaths.Transaction,
-      RoutePaths.EntityList,
-      formatDate(this.transactionListView() ?? new Date(), 'yyyy-MM-dd', 'en-US')
-    ]);
+    this.#router.navigate(
+      [
+        RoutePaths.Pocketbook,
+        this.pocketbook()?.id,
+        RoutePaths.Transaction,
+        RoutePaths.EntityList,
+        formatDate(this.transactionListView() ?? new Date(), 'yyyy-MM-dd', 'en-US')
+      ],
+      {
+        queryParams: {
+          viewMode: this.transactionListViewMode() ?? 'monthly'
+        }
+      }
+    );
   }
 }
