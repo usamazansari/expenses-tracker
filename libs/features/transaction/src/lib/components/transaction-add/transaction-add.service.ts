@@ -85,4 +85,8 @@ export class TransactionAddService {
       }
     );
   }
+
+  getState() {
+    return (this.#router.lastSuccessfulNavigation?.extras?.state as { transactionDate: Date })?.transactionDate;
+  }
 }
