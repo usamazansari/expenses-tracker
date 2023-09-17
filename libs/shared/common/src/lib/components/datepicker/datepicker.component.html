@@ -23,7 +23,7 @@
   cdkConnectedOverlay
   [cdkConnectedOverlayOrigin]="trigger"
   [cdkConnectedOverlayOpen]="showPicker()"
-  (overlayOutsideClick)="showPicker.set(false)">
+  (overlayOutsideClick)="closePicker()">
   <expenses-tracker-calendar
     [selectedDateInput]="selectedDate()"
     [showWeekNumbersInput]="showWeekNumbers()"
