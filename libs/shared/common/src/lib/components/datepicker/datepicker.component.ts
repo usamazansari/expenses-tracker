@@ -43,6 +43,10 @@ export class DatePickerComponent {
     this.showPicker.update(v => !v);
   }
 
+  closePicker() {
+    this.showPicker.set(false);
+  }
+
   selectDate(day: Date) {
     this.selectedDate.set(day);
     this.showPicker.set(false);
