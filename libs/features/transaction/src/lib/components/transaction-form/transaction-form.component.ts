@@ -78,7 +78,7 @@ export class TransactionFormComponent implements OnDestroy {
     { label: 'Trips', value: 'trips' }
   ];
 
-  @Input() set transactionInput(transaction: TransactionDAO) {
+  @Input() set transactionInput(transaction: Partial<TransactionDAO>) {
     this.formGroup.patchValue(transaction);
   }
 

@@ -17,6 +17,7 @@
     </ng-container>
     <ng-container *ngIf="flags().addTransaction.visible">
       <expenses-tracker-transaction-form
+        [transactionInput]="{ transactionDate: transactionDate() }"
         (gotoTransactionList$)="gotoTransactionList()"
         (transactionOperation$)="addTransaction($event)"></expenses-tracker-transaction-form>
     </ng-container>
