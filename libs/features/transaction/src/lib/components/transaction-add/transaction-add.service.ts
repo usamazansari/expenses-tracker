@@ -1,3 +1,4 @@
+import { formatDate } from '@angular/common';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
@@ -19,6 +20,7 @@ export class TransactionAddService {
   #notification = inject(NotificationService);
   #router = inject(Router);
   pocketbook = computed(() => this.#context.pocketbook());
+  transactionListView = computed(() => this.#context.transactionListView());
   flags = signal<ComponentFlags>({ addTransaction: INITIAL_FLAGS });
 
   resetFlags() {
@@ -71,7 +73,8 @@ export class TransactionAddService {
       RoutePaths.Pocketbook,
       this.pocketbook()?.id,
       RoutePaths.Transaction,
-      RoutePaths.EntityList
+      RoutePaths.EntityList,
+      formatDate(this.transactionListView() ?? new Date(), 'yyyy-MM-dd', 'en-US')
     ]);
   }
 }
