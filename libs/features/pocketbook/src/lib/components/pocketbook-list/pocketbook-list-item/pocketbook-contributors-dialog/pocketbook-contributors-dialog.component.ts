@@ -36,10 +36,6 @@ export class PocketbookContributorsDialogComponent implements OnInit, OnDestroy 
     return user.uid;
   }
 
-  gotoPocketbook() {
-    this.#service.gotoPocketbook(this.pocketbook);
-  }
-
   closeDialog() {
     this.#dialogRef.close();
   }

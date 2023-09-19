@@ -1,34 +1,37 @@
-<div class="p-4 group">
+<div class="p-4">
   <div class="grid grid-cols-[auto_1fr]">
-    <div class="grid gap-2">
-      <a (click)="gotoPocketbookDetail()">
-        <div class="flex items-center gap-2 cursor-pointer">
-          <ng-container *ngIf="isOwner(); else isCollaborator">
-            <span class="material-icons text-[1.375rem] text-color-open-fg">verified_user</span>
-          </ng-container>
-          <ng-template #isCollaborator>
-            <span class="material-icons text-[1.375rem] text-color-fg-default">group</span>
-          </ng-template>
-          <p class="text-2xl font-bold text-color-accent-fg hover:underline">
-            {{ pocketbook()?.name }}
-          </p>
-        </div>
-      </a>
-
-      <div class="flex gap-2" [expensesTrackerTooltip]="showContributorsTooltip">
-        <span
-          class="font-semibold transition-colors duration-200 cursor-pointer hover:text-color-accent-fg"
-          (click)="showContributors()">
-          {{ pocketbook()?.collaboratorList?.length }}
-          {{ (pocketbook()?.collaboratorList || []).length !== 1 ? 'Collaborators' : 'Collaborator' }}
-        </span>
+    <div class="flex gap-4">
+      <div class="grid">
+        <ng-container *ngIf="isOwner(); else isCollaborator">
+          <button
+            class="w-16 h-16 transition-colors duration-200 border rounded-full material-icons hover:text-color-accent-fg border-color-border-default"
+            (click)="showContributors()"
+            [expensesTrackerTooltip]="showContributorsTooltip">
+            <span class="material-icons">person</span>
+          </button>
+        </ng-container>
+        <ng-template #isCollaborator>
+          <button
+            class="w-16 h-16 transition-colors duration-200 border rounded-full material-icons hover:text-color-accent-fg border-color-border-default"
+            (click)="showContributors()"
+            [expensesTrackerTooltip]="showContributorsTooltip">
+            <span class="material-icons">groups</span>
+          </button>
+        </ng-template>
       </div>
 
-      <div class="flex items-center gap-1 cursor-default">
-        <span class="text-[1.375rem] material-icons text-color-fg-muted">today</span>
-        <p class="text-sm italic font-semibold text-color-fg-muted">
-          {{ pocketbook()?.createdAt | date: 'longDate' }}
-        </p>
+      <div class="grid gap-2">
+        <a
+          class="text-xl font-bold transition-colors duration-200 cursor-pointer hover:text-color-accent-fg"
+          (click)="gotoPocketbookDetail()">
+          {{ pocketbook()?.name }}
+        </a>
+
+        <div class="flex items-center gap-1 cursor-default">
+          <p class="text-sm italic font-semibold text-color-fg-muted">
+            {{ pocketbook()?.createdAt | date: 'longDate' }}
+          </p>
+        </div>
       </div>
     </div>
 

@@ -1,12 +1,7 @@
 <ng-container *ngIf="pocketbook">
   <div class="grid gap-2 et-card p-0 min-w-[360px] bg-color-canvas-default">
     <div class="flex items-center justify-between gap-4 p-4 bg-color-canvas-subtle">
-      <p class="text-xl font-bold">
-        <span class="cursor-pointer text-color-accent-fg hover:underline" (click)="gotoPocketbook()">{{
-          pocketbook.name
-        }}</span
-        ><span> Collaborators</span>
-      </p>
+      <span class="text-xl font-bold cursor-default text-color-accent-fg">{{ pocketbook.name }} Collaborators</span>
       <span
         class="transition-colors duration-200 cursor-pointer material-icons text-color-fg-muted hover:text-color-accent-fg"
         (click)="closeDialog()">
@@ -21,7 +16,7 @@
         </div>
       </div>
     </ng-container>
-    <div class="grid gap-2 p-4">
+    <div class="grid gap-4 p-4">
       <ng-container *ngIf="flags().contributorsFetch.success">
         <div class="grid items-center grid-cols-2 gap-2">
           <span class="font-bold text-right">Owned by</span>
