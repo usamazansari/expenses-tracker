@@ -38,9 +38,12 @@
             </span>
             <span
               class="flex cursor-default material-icons md:hidden"
-              [expensesTrackerTooltip]="weekInformationTooltip">
-              info
-            </span>
+              [cdkMenuPosition]="[
+                { originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom', offsetY: -4 }
+              ]"
+              [cdkMenuTriggerFor]="weekInformation"
+              >info</span
+            >
           </div>
         </ng-container>
         <ng-template #showDailyOrMonthly>
@@ -142,6 +145,13 @@
 <expenses-tracker-tooltip #weekInformationTooltip>
   <span>{{ weekSunday() | date: 'MMMM dd' }} to {{ weekSaturday() | date: 'MMMM dd' }}</span>
 </expenses-tracker-tooltip>
+
+<ng-template #weekInformation>
+  <div class="grid et-card bg-color-canvas-overlay" cdkMenu>
+    <span>{{ weekSunday() | date: 'MMMM dd' }} to {{ weekSaturday() | date: 'MMMM dd' }}</span>
+  </div>
+</ng-template>
+
 <expenses-tracker-tooltip #previousMonthTooltip>
   <span>Go to the previous {{ viewMode() === 'daily' ? 'day' : viewMode() === 'weekly' ? 'week' : 'month' }}</span>
 </expenses-tracker-tooltip>

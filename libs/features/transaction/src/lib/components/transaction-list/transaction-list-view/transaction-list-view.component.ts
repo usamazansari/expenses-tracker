@@ -16,11 +16,20 @@ import {
 import { TransactionListItemComponent } from '../transaction-list-item/transaction-list-item.component';
 import { TransactionListService } from '../transaction-list.service';
 import { TransactionViewSummaryDialogComponent } from './transaction-view-summary-dialog.component';
+import { CdkMenuTrigger, CdkMenu } from '@angular/cdk/menu';
 
 @Component({
   selector: 'expenses-tracker-transaction-list-view',
   standalone: true,
-  imports: [CommonModule, TransactionListItemComponent, TooltipModule, OverlayModule, CalendarComponent],
+  imports: [
+    CalendarComponent,
+    CdkMenu,
+    CdkMenuTrigger,
+    CommonModule,
+    OverlayModule,
+    TooltipModule,
+    TransactionListItemComponent
+  ],
   templateUrl: './transaction-list-view.component.html'
 })
 export class TransactionListViewComponent implements OnDestroy {
