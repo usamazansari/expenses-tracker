@@ -1,8 +1,8 @@
-name: Deploy to Firebase Hosting on merge
+name: Deploy to Firebase on a new release
 on:
   push:
     tags:
-      - '*'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
   build_deploy:
