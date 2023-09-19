@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { FirebaseError } from 'firebase/app';
 
+/**
+ * @deprecated Use strings for errors
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -18,6 +21,9 @@ export class ErrorService {
     ['permission-denied', 'You do not have sufficient permissions']
   ]);
 
+  /**
+   * @deprecated Use strings for errors
+   */
   getError(message: string) {
     return this.#errorMap.get(message) ?? `Unknown error: ${message}`;
   }

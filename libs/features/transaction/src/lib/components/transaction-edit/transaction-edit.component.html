@@ -1,58 +1,27 @@
-<div
-  class="grid grid-cols-1 grid-rows-1 gap-2 p-4 border rounded-lg justify-items-center text-et-color-fg-default bg-et-layer-alternate border-et-color-border-default">
-  <div class="flex items-center justify-center gap-2 py-12">
-    <span class="text-3xl material-icons text-color-accent-emphasis">account_balance_wallet</span>
-    <span class="text-3xl font-bold text-et-color-accent-emphasis">Edit Transaction</span>
+<div class="grid gap-4 et-card">
+  <div class="flex items-center gap-4">
+    <span class="text-xl font-bold cursor-default text-color-accent-fg">Edit Transaction</span>
+    <ng-container *ngIf="flags().editTransaction.fail">
+      <span
+        class="cursor-pointer material-icons text-color-danger-fg"
+        [expensesTrackerTooltip]="transactionEditFailTooltip">
+        error
+      </span>
+      <expenses-tracker-tooltip #transactionEditFailTooltip>
+        <span>Unable to edit transaction</span>
+      </expenses-tracker-tooltip>
+    </ng-container>
   </div>
-  <div class="grid min-w-[24rem]">
-    <form [formGroup]="formGroup" (ngSubmit)="editTransaction()" class="max-w-[24rem]">
-      <div class="grid grid-rows-[1fr_auto] gap-2">
-        <div class="grid gap-2">
-          <div class="flex items-center gap-2">
-            <span class="material-icons min-w-[24px]">payments</span>
 
-            <label>Amount</label>
-            <span class="mr-1">€</span>
-            <input formControlName="amount" type="number" placeholder="100" required />
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="material-icons min-w-[24px]">category</span>
-
-            <label>Category</label>
-            <input formControlName="category" type="text" placeholder="Grocery" required />
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="material-icons min-w-[24px]">swap_horiz</span>
-
-            <label>Direction</label>
-            <select formControlName="direction">
-              <option value="income">Income</option>
-              <option value="expense">Expense</option>
-            </select>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="material-icons min-w-[24px]">comment</span>
-
-            <label>Message</label>
-            <input formControlName="message" type="text" placeholder="Groceries for this month" />
-          </div>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <button
-            type="submit"
-            class="flex items-center justify-center w-full gap-2 py-3 rounded-lg text-et-color-button-primary bg-et-color-button-primary-bg">
-            <span class="material-icons min-w-[24px]">save</span>
-            <span>SAVE</span>
-          </button>
-          <button
-            type="button"
-            (click)="cancelEditTransaction()"
-            class="flex items-center justify-center w-full gap-2 px-6 py-3 text-center rounded-lg cursor-pointer text-et-color-button-danger bg-et-color-button-danger-bg">
-            <span class="material-icons min-w-[24px]">clear</span>
-            <span>CANCEL</span>
-          </button>
-        </div>
-      </div>
-    </form>
+  <div class="relative grid">
+    <ng-container *ngIf="flags().editTransaction.loading">
+      <div class="et-loading-overlay"></div>
+    </ng-container>
+    <ng-container *ngIf="flags().editTransaction.visible">
+      <expenses-tracker-transaction-form
+        [transactionInput]="transaction()"
+        (gotoTransactionList$)="gotoTransactionList()"
+        (transactionOperation$)="editTransaction($event)"></expenses-tracker-transaction-form>
+    </ng-container>
   </div>
 </div>

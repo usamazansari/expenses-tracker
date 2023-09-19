@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, computed, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
-import { CalendarComponent } from './calendar.component';
+import { CalendarComponent } from './calendar/calendar.component';
 
 @Component({
   selector: 'expenses-tracker-datepicker',
@@ -32,11 +32,19 @@ export class DatePickerComponent {
   @Input() set iconInput(value: string) {
     this.icon.set(value);
   }
+  showWeekNumbers = signal(false);
+  @Input() set showWeekNumbersInput(value: boolean) {
+    this.showWeekNumbers.set(value);
+  }
 
   @Output() dateSelected$ = new EventEmitter<Date>();
 
   togglePicker() {
     this.showPicker.update(v => !v);
+  }
+
+  closePicker() {
+    this.showPicker.set(false);
   }
 
   selectDate(day: Date) {

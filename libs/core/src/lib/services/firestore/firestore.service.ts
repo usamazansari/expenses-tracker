@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { User } from 'firebase/auth';
 
-import { IPocketbook, ITransaction } from '@expenses-tracker/shared/interfaces';
+import { IPocketbook, ITransaction, TransactionDAO } from '@expenses-tracker/shared/interfaces';
 
 import { FirestorePocketbookService } from './firestore-pocketbook/firestore-pocketbook.service';
 import { FirestoreTransactionService } from './firestore-transaction/firestore-transaction.service';
@@ -98,7 +98,7 @@ export class FirestoreService {
     return this.#transaction.watchTransaction$(transactionId);
   }
 
-  createTransaction$(transaction: ITransaction) {
+  createTransaction$(transaction: TransactionDAO) {
     return this.#transaction.createTransaction$(transaction);
   }
 

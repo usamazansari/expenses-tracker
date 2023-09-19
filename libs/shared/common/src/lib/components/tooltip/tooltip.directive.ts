@@ -6,10 +6,12 @@ import {
   ElementRef,
   HostListener,
   Input,
+  OnInit,
   ViewContainerRef,
   inject,
   signal
 } from '@angular/core';
+import { Subject, debounceTime } from 'rxjs';
 
 import { TooltipComponent } from './tooltip.component';
 
@@ -18,10 +20,11 @@ let id = 0;
 @Directive({
   selector: '[expensesTrackerTooltip]'
 })
-export class TooltipDirective implements AfterViewInit {
+export class TooltipDirective implements OnInit, AfterViewInit {
   #overlayRef = signal<OverlayRef | null>(null);
   #portal = signal<TemplatePortal<unknown> | null>(null);
   #id = `expensesTrackerTooltip-${id++}`;
+  #tooltipOpenFlag = new Subject<boolean>();
 
   @Input('expensesTrackerTooltip') tooltip!: TooltipComponent | null;
 
@@ -29,14 +32,25 @@ export class TooltipDirective implements AfterViewInit {
   #elementRef = inject(ElementRef);
   #viewContainerRef = inject(ViewContainerRef);
 
-  @HostListener('mouseenter')
-  showTooltip() {
-    this.#openTooltip();
+  @HostListener('mouseenter', ['$event'])
+  showTooltip(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.#tooltipOpenFlag.next(true);
   }
 
-  @HostListener('mouseleave')
-  hideTooltip() {
-    this.#closeTooltip();
+  @HostListener('mouseleave', ['$event'])
+  hideTooltip(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.#tooltipOpenFlag.next(false);
+  }
+
+  ngOnInit() {
+    this.#tooltipOpenFlag.pipe(debounceTime(250)).subscribe(flag => {
+      if (!flag) this.#closeTooltip();
+      else this.#openTooltip();
+    });
   }
 
   ngAfterViewInit() {
