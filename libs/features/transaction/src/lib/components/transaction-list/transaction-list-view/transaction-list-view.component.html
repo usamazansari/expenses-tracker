@@ -38,9 +38,7 @@
             </span>
             <span
               class="flex cursor-default material-icons md:hidden"
-              [cdkMenuPosition]="[
-                { originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom', offsetY: -4 }
-              ]"
+              [cdkMenuPosition]="[{ originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom' }]"
               [cdkMenuTriggerFor]="weekInformation"
               >info</span
             >
@@ -48,14 +46,16 @@
         </ng-container>
         <ng-template #showDailyOrMonthly>
           <button
-            class="h-full et-button"
+            class="h-full p-2 et-button lg:px-6 lg:py-2"
             (click)="togglePicker()"
             cdkOverlayOrigin
             #dailyMonthlyTrigger="cdkOverlayOrigin">
             <span class="material-icons">
               {{ viewMode() === 'daily' ? 'calendar_view_day' : 'calendar_view_month' }}
             </span>
-            {{ view() | date: datePipeArgs() }}
+            <span>
+              {{ view() | date: datePipeArgs() }}
+            </span>
           </button>
           <ng-template
             cdkConnectedOverlay
@@ -147,8 +147,11 @@
 </expenses-tracker-tooltip>
 
 <ng-template #weekInformation>
-  <div class="grid et-card bg-color-canvas-overlay" cdkMenu>
-    <span>{{ weekSunday() | date: 'MMMM dd' }} to {{ weekSaturday() | date: 'MMMM dd' }}</span>
+  <div class="flex flex-col items-center" cdkMenu>
+    <div class="grid et-card bg-color-canvas-overlay">
+      <span>{{ weekSunday() | date: 'MMMM dd' }} to {{ weekSaturday() | date: 'MMMM dd' }}</span>
+    </div>
+    <div class="w-5 h-5 bg-color-border-default" style="clip-path: polygon(0% 0%, 100% 0%, 50% 50%)"></div>
   </div>
 </ng-template>
 
