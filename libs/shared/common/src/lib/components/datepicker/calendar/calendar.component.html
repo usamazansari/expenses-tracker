@@ -103,6 +103,7 @@
       </div>
     </div>
   </ng-container>
+
   <ng-container *ngIf="viewMode() === 'year'">
     <div class="grid gap-4">
       <div class="flex items-center justify-between">
@@ -139,10 +140,9 @@
       <div class="grid grid-cols-4 grid-rows-3 gap-1">
         <ng-container *ngFor="let month of monthsOfYear">
           <button
-            class="h-full p-2 et-button"
+            class="h-full px-2 py-4 et-button"
             [ngClass]="{
-              'bg-color-accent-fg text-color-fg-on-emphasis': isSelectedMonth(month),
-              'bg-color-transparent': !isSelectedMonth(month)
+              'bg-color-accent-fg text-color-fg-on-emphasis': isSelectedMonth(month)
             }"
             (click)="selectMonth(month)">
             <span class="font-bold text-center">
