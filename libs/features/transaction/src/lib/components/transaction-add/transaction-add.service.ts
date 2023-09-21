@@ -54,6 +54,7 @@ export class TransactionAddService {
             ...value,
             addTransaction: { ...value.addTransaction, loading: false, success: true, fail: false }
           }));
+          this.#context.setTransactionListView(transaction.transactionDate);
           this.gotoTransactionList();
         },
         error: error => {

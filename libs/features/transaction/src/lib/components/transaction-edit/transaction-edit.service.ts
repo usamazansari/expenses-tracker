@@ -59,6 +59,7 @@ export class TransactionEditService {
             ...value,
             editTransaction: { ...value.editTransaction, loading: false, success: true, fail: false }
           }));
+          if (transaction.transactionDate) this.#context.setTransactionListView(transaction.transactionDate);
           this.gotoTransactionList();
         },
         error: error => {
