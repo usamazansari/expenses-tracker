@@ -65,7 +65,7 @@
     "@typescript-eslint/eslint-plugin": "5.62.0",
     "@typescript-eslint/parser": "5.62.0",
     "autoprefixer": "^10.4.0",
-    "cypress": "12.17.4",
+    "cypress": "^13.0.0",
     "eslint": "8.46.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-cypress": "2.14.0",
@@ -84,4 +84,3 @@
     "typescript": "5.1.6"
   }
 }
-
