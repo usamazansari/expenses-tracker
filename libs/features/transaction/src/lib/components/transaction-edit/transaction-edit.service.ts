@@ -24,7 +24,7 @@ export class TransactionEditService {
   pocketbook = computed(() => this.#context.pocketbook());
   transaction = computed(() => this.#context.transaction());
 
-  editTransaction$(transaction: Partial<TransactionDAO>) {
+  editTransaction$({ transaction }: { transaction: Partial<TransactionDAO> }) {
     this.flags.set({ editTransaction: INITIAL_FLAGS });
     this.flags.update(value => ({
       ...value,

@@ -20,6 +20,7 @@
     <ng-container *ngIf="flags().editTransaction.visible">
       <expenses-tracker-transaction-form
         [transactionInput]="transaction()"
+        [saveModeInput]="'edit'"
         (gotoTransactionList$)="gotoTransactionList()"
         (transactionOperation$)="editTransaction($event)"></expenses-tracker-transaction-form>
     </ng-container>
