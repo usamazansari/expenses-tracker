@@ -5,7 +5,7 @@ import { catchError, switchMap, throwError } from 'rxjs';
 
 import { ContextService, FirestoreService } from '@expenses-tracker/core';
 import { NotificationService, RoutePaths } from '@expenses-tracker/shared/common';
-import { IFlag, INITIAL_FLAGS, TransactionDAO } from '@expenses-tracker/shared/interfaces';
+import { IFlag, INITIAL_FLAGS, TransactionDAO, TransactionFormSaveMode } from '@expenses-tracker/shared/interfaces';
 
 export type ComponentFlags = {
   addTransaction: IFlag;
@@ -28,7 +28,7 @@ export class TransactionAddService {
     this.flags.set({ addTransaction: INITIAL_FLAGS });
   }
 
-  addTransaction$(transaction: TransactionDAO) {
+  addTransaction$({ transaction, saveMode }: { transaction: TransactionDAO; saveMode: TransactionFormSaveMode }) {
     this.resetFlags();
     this.flags.update(value => ({ ...value, addTransaction: { ...value.addTransaction, loading: true } }));
 
@@ -55,7 +55,7 @@ export class TransactionAddService {
             addTransaction: { ...value.addTransaction, loading: false, success: true, fail: false }
           }));
           this.#context.setTransactionListView(transaction.transactionDate);
-          this.gotoTransactionList();
+          if (saveMode !== 'add-another') this.gotoTransactionList();
         },
         error: error => {
           this.#notification.error({

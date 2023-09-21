@@ -3,7 +3,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { TooltipModule } from '@expenses-tracker/shared/common';
-import { TransactionDAO } from '@expenses-tracker/shared/interfaces';
+import { TransactionDAO, TransactionFormSaveMode } from '@expenses-tracker/shared/interfaces';
 
 import { TransactionFormComponent } from '../transaction-form/transaction-form.component';
 import { TransactionAddService } from './transaction-add.service';
@@ -24,8 +24,8 @@ export class TransactionAddComponent implements OnInit {
     this.transactionDate.set(this.#service.getState() ?? new Date());
   }
 
-  addTransaction(transaction: TransactionDAO) {
-    this.#service.addTransaction$(transaction);
+  addTransaction({ transaction, saveMode }: { transaction: TransactionDAO; saveMode: TransactionFormSaveMode }) {
+    this.#service.addTransaction$({ transaction, saveMode });
   }
 
   gotoTransactionList() {

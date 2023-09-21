@@ -94,17 +94,66 @@
     </div>
 
     <!-- form controls -->
-    <div class="grid lg:grid-cols-3">
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr_6fr_1fr]">
       <div></div>
-      <div class="grid grid-cols-2 gap-2 lg:gap-4">
-        <button type="button" class="w-full et-button et-button-danger" (click)="cancelAddTransaction()">
-          <span class="material-icons min-w-[24px]">clear</span>
-          <span>Cancel</span>
-        </button>
-        <button type="submit" class="w-full et-button et-button-primary">
-          <span class="material-icons min-w-[24px]">save</span>
-          <span>Save</span>
-        </button>
+      <div class="grid grid-cols-1 gap-2 lg:grid-cols-2 lg:gap-4">
+        <div class="grid">
+          <button type="button" class="w-full et-button et-button-danger" (click)="cancelAddTransaction()">
+            <span class="material-icons min-w-[24px]">clear</span>
+            <span>Cancel</span>
+          </button>
+        </div>
+        <div class="flex items-center gap-[1px]">
+          <ng-container *ngIf="saveMode() === 'edit'; else showAdd">
+            <button type="submit" class="w-full et-button et-button-primary">
+              <span class="material-icons min-w-[24px]">save</span>
+              <span>Save</span>
+            </button>
+          </ng-container>
+          <ng-template #showAdd>
+            <ng-container *ngIf="saveMode() === 'add'">
+              <button
+                type="submit"
+                class="flex items-center justify-center w-full gap-4 rounded-tr-none rounded-br-none et-button et-button-primary">
+                <span class="w-4 material-icons">save</span>
+                <span>Add Transaction</span>
+              </button>
+            </ng-container>
+            <ng-container *ngIf="saveMode() === 'add-another'">
+              <button
+                type="submit"
+                class="flex items-center justify-center w-full gap-4 rounded-tr-none rounded-br-none et-button et-button-primary">
+                <span class="w-4 material-icons">add_circle_outline</span>
+                <span>Save &amp; Add Transaction</span>
+              </button>
+            </ng-container>
+            <button
+              type="button"
+              class="p-2 rounded-tl-none rounded-bl-none et-button et-button-primary"
+              [cdkMenuPosition]="[{ originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top', offsetY: 2 }]"
+              [cdkMenuTriggerFor]="saveOptions">
+              <span class="material-icons">expand_more</span>
+            </button>
+            <ng-template #saveOptions>
+              <div class="grid p-0 overflow-auto et-card" cdkMenu>
+                <button
+                  class="flex items-center justify-start gap-4 px-2 rounded-bl-none rounded-br-none et-button hover:bg-color-accent-emphasis hover:text-color-fg-on-emphasis"
+                  cdkMenuItem
+                  (cdkMenuItemTriggered)="saveMode.set('add')">
+                  <span class="w-4 material-icons">save</span>
+                  <span>Add Transaction</span>
+                </button>
+                <button
+                  class="flex items-center justify-start gap-4 px-2 rounded-tl-none rounded-tr-none et-button hover:bg-color-accent-emphasis hover:text-color-fg-on-emphasis"
+                  cdkMenuItem
+                  (cdkMenuItemTriggered)="saveMode.set('add-another')">
+                  <span class="w-4 material-icons">add_circle_outline</span>
+                  <span>Save &amp; Add Transaction</span>
+                </button>
+              </div>
+            </ng-template>
+          </ng-template>
+        </div>
       </div>
       <div></div>
     </div>

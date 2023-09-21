@@ -1,0 +1,85 @@
+name: New Pull Request
+description: Create a pull request from your branch.
+body:
+  - type: input
+    id: closes-issue
+    attributes:
+      label: Closes Issue
+      description: >-
+        Please enter the number or the link of the issue which is addressed by
+        this PR.
+      placeholder: '#125'
+    validations:
+      required: true
+  - type: checkboxes
+    id: issue-checklist
+    attributes:
+      label: Issue Checklist
+      description: Developer checklist related to the issue.
+      options:
+        - label: All acceptance criteria from the issue are met
+          required: false
+        - label: Tested in latest Chrome/Firefox
+          required: false
+  - type: checkboxes
+    id: code-checklist
+    attributes:
+      label: Code Checklist
+      description: Developer checklist related to the code.
+      options:
+        - label: >-
+            Branch is up-to-date with the branch to be merged with, i.e.,
+            `develop`
+          required: false
+        - label: Code is cleaned up and formatted
+          required: false
+  - type: checkboxes
+    id: pr-checklist
+    attributes:
+      label: PR Checklist
+      description: Developer checklist related to the pull request.
+      options:
+        - label: >-
+            Descriptive title for this pull request is provided (will be used
+            for release notes later)
+          required: false
+        - label: Reviewer and assignees are defined
+          required: false
+        - label: >-
+            Add type label (e.g., `type: bug` or `type: feature`) to this pull
+            request
+          required: false
+        - label: >-
+            Add release label (e.g., `release: minor`) to this PR following
+            [semver](https://semver.org/)
+          required: false
+        - label: 'The PR is connected to the corresponding issue (via `Closes #...`)'
+          required: false
+        - label: '[Summary of changes](#summary-of-changes) is written'
+          required: false
+  - type: textarea
+    id: summary-of-changes
+    attributes:
+      label: Summary of Changes
+      description: Please provide a summary of the changes implemented in this PR.
+      placeholder: '- Fixed the bug in #125'
+    validations:
+      required: true
+  - type: textarea
+    id: pr-screenhosts
+    attributes:
+      label: Screenshots
+      description: Please attach screenshots of the fixes implemented in this PR.
+      placeholder: Upload the images here
+    validations:
+      required: true
+  - type: textarea
+    id: additional-notes
+    attributes:
+      label: Additional notes for the reviewer(s)
+      description: Add additional notes for the reviewers (if any).
+  - type: markdown
+    attributes:
+      value: >-
+        This template was generated with [Issue Forms
+        Creator](https://issue-forms-creator.netlify.app)
