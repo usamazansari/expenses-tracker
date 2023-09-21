@@ -37,6 +37,8 @@ type TransactionCategory =
 
 type TransactionType = 'income' | 'expense';
 
+type TransactionFormSaveMode = 'add' | 'edit' | 'add-another';
+
 interface ITransaction<T extends DateOrTimestamp = Date> {
   id: string;
   amount: number;
@@ -56,6 +58,7 @@ export {
   PaymentMode,
   TransactionCategory,
   TransactionDAO,
+  TransactionFormSaveMode,
   TransactionListDatePipeArgs,
   TransactionListViewTypes,
   TransactionType

@@ -1,6 +1,6 @@
 import { Dialog } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnDestroy, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, Output, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
@@ -16,15 +16,26 @@ import {
   PaymentMode,
   TransactionCategory,
   TransactionDAO,
+  TransactionFormSaveMode,
   TransactionType
 } from '@expenses-tracker/shared/interfaces';
 
 import { TransactionFormDialogComponent } from './transaction-form-dialog.component';
+import { CdkMenuTrigger, CdkMenu, CdkMenuItem } from '@angular/cdk/menu';
 
 @Component({
   selector: 'expenses-tracker-transaction-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DatePickerComponent, SelectComponent, SegmentedControlComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    DatePickerComponent,
+    SelectComponent,
+    SegmentedControlComponent,
+    CdkMenuTrigger,
+    CdkMenu,
+    CdkMenuItem
+  ],
   templateUrl: './transaction-form.component.html'
 })
 export class TransactionFormComponent implements OnDestroy {
@@ -78,12 +89,22 @@ export class TransactionFormComponent implements OnDestroy {
     { label: 'Trips', value: 'trips' }
   ];
 
+  saveMode = signal<TransactionFormSaveMode>('add');
+  @Input() set saveModeInput(value: TransactionFormSaveMode) {
+    this.saveMode.set(value);
+  }
+
+  transactionDate = signal<Date>(new Date(Date.now()));
   @Input() set transactionInput(transaction: Partial<TransactionDAO>) {
     this.formGroup.patchValue(transaction);
+    this.transactionDate.set(transaction.transactionDate ?? new Date(Date.now()));
   }
 
   @Output() gotoTransactionList$ = new EventEmitter<void>();
-  @Output() transactionOperation$ = new EventEmitter<TransactionDAO>();
+  @Output() transactionOperation$ = new EventEmitter<{
+    transaction: TransactionDAO;
+    saveMode: TransactionFormSaveMode;
+  }>();
 
   #transactionFormDialogSubscription$!: Subscription;
 
@@ -108,7 +129,17 @@ export class TransactionFormComponent implements OnDestroy {
   }
 
   transactionOperation() {
-    this.transactionOperation$.emit({ ...(this.formGroup.value as TransactionDAO) });
+    this.transactionOperation$.emit({
+      transaction: { ...(this.formGroup.value as TransactionDAO) },
+      saveMode: this.saveMode()
+    });
+    this.formGroup.reset({
+      amount: 0,
+      category: 'other',
+      paymentMode: 'card',
+      transactionDate: this.transactionDate(),
+      transactionType: 'expense'
+    });
   }
 
   cancelAddTransaction() {
