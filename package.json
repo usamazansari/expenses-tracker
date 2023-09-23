@@ -1,6 +1,6 @@
 {
   "name": "expenses-tracker",
-  "version": "2.11.1-SNAPSHOT",
+  "version": "2.12.0",
   "license": "MIT",
   "scripts": {
     "ng": "nx",
