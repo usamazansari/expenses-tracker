@@ -4,7 +4,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Timestamp } from '@angular/fire/firestore';
 import { User } from 'firebase/auth';
-import { map, throwError } from 'rxjs';
+import { map, of } from 'rxjs';
 
 import { Collections } from '@expenses-tracker/shared/common';
 import {
@@ -72,7 +72,7 @@ export class ContextService {
         .valueChanges()
         .pipe(map(([pb]) => (!pb ? null : PocketbookMapper(pb))));
     }
-    return throwError(() => new Error('Pocketbook is not set in the URL.'));
+    return of(null);
   }
 
   #fetchPocketbook$() {
@@ -102,7 +102,7 @@ export class ContextService {
           )
         );
     }
-    return throwError(() => new Error('Transaction is not set in the URL.'));
+    return of(null);
   }
 
   #fetchTransaction$() {
