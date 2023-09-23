@@ -97,9 +97,9 @@
     </div>
   </ng-container>
   <ng-container *ngIf="flags().success">
-    <div class="grid gap-1 p-0 et-card">
+    <div class="grid">
       <ng-container *ngIf="!transactionList().length; else showTransactionList">
-        <div class="grid p-4 h-60 place-content-center">
+        <div class="grid et-card h-60 place-content-center">
           <div class="flex items-center gap-2 cursor-default">
             <span class="material-icons text-color-danger-fg">error</span>
             <span class="font-bold text-color-danger-fg">
@@ -110,25 +110,26 @@
         </div>
       </ng-container>
       <ng-template #showTransactionList>
-        <!-- TODO: @usamazansari: Add day separator -->
-        <!-- <ng-container *ngIf="viewMode() === 'daily'; else showDaysSeparatedView"> -->
-        <ng-container *ngFor="let transaction of transactionList(); trackBy: transactionListTrack; last as isLast">
-          <expenses-tracker-transaction-list-item [transactionInput]="transaction">
-          </expenses-tracker-transaction-list-item>
-          <ng-container *ngIf="!isLast">
-            <div class="border-b border-color-border-default"></div>
+        <div class="grid gap-2">
+          <ng-container *ngFor="let item of dayWiseTransactionMap() | keyvalue">
+            <div class="grid items-center grid-cols-[1fr_1fr_1fr] lg:grid-cols-[4rem_auto_1fr] gap-4 px-4">
+              <div class="p-px bg-color-border-default"></div>
+              <div class="">
+                <span class="font-bold whitespace-nowrap text-color-fg-muted">{{ item.key | date: 'longDate' }}</span>
+              </div>
+              <div class="p-px bg-color-border-default"></div>
+            </div>
+            <div class="p-0 et-card">
+              <ng-container *ngFor="let transaction of item.value; trackBy: transactionListTrack; last as isLast">
+                <expenses-tracker-transaction-list-item [transactionInput]="transaction">
+                </expenses-tracker-transaction-list-item>
+                <ng-container *ngIf="!isLast">
+                  <div class="border-b border-color-border-default"></div>
+                </ng-container>
+              </ng-container>
+            </div>
           </ng-container>
-        </ng-container>
-        <!-- </ng-container>
-        <ng-template #showDaysSeparatedView>
-          <ng-container *ngFor="let transaction of transactionList(); trackBy: transactionListTrack; last as isLast">
-            <expenses-tracker-transaction-list-item [transactionInput]="transaction">
-            </expenses-tracker-transaction-list-item>
-            <ng-container *ngIf="!isLast">
-              <div class="border-b border-color-border-default"></div>
-            </ng-container>
-          </ng-container>
-        </ng-template> -->
+        </div>
       </ng-template>
     </div>
   </ng-container>
