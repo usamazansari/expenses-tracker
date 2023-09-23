@@ -30,6 +30,15 @@ export class TransactionListService {
     transactionList: { ...INITIAL_FLAGS }
   });
 
+  dayWiseTransactionMap = computed(() =>
+    this.transactionList().reduce((acc, transaction) => {
+      const { transactionDate } = transaction;
+      const formattedDate = formatDate(transactionDate, 'yyyy-MM-dd', 'en-US');
+      acc.set(formattedDate, [...(acc.get(formattedDate) ?? []), transaction]);
+      return acc;
+    }, new Map<string, ITransaction[]>())
+  );
+
   #fetchTransactionListForDay$(date: Date) {
     return this.#firestore.watchTransactionListForDay$(date).pipe(
       tap(transactionList => {

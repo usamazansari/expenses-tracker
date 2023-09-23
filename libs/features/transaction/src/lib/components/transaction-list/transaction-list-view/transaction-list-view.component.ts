@@ -40,6 +40,7 @@ export class TransactionListViewComponent implements OnDestroy {
   view = computed(() => this.#service.transactionListView() as Date);
   flags = computed(() => this.#service.flags().transactionList);
   transactionList = signal<ITransaction[]>([]);
+  dayWiseTransactionMap = computed(() => this.#service.dayWiseTransactionMap());
   showPicker = signal<boolean>(false);
 
   @Input() set viewModeInput(value: TransactionListViewTypes) {
