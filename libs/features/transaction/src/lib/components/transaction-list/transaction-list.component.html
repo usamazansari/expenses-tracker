@@ -1,21 +1,14 @@
 <div class="grid gap-2">
   <ng-container *ngIf="flags().visible">
-    <div class="grid gap-6 et-card">
+    <div class="grid gap-6 lg:et-card">
       <div class="flex items-center justify-between">
         <span class="text-xl font-bold cursor-default text-color-accent-fg">Transaction List</span>
-        <button
-          type="button"
-          class="flex et-button et-button-primary md:hidden"
-          (click)="addTransaction()"
-          [expensesTrackerTooltip]="addTransactionTooltip">
-          <span class="material-icons">add</span>
-        </button>
-        <button type="button" class="hidden et-button et-button-primary md:flex" (click)="addTransaction()">
+        <button type="button" class="et-button et-button-primary" (click)="addTransaction()">
           <span class="material-icons">add</span>
           <span class="">Add Transaction</span>
         </button>
       </div>
-      <div class="flex items-center gap-2">
+      <div class="flex flex-col gap-2 lg:items-center lg:flex-row">
         <div class="flex-grow p-0 et-form-field-wrapper">
           <div class="et-form-field-input-wrapper">
             <input
@@ -30,6 +23,8 @@
         <expenses-tracker-segmented-control
           [dataInput]="viewOptions"
           [selectedInput]="viewMode()"
+          [hideLabelInput]="false"
+          [isFullWidthInput]="true"
           (selectionChange$)="changeViewMode($event)"></expenses-tracker-segmented-control>
       </div>
 
@@ -37,7 +32,3 @@
     </div>
   </ng-container>
 </div>
-
-<expenses-tracker-tooltip #addTransactionTooltip>
-  <span>Add Transaction</span>
-</expenses-tracker-tooltip>

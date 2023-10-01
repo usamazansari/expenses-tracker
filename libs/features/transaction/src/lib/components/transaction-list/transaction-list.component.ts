@@ -31,9 +31,9 @@ export class TransactionListComponent implements OnInit {
   flags = computed(() => this.#service.flags().transactionList);
   viewMode = computed(() => (this.#service.transactionListViewMode() as TransactionListViewTypes) ?? 'monthly');
   viewOptions: SegmentedControlWrapper<TransactionListViewTypes>[] = [
-    { icon: 'calendar_view_month', tooltip: 'Monthly view', value: 'monthly' },
-    { icon: 'calendar_view_week', tooltip: 'Weekly view', value: 'weekly' },
-    { icon: 'calendar_view_day', tooltip: 'Daily view', value: 'daily' }
+    { label: 'Monthly view', icon: 'calendar_view_month', value: 'monthly' },
+    { label: 'Weekly view', icon: 'calendar_view_week', value: 'weekly' },
+    { label: 'Daily view', icon: 'calendar_view_day', value: 'daily' }
   ];
 
   ngOnInit() {

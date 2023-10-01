@@ -16,10 +16,12 @@ export class SegmentedControlComponent<T = unknown> {
   @Input() set dataInput(value: SegmentedControlWrapper<T>[]) {
     this.data.set(value);
   }
+
   id = signal<string>('segmented-control-input');
   @Input() set idInput(value: string) {
     this.id.set(value);
   }
+
   isFullWidth = signal<boolean>(false);
   @Input() set isFullWidthInput(value: boolean) {
     this.isFullWidth.set(value);
@@ -38,6 +40,11 @@ export class SegmentedControlComponent<T = unknown> {
   disabled = signal<boolean>(false);
   @Input() set disabledInput(value: boolean) {
     this.disabled.set(value);
+  }
+
+  hideLabel = signal<boolean>(true);
+  @Input() set hideLabelInput(value: boolean) {
+    this.hideLabel.set(value);
   }
 
   @Output() selectionChange$ = new EventEmitter<T>();
