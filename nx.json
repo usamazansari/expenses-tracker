@@ -1,5 +1,6 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "defaultProject": "client",
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "production": [
@@ -46,5 +47,5 @@
       }
     }
   },
-  "nxCloudAccessToken": "M2EwMzcwNWEtOWEwNC00NDE3LWE4YmYtMjVmYjczZmNlNTFkfHJlYWQtd3JpdGU="
+  "nxCloudAccessToken": "ZDQ2OTZkZTctYTQwYS00Y2JjLWE1ODItZjNjNDY4NjkxYmQ2fHJlYWQtd3JpdGU="
 }

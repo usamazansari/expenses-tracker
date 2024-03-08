@@ -1783,9 +1783,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@et/source@workspace:.":
+"@exodus/schemasafe@npm:^1.0.0-rc.2":
+  version: 1.3.0
+  resolution: "@exodus/schemasafe@npm:1.3.0"
+  checksum: 10c0/e19397c14db76342154c32a9088536149babfd9b18ecae815add0b2f911d9aa292aa51c6ab33b857b4b6bb371a74ebde845e6f17b2824e73b4e307230f23f86a
+  languageName: node
+  linkType: hard
+
+"@expenses-tracker/source@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@et/source@workspace:."
+  resolution: "@expenses-tracker/source@workspace:."
   dependencies:
     "@mantine/carousel": "npm:^7.5.2"
     "@mantine/charts": "npm:^7.5.2"
@@ -1852,13 +1859,6 @@ __metadata:
     vitest: "npm:^1.0.4"
   languageName: unknown
   linkType: soft
-
-"@exodus/schemasafe@npm:^1.0.0-rc.2":
-  version: 1.3.0
-  resolution: "@exodus/schemasafe@npm:1.3.0"
-  checksum: 10c0/e19397c14db76342154c32a9088536149babfd9b18ecae815add0b2f911d9aa292aa51c6ab33b857b4b6bb371a74ebde845e6f17b2824e73b4e307230f23f86a
-  languageName: node
-  linkType: hard
 
 "@floating-ui/core@npm:^1.0.0":
   version: 1.6.0

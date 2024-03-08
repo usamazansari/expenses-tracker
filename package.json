@@ -1,8 +1,13 @@
 {
-  "name": "@et/source",
+  "name": "@expenses-tracker/source",
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "start": "nx serve",
+    "build": "nx build",
+    "lint": "nx lint"
+  },
   "dependencies": {
     "@mantine/carousel": "^7.5.2",
     "@mantine/charts": "^7.5.2",
@@ -69,9 +74,6 @@
     "vite": "~5.0.0",
     "vite-plugin-eslint": "^1.8.1",
     "vitest": "^1.0.4"
-  },
-  "nx": {
-    "includedScripts": []
   },
   "packageManager": "yarn@4.1.1"
 }
